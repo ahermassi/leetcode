@@ -19,6 +19,17 @@ class Solution:
         stack[0].next = None
         return stack[-1]
 
+    @staticmethod
+    def reverse_list_v1(head):  # Iterative approach
+        curr, prev = head, None
+        while curr:
+            temp = curr.next
+            curr.next = prev
+            prev = curr
+            curr = temp
+        return prev
+
+
 def print_list(head):
     if not head:
         print('List is empty.')
@@ -37,5 +48,7 @@ if __name__ == '__main__':
     head.next.next.next.next = ListNode(5)
     print('List:', end=' ')
     print_list(head)
-    print('Reversed list:', end=' ')
+    print('Reversed list (naive):', end=' ')
     print_list(Solution.reverse_list(head))
+    print('Reversed list (iterative):', end=' ')
+    print_list(Solution.reverse_list_v1(head))
