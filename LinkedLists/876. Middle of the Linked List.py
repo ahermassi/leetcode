@@ -6,7 +6,8 @@ class ListNode:
 
 
 class Solution:
-    def middle_node(self, head: ListNode) -> ListNode:
+    @staticmethod
+    def middle_node(head: ListNode) -> ListNode:
         slow = fast = head
         while fast and fast.next:
             slow = slow.next
@@ -14,3 +15,27 @@ class Solution:
         return slow
 
 
+def print_list(head):
+    if not head:
+        print('List is empty.')
+        return
+    while head:
+        print(head.val, end=' ')
+        head = head.next
+    print()
+
+
+if __name__ == '__main__':
+    head = ListNode(1)
+    head.next = ListNode(2)
+    head.next.next = ListNode(3)
+    head.next.next.next = ListNode(4)
+    head.next.next.next.next = ListNode(5)
+    print('List:', end=' ')
+    print_list(head)
+    print('Middle of list:', end=' ')
+    print_list(Solution.middle_node(head))
+    head.next.next.next.next.next = ListNode(6)
+    print('Added node 6 ..')
+    print('Middle of list:', end=' ')
+    print_list(Solution.middle_node(head))
