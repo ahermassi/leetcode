@@ -29,6 +29,15 @@ class Solution:
             curr = temp
         return prev
 
+    @staticmethod
+    def reverse_list_v2(head):  # Recursive approach
+        if not head or not head.next:
+            return head
+        p = Solution.reverse_list_v2(head.next)
+        head.next.next = head
+        head.next = None
+        return p
+
 
 def print_list(head):
     if not head:
@@ -52,3 +61,6 @@ if __name__ == '__main__':
     print_list(Solution.reverse_list(head))
     print('Reversed list (iterative):', end=' ')
     print_list(Solution.reverse_list_v1(head))
+    print('Reversed list (recursive):', end=' ')
+    print_list(Solution.reverse_list_v2(head))
+
