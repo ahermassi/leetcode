@@ -18,9 +18,23 @@ def sort_array_by_parity(A):
     return A
 
 
+def sort_array_by_parity_v2(A):
+    """
+    Given an array A of non-negative integers, return an array consisting of all the even elements of A,
+    followed by all the odd elements of A.
+    :type A: List[int]
+    :rtype: List[int]
+    Time complexity: O(N) where N is the number of elements in A
+    Space complexity: O(1) since it's in-place
+    """
+    A.sort(key=lambda x: x % 2)
+    # This one is smart. In fact, applying that key returns either 0 or 1 (even or odd element). Since we want even
+    # numbers to appear first, we sort in increasing order.
+
+
 if __name__ == '__main__':
     A = [3, 1, 2, 4]
     print('Array before sorting: ', A)
-    sort_array_by_parity(A)
+    sort_array_by_parity_v2(A)
     print('Array after sorting: ', A)
 
