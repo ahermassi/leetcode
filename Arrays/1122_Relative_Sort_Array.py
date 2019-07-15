@@ -43,8 +43,8 @@ def relative_sort_array_v2(arr1, arr2):
 
 def relative_sort_array_v3(arr1, arr2):
     """ This is the most elegant solution. Sort arr1 using position of numbers in arr2 as key.
-     Time complexity:
-     Space complexity:
+     Time complexity: O(N log N) for Timsort
+     Space complexity: O(len(arr2)
      """
     position = {v: i for i, v in enumerate(arr2)}
     return sorted(arr1, key=lambda i: position.get(i, i + 1000))  # If i not found in the dictionary, return i + 1000
