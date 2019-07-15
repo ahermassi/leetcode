@@ -35,11 +35,41 @@ def sorted_squares_v2(A):
     return list(result)
 
 
+def sorted_squares_v3(A):
+    """ Use two pointers, but this time without a deque. Instead, add the larger square from the back of the list,
+    denoted by the index r - l
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    result = [None] * len(A)
+    l, r = 0, len(A) - 1
+    while l <= r:
+        left, right = abs(A[l]), abs(A[r])
+        if left > right:
+            result[r - l] = left ** 2
+            l += 1
+        else:
+            result[r - l] = right ** 2
+            r -= 1
+    return result
+
+
+def sorted_squares_v4(A):
+    """ Sorting in-place and then calculating squares
+     Time complexity: O(N log N) for Timsort
+    Space complexity: O(1) since first sorting is in-place
+     """
+    A.sort(key=abs)
+    for i in range(len(A)):
+        A[i] = A[i] ** 2
+    return A
+
+
 class Test(unittest2.TestCase):
     test_data = [-7, -3, 0, 2, 4, 6]
 
     def test_sorted_squares(self):
-        self.assertEqual([0, 4, 9, 16, 36, 49], sorted_squares_v2(self.test_data))
+        self.assertEqual([0, 4, 9, 16, 36, 49], sorted_squares_v3(self.test_data))
 
 
 if __name__ == '__main__':
