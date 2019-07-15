@@ -8,6 +8,10 @@ don't appear in arr2 should be placed at the end of arr1 in ascending order. """
 
 
 def relative_sort_array_v1(arr1, arr2):
+    """
+    Time complexity: O(N log N) for Timsort
+    Space complexity: O(N)
+    """
     arr1.sort()
     result = []
     for i in range(len(arr2)):
@@ -21,6 +25,10 @@ def relative_sort_array_v1(arr1, arr2):
 
 
 def relative_sort_array_v2(arr1, arr2):
+    """
+       Time complexity: O(1001)
+       Space complexity: O(N)
+       """
     result = []
     counter = Counter(arr1)  # Count the occurrence of each number
     for i in arr2:
@@ -31,6 +39,15 @@ def relative_sort_array_v2(arr1, arr2):
         if counter[i]:
             result.extend([i] * counter.pop(i))
     return result
+
+
+def relative_sort_array_v3(arr1, arr2):
+    """ This is the most elegant solution. Sort arr1 using position of numbers in arr2 as key.
+     Time complexity:
+     Space complexity:
+     """
+    position = {v: i for i, v in enumerate(arr2)}
+    return sorted(arr1, key=lambda i: position.get(i, i + 1000))  # If i not found in the dictionary, return i + 1000
 
 
 class Test(unittest.TestCase):
