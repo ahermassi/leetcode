@@ -21,18 +21,34 @@ def two_sum_v2(nums, target):
     Time complexity: O(N) for array pass
     Space complexity: O(N)
     """
-    d = {v: i for i, v in enumerate(nums)}
+    d = {v: i for i, v in enumerate(nums)}  # Add each element's value and its index to the table
     for i in range(len(nums)):
         s = nums[i]
         if d.get(target - s) and d.get(target - s) != i:  # The complement (target - s) found in O(1) lookup
             return [i, d.get(target - s)]
 
 
+def two_sum_v3(nums, target):
+    """ We can do it in one-pass. While we iterate and inserting elements into the table, we also look back to check
+    if current element's complement already exists in the table. If it exists, we have found a solution and return
+    immediately.
+    Time complexity: O(N) for array pass
+    Space complexity: O(N)
+    """
+    d = dict()
+    for i, v in enumerate(nums):
+        if target - v in d:
+            return [d.get(target - v), i]
+        d[v] = i
+
+
 class Test(unittest.TestCase):
     data = ([2, 7, 11, 15], 9)
 
     def test_two_sum(self):
+        self.assertEqual([0, 1], two_sum_v1(self.data[0], self.data[1]))
         self.assertEqual([0, 1], two_sum_v2(self.data[0], self.data[1]))
+        self.assertEqual([0, 1], two_sum_v3(self.data[0], self.data[1]))
 
 
 if __name__ == '__main__':
