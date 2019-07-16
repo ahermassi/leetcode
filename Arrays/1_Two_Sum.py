@@ -5,7 +5,10 @@ import unittest2 as unittest
 
 
 def two_sum(nums, target):
-    """ Brute force approach. Not the best performance. """
+    """ Brute force approach. Not the best performance.
+    Time complexity: O(N ** 2)
+    Space complexity: O(1)
+    """
     for i in range(len(nums)):
         s = nums[i]
         for j in range(i + 1, len(nums)):
