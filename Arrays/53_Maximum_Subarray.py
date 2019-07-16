@@ -5,16 +5,17 @@ import unittest2 as unittest
 
 
 def maximum_subarray_v1(nums):
-    """ Greedy approach. The problem to find maximum (or minimum) element (or sum) with a single array as the input
-    is a good candidate to be solved by the greedy approach in linear time. Assume first element is the maximum (
-    local and global) sum. Iterate over the array, and at each step ask yourself: which is greater, the current
-    element x or (last sum + x) ? Update the local sum and global sum accordingly.
+    """
+    This algorithm is called Kadane's algorithm. Assume first element is the maximum (local and global) sum. Iterate
+    over the array, and at each step ask yourself: which is greater, the current element x or (last sum + x) ? Update
+    the local sum and global sum accordingly.
     Time complexity: O(N)
     Space complexity: O(1)
     """
     curr_sum = max_sum = nums[0]
     for i in range(1, len(nums)):
-        curr_sum = max(nums[i], curr_sum + nums[i])  # Continue summing up or start over (greedy)
+        curr_sum = max(nums[i], curr_sum + nums[i])  # What's the maximum subarray ending here ? Either [current
+        # element] or [previous subarray, current]
         max_sum = max(max_sum, curr_sum)  # Update global max
     return max_sum
 
