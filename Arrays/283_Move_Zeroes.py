@@ -46,7 +46,7 @@ class Test(unittest.TestCase):
             ([1, 2, 3], [1, 2, 3])
             ]
 
-    def test_plus_one(self):
+    def test_move_zeroes(self):
         for test_array, result in self.data:
             move_zeroes_v1(test_array)
             self.assertEqual(result, test_array)
