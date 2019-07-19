@@ -19,6 +19,21 @@ def longest_common_prefix_v1(strings):
     return longest_prefix
 
 
+def longest_common_prefix_v2(strings):
+    """ This solution is based on the idea that longest common prefix is included in or equal to the shortest string.
+    Time complexity: O(S) where S is the length of the shortest string in the array
+    Space complexity: O(L), where L is the length of the longest string in the array
+    """
+    if not strings:
+        return ''
+    shortest = min(strings)
+    longest = max(strings)
+    for i, c in enumerate(shortest):
+        if c != longest[i]:
+            return shortest[:i]  # Return the string up to this index. Clever use of enumerate()
+    return shortest
+
+
 class Test(unittest.TestCase):
     data = [(['flower', 'flow', 'flight'], 'fl'),
             (['dog', 'racecar', 'car'], '')
@@ -27,6 +42,7 @@ class Test(unittest.TestCase):
     def test_longest_common_prefix(self):
         for test_array, result in self.data:
             self.assertEqual(result, longest_common_prefix_v1(test_array))
+            self.assertEqual(result, longest_common_prefix_v2(test_array))
 
 
 if __name__ == '__main__':
