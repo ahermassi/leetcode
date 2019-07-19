@@ -5,7 +5,7 @@ You must do this in-place without making a copy of the array. """
 import unittest2 as unittest
 
 
-def move_zeroes(nums):
+def move_zeroes_v1(nums):
     """ First thought. A run on [0,1,0,3,12] produces the following intermediate arrays:
      1 0 3 0 12
      1 3 0 12 0
@@ -20,6 +20,18 @@ def move_zeroes(nums):
             i += 1
 
 
+def move_zeroes_v2(nums):
+    """ Keep index of non zero element and perform some swaps.
+     Time complexity: O(N)
+     Space complexity: O(1)
+     """
+    non_zero_index = 0
+    for i in range(len(nums)):
+        if nums[i] != 0:
+            nums[i], nums[non_zero_index] = nums[non_zero_index], nums[i]
+            non_zero_index += 1
+
+
 class Test(unittest.TestCase):
     data = [([0, 1, 0, 3, 12], [1, 3, 12, 0, 0]),
             ([0, 1], [1, 0]),
@@ -28,7 +40,10 @@ class Test(unittest.TestCase):
 
     def test_plus_one(self):
         for test_array, result in self.data:
-            move_zeroes(test_array)
+            move_zeroes_v1(test_array)
+            self.assertEqual(result, test_array)
+        for test_array, result in self.data:
+            move_zeroes_v2(test_array)
             self.assertEqual(result, test_array)
 
 
