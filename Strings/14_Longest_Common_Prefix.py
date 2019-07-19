@@ -34,6 +34,20 @@ def longest_common_prefix_v2(strings):
     return shortest
 
 
+def longest_common_prefix_v3(strings):
+    """ This one uses zip() in a rather elegant way. Use zip() to look at respective characters in order.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    prefix = ''
+    zipped_chars = zip(*strings)
+    for zipped in zipped_chars:
+        if len(set(zipped)) > 1:  # If not all respective characters are the same
+            return prefix
+        prefix += zipped[0]  # If all characters are equal (equal to same character), append that character
+    return prefix
+
+
 class Test(unittest.TestCase):
     data = [(['flower', 'flow', 'flight'], 'fl'),
             (['dog', 'racecar', 'car'], '')
@@ -43,6 +57,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, longest_common_prefix_v1(test_array))
             self.assertEqual(result, longest_common_prefix_v2(test_array))
+            self.assertEqual(result, longest_common_prefix_v3(test_array))
 
 
 if __name__ == '__main__':
