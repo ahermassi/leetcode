@@ -23,6 +23,21 @@ def plus_one_v1(digits):
     return digits
 
 
+def plus_one_v2(digits):
+    """ Same as above but recursively.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    if len(digits) == 1 and digits[0] == 9:
+        return [1, 0]
+    if digits[-1] != 9:
+        digits[-1] += 1
+    else:
+        digits[-1] = 0
+        digits[:-1] = plus_one_v2(digits[:-1])
+    return digits
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3], [1, 2, 4]),
             ([9], [1, 0]),
@@ -31,7 +46,7 @@ class Test(unittest.TestCase):
 
     def test_plus_one(self):
         for test_array, result in self.data:
-            self.assertEqual(result, plus_one_v1(test_array))
+            self.assertEqual(result, plus_one_v2(test_array))
 
 
 if __name__ == '__main__':
