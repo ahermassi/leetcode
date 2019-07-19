@@ -21,7 +21,7 @@ def move_zeroes_v1(nums):
 
 
 def move_zeroes_v2(nums):
-    """ Keep index of non zero element and perform some swaps.
+    """ Keep index of non zero element and swap last 0 and last non 0.
      Time complexity: O(N)
      Space complexity: O(1)
      """
@@ -30,6 +30,14 @@ def move_zeroes_v2(nums):
         if nums[i] != 0:
             nums[i], nums[non_zero_index] = nums[non_zero_index], nums[i]
             non_zero_index += 1
+
+
+def move_zeroes_v3(nums):
+    """ Using built-in sort() elegantly. Note that Timsort might introduce temporary arrays making in not in-place
+    Time complexity: O(N log N)
+     Space complexity: O(1) (?)
+    """
+    nums.sort(key=lambda x: 1 if x == 0 else 1)
 
 
 class Test(unittest.TestCase):
@@ -44,6 +52,9 @@ class Test(unittest.TestCase):
             self.assertEqual(result, test_array)
         for test_array, result in self.data:
             move_zeroes_v2(test_array)
+            self.assertEqual(result, test_array)
+        for test_array, result in self.data:
+            move_zeroes_v3(test_array)
             self.assertEqual(result, test_array)
 
 
