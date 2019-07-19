@@ -1,0 +1,39 @@
+""" Given a non-empty array of digits representing a non-negative integer, plus one to the integer.
+ Example:
+Input: [1,2,3]
+Output: [1,2,4]
+Explanation: The array represents the integer 123. """
+
+import unittest2 as unittest
+
+
+def plus_one_v1(digits):
+    """ Read array from end, and replace each digit with 0 as long as it is a 9.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    i = len(digits) - 1
+    while i >= 0 and digits[i] == 9:
+        digits[i] = 0
+        i -= 1
+    if i >= 0:
+        digits[i] += 1
+    else:
+        digits.insert(0, 1)
+    return digits
+
+
+class Test(unittest.TestCase):
+    data = [([1, 2, 3], [1, 2, 4]),
+            ([9], [1, 0]),
+            ([1, 9, 9], [2, 0, 0])
+            ]
+
+    def test_plus_one(self):
+        for test_array, result in self.data:
+            self.assertEqual(result, plus_one_v1(test_array))
+
+
+if __name__ == '__main__':
+    unittest.main()
+
