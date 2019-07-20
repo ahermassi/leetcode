@@ -26,7 +26,7 @@ class Test(unittest.TestCase):
              'ogdmaaaaaaaaaa')
            ]
 
-    def test_move_zeroes(self):
+    def test_goat_latin(self):
         for test_string, result in self.data:
             self.assertEqual(result, to_goat_latin(test_string))
 

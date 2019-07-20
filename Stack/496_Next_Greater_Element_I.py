@@ -45,7 +45,7 @@ class Test(unittest.TestCase):
             ([2, 4], [1, 2, 3, 4], [3, -1])
             ]
 
-    def test_move_zeroes(self):
+    def test_next_greater_element(self):
         for nums1, nums2, result in self.data:
             self.assertEqual(result, next_greater_element_v1(nums1, nums2))
             self.assertEqual(result, next_greater_element_v2(nums1, nums2))
