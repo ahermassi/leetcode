@@ -21,7 +21,7 @@ def move_zeroes_v1(nums):
 
 
 def move_zeroes_v2(nums):
-    """ Keep index of non zero element and swap last 0 and last non 0.
+    """
      Time complexity: O(N)
      Space complexity: O(1)
      """
