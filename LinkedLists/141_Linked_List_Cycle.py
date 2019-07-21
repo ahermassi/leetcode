@@ -43,6 +43,22 @@ def has_cycle_v2(head):
         return False
 
 
+def has_cycle_v3(head):
+    """ We go through each node one by one and record each node's reference in a hash table. If
+    the current node is null, we have reached the end of the list and it must not be cyclic. If current node’s
+    reference is in the hash table, then return true.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    nodes = {}
+    while head:
+        if nodes.get(head):
+            return True
+        nodes[head] = head.val
+        head = head.next
+    return False
+
+
 class Test(unittest.TestCase):
     head1 = ListNode(3)
     head1.next = ListNode(2)
@@ -59,6 +75,8 @@ class Test(unittest.TestCase):
         self.assertFalse(has_cycle_v1(self.head2))
         self.assertTrue(has_cycle_v2(self.head1))
         self.assertFalse(has_cycle_v2(self.head2))
+        self.assertTrue(has_cycle_v3(self.head1))
+        self.assertFalse(has_cycle_v3(self.head2))
 
 
 if __name__ == '__main__':
