@@ -36,6 +36,6 @@ def invert_tree_v1(root):
     """
     if root:
         root.left, root.right = root.right, root.left
-        invert_tree(root.left)
-        invert_tree(root.right)
+        invert_tree_v1(root.left)
+        invert_tree_v1(root.right)
         return root
