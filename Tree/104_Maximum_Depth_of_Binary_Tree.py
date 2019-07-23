@@ -20,9 +20,9 @@ class TreeNode(object):
         self.right = None
 
 
-def max_depth(root):
+def max_depth_v1(root):
     """ Do it recursively.
-    Time complexity: O(N)
+    Time complexity: O(N), where N is the number of nodes
     Space complexity: in the worst case, the tree is completely unbalanced, e.g. each node has only left child node,
     the recursion call would occur N times (the height of the tree), therefore the storage to keep the call stack
     would be O(N). But in the best case (the tree is completely balanced), the height of the tree would be log(N).
@@ -30,9 +30,29 @@ def max_depth(root):
     """
     if not root:
         return 0
-    left_depth = max_depth(root.left)
-    right_depth = max_depth(root.right)
+    left_depth = max_depth_v1(root.left)
+    right_depth = max_depth_v1(root.right)
     return max(left_depth, right_depth) + 1  # Add 1 to account for the root level
+
+
+def max_depth_v2(root):
+    """ We start from a stack which contains the root node and the corresponding depth which is 1. Then we proceed to
+    the iterations: pop the current node out of the stack and push the child nodes. The depth is updated at each
+    step.
+    Time complexity: O(N)
+    Space complexity: O(log N)
+    """
+    stack = []
+    if root:
+        stack.append((1, root))
+    depth = 0
+    while stack:
+        current_depth, root = stack.pop()
+        if root:
+            depth = max(depth, current_depth)
+            stack.append((current_depth + 1, root.left))
+            stack.append((current_depth + 1, root.right))
+    return depth
 
 
 class Test(unittest.TestCase):
@@ -43,7 +63,8 @@ class Test(unittest.TestCase):
     root.right.right = TreeNode(7)
 
     def test_max_depth(self):
-        self.assertEqual(3, max_depth(self.root))
+        self.assertEqual(3, max_depth_v1(self.root))
+        self.assertEqual(3, max_depth_v2(self.root))
 
 
 if __name__ == '__main__':
