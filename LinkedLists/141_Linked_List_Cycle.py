@@ -70,7 +70,7 @@ class Test(unittest.TestCase):
     head2.next.next = ListNode(2)
     head2.next.next.next = ListNode(3)
 
-    def test_next_greater_element(self):
+    def test_has_cycle(self):
         self.assertTrue(has_cycle_v1(self.head1))
         self.assertFalse(has_cycle_v1(self.head2))
         self.assertTrue(has_cycle_v2(self.head1))
