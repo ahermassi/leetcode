@@ -19,6 +19,7 @@ Output:
  """
 
 # Definition for a binary tree node.
+from collections import deque
 
 
 class TreeNode(object):
@@ -42,7 +43,7 @@ def invert_tree_v1(root):
 
 
 def invert_tree_v2(root):
-    """ Iterative approach, in a manner similar to BFS.
+    """ Iterative approach, in a manner similar to DFS.
     As long as the queue is not empty, remove the next node from  the queue, swap its children, and add the children
     to the queue. Eventually, the queue will be empty and all the children swapped.
     Time complexity: O(N)
@@ -57,4 +58,23 @@ def invert_tree_v2(root):
             node.left, node.right = node.right, node.left
             stack.append(node.left)
             stack.append(node.right)
+    return root
+
+
+def invert_tree_v3(root):
+    """ Iterative approach, in a manner similar to BFS, using a deque.
+    As long as the queue is not empty, remove the next node from the queue, swap its children, and add the children
+    to the left of the queue. Eventually, the queue will be empty and all the children swapped.
+    Time complexity: O(N)
+    Space complexity: O(N) since in the worst case, the queue will contain all nodes in one level of the binary tree.
+    """
+    queue = deque()
+    if root:
+        queue.appendleft(root)
+    while queue:
+        node = queue.pop()
+        if node:
+            node.left, node.right = node.right, node.left
+            queue.appendleft(node.left)
+            queue.appendleft(node.right)
     return root
