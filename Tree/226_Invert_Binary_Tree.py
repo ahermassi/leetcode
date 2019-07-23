@@ -39,3 +39,22 @@ def invert_tree_v1(root):
         invert_tree_v1(root.left)
         invert_tree_v1(root.right)
         return root
+
+
+def invert_tree_v2(root):
+    """ Iterative approach, in a manner similar to BFS.
+    As long as the queue is not empty, remove the next node from  the queue, swap its children, and add the children
+    to the queue. Eventually, the queue will be empty and all the children swapped.
+    Time complexity: O(N)
+    Space complexity: O(N) since in the worst case, the queue will contain all nodes in one level of the binary tree.
+    """
+    stack = []
+    if root:
+        stack.append(root)
+    while stack:
+        node = stack.pop()
+        if node:
+            node.left, node.right = node.right, node.left
+            stack.append(node.left)
+            stack.append(node.right)
+    return root
