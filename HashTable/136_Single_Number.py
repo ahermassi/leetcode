@@ -13,11 +13,24 @@ def single_number_v1(nums):
     """
     count = {}
     for i in nums:
+        # try-except, EAPF fashion
         try:
             count.pop(i)
         except KeyError:
             count[i] = 1
     return count.popitem()[0]
+
+
+def single_number_v2(nums):
+    """ Knowing that A XOR A = 0 and A XOR 0 = A and the XOR operator is commutative, the solution will be very
+    straightforward.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    single = 0
+    for i in nums:
+        single ^= i
+    return single
 
 
 class Test(unittest.TestCase):
