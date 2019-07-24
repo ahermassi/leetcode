@@ -90,7 +90,7 @@ class Test(unittest.TestCase):
     hash_map.remove(2)
     new_two = hash_map.get(2)
 
-    def test_high_five(self):
+    def test_hashmap(self):
         self.assertEqual(1, self.one)
         self.assertEqual(-1, self.three)
         self.assertEqual(1, self.two)
