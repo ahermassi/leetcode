@@ -12,7 +12,7 @@ class TreeNode(object):
         self.right = None
 
 
-def is_symmetric(root):
+def is_symmetric_v1(root):
     """ Each two consecutive nodes in the nodes list should be equal. The algorithm works similarly to BFS,
     with some key differences. Each time, two nodes are extracted and their values compared. Then, the right and left
     children of the two nodes are inserted in the queue in opposite order.
@@ -37,6 +37,30 @@ def is_symmetric(root):
     return True
 
 
+def is_symmetric_v2(root):
+    """ Two trees are a mirror reflection of each other if:
+        1- Their two roots have the same value.
+        2- The right subtree of each tree is a mirror reflection of the left subtree of the other tree.
+        This is like a person looking at a mirror. The reflection in the mirror has the same head, but the reflection's
+        right arm corresponds to the actual person's left arm, and vice versa.
+     Time complexity: O(N)
+     Space complexity: O(N), the number of recursive calls is bound by the height of the tree. In the worst case,
+     the tree is linear and the height is O(N)
+     """
+    def is_mirror(left, right):
+        if not left and not right:
+            return True
+        if not left or not right:
+            return False
+        if left.val == right.val:
+            return is_mirror(left.left, right.right) and is_mirror(left.right, right.left)
+        return False
+
+    if not root:
+        return True
+    return is_mirror(root.left, root.right)
+
+
 class Test(unittest.TestCase):
     root1 = TreeNode(1)
     root1.left = TreeNode(2)
@@ -52,8 +76,10 @@ class Test(unittest.TestCase):
     root2.right.right = TreeNode(3)
 
     def test_is_symmetric(self):
-        self.assertTrue(is_symmetric(self.root1))
-        self.assertFalse(is_symmetric(self.root2))
+        self.assertTrue(is_symmetric_v1(self.root1))
+        self.assertFalse(is_symmetric_v1(self.root2))
+        self.assertTrue(is_symmetric_v2(self.root1))
+        self.assertFalse(is_symmetric_v2(self.root2))
 
 
 if __name__ == '__main__':
