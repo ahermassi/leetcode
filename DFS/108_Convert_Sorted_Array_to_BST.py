@@ -32,6 +32,24 @@ def sorted_array_to_bst_v1(nums):
     return root
 
 
+def sorted_array_to_bst_v2(nums):
+    """ Slicing the array is expensive. It is better to pass the left and right bounds into recursive calls instead.
+    Time complexity: O(log N)
+    Space complexity: O(log N)
+    """
+
+    def convert(left, right):
+        if left > right:
+            return None
+        mid = (left + right) // 2
+        node = TreeNode(nums[mid])
+        node.left = convert(left, mid - 1)
+        node.right = convert(mid + 1, right)
+        return node
+
+    return convert(0, len(nums) - 1)
+
+
 class Test(unittest.TestCase):
     data = [-10, -3, 0, 5, 9]
 
