@@ -20,6 +20,24 @@ def intersection_v1(nums1, nums2):
     return result
 
 
+def intersection_v2(nums1, nums2):
+    """ The idea is to convert both arrays into sets, and then iterate over the smallest set checking the presence of
+    each element in the larger set.
+    Time complexity: O(N + M)
+    Space complexity: O(N + M)
+    """
+
+    def set_intersection(set1, set2):
+        return [x for x in set1 if x in set2]
+
+    set1 = set(nums1)
+    set2 = set(nums2)
+    if len(set1) < len(set2):
+        return set_intersection(set1, set2)
+    else:
+        return set_intersection(set2, set1)
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 2, 1], [2, 2], [2]),
             ([4, 9, 5], [9, 4, 9, 8, 4], [9, 4])
@@ -28,6 +46,7 @@ class Test(unittest.TestCase):
     def test_intersection(self):
         for nums1, nums2, result in self.data:
             self.assertEqual(result, intersection_v1(nums1, nums2))
+            self.assertEqual(result, intersection_v2(nums1, nums2))
 
 
 if __name__ == '__main__':
