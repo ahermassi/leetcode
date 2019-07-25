@@ -50,6 +50,28 @@ def find_paths(root, path, paths):
         paths.append(path)
 
 
+def binary_tree_paths_v2(root):
+    """ Initiate the stack by a root node and then at each step we pop out one node and its path. If the popped node
+    is a leaf, update the list of all paths. If not, push its child nodes and corresponding paths into stack till all
+    nodes are checked.
+    Time complexity: O(N) since each node is visited exactly once
+    Space complexity: O(N)
+    """
+    if not root:
+        return []
+    paths, stack = [], [(root, '')]
+    while stack:
+        node, path = stack.pop()
+        if not node.left and not node.right:
+            path += str(node.val)
+            paths.append(path)
+        if node.right:
+            stack.append((node.right, path + str(node.val) + '->'))
+        if node.left:
+            stack.append((node.left, path + str(node.val) + '->'))
+    return paths
+
+
 class Test(unittest.TestCase):
     root = TreeNode(1)
     root.left = TreeNode(2)
@@ -59,6 +81,7 @@ class Test(unittest.TestCase):
 
     def test_binary_tree_paths(self):
         self.assertEqual(self.result, binary_tree_paths_v1(self.root))
+        self.assertEqual(self.result, binary_tree_paths_v2(self.root))
 
 
 if __name__ == '__main__':
