@@ -46,13 +46,18 @@ def reverse_list_v2(head):
     return prev
 
 
-def reverse_list_v3(head):  # Recursive approach
-    if not head or not head.next:
+def reverse_list_v3(head):
+    """ Recursive approach. Traverse the list recursively until the tail is reached. From there, reverse each two
+    consecutive nodes and return the new head.
+    Time complexity: O(N)
+    Space complexity: O(N), the recursion could go up to N levels deep
+    """
+    if not head or not head.next:  # If tail is reached, return it to become the new head
         return head
-    p = reverse_list_v2(head.next)
+    p = reverse_list_v2(head.next)  # When the tail is reached, p points to the tail, which is the new list's head
     head.next.next = head
     head.next = None
-    return p
+    return p  # Return that new head
 
 
 class Test(unittest.TestCase):
