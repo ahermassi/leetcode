@@ -30,6 +30,31 @@ def get_intersection_node_v1(headA, headB):
         return pa
 
 
+def get_intersection_node_v2(headA, headB):
+    """ Store the sizes of list A and list B as lena and lenb. Then reset the pointers to headA and headB and find the
+    difference between lena and lenb, and then let the pointer of the LONGER list proceed by the difference between
+    lena and lenb. Finally, traverse through the lists again, the intersection node can be easily found.
+    Time complexity: O(N + M)
+    Space complexity: O(1)
+    """
+    pa, pb, lena, lenb = headA, headB, 0, 0
+    while pa:  # Find length of list A
+        lena, pa = lena + 1, pa.next
+    while pb:  # Find length of list B
+        lenb, pb = lenb + 1, pb.next
+    pa, pb = headA, headB  # Reset pointers for final traversal
+    # Account for difference in length by moving the head of longer list forward by abs(lena - lenb)
+    if lena > lenb:
+        while lena > lenb:
+            lena, pa = lena - 1, pa.next
+    else:
+        while lenb > lena:
+            lenb, pb = lenb - 1, pb.next
+    while pa != pb:  # Traverse again until the two pointers meet
+        pa, pb = pa.next, pb.next
+    return pa
+
+
 class Test(unittest.TestCase):
     eight = ListNode(8)
     eight.next = ListNode(4)
@@ -44,6 +69,7 @@ class Test(unittest.TestCase):
 
     def test_merge_two_lists(self):
         self.assertEqual(self.eight, get_intersection_node_v1(self.head1, self.head2))
+        self.assertEqual(self.eight, get_intersection_node_v2(self.head1, self.head2))
 
 
 if __name__ == '__main__':
