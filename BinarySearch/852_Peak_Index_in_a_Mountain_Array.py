@@ -32,6 +32,21 @@ def peak_index_in_mountain_array_v2(A):
     return find_peak_index(A, 0, len(A) - 1)
 
 
+def peak_index_in_mountain_array_v3(A):
+    """ Iterative binary search.
+    Time complexity: O(log N)
+    Space complexity: O(1)
+    """
+    left, right = 0, len(A) - 1
+    while left < right:
+        mid = (left + right) // 2
+        if A[mid + 1] > A[mid]:
+            left = mid + 1
+        else:
+            right = mid
+    return left
+
+
 class Test(unittest.TestCase):
     data = [([0, 1, 0], 1),
             ([0, 2, 1, 0], 1)
