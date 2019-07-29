@@ -40,13 +40,31 @@ def two_sum_v2(numbers, target):
             left += 1
 
 
+def two_sum_v3(numbers, target):
+    """ For each element i in the array, try to find its complement target - i using binary search.
+    Time complexity: O(N log N), array pass + binary search
+    Space complexity: O(1)
+    """
+    for i in range(len(numbers)):
+        left, right = i + 1, len(numbers) - 1
+        temp = target - numbers[i]
+        while left <= right:
+            mid = (left + right) // 2
+            if numbers[mid] == temp:
+                return [i + 1, mid + 1]
+            elif numbers[mid] > temp:
+                right = mid - 1
+            else:
+                left = mid + 1
+
+
 class Test(unittest.TestCase):
     data = ([2, 7, 11, 15], 9)
 
     def test_two_sum(self):
         self.assertEqual([1, 2], two_sum_v1(self.data[0], self.data[1]))
         self.assertEqual([1, 2], two_sum_v2(self.data[0], self.data[1]))
-        # self.assertEqual([0, 1], two_sum_v3(self.data[0], self.data[1]))
+        self.assertEqual([1, 2], two_sum_v3(self.data[0], self.data[1]))
 
 
 if __name__ == '__main__':
