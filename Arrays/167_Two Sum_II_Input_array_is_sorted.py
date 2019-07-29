@@ -20,12 +20,32 @@ def two_sum_v1(numbers, target):
             vals[v] = i
 
 
+def two_sum_v2(numbers, target):
+    """ Make use of the property where the input array is sorted. We use two indexes, initially pointing to the first
+    and last element respectively. Compare the sum of these two elements with target. If the sum is equal to target,
+    we found the exactly only solution. If it is less than target, we increase the smaller index by one. If it is
+    greater than target, we decrease the larger index by one. Move the indexes and repeat the comparison until the
+    solution is found.
+    Time complexity: O(N), each of the n elements is visited at most once
+    Space complexity: O(1)
+    """
+    left, right = 0, len(numbers) - 1
+    while left < right:
+        s = numbers[left] + numbers[right]
+        if s == target:
+            return [left + 1, right + 1]
+        elif s > target:
+            right -= 1
+        else:
+            left += 1
+
+
 class Test(unittest.TestCase):
     data = ([2, 7, 11, 15], 9)
 
     def test_two_sum(self):
         self.assertEqual([1, 2], two_sum_v1(self.data[0], self.data[1]))
-        # self.assertEqual([0, 1], two_sum_v2(self.data[0], self.data[1]))
+        self.assertEqual([1, 2], two_sum_v2(self.data[0], self.data[1]))
         # self.assertEqual([0, 1], two_sum_v3(self.data[0], self.data[1]))
 
 
