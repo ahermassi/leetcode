@@ -9,6 +9,9 @@ def first_bad_version(n):
         When is_bad_version(mid) is True, mid may or may not be the first bad version, but we can tell for sure that
         all versions after mid can be discarded. Therefore we set right = mid - 1 as the new search space of interval
         [left, mid - 1] (inclusive).
+        Note that binary search can be used because if we model the problem as an array [good, good, good, bad, bad]
+        where 'good' means is_bad_version(arr[i]) == False and 'bad' means is_bad_version(arr[i]) == True, the array is
+        sorted. (every version after a bad version is bad)
     Time complexity: O(log n), the search space is halved each time
     Space complexity: O(1)
     """
