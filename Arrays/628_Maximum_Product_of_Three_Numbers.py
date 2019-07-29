@@ -15,6 +15,28 @@ def maximum_product_v1(nums):
     return max(nums[-1] * nums[-2] * nums[-3], nums[0] * nums[1] * nums[-1])
 
 
+def maximum_product_v2(nums):
+    """ We need not necessarily sort nums array to find the maximum product. Instead, we can only find the required 2
+    smallest values (min1 and min2) and the three largest values (max1, max2, max3)in the mums array,
+    by iterating over the nums array only once.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    max1, max2, max3, min1, min2 = float('-Inf'), float('-Inf'), float('-Inf'), float('Inf'), float('Inf')
+    for num in nums:
+        if num > max1:
+            max1, max2, max3 = num, max1, max2
+        elif num > max2:
+            max2, max3 = num, max2
+        elif num > max3:
+            max3 = num
+        if num < min1:
+            min1, min2 = num, min1
+        elif num < min2:
+            min2 = num
+    return max(min1 * min2 * max3, max1 * max2 * max3)
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3], 6),
             ([1, 2, 3, 4], 24)
@@ -23,6 +45,7 @@ class Test(unittest.TestCase):
     def test_two_sum(self):
         for test_array, result in self.data:
             self.assertEqual(result, maximum_product_v1(test_array))
+            self.assertEqual(result, maximum_product_v2(test_array))
 
 
 if __name__ == '__main__':
