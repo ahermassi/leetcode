@@ -20,6 +20,26 @@ def intersect_v1(nums1, nums2):
     return res
 
 
+def intersect_v2(nums1, nums2):
+    """ Follow up questions: What if the given array is already sorted? How would you optimize your algorithm?
+        If both arrays are sorted, use two pointers to iterate.
+    Time complexity: O(N) where N is the length of the shortest array
+    Space complexity: O(1)
+    """
+    nums1, nums2 = sorted(nums1), sorted(nums2)
+    p1, p2, res = 0, 0, []
+    while p1 < len(nums1) and p2 < len(nums2):
+        if nums1[p1] == nums2[p2]:
+            res.append(nums1[p1])
+            p1 += 1
+            p2 += 1
+        elif nums1[p1] < nums2[p2]:
+            p1 += 1
+        else:
+            p2 += 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 2, 1], [2, 2], [2, 2]),
             ([4, 9, 5], [9, 4, 9, 8, 4], [9, 4])
