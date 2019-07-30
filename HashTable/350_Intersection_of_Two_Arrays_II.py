@@ -40,6 +40,14 @@ def intersect_v2(nums1, nums2):
     return res
 
 
+def intersect_v3(nums1, nums2):
+    """ Follow up question:  What if nums1's size is small compared to nums2's size? Which algorithm is better?
+        Suppose lengths of two arrays are N and M, the time complexity of the solution is O(N+M) and the space
+        complexity is O(N) considering the hash. So it's better to use the smaller array to construct the counter hash.
+    """
+    pass
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 2, 1], [2, 2], [2, 2]),
             ([4, 9, 5], [9, 4, 9, 8, 4], [9, 4])
