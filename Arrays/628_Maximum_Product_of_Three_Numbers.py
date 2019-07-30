@@ -1,5 +1,6 @@
 """ Given an integer array, find three numbers whose product is maximum and output the maximum product. """
 
+import heapq
 import unittest2 as unittest
 
 
@@ -37,6 +38,17 @@ def maximum_product_v2(nums):
     return max(min1 * min2 * max3, max1 * max2 * max3)
 
 
+def maximum_product_v3(nums):
+    """ Use heapq module to get the 2 smallest and 3 largest elements.
+    Time complexity: O(N). First, k items are heapified - that's an O(k log k) operation. Then, n-k items are added
+    into the heap with heapreplace - that's n-k O(log k) operations, or O((n-k) log k). Add those up, you get
+    O(n log k). In this case k is constant and doesn't scale with n, so this usage is O(n).
+    """
+    a = heapq.nsmallest(2, nums)
+    b = heapq.nlargest(3, nums)
+    return max(a[0] * a[1] * b[0], b[0] * b[1] * b[2])
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3], 6),
             ([1, 2, 3, 4], 24)
@@ -46,6 +58,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, maximum_product_v1(test_array))
             self.assertEqual(result, maximum_product_v2(test_array))
+            self.assertEqual(result, maximum_product_v3(test_array))
 
 
 if __name__ == '__main__':
