@@ -17,15 +17,31 @@ def is_strobogrammatic_v1(num):
     return list(num) == num_upside_down[::-1]
 
 
+def is_strobogrammatic_v2(num):
+    """ Keep two pointers and check each 2 digits from both ends.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    d = {'0': '0', '1': '1', '6': '9', '8': '8', '9': '6'}
+    left, right = 0, len(num) - 1
+    while left <= right:
+        if num[right] != d[num[left]]:
+            return False
+        left += 1
+        right -= 1
+    return True
+
+
 class Test(unittest.TestCase):
     data = [('69', True),
             ('88', True),
             ('962', False)
             ]
 
-    def test_intersect(self):
+    def test_is_strobogrammatic(self):
         for test_num, result in self.data:
             self.assertEqual(result, is_strobogrammatic_v1(test_num))
+            self.assertEqual(result, is_strobogrammatic_v2(test_num))
 
 
 if __name__ == '__main__':
