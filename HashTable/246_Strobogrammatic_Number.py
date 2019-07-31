@@ -1,0 +1,32 @@
+""" A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+Write a function to determine if a number is strobogrammatic. The number is represented as a string. """
+
+import unittest2 as unittest
+
+
+def is_strobogrammatic_v1(num):
+    """ Pretty straightforward. This solution is dictionary based.
+    Time complexity: O(N) where N is the length of num
+    Space complexity: O(N) for num_upside_down list (the dictionary is O(1))
+    """
+    d, num_upside_down = {'0': '0', '1': '1', '6': '9', '8': '8', '9': '6'}, []
+    for ch in num:
+        if ch not in d:
+            return False
+        num_upside_down.append(d[ch])
+    return list(num) == num_upside_down[::-1]
+
+
+class Test(unittest.TestCase):
+    data = [('69', True),
+            ('88', True),
+            ('962', False)
+            ]
+
+    def test_intersect(self):
+        for test_num, result in self.data:
+            self.assertEqual(result, is_strobogrammatic_v1(test_num))
+
+
+if __name__ == '__main__':
+    unittest.main()
