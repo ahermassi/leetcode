@@ -30,6 +30,21 @@ def is_monotonic_v1(A):
     return True
 
 
+def is_monotonic_v2(A):
+    """ To perform this check in one pass, we want to remember if it is monotone increasing or monotone decreasing.
+        If it is either monotone increasing or monotone decreasing, then A is monotonic.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    increasing = decreasing = True
+    for i in range(len(A) - 1):
+        if A[i] < A[i + 1]:
+            decreasing = False
+        elif A[i] > A[i + 1]:
+            increasing = False
+    return increasing or decreasing
+
+
 class Test(unittest.TestCase):
     data = [([6, 5, 4, 4], True),
             ([1, 2, 2, 3], True),
@@ -39,6 +54,7 @@ class Test(unittest.TestCase):
     def test_is_monotonic(self):
         for test_array, result in self.data:
             self.assertEqual(result, is_monotonic_v1(test_array))
+            self.assertEqual(result, is_monotonic_v2(test_array))
 
 
 if __name__ == '__main__':
