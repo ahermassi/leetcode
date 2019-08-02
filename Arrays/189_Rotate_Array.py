@@ -65,7 +65,7 @@ class Test(unittest.TestCase):
             ([-1, -100, 3, 99], 2, [3, 99, -1, -100]),
             ]
 
-    def test_valid_mountain_array(self):
+    def test_rotate(self):
         for test_array, k, result in self.data:
             rotate_v1(test_array, k)
             self.assertEqual(result, test_array)
