@@ -26,6 +26,19 @@ def rotate_v1(nums, k):
         nums[:] = nums[-k:] + nums[:len(nums) - k]
 
 
+def rotate_v2(nums, k):
+    """ Use a stack to push the elements involved in rotation.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    stack, k, res = [], k % len(nums), []
+    for _ in range(k):
+        stack.append(nums.pop())
+    while stack:
+        res.append(stack.pop())
+    nums[:] = res + nums
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3, 4, 5, 6, 7], 3, [5, 6, 7, 1, 2, 3, 4]),
             ([-1, -100, 3, 99], 2, [3, 99, -1, -100]),
