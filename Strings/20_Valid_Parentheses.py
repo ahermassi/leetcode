@@ -45,6 +45,20 @@ def is_valid_v1(s):
     return process(s, 0)
 
 
+def is_valid_v2(s):
+    """ Iterative approach. Pretty straightforward.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    d, stack = {'(': ')', '{': '}', '[': ']'}, []
+    for ch in s:
+        if stack and stack[-1] in d and ch == d[stack[-1]]:
+            stack.pop()
+        else:
+            stack.append(ch)
+    return not stack
+
+
 class Test(unittest.TestCase):
     data = [('()', True),
             ('()[]{}', True),
@@ -56,6 +70,7 @@ class Test(unittest.TestCase):
     def test_is_valid(self):
         for test_string, result in self.data:
             self.assertEqual(result, is_valid_v1(test_string))
+            self.assertEqual(result, is_valid_v2(test_string))
 
 
 if __name__ == '__main__':
