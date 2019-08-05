@@ -31,6 +31,19 @@ def lowest_common_ancestor_v1(root, p, q):
             return root
 
 
+def lowest_common_ancestor_v2(root, p, q):
+    """ Recursive approach.
+    Time complexity: O(N), in the worst case we might be visiting all the nodes of the BST.
+    Space complexity: O(N) in the worst case (skewed tree), O(log N) in the case of a balanced BST
+    """
+    if p.val < root.val and q.val < root.val:
+        return lowest_common_ancestor_v2(root.left, p, q)
+    elif p.val > root.val and q.val > root.val:
+        return lowest_common_ancestor_v2(root.right, p, q)
+    else:
+        return root
+
+
 class Test(unittest.TestCase):
     root = TreeNode(6)
     root.left = TreeNode(2)
@@ -44,6 +57,7 @@ class Test(unittest.TestCase):
     def test_lowest_common_ancestor(self):
         for p, q, result in self.values:
             self.assertEqual(result, lowest_common_ancestor_v1(self.root, TreeNode(p), TreeNode(q)).val)
+            self.assertEqual(result, lowest_common_ancestor_v2(self.root, TreeNode(p), TreeNode(q)).val)
 
 
 if __name__ == '__main__':
