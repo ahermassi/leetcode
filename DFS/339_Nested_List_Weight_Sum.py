@@ -19,13 +19,30 @@ def depthSum_v1(nestedList):
         in the input. For example, D = 2 for the input [[1,1],2,[1,1]], and D = 3 for the input [1,[4,[6]]].
         """
         sum = 0
-        for i in range(len(nestedList)):
-            elem = nestedList[i]
-            if elem.isInteger():
-                sum += elem.getInteger() * depth
+        for lst in nestedList:
+            if lst.isInteger():
+                sum += lst.getInteger() * depth
             else:
-                l = elem.getList()
+                l = lst.getList()
                 sum += process(l, depth + 1)
         return sum
 
     return process(nestedList, 1)
+
+
+def depthSum_v2(nestedList):
+    """ Same as above, but emulating the recursion call using actual stack.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    sum, stack = 0, []
+    for lst in nestedList:
+        stack.append((lst, 1))
+    while stack:
+        elem, depth = stack.pop()
+        if elem.isInteger():
+            sum += elem.getInteger() * depth
+        else:
+            for lst in elem.getList():
+                stack.append((lst, depth + 1))
+    return sum
