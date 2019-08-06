@@ -36,6 +36,27 @@ def convert_bst_v1(root):
     return root
 
 
+def convert_bst_v2(root):
+    """ Perform a reverse in-order traversal via iteration and a literal stack to emulate the call stack. First,
+        we initialize an empty stack and set the current node to the root. Then, we push all of the nodes along the
+        path to the rightmost leaf onto the stack. This is equivalent to always processing the right subtree first
+        in the recursive solution. Next, we visit the node on the top of our stack, and consider its left subtree.
+    Time complexity: O(N)
+    Space complexity: O(N), the stack can contain (at most) N nodes
+    """
+    node, total = root, 0
+    stack = []
+    while stack or node:
+        while node:
+            stack.append(node)
+            node = node.right
+        node = stack.pop()
+        total += node.val
+        node.val = total
+        node = node.left
+    return root
+
+
 class Test(unittest.TestCase):
     root = TreeNode(5)
     root.left = TreeNode(2)
