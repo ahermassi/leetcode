@@ -26,12 +26,29 @@ def can_place_flowers_v1(flowerbed, n):
     return count >= n
 
 
+def can_place_flowers_v2(flowerbed, n):
+    """ Iterate over the flowerbed and verify if slots of 3 consecutive zeros can be found. Update the array
+    accordingly.
+    Time complexity: O(N)
+    Space complexity: O(N) for the new flowerbed array
+    """
+    flowerbed[:] = [0] + flowerbed + [0]  # Leading an trailing zeros are necessary for cases when flowerbed starts
+    # and/or ends with 0
+    count = 0
+    for i in range(1, len(flowerbed) - 1):
+        if flowerbed[i - 1] == flowerbed[i] == flowerbed[i + 1] == 0:
+            flowerbed[i] = 1
+            count += 1
+    return count >= n
+
+
 class Test(unittest.TestCase):
     data = [([1, 0, 0, 0, 1], 1, True), ([1, 0, 0, 0, 1], 2, False)]
 
     def test_can_place_flowers(self):
         for test_array, n, result in self.data:
             self.assertEqual(result, can_place_flowers_v1(test_array, n))
+            self.assertEqual(result, can_place_flowers_v2(test_array, n))
 
 
 if __name__ == '__main__':
