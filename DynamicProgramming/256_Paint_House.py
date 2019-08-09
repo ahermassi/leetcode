@@ -38,6 +38,21 @@ def min_cost_v1(costs):
     return min(min_red, min_blue, min_green)
 
 
+def min_cost_v2(costs):
+    """ Same idea as above but slightly different implementation that alters the input array.
+    Time complexity: O(N) where N is the length of costs array
+    Space complexity: O(1)
+    """
+    if not costs:
+        return 0
+    for i in range(1, len(costs)):
+        cost, prev = costs[i], costs[i - 1]
+        cost[0] += min(prev[1], prev[2])
+        cost[1] += min(prev[0], prev[2])
+        cost[2] += min(prev[0], prev[1])
+    return min(costs[-1])
+
+
 class Test(unittest.TestCase):
     data = [([[17, 2, 17], [16, 16, 5], [14, 3, 19]], 10)]
 
