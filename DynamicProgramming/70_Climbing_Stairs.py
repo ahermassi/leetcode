@@ -27,8 +27,8 @@ def climb_stairs_v2(n):
         Now given the above intuition, one can construct an array where each node stores the solution for each number
         n. Or if we look at it closer, it is clear that this is basically a fibonacci number, with the starting numbers
         as 1 and 2, instead of 1 and 1.
-    Time complexity: O(N)
-    Space complexity: O(N)
+    Time complexity: O(n)
+    Space complexity: O(n)
     """
 
     def climb(n):
@@ -47,8 +47,8 @@ def climb_stairs_v2(n):
 
 def climb_stairs_v3(n):
     """ Top down + memoization (dictionary)
-    Time complexity: O(N)
-    Space complexity: O(N)
+    Time complexity: O(n)
+    Space complexity: O(n)
     """
     def climb(n):
         if n in memo:
@@ -62,6 +62,30 @@ def climb_stairs_v3(n):
     return climb(n)
 
 
+def climb_stairs_v4(n):
+    """ DP is all about caching the answers to previous work and using it in current work.
+        dp[n] denotes the number of ways to climb n steps if we can take 1 or 2 steps.
+        dp[n] = dp[n - 1] + dp[n - 2]
+    Time complexity: O(n)
+    Space complexity: O(n)
+    """
+    dp = [None] * (n + 1)
+    dp[0] = dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[-1]
+
+
+def climb_stairs_v5(n):
+    """ No need to store every middle result. We notice that this is just the Fibonacci series. We can just use local
+        variables to keep track of the items 1 and 2 behind where we stand.
+    Time complexity: O(n)
+    Space complexity: O(1)
+    """
+    a, b = 1, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
 
 
 
