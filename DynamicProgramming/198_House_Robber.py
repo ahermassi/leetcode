@@ -35,6 +35,16 @@ def rob_v1(nums):
     return dp[-1]
 
 
+# Bottom-up + 2 variables (constant space)
+
+
+def rob_v2(nums):
+    a = b = 0
+    for i in range(len(nums)):
+        a, b = b, max(nums[i] + a, b)
+    return b
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3, 1], 4),
             ([2, 7, 9, 3, 1], 12)]
@@ -42,6 +52,7 @@ class Test(unittest.TestCase):
     def test_rob(self):
         for test_array, result in self.data:
             self.assertEqual(result, rob_v1(test_array))
+            self.assertEqual(result, rob_v2(test_array))
 
 
 if __name__ == '__main__':
