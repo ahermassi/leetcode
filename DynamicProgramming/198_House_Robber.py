@@ -24,6 +24,12 @@ def rob_v1(nums):
     Space complexity: O(N)
     """
     # Bottom-up + memoization
+    """At first glance, it appears that the robber could just rob every other house – in which case, we ask whether 
+        he should start with the first house or the second house; this could maximize the number of houses he robs. 
+        However, it is possible that neither of these possibilities maximize the amount of money he’d steal 
+        The recurrence relation for stealing the maximum amount of money is the following:
+            dp[i] = max(dp[i-1], dp[i-2] + num[i])
+    """
     if not nums:
         return 0
     if len(nums) == 1:
@@ -39,10 +45,16 @@ def rob_v1(nums):
 
 
 def rob_v2(nums):
+    """
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
     a = b = 0
     for i in range(len(nums)):
         a, b = b, max(nums[i] + a, b)
     return b
+
+# To do: implement it recursively
 
 
 class Test(unittest.TestCase):
