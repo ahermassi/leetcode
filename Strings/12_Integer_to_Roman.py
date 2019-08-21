@@ -32,6 +32,20 @@ def int_to_roman_v1(num):
     return ''.join(ans[::-1])
 
 
+def int_to_roman_v2(num):
+    """ More concise but tricky solution. It uses division and modulo to reduce the number as we go.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    ans = ''
+    decimals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+    romans = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I']
+    for i, v in enumerate(decimals):
+        ans += (num // v) * romans[i]
+        num = num % v
+    return ans
+
+
 class Test(unittest.TestCase):
     data = [
         (3, 'III'),
@@ -44,6 +58,7 @@ class Test(unittest.TestCase):
     def test_roman_to_int(self):
         for test_int, result in self.data:
             self.assertEqual(result, int_to_roman_v1(test_int))
+            self.assertEqual(result, int_to_roman_v2(test_int))
 
 
 if __name__ == '__main__':
