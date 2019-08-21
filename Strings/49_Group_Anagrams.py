@@ -29,6 +29,23 @@ def group_anagrams_v1(strs):
     return d.values()
 
 
+def group_anagrams_v2(strs):
+    """ Two strings are anagrams if and only if their character counts (respective number of occurrences of each
+        character) are the same. We can transform each string s into a character count, char_count, consisting of 26
+        non-negative integers representing the number of a's, b's, c's, etc. We use these counts as the basis for our
+        hash map.
+    Time complexity: O(N * K)  where N is the length of strs, and K is the maximum length of a string in strs.
+    Space complexity: O(N * K)
+    """
+    d = defaultdict(list)
+    for s in strs:
+        char_count = [0] * 26
+        for c in s:
+            char_count[ord(c) - ord('a')] += 1
+        d[tuple(char_count)].append(s)  # List is not hashable and can't serve as dict key, so we transform it to tuple
+    return d.values()
+
+
 class Test(unittest.TestCase):
     data = [(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'], [
         ['ate', 'eat', 'tea'],
@@ -40,6 +57,7 @@ class Test(unittest.TestCase):
     def test_group_anagrams(self):
         for test_strings, result in self.data:
             self.assertEqual(result, group_anagrams_v1(test_strings))
+            self.assertEqual(result, group_anagrams_v2(test_strings))
 
 
 if __name__ == '__main__':
