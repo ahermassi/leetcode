@@ -24,7 +24,8 @@ def group_anagrams_v1(strs):
     """
     d = defaultdict(list)
     for s in strs:
-        d[''.join(sorted(s))].append(s)
+        d[''.join(sorted(s))].append(s)  # sorted('abc') == ['a', 'b', 'c'], array is not hashable, which means it is
+        # not allowed to be a key
     return d.values()
 
 
