@@ -13,19 +13,15 @@ def is_monotonic_v1(A):
     Time complexity: O(N) where N is the length of A
     Space complexity: O(1)
     """
-    if len(A) <= 2:
-        return True
-    i = 0
+    i, increasing = 0, False
     while i < len(A) - 1 and A[i] == A[i + 1]:
         i += 1
     if i == len(A) - 1:
         return True
     if A[i] < A[i + 1]:
         increasing = True
-    else:
-        increasing = False
-    for j in range(i + 1, len(A) - 1):
-        if (increasing and A[j] > A[j + 1]) or (not increasing and A[j] < A[j + 1]):
+    for j in range(i, len(A) - 1):
+        if A[j] < A[j + 1] and not increasing or A[j] > A[j + 1] and increasing:
             return False
     return True
 
