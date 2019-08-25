@@ -9,16 +9,15 @@ def inorder(root):
     stack = [[root, False]]
     while stack:
         node, visited = stack[-1][0], stack[-1][1]
-        if not node:
+        if visited:
             stack.pop()
-        elif visited:
             print(node.val)
-            right = node.right
-            stack.pop()
-            stack.append([right, False])
+            if node.right:
+                stack.append([node.right, False])
         else:
             stack[-1][1] = True
-            stack.append([node.left, False])
+            if node.left:
+                stack.append([node.left, False])
 
 
 if __name__ == '__main__':
