@@ -32,8 +32,7 @@ def inorder_v2(root):
     while stack:
         node = stack.pop()
         print(node.val)
-        if node.right:
-            process_leftmost(node.right)
+        process_leftmost(node.right)
 
 
 if __name__ == '__main__':
