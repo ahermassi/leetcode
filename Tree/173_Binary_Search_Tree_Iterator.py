@@ -47,3 +47,49 @@ class BSTIteratorV1(object):
         self.inorder(root.left)
         self.values.append(root.val)
         self.inorder(root.right)
+
+
+class BSTIteratorV2(object):
+    """ if we could simulate a controlled recursion for an inorder traversal, we wouldn't really need to use any
+        additional space other than the space used by the stack for our recursion simulation.
+        So, this approach essentially uses a custom stack to simulate the inorder traversal i.e. we will be taking an
+        iterative approach to inorder traversal rather than going with the recursive approach and in doing so, we will
+        be able to easily implement the two function calls without any other additional space.
+    Time complexity: O(1) for hasNext(); next() involves two major operations. One is where we pop an element from the
+    stack which becomes the next smallest element to return. This is a O(1) operation. However, we then make a call
+    to our helper function process_leftmost() which iterates over some nodes. However, the important thing to note
+    here is that we only make such a call for nodes which have a right child. Otherwise, we simply return. Also, even
+    if we end up calling the helper function, it won't always process N nodes. They will be much less.
+    Thus, the amortized (average) time complexity for this function would still be O(1)
+    Space complexity: O(log N) = O(height) which is occupied by our custom stack for simulating the inorder traversal
+    """
+
+    def __init__(self, root):
+        """
+        :type root: TreeNode
+        """
+        self.stack = []
+        self.process_leftmost(root)
+
+    def next(self):
+        """
+        @return the next smallest number
+        :rtype: int
+        """
+        node = self.stack.pop()  # Node at the top of the stack is the next smallest element
+        self.process_leftmost(node.right)  # Need to maintain the invariant. If the node has a right child, call the
+        # helper function for the right child
+        return node.val
+
+    def hasNext(self):
+        """
+        @return whether we have a next smallest number
+        :rtype: bool
+        """
+        return self.stack
+
+    def process_leftmost(self, root):
+        """ For a given node, add all the elements in the leftmost branch of the tree under it to the stack. """
+        while root:
+            self.stack.append(root)
+            root = root.left
