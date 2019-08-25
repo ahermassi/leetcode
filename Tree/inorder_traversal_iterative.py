@@ -20,10 +20,26 @@ def inorder(root):
                 stack.append([node.left, False])
 
 
+def inorder_v2(root):
+
+    def process_leftmost(root):
+        while root:
+            stack.append(root)
+            root = root.left
+
+    stack = []
+    process_leftmost(root)
+    while stack:
+        node = stack.pop()
+        print(node.val)
+        if node.right:
+            process_leftmost(node.right)
+
+
 if __name__ == '__main__':
     root = TreeNode(7)
     root.left = TreeNode(3)
     root.right = TreeNode(15)
     root.right.left = TreeNode(9)
     root.right.right = TreeNode(20)
-    inorder(root)
+    inorder_v2(root)
