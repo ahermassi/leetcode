@@ -25,6 +25,22 @@ def rotate_v1(matrix):
                 matrix[i][j] = matrix[n - 1 - j][i]
 
 
+def rotate_v2(matrix):
+    """ The obvious idea would be to transpose the matrix first and then reverse each row. Transposing a matrix
+        exchanges the row and column of the same index: 1st row becomes 1st column, 2nd row becomes 2nd column etc.
+        Rotating the matrix by 90 degrees (clockwise) puts the 1st row to the last column, 2nd row to the 2nd-to-last
+        column, etc.
+    Time complexity : O(N ** 2)
+    Space complexity : O(1) since we do a rotation in place
+    """
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    for row in matrix:
+        row.reverse()
+
+
 class Test(unittest.TestCase):
     data = [([
                  [1, 2, 3],
