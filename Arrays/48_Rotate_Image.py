@@ -1,0 +1,59 @@
+""" You are given an n x n 2D matrix representing an image.
+Rotate the image by 90 degrees (clockwise).
+Note:
+You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate
+another 2D matrix and do the rotation.
+"""
+
+import unittest2 as unittest
+
+
+def rotate_v1(matrix):
+    """ The idea is to notice that every (i, j) in the rotated matrix corresponds to (n - 1 - j, i) in the original.
+        When updating the cells, keep the old values in a hash map as they will be needed.
+    Time complexity: O(N ** 2)
+    Space complexity: O(N ** 2)
+    """
+    n, d = len(matrix), {}
+    for i in range(n):
+        for j in range(n):
+            if (i, j) not in d:
+                d[(i, j)] = matrix[i][j]
+            if (n - 1 - j, i) in d:
+                matrix[i][j] = d[(n - 1 - j, i)]
+            else:
+                matrix[i][j] = matrix[n - 1 - j][i]
+
+
+class Test(unittest.TestCase):
+    data = [([
+                 [1, 2, 3],
+                 [4, 5, 6],
+                 [7, 8, 9]
+             ], [
+                 [7, 4, 1],
+                 [8, 5, 2],
+                 [9, 6, 3]
+             ]),
+        ([
+             [5, 1, 9, 11],
+             [2, 4, 8, 10],
+             [13, 3, 6, 7],
+             [15, 14, 12, 16]
+         ],
+         [
+             [15, 13, 2, 5],
+             [14, 3, 4, 1],
+             [12, 6, 8, 9],
+             [16, 7, 10, 11]
+         ]
+        )]
+
+    def test_rotate(self):
+        for test_matrix, result in self.data:
+            rotate_v1(test_matrix)
+            self.assertEqual(result, test_matrix)
+
+
+if __name__ == '__main__':
+    unittest.main()
