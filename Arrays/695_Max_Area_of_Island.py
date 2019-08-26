@@ -31,19 +31,48 @@ def max_area_of_island_v1(grid):
     return max_area
 
 
+def max_area_of_island_v2(grid):
+    """ We can try the same approach using a stack based, (or "iterative") depth-first search.
+        Here, 'visited' set will represent squares that have either been visited or are added to our list of squares
+        to visit (stack). For every starting land square that hasn't been visited, we will explore 4-directionally
+        around it, adding land squares that haven't been added to 'visited to our stack.
+        On the side, we'll keep a count 'area' of the total number of squares seen during the exploration of this shape.
+        We'll want the running max of these counts.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M), the space used by 'visited' to keep track of visited squares and the space used by stack
+    """
+    rows, cols, max_area, visited = len(grid), len(grid[0]), 0, set()
+    for i in range(rows):
+        for j in range(cols):
+            if grid[i][j] and (i, j) not in visited:
+                stack = [(i, j)]
+                visited.add((i, j))
+                area = 0
+                while stack:
+                    area += 1
+                    x, y = stack.pop()
+                    for a, b in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+                        if 0 <= a < rows and 0 <= b < cols and grid[a][b] and (a, b) not in visited:
+                            visited.add((a, b))
+                            stack.append((a, b))
+                max_area = max(area, max_area)
+    return max_area
+
+
 class Test(unittest.TestCase):
     data = [([[0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-            [0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0],
-            [0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0]], 6)]
+              [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+              [0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0],
+              [0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0]], 6)]
 
     def test_max_area_of_island(self):
         for test_grid, result in self.data:
             self.assertEqual(result, max_area_of_island_v1(test_grid))
+            self.assertEqual(result, max_area_of_island_v2(test_grid))
 
 
 if __name__ == '__main__':
