@@ -37,15 +37,15 @@ def has_path_sum_v2(root, sum):
     """
     if not root:
         return False
-    stack = [(root, root.val)]
+    stack = [(root, sum)]
     while stack:
-        node, curr_sum = stack.pop()
-        if not node.left and not node.right and curr_sum == sum:
+        node, sum_till_now = stack.pop()
+        if not node.left and not node.right and node.val == sum_till_now:
             return True
         if node.left:
-            stack.append((node.left, curr_sum + node.left.val))
+            stack.append((node.left, sum_till_now - node.val))
         if node.right:
-            stack.append((node.right, curr_sum + node.right.val))
+            stack.append((node.right, sum_till_now - node.val))
     return False
 
 
