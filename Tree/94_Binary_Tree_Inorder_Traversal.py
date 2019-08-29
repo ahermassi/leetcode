@@ -28,6 +28,27 @@ def inorder_traversal_v1(root):
     return values
 
 
+def inorder_traversal_v2(root):
+    """ This iterative solution uses a 'visited' flag. If a node is not visited, push its left child. If a node is
+        is visited, get its value, pop it, and push its right child.
+    Time complexity: O(N) as we visit each node once
+    Space complexity: O(N)
+    """
+    values, stack = [], [[root, False]]
+    while stack:
+        node, visited = stack[-1]
+        if not node:
+            stack.pop()
+        elif not visited:
+            stack[-1][1] = True
+            stack.append([node.left, False])
+        else:
+            values.append(node.val)
+            stack.pop()
+            stack.append([node.right, False])
+    return values
+
+
 class Test(unittest.TestCase):
     root = TreeNode(7)
     root.left = TreeNode(3)
@@ -38,6 +59,7 @@ class Test(unittest.TestCase):
 
     def test_has_cycle(self):
         self.assertEqual(self.result, inorder_traversal_v1(self.root))
+        self.assertEqual(self.result, inorder_traversal_v2(self.root))
 
 
 if __name__ == '__main__':
