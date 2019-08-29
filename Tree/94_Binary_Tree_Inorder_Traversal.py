@@ -49,6 +49,23 @@ def inorder_traversal_v2(root):
     return values
 
 
+def inorder_traversal_v3(root):
+    """ Second iterative solution. Use stack to store value and iteratively construct list.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    values, stack = [], []
+    while root or stack:
+        if root:
+            stack.append(root)
+            root = root.left
+        else:
+            node = stack.pop()
+            values.append(node.val)
+            root = node.right
+    return values
+
+
 class Test(unittest.TestCase):
     root = TreeNode(7)
     root.left = TreeNode(3)
@@ -60,6 +77,7 @@ class Test(unittest.TestCase):
     def test_has_cycle(self):
         self.assertEqual(self.result, inorder_traversal_v1(self.root))
         self.assertEqual(self.result, inorder_traversal_v2(self.root))
+        self.assertEqual(self.result, inorder_traversal_v3(self.root))
 
 
 if __name__ == '__main__':
