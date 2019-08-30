@@ -31,6 +31,23 @@ def kth_smallest_v1(root, k):
         root = node.right
 
 
+def kth_smallest_v2(root, k):
+
+    def push_leftmost(root):
+        while root:
+            stack.append(root)
+            root = root.left
+
+    stack, count = [], k
+    push_leftmost(root)
+    while stack:
+        node = stack.pop()
+        count -= 1
+        if not count:
+            return node.val
+        push_leftmost(node.right)
+
+
 class Test(unittest.TestCase):
     root = TreeNode(5)
     root.left = TreeNode(3)
@@ -43,6 +60,7 @@ class Test(unittest.TestCase):
 
     def test_kth_smallest(self):
         self.assertEqual(self.result, kth_smallest_v1(self.root, self.k))
+        self.assertEqual(self.result, kth_smallest_v2(self.root, self.k))
 
 
 if __name__ == '__main__':
