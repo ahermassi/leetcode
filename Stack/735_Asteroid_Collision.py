@@ -10,7 +10,7 @@ import unittest2 as unittest
 def asteroid_collision(asteroids):
     """ This is a recursive solution. The recursion arises because whenever a collision happens, the same logic/process
         needs to be applied to the remaining stack elements in order to detect further collisions. In other words, a
-        collision might trigger another collision, and so on and so forth, even before a 'new' asteroid come into play.
+        collision might trigger another collision, and so on and so forth, even before a 'new' asteroid comes into play.
     Time complexity: O(N)
     Space complexity:  O(N)
     """
