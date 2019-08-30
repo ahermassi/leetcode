@@ -56,13 +56,12 @@ def inorder_traversal_v3(root):
     """
     values, stack = [], []
     while root or stack:
-        if root:
+        while root:
             stack.append(root)
             root = root.left
-        else:
-            node = stack.pop()
-            values.append(node.val)
-            root = node.right
+        node = stack.pop()
+        values.append(node.val)
+        root = node.right
     return values
 
 
