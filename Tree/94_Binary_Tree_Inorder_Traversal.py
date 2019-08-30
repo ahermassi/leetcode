@@ -73,7 +73,7 @@ class Test(unittest.TestCase):
     root.right.right = TreeNode(20)
     result = [3, 7, 9, 15, 20]
 
-    def test_has_cycle(self):
+    def test_inorder_traversal(self):
         self.assertEqual(self.result, inorder_traversal_v1(self.root))
         self.assertEqual(self.result, inorder_traversal_v2(self.root))
         self.assertEqual(self.result, inorder_traversal_v3(self.root))
