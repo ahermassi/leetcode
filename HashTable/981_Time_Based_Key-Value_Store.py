@@ -1,5 +1,6 @@
 """ Create a timebased key-value store class TimeMap. See description on leetcode. """
 
+import bisect
 from collections import defaultdict
 import unittest2 as unittest
 
@@ -40,6 +41,41 @@ class TimeMapV1(object):
                 # are also greater (timestamps are in increasing order)
                 break
         return ans
+
+
+class TimeMapV2(object):
+    """ This solution uses bisect() to search in the ordered list of timestamps. """
+
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.data = defaultdict(list)
+
+    def set(self, key, value, timestamp):
+        """
+        :type key: str
+        :type value: str
+        :type timestamp: int
+        :rtype: None
+        """
+        self.data[key].append((timestamp, value))  # Note how timestamp comes before value as it is the basis of search
+
+    def get(self, key, timestamp):
+        """
+        :type key: str
+        :type timestamp: int
+        :rtype: str
+        """
+        if key not in self.data:
+            return ''
+        if timestamp > self.data[key][-1][0]:  # This optimization results in 30 - 60ms less in execution time
+            return self.data[key][-1][1]
+        values = self.data[key]
+        idx = bisect.bisect(values, (timestamp, chr(127)))  # chr(127) is the char #127 in ASCII table. It is larger
+        # than all the commonly used characters. It is helpful because, in tuple comparison, python will compare
+        # element by element, and in case of equal timestamps it returns the index after the last found tuple.
+        return values[idx - 1][1] if idx else ''  # If idx is 0, then all timestamps are greater than 'timestamp'
 
 
 class Test(unittest.TestCase):
