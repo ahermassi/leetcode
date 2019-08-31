@@ -20,12 +20,23 @@ def majority_element_v1(nums):
             return num
 
 
+def majority_element_v2(nums):
+    """ If the elements are sorted in monotonically increasing (or decreasing) order, the majority element can be found
+    at index len(nums) // 2
+    Time complexity: O(N logN) for Timsort
+    Space complexity: O(N) for the Timsort which is not an in-place algorithm
+    """
+    nums.sort()
+    return nums[len(nums) // 2]
+
+
 class Test(unittest.TestCase):
     data = [([3, 2, 3], 3), ([2, 2, 1, 1, 1, 2, 2], 2)]
 
     def test_majority_element(self):
         for test_array, result in self.data:
             self.assertEqual(result, majority_element_v1(test_array))
+            self.assertEqual(result, majority_element_v2(test_array))
 
 
 if __name__ == '__main__':
