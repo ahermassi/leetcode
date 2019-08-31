@@ -30,6 +30,28 @@ def majority_element_v2(nums):
     return nums[len(nums) // 2]
 
 
+def majority_element_v3(nums):
+    """ This is Boyer-Moore voting algorithm. Essentially, what Boyer-Moore does is look for a suffix suf of nums
+        where suf[0] is the majority element in that suffix. To do this, we maintain a count, which is incremented
+        whenever we see an instance of our current candidate for majority element and decremented whenever we see
+        anything else. Whenever count equals 0, we effectively forget about everything in nums up to the current index
+        and consider the current number as the candidate for majority element. Eventually, a suffix will be found for
+        which count does not hit 0, and the majority element of that suffix will necessarily be the same as the majority
+        element of the overall array.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    count, candidate = 0, None
+    for num in nums:
+        if count == 0:
+            candidate = num
+        if num == candidate:
+            count += 1
+        else:
+            count -= 1
+    return candidate
+
+
 class Test(unittest.TestCase):
     data = [([3, 2, 3], 3), ([2, 2, 1, 1, 1, 2, 2], 2)]
 
@@ -37,6 +59,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, majority_element_v1(test_array))
             self.assertEqual(result, majority_element_v2(test_array))
+            self.assertEqual(result, majority_element_v3(test_array))
 
 
 if __name__ == '__main__':
