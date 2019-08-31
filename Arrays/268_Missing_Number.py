@@ -16,12 +16,24 @@ def missing_number_v1(nums):
     return n * (n + 1) / 2 - sum(nums)
 
 
+def missing_number_v2(nums):
+    """ if we initialize an integer to n and XOR it with every index and value, we will be left with the missing number.
+    Time complexity: O(N) assuming that XOR is a constant-time operation
+    Space complexity: O(1)
+    """
+    missing = len(nums)
+    for i, num in enumerate(nums):
+        missing ^= i ^ num
+    return missing
+
+
 class Test(unittest.TestCase):
     data = [([3, 0, 1], 2), ([9, 6, 4, 2, 3, 5, 7, 0, 1], 8)]
 
     def test_missing_number(self):
         for test_array, result in self.data:
             self.assertEqual(result, missing_number_v1(test_array))
+            self.assertEqual(result, missing_number_v2(test_array))
 
 
 if __name__ == '__main__':
