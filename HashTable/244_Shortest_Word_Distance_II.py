@@ -31,7 +31,6 @@ class WordDistance(object):
         :type words: List[str]
         """
         self.words = words
-        self.distances = {}
         self.indices = defaultdict(list)
         for i, word in enumerate(self.words):
             self.indices[word].append(i)
@@ -59,7 +58,7 @@ class Test(unittest.TestCase):
     words = [('coding', 'practice'), ('makes', 'coding')]
     result = [3, 1]
 
-    def test_has_cycle(self):
+    def test_shortest(self):
         for test_words, result in zip(self.words, self.result):
             self.assertEqual(result, self.word_distance.shortest(test_words[0], test_words[1]))
 
