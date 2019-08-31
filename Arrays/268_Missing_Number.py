@@ -27,6 +27,18 @@ def missing_number_v2(nums):
     return missing
 
 
+def missing_number_v3(nums):
+    """ A brute force method would be to simply check for the presence of each number that we expect to be present. Use
+         a set to get constant time containment queries and overall linear runtime.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    num_set = set(nums)
+    for number in range(len(nums) + 1):
+        if number not in num_set:
+            return number
+
+
 class Test(unittest.TestCase):
     data = [([3, 0, 1], 2), ([9, 6, 4, 2, 3, 5, 7, 0, 1], 8)]
 
@@ -34,6 +46,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, missing_number_v1(test_array))
             self.assertEqual(result, missing_number_v2(test_array))
+            self.assertEqual(result, missing_number_v3(test_array))
 
 
 if __name__ == '__main__':
