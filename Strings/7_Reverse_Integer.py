@@ -17,7 +17,16 @@ def reverse_v1(x):
     while p:
         rev = rev * 10 + p % 10
         p = p // 10
-    return sign * rev if -2 ** 31 <= rev <= 2 ** 31 else 0
+    return sign * rev if pow(-2, 31) <= rev <= pow(2, 31) else 0
+
+
+def reverse_v2(x):
+    """ This solution converts the integer to a string and then it reverses it.
+
+    """
+    sign = [1, -1][x < 0]
+    res = sign * int(str(abs(x))[::-1])
+    return res if pow(-2, 31) <= res <= pow(2, 31) else 0
 
 
 class Test(unittest.TestCase):
@@ -26,6 +35,7 @@ class Test(unittest.TestCase):
     def test_reverse(self):
         for test_number, result in self.data:
             self.assertEqual(result, reverse_v1(test_number))
+            self.assertEqual(result, reverse_v2(test_number))
 
 
 if __name__ == '__main__':
