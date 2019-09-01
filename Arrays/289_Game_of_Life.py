@@ -42,8 +42,8 @@ def game_of_life_v2(board):
         the rule, then we can change the value to 3. Hence:
         0, 3 are "dead", and "dead->live"
         1, 2 are "live", and "live->dead"
-        We iterate the board again and change the value of a cell to a 1 if its value currently is 2 and change the
-        value to a 0 if its current value is 3.
+        We iterate the board again and change the value of a cell to a 0 if its value currently is 2 and change the
+        value to a 1 if its current value is 3.
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
