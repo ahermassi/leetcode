@@ -72,3 +72,34 @@ def game_of_life_v2(board):
             elif board[i][j] == 3:  # 3 means was previously dead
                 board[i][j] = 1
 
+
+# Follow up: In this question, we represent the board using a 2D array. In principle, the board is infinite, which would
+# cause problems when the active area encroaches the border of the array. How would you address these problems?
+
+def game_of_life_v3(board):
+    """ If we have an extremely sparse matrix, it would make much more sense to actually save the location of only
+        the live cells and then apply the 4 rules accordingly using only these live cells.
+        We have the coordinates of all living cells in a set. Then we count the living neighbors of all cells by going
+        through the living cells and increasing the counter of their neighbors (thus cells without living neighbor will
+        not be in the counter). Afterwards, we just collect the new set of living cells by picking those with the right
+        amount of neighbors.
+    """
+    def get_neighbors(i, j):
+        neighbors = [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1),
+                     (i - 1, j - 1), (i + 1, j + 1), (i - 1, j + 1), (i + 1, j - 1)]
+        return [neighbor for neighbor in neighbors
+                if 0 <= neighbor[0] < n and 0 <= neighbor[1] < m]
+
+    n, m = len(board), len(board[0])
+    live = {(i, j) for i in range(n) for j in range(m) if board[i][j]}
+    all_live, new_live = defaultdict(int), set()
+    for i, j in live:
+        for neighbor in get_neighbors(i, j):
+            all_live[neighbor] += 1
+    for cell in all_live.keys():
+        if all_live[cell] == 2 or all_live[cell] == 3 and cell in live:
+            new_live.add(cell)
+    for i in range(n):
+        for j in range(m):
+            board[i][j] = int((i, j) in new_live)
+
