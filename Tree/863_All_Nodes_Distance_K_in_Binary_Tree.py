@@ -9,8 +9,11 @@ import unittest2 as unittest
 def distance_k(root, target, K):
     """ If we know the parent of every node x, we know all nodes that are distance 1 from x. We can then perform a
         breadth first search from the target node to find the answer.
-        We first do a depth first search where we annotate every node with information about it's parent.
+        We first do a depth first search where we annotate every node with information about its parent. Therefore, we
+        need a set to keep track of nodes we have visited so that we do not go back and revisit what has already been
+        processed and cause an infinite cycle.
         After, we do a breadth first search to find all nodes a distance K from the target.
+
     Time complexity: O(N), where N is the number of nodes in the given tree
     Space complexity: O(N)
     """
@@ -23,14 +26,15 @@ def distance_k(root, target, K):
 
     annotate(root)
     queue = deque()
-    queue.append((target, 0))
+    queue.append((target, 0))  # When our search starts, we are standing at layer 0
     seen = {target}
     while queue:
-        if queue[0][1] == K:
+        if queue[0][1] == K:  # Is this the layer we want? If so, extract and return it
             return [node.val for node, depth in queue]
-        node, depth = queue.popleft()
-        for n in (node.left, node.right, node.par):
-            if n and n not in seen:
+        node, depth = queue.popleft()  # Pull a node from the search queue. We are going to basically use our current
+        # layer to populate the next layer of nodes that we need to search in the next while loop iteration
+        for n in (node.left, node.right, node.par):  # Let's process all nodes in the layer. This is BFS.
+            if n and n not in seen:  # Has node been touched before?
                 queue.append((n, depth + 1))
                 seen.add(n)
     return []
