@@ -3,7 +3,6 @@ Return a list of the values of all nodes that have a distance K from the target 
 order. """
 
 from collections import deque
-import unittest2 as unittest
 
 
 def distance_k(root, target, K):
