@@ -42,6 +42,26 @@ def level_order_v1(root):
     return ans
 
 
+def level_order_v2(root):
+    """ This solution uses a list instead of deque. 'level' is a list of the nodes in the current level. Keep appending
+        a list of the values of these nodes to ans and then updating level with all the nodes in the next level (leaves)
+        until it reaches an empty level. Python's list comprehension makes it easier to deal with many conditions in a
+        concise manner.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not root:
+        return None
+    level, ans = [root], []
+    while level:
+        ans.append([node.val for node in level])
+        leaves = []
+        for node in level:
+            leaves.extend([node.left, node.right])
+        level = [leaf for leaf in leaves if leaf]
+    return ans
+
+
 class Test(unittest.TestCase):
     root = TreeNode(3)
     root.left = TreeNode(9)
@@ -56,6 +76,7 @@ class Test(unittest.TestCase):
 
     def test_level_order(self):
         self.assertEqual(self.result, level_order_v1(self.root))
+        self.assertEqual(self.result, level_order_v2(self.root))
 
 
 if __name__ == '__main__':
