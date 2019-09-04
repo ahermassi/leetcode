@@ -32,6 +32,26 @@ def right_side_view_v1(root):
     return ans
 
 
+def right_side_view_v2(root):
+    """ BFS stack version. The stack holds the current 'level' at each iteration, with the right side being always in
+        the rear of the list.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not root:
+        return None
+    level, res = [root], []
+    while level:
+        res.append(level[-1].val)
+        next_level = []
+        for node in level:
+            for kid in (node.left, node.right):
+                if kid:
+                    next_level.append(kid)
+        level = next_level
+    return res
+
+
 class Test(unittest.TestCase):
     root = TreeNode(1)
     root.left = TreeNode(2)
