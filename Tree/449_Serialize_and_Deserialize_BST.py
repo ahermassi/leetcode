@@ -23,10 +23,9 @@ class CodecPreorder:
         traversals one could restore the inorder one: inorder = sorted(postorder) = sorted(preorder).
 
         This class uses preorder traversal for serialization. To deserialized, use a queue to recursively get root
-        node, left subtree and right subtree.
+        node, left subtree and right subtree. In this case, root will be always the first element in the stack.
         Pre order traversal of BST will output root node first, then left children, then right:
         root left1 left2 leftX right1 rightX
-
     """
 
     def serialize(self, root):
@@ -67,6 +66,49 @@ class CodecPreorder:
         queue = deque(values)
         return build(float('-inf'), float('inf'))  # Use lower and upper bounds to verify BST properties before each
         # attempt to create right/left child.
+
+
+class CodecPostorder:
+    """ This class uses preorder traversal for serialization. To deserialized, use a stack to recursively get root
+        node, left subtree and right subtree. In this case, root will be always the last element in the stack.
+    """
+
+    def serialize(self, root):
+        """Encodes a tree to a single string.
+
+        :type root: TreeNode
+        :rtype: str
+        """
+        values = []
+
+        def postorder(root):
+            if root:
+                postorder(root.left)
+                postorder(root.right)
+                values.append(root.val)
+
+        postorder(root)
+        return ' '.join([str(val) for val in values])
+
+    def deserialize(self, data):
+        """Decodes your encoded data to tree.
+
+        :type data: str
+        :rtype: TreeNode
+        """
+
+        def build(lower, upper):
+            if values and lower < values[-1] < upper:
+                val = values.pop()
+                root = TreeNode(val)
+                root.right = build(val, upper)
+                root.left = build(lower, val)
+                return root
+
+        if not data:
+            return None
+        values = [int(val) for val in data.split(' ')]
+        return build(float('-inf'), float('inf'))
 
 
 class Test(unittest.TestCase):
