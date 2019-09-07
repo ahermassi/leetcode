@@ -40,6 +40,40 @@ def count_nodes_v1(root):
         level = next_level
 
 
+def count_nodes_v2(root):
+    """ The height of a tree can be found by just going left. Find the height of left sub tree and right sub tree.
+        If left and right subtrees have the same height, then the last node on the last tree row is in the right subtree
+        and the left subtree is a full tree of height 'left_height'. So we take the 2^left_height nodes of the left
+        subtree plus the 1 root node plus recursively the number of nodes in the right subtree.
+        If not, then the last node on the last tree row is in the left subtree and the right subtree is a full tree of
+        height 'right_height'. So we take the 2^'right_height' nodes of the right subtree plus the 1 root node plus
+        recursively the number of nodes in the left subtree.
+        In other words:
+        If left sub tree height equals right sub tree height then,
+            a. left sub tree is perfect binary tree
+            b. right sub tree is complete binary tree
+        If left sub tree height greater than right sub tree height then,
+            a. left sub tree is complete binary tree
+            b. right sub tree is perfect binary tree
+    Time complexity: we halve the tree in every recursive step, so we have O(log N) steps. Finding a height costs
+    O(log N). So overall O(logN ^ 2).
+    Space complexity: O(logN ^ 2)
+    """
+
+    def get_height(root):
+        if not root:
+            return 0
+        return 1 + get_height(root.left)
+
+    if not root:
+        return 0
+    left_height = get_height(root.left)
+    right_height = get_height(root.right)
+    if left_height == right_height:
+        return pow(2, left_height) + count_nodes_v2(root.right)
+    return pow(2, right_height) + count_nodes_v2(root.left)
+
+
 class Test(unittest.TestCase):
     root = TreeNode(1)
     root.left = TreeNode(2)
