@@ -44,6 +44,24 @@ def lowest_common_ancestor_v1(root, p, q):
     return q
 
 
+def lowest_common_ancestor_v2(root, p, q):
+    """ Recursive approach. """
+    if root == p or root == q:  # # If looking for me, return myself
+        return root
+    left = right = None
+    # Else look in left and right children
+    if root.left:
+        left = lowest_common_ancestor_v2(root.left, p, q)
+    if root.right:
+        right = lowest_common_ancestor_v2(root.right, p, q)
+    if left and right:  # if both children returned a node, it means both p and q found, so parent is LCA
+        return root
+    # Either one of the children returned a node, meaning either p or q found on left or right branch.
+    # Example: assuming 'p' found in left child, right child returned 'None'. This means 'q' is somewhere below node
+    # where 'p' was found we don't need to search all the way,  because in such scenarios, node where 'p' found is LCA
+    return left or right
+
+
 class Test(unittest.TestCase):
     root = TreeNode(3)
     root.left = TreeNode(5)
@@ -54,9 +72,9 @@ class Test(unittest.TestCase):
     root.right.right = TreeNode(8)
     root.right.left.left = TreeNode(7)
     root.right.right.right = TreeNode(4)
-    p = 5
-    q = 4
-    result = 5
+    p = root.left
+    q = root.right.right.right
+    result = root
 
     def test_lowest_common_ancestor(self):
         self.assertEqual(self.result, lowest_common_ancestor_v1(self.root, self.p, self.q))
