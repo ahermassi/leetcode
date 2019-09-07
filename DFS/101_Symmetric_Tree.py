@@ -17,7 +17,7 @@ def is_symmetric_v1(root):
     with some key differences. Each time, two nodes are extracted and their values compared. Then, the right and left
     children of the two nodes are inserted in the queue in opposite order.
     Time complexity: O(N)
-    Space complexity: O(N). In the worst case, we have to insert O(n)O(n) nodes in the list
+    Space complexity: O(N). In the worst case, we have to insert O(n) nodes in the list
     """
     if not root:
         return True
