@@ -60,7 +60,7 @@ class Test(unittest.TestCase):
     root2.right.left = TreeNode(3)
     root2.right.right = TreeNode(6)
 
-    def test_inorder_traversal(self):
+    def test_is_valid_bst(self):
         self.assertTrue(is_valid_bst_v1(self.root1))
         self.assertFalse(is_valid_bst_v1(self.root2))
         self.assertTrue(is_valid_bst_v2(self.root1))
