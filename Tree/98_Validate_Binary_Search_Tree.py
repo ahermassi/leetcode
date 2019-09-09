@@ -32,6 +32,24 @@ def is_valid_bst_v1(root):
     return True
 
 
+def is_valid_bst_v2(root):
+    """ Use recursion. Pass down two parameters: lower (which means that all nodes in the the current subtree must
+        be greater than this value) and upper (all must be less than it). Compare root of the current subtree
+        with these two values. Then, recursively check the left and right subtree of the current one. Take care of the
+        values passed down.
+    Time complexity: O(N) since we visit each node exactly once
+    Space complexity: O(N) since we keep up to the entire tree
+    """
+    def check(root, lower, upper):
+        if not root:
+            return True
+        if not lower < root.val < upper:
+            return False
+        return check(root.left, lower, root.val) and check(root.right, root.val, upper)
+
+    return check(root, float('-inf'), float('inf'))
+
+
 class Test(unittest.TestCase):
     root1 = TreeNode(2)
     root1.left = TreeNode(1)
@@ -45,6 +63,8 @@ class Test(unittest.TestCase):
     def test_inorder_traversal(self):
         self.assertTrue(is_valid_bst_v1(self.root1))
         self.assertFalse(is_valid_bst_v1(self.root2))
+        self.assertTrue(is_valid_bst_v2(self.root1))
+        self.assertFalse(is_valid_bst_v2(self.root2))
 
 
 if __name__ == '__main__':
