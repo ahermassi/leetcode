@@ -12,7 +12,7 @@ class TreeNode(object):
 
 
 def path_sum_v1(root, sum):
-    """ Good old BFS using stack.
+    """ Good old DFS using stack.
     Time complexity: O(N)
     Space complexity: in the worst case, the tree is completely unbalanced and we would keep all N nodes in the stack
     so O(N); in the best case (the tree is completely balanced), it is O(log N) which is the height of the tree
@@ -26,6 +26,28 @@ def path_sum_v1(root, sum):
             res.append(path + [node.val])
         else:
             stack.extend([(kid, path + [node.val], s - node.val) for kid in (node.right, node.left) if kid])
+    return res
+
+
+def path_sum_v2(root, sum):
+    """ Same DFS idea but recursively.
+    Time complexity: O(N)
+    Space complexity: in the worst case, the tree is completely unbalanced and we would keep all N nodes in the stack
+    so O(N); in the best case (the tree is completely balanced), it is O(log N) which is the height of the tree
+    """
+
+    def dfs(root, path, sum):
+        if not root:
+            return
+        if root.val == sum and not root.left and not root.right:
+            path.append(root.val)
+            res.append(path)
+        else:
+            dfs(root.left, path + [root.val], sum - root.val)
+            dfs(root.right, path + [root.val], sum - root.val)
+
+    res = []
+    dfs(root, [], sum)
     return res
 
 
@@ -48,6 +70,7 @@ class Test(unittest.TestCase):
 
     def test_path_sum(self):
         self.assertEqual(self.result, path_sum_v1(self.root, self.sum))
+        self.assertEqual(self.result, path_sum_v2(self.root, self.sum))
 
 
 if __name__ == '__main__':
