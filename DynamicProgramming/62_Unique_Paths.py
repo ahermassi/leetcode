@@ -61,6 +61,18 @@ def unique_paths_v2(m, n):
     return dp[-1][-1]  # This is the bottom right corner where we want to stop
 
 
+def unique_paths_v3(m, n):
+    """ Bottom up + memoization but using 1D list instead of 2D.
+    Time complexity: O(n * m)
+    Space complexity: O(m)
+    """
+    dp = [1] * m
+    for i in range(1, n):
+        for j in range(1, m):
+            dp[j] = dp[j] + dp[j - 1]
+    return dp[-1]
+
+
 class Test(unittest.TestCase):
     data = [(3, 2, 3), (7, 3, 28)]
 
@@ -68,6 +80,7 @@ class Test(unittest.TestCase):
         for test_m, test_n, result in self.data:
             self.assertEqual(result, unique_paths_v1(test_m, test_n))
             self.assertEqual(result, unique_paths_v2(test_m, test_n))
+            self.assertEqual(result, unique_paths_v3(test_m, test_n))
 
 
 if __name__ == '__main__':
