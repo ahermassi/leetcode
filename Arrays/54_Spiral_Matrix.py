@@ -23,6 +23,25 @@ def spiral_order_v1(matrix):
     return res
 
 
+def spiral_order_v2(matrix):
+    """ Walk through an example to better understand this solution. Peel off layers.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    res = []
+    while matrix:
+        res.extend(matrix.pop(0))
+        if matrix and matrix[0]:
+            for row in matrix:
+                res.append(row.pop())
+        if matrix:
+            res.extend(matrix.pop()[::-1])
+        if matrix and matrix[0]:
+            for row in matrix[::-1]:
+                res.append(row.pop(0))
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([[
         [1, 2, 3],
@@ -39,6 +58,7 @@ class Test(unittest.TestCase):
     def test_spiral_order(self):
         for test_array, result in self.data:
             self.assertEqual(result, spiral_order_v1(test_array))
+            # self.assertEqual(result, spiral_order_v2(test_array))
 
 
 if __name__ == '__main__':
