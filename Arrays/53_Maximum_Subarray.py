@@ -34,13 +34,14 @@ def maximum_subarray_v2(nums):
 
 class Test(unittest.TestCase):
     data = [
-        ([-2,1,-3,4,-1,2,1,-5,4], 6),
+        ([-2, 1, -3, 4, -1, 2, 1, -5, 4], 6),
         ([0, -1, 5], 5)
     ]
 
     def test_two_sum(self):
         for test_array, result in self.data:
             self.assertEqual(result, maximum_subarray_v1(test_array))
+            self.assertEqual(result, maximum_subarray_v2(test_array))
 
 
 if __name__ == '__main__':
