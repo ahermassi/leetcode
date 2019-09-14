@@ -24,8 +24,8 @@ def two_sum_v2(nums, target):
     d = {v: i for i, v in enumerate(nums)}  # Add each element's value and its index to the table
     for i in range(len(nums)):
         s = nums[i]
-        if d.get(target - s) and d.get(target - s) != i:  # The complement (target - s) found in O(1) lookup
-            return [i, d.get(target - s)]
+        if d[target - s] and d[target - s] != i:  # The complement (target - s) found in O(1) lookup
+            return [i, d[target - s]]
 
 
 def two_sum_v3(nums, target):
@@ -35,10 +35,10 @@ def two_sum_v3(nums, target):
     Time complexity: O(N) for array pass
     Space complexity: O(N)
     """
-    d = dict()
+    d = {}
     for i, v in enumerate(nums):
         if target - v in d:
-            return [d.get(target - v), i]
+            return [d[target - v], i]
         d[v] = i
 
 
