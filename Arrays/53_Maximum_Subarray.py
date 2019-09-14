@@ -20,6 +20,18 @@ def maximum_subarray_v1(nums):
     return max_sum
 
 
+def maximum_subarray_v2(nums):
+    """ Let's do it the DP way. dp[i] represents the maximum sum of a contiguous subarray ending/starting at index i.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    dp = [0] * len(nums)
+    dp[0] = nums[0]
+    for i in range(1, len(nums)):
+        dp[i] = max(nums[i], dp[i - 1] + nums[i])
+    return max(dp)
+
+
 class Test(unittest.TestCase):
     data = [
         ([-2,1,-3,4,-1,2,1,-5,4], 6),
