@@ -22,7 +22,8 @@ def reverse_v1(x):
 
 def reverse_v2(x):
     """ This solution converts the integer to a string and then it reverses it.
-
+    Time complexity: O(N) for string reversal
+    Space complexity: O(N) for string allocation
     """
     sign = [1, -1][x < 0]
     res = sign * int(str(abs(x))[::-1])
