@@ -1,4 +1,5 @@
 """ Given two strings s and t , write a function to determine if t is an anagram of s. """
+from collections import defaultdict
 
 import unittest2 as unittest
 
@@ -13,14 +14,14 @@ def is_anagram(s, t):
     """
     if len(s) != len(t):
         return False
-    chars = {}
+    chars = defaultdict(int)
     for ch in s:
-        chars[ch] = chars.get(ch, 0) + 1
+        chars[ch] += 1
     for ch in t:
         if ch in chars:
             chars[ch] -= 1
     for v in chars.values():
-        if v != 0:
+        if v:
             return False
     return True
 
