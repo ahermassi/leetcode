@@ -1,5 +1,6 @@
 """ Given two arrays, write a function to compute their intersection.
 Each element in the result should appear as many times as it shows in both arrays."""
+from collections import defaultdict
 
 import unittest2 as unittest
 
@@ -10,9 +11,9 @@ def intersect_v1(nums1, nums2):
     Time complexity: O(N + M) where N is the length of nums1 and M is the length of nums2
     Space complexity: O(N + M)
     """
-    counts, res = {}, []
+    counts, res = defaultdict(int), []
     for i in nums1:
-        counts[i] = counts.get(i, 0) + 1
+        counts[i] += 1
     for i in nums2:
         if i in counts and counts[i] > 0:
             res.append(i)
@@ -47,12 +48,14 @@ def intersect_v3(nums1, nums2):
     """
     pass
 
+
 def intersect_v4(nums1, nums2):
     """ Follow up question: What if elements of nums2 are stored on disk, and the memory is limited such that you
         cannot load all elements into the memory at once?
         If the two arrays have relatively the same length, we can use external sort to sort out the two arrays in the
         disk. Then load chunks of each array into the memory and compare, by using the method 1.
     """
+
 
 class Test(unittest.TestCase):
     data = [([1, 2, 2, 1], [2, 2], [2, 2]),
