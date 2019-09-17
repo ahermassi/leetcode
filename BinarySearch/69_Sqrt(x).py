@@ -10,7 +10,9 @@ def my_sqrt(x):
     Time complexity: O(log x)
     Space complexity: O(1)
     """
-    left, right = 0, x
+    if x <= 1:
+        return x
+    left, right = 0, x // 2
     while left <= right:
         mid = (left + right) // 2
         if mid ** 2 <= x < (mid + 1) ** 2:
