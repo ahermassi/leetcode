@@ -27,8 +27,8 @@ def has_cycle_v1(head):
 
 def has_cycle_v2(head):
     """ Use fast and slow pointers. Fast pointer runs 2 steps at a time and slow pointer runs 1 step at a time. They
-    both start from beginning. If faster pointer catches slow pointer some time, it means linked list has a circle.
-    This algorithm is called Floyd's cycle detection algorithm, or the tortoise and the hare algorithm.
+    both start from beginning. If faster pointer catches slow pointer some time, it means linked list has a cycle.
+    This algorithm is called Floyd's cycle detection algorithm, or 'the tortoise and the hare' algorithm.
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -52,7 +52,7 @@ def has_cycle_v3(head):
     """
     nodes = {}
     while head:
-        if nodes.get(head):
+        if head.val in nodes:
             return True
         nodes[head] = head.val
         head = head.next
