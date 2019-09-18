@@ -19,11 +19,8 @@ def rotate_v1(nums, k):
     """
     if not k:
         return nums
-    if k >= len(nums):
-        for _ in range(k % len(nums)):
-            nums[:] = nums[-1] + nums[:-1]
-    else:
-        nums[:] = nums[-k:] + nums[:len(nums) - k]
+    k, n = k % len(nums), len(nums)
+    nums[:] = nums[n - k:] + nums[:n - k]
 
 
 def rotate_v2(nums, k):
