@@ -15,21 +15,21 @@ def asteroid_collision(asteroids):
     Space complexity:  O(N)
     """
 
-    def process(stack, asteroid):
-        if not stack:
+    def collide(asteroid, stack):
+        if not stack or asteroid * stack[-1] > 0:
             stack.append(asteroid)
-        elif asteroid < 0 and stack[-1] > 0:
-            if asteroid + stack[-1] == 0:  # Asteroids of same size cancel each other
+        elif stack[-1] > 0 and asteroid < 0:
+            if stack[-1] == abs(asteroid):  # Asteroids of same size cancel each other
                 stack.pop()
-            elif asteroid + stack[-1] < 0:  # This is where a recursion might appear: a collision is detected
+            elif abs(asteroid) > stack[-1]:  # This is where a recursion might appear: a collision is detected
                 stack.pop()
-                process(stack, asteroid)
+                collide(asteroid, stack)
         else:
             stack.append(asteroid)
 
     stack = []
     for asteroid in asteroids:
-        process(stack, asteroid)
+        collide(asteroid, stack)
     return stack
 
 
