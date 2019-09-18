@@ -8,20 +8,17 @@ def find_replace_string(S, indexes, sources, targets):
     Time complexity: O(N + Q), where N is the length of S and Q is the length of indexes (or sources, or targets)
     Space complexity: O(N + Q)
     """
-    ans, i, d = '', 0, {}
-    for idx, source, target in zip(indexes, sources, targets):
-        d[idx] = [source, target]
+    i, res = 0, []
+    d = {index: [source, target] for index, source, target in zip(indexes, sources, targets)}
     while i < len(S):
-        if i not in d:
-            ans += S[i]
-            i += 1
-        elif S[i:i + len(d[i][0])] == d[i][0]:
-            ans += d[i][1]
+        c = S[i]
+        if i in d and S[i:i + len(d[i][0])] == d[i][0]:
+            res.append(d[i][1])
             i += len(d[i][0])
         else:
-            ans += S[i:i + len(d[i][0])]
-            i += len(d[i][0])
-    return ans
+            res.append(c)
+            i += 1
+    return ''.join(res)
 
 
 class Test(unittest.TestCase):
