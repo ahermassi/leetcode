@@ -33,7 +33,7 @@ def three_sum_closest(nums, target):
 class Test(unittest.TestCase):
     data = [([-1, 2, 1, -4], 1, 2), ([0, 2, 1, -3], 1, 0)]
 
-    def test_max_area(self):
+    def test_three_sum_closest(self):
         for test_array, test_target, result in self.data:
             self.assertEqual(result, three_sum_closest(test_array, test_target))
 
