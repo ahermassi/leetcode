@@ -6,6 +6,10 @@ import unittest2 as unittest
 
 
 def reorder_log_files(logs):
+    """ Pretty straightforward.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
     letter_logs = [log for log in logs if log.split()[1].isalpha()]
     digit_logs = [log for log in logs if log.split()[1].isdigit()]
     # The trick here is to sort according to 2 criteria, and that's what the lambda does: returns a tuple. In case of
