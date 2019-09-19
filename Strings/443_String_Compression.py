@@ -15,7 +15,7 @@ import unittest2 as unittest
 def compress(chars):
     """ Group the array into repeated chunks, keeping track of the character and the count. This forms the encoded
         contents.
-        Update the original array with the encodede contents. We maintain a left pointer to know which position to
+        Update the original array with the encoded contents. We maintain a left pointer to know which position to
         update the original array with the encoded contents and increment it according to the length of the encoded
         contents.
     Time complexity: O(N)
