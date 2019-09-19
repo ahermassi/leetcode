@@ -53,7 +53,7 @@ def sorted_array_to_bst_v2(nums):
 class Test(unittest.TestCase):
     data = [-10, -3, 0, 5, 9]
 
-    def test_is_alien_sorted1(self):
+    def test_sorted_array_to_bst(self):
         root = sorted_array_to_bst_v1(self.data)
         self.assertEqual(0, root.val)
         self.assertEqual(-3, root.left.val)
