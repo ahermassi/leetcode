@@ -12,16 +12,15 @@ def is_alien_sorted(words, order):
     of 26 characters to 26 numbers.
     """
     alphabet = {c: i for i, c in enumerate(order)}
+    alphabet[''] = -1
     for i in range(len(words) - 1):
         word1 = words[i]
         word2 = words[i + 1]
-        for j in range(min(len(word1), len(word2))):
-            if word1[j] != word2[j]:
-                if alphabet[word1[j]] > alphabet[word2[j]]:
+        for j in range(max(len(word1), len(word2))):
+            if word1[j:j+1] != word2[j:j+1]:
+                if alphabet[word1[j:j+1]] > alphabet[word2[j:j+1]]:
                     return False
                 break
-            elif len(word1) > len(word2):
-                return False
     return True
 
 
