@@ -16,9 +16,9 @@ class TreeNode(object):
         self.right = None
 
 
-def is_subtree(s, t):
-    """ We do a BFS traversal of the first tree s. At each node whose value is equal to the second tree t root value,
-        we perform a recursive check to verify if the subtree at the current node is equal to the tree t. If it's not
+def is_subtree_v1(s, t):
+    """ We do a BFS traversal of the first tree s. At each node whose value is is_identical to the second tree t root value,
+        we perform a recursive check to verify if the subtree at the current node is is_identical to the tree t. If it's not
         the case, we carry on the BFS until the stack is empty or a match is found.
     Time complexity: O(N * M) where N is the number of s nodes and M is the number of t nodes. In worst case(skewed
     tree) the traversal takes O(N * M)
@@ -28,8 +28,11 @@ def is_subtree(s, t):
     def is_identical(s, t):
         if not s and not t:
             return True
-        if s and t and s.val == t.val:
-            return is_identical(s.left, t.left) and is_identical(s.right, t.right)
+        if not s or not t:
+            return False
+        if s.val != t.val:
+            return False
+        return is_identical(s.left, t.left) and is_identical(s.right, t.right)
 
     queue = deque()
     queue.append(s)
@@ -41,6 +44,29 @@ def is_subtree(s, t):
             queue.append(node.left)
             queue.append(node.right)
     return False
+
+
+def is_subtree_v2(s, t):
+    """ Same as above but recursively.
+    Time complexity: O(N * M) where N is the number of s nodes and M is the number of t nodes. In worst case (skewed
+    tree) the traversal takes O(N * M)
+    Space complexity: O(N), the depth of the recursion tree can go up to N
+    """
+
+    def is_identical(s, t):
+        if not s and not t:
+            return True
+        if not s or not t:
+            return False
+        if s.val != t.val:
+            return False
+        return is_identical(s.left, t.left) and is_identical(s.right, t.right)
+
+    if not s:
+        return False
+    if is_identical(s, t):
+        return True
+    return is_subtree_v1(s.left, t) or is_subtree_v1(s.right, t)
 
 
 class Test(unittest.TestCase):
@@ -58,8 +84,10 @@ class Test(unittest.TestCase):
     root3.right.left = TreeNode(0)
 
     def test_is_subtree(self):
-        self.assertTrue(is_subtree(self.root1, self.root2))
-        self.assertFalse(is_subtree(self.root1, self.root3))
+        self.assertTrue(is_subtree_v1(self.root1, self.root2))
+        self.assertFalse(is_subtree_v1(self.root1, self.root3))
+        self.assertTrue(is_subtree_v2(self.root1, self.root2))
+        self.assertFalse(is_subtree_v2(self.root1, self.root3))
 
 
 if __name__ == '__main__':
