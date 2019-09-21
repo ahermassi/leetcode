@@ -8,7 +8,7 @@ def valid_palindrome(s):
         inwards. Whenever there is a mismatch, we can either exclude the character at the left or the right pointer. We
         then check if either substring is a palindrome.
     Time complexity: O(N)
-    Space complexity: O(1) for the creation of reversed strings using [::-1] notation
+    Space complexity: O(N) for the creation of reversed strings using [::-1] notation
     """
     left, right = 0, len(s) - 1
     while left < right:
