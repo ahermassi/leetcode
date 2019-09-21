@@ -1,10 +1,22 @@
 """ Given two arrays, write a function to compute their intersection. """
 from collections import defaultdict
-
 import unittest2 as unittest
 
 
 def intersection_v1(nums1, nums2):
+    """ Use a set to avoid redundant elements.
+    Time complexity: O(N + M)
+    Space complexity: O(N + M)
+    """
+    res = set()
+    d = {v: 1 for i, v in enumerate(nums1)}
+    for num in nums2:
+        if num in d:
+            res.add(num)
+    return list(res)
+
+
+def intersection_v2(nums1, nums2):
     """ Use a hash table to record all nums that appeared in the first list, and then check if there are nums in the
     second list have appeared in the hash table.
     Time complexity: O(N + M) where N is the length of nums1 and M is the length of nums2
@@ -20,7 +32,7 @@ def intersection_v1(nums1, nums2):
     return result
 
 
-def intersection_v2(nums1, nums2):
+def intersection_v3(nums1, nums2):
     """ The idea is to convert both arrays into sets, and then iterate over the smallest set checking the presence of
     each element in the larger set.
     Time complexity: O(N + M)
@@ -47,6 +59,7 @@ class Test(unittest.TestCase):
         for nums1, nums2, result in self.data:
             self.assertEqual(result, intersection_v1(nums1, nums2))
             self.assertEqual(result, intersection_v2(nums1, nums2))
+            self.assertEqual(result, intersection_v3(nums1, nums2))
 
 
 if __name__ == '__main__':
