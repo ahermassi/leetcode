@@ -69,7 +69,7 @@ class CodecPreorder:
 
 
 class CodecPostorder:
-    """ This class uses preorder traversal for serialization. To deserialized, use a stack to recursively get root
+    """ This class uses postorder traversal for serialization. To deserialize, use a stack to recursively get root
         node, left subtree and right subtree. In this case, root will be always the last element in the stack.
     """
 
