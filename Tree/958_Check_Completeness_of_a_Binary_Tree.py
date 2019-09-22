@@ -17,7 +17,7 @@ class TreeNode(object):
 
 
 def is_complete_tree(root):
-    """ Use BFS to do a level order traversal, add childrens to the bfs queue, until we met the first empty node.
+    """ Use BFS to do a level order traversal, add children to the bfs queue, until we met the first empty node.
         For a complete binary tree, there should not be any node after we met an empty one.
         It's using the key feature of level order traversal - from top to bottom and from left to right, so as soon as
         we see null node(previous level or last level), there should be no more non-null node as we continue the
