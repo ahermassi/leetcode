@@ -20,6 +20,31 @@ def sort_colors_v1(nums):
     nums[:] = [0] * d[0] + [1] * d[1] + [2] * d[2]
 
 
+def sort_colors_v2(nums):
+    """ Let's use here three pointers to track the rightmost boundary of zeros, the leftmost boundary of twos and the
+        current element under the consideration.
+        The idea of solution is to move curr pointer along the array, if nums[curr] = 0 - swap it with nums[p0], if
+        nums[curr] = 2 - swap it with nums[p2].
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    left, curr, right = 0, 0, len(nums) - 1
+    # For all idx < left : nums[idx] == 0
+    # For all idx > right : nums[idx] == 2
+    # curr is an index of element under consideration
+    while curr <= right:
+        num = nums[curr]
+        if num == 0:
+            nums[left], nums[curr] = nums[curr], nums[left]
+            left += 1  # Move both pointers to the right
+            curr += 1
+        elif num == 1:
+            curr += 1
+        else:
+            nums[right], nums[curr] = nums[curr], nums[right]
+            right -= 1
+
+
 class Test(unittest.TestCase):
     data = [([2, 0, 2, 1, 1, 0], [0, 0, 1, 1, 2, 2])]
 
