@@ -37,3 +37,26 @@ def delete_node(root, key):
             root.left = delete_node(root.left, temp.val)
     return root
 
+# Utility functions
+
+
+def successor(root):
+    """ Successor = "after node", i.e. the next node, or the smallest node after the current one.
+        It's also the next node in the inorder traversal.
+        Successor == one step right and then left as you can
+    """
+    root = root.right
+    while root.left:
+        root = root.left
+    return root
+
+
+def predecessor(root):
+    """ Predecessor = "before node", i.e. the previous node, or the largest node before the current one.
+        It's also the previous node in the inorder traversal.
+        Predecessor == one step left and then right as you can
+    """
+    root = root.left
+    while root.right:
+        root = root.right
+    return root
