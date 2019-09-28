@@ -88,7 +88,7 @@ class Test(unittest.TestCase):
     root.right.left = TreeNode(15)
     root.right.right = TreeNode(7)
 
-    def test_is_balanced(self):
+    def test_build_tree(self):
         root = build_tree_v1(self.preorder, self.inorder)
         self.assertEqual(3, root.val)
         self.assertEqual(9, root.left.val)
