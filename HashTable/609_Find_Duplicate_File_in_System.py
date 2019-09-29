@@ -20,6 +20,9 @@ def find_duplicate(paths):
             d[content].append(directory + '/' + name)
     return [v for v in d.values() if len(v) > 1]
 
+# Follow up questions:
+# https://leetcode.com/problems/find-duplicate-file-in-system/discuss/104120/Follow-up-questions-discussion
+
 
 class Test(unittest.TestCase):
     data = [(['root/a 1.txt(abcd) 2.txt(efgh)', 'root/c 3.txt(abcd)', 'root/c/d 4.txt(efgh)', 'root 4.txt(efgh)'],
