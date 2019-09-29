@@ -47,6 +47,35 @@ def is_valid_sudoku_v1(board):
     return valid_rows(board) and valid_cols(board) and valid_squares(board)
 
 
+def is_valid_sudoku_v2(board):
+    """ Actually, all this could be done in just one iteration.
+        We could use box_index = (row / 3) * 3 + col / 3 where / is an integer division, row is a row number, and col
+        is a column number.
+        Move along the board. Check for each cell value if it was seen already in the current row / column / box
+    Time complexity: O(1)
+    Space complexity: O(1)
+    """
+    rows = [{} for _ in range(9)]
+    cols = [{} for _ in range(9)]
+    boxes = [{} for _ in range(9)]
+
+    for i in range(9):
+        for j in range(9):
+            cell = board[i][j]
+            if cell != '.':
+                if cell in rows[i]:
+                    return False
+                rows[i][cell] = 1
+                if cell in cols[j]:
+                    return False
+                cols[j][cell] = 1
+                box_index = (i // 3) * 3 + j // 3
+                if cell in boxes[box_index]:
+                    return False
+                boxes[box_index][cell] = 1
+    return True
+
+
 class Test(unittest.TestCase):
     data = [([
                  ["5", "3", ".", ".", "7", ".", ".", ".", "."],
@@ -74,6 +103,7 @@ class Test(unittest.TestCase):
     def test_find_duplicate(self):
         for test_board, result in self.data:
             self.assertEqual(result, is_valid_sudoku_v1(test_board))
+            self.assertEqual(result, is_valid_sudoku_v2(test_board))
 
 
 if __name__ == '__main__':
