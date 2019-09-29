@@ -16,7 +16,7 @@ def find_celebrity_v1(n):
         The moment you realize a call to knows(i,j) eliminates either i or j the problem is solved. knows(i,j) == true
         then i can't be a celebrity. since a celebrity knows nobody and knows(i,j) == false then j can't be a celebrity
         since everyone must know the celebrity.
-    Time complexity: O(N)
+    Time complexity: O(n)
     Space complexity: O(1)
     """
     candidate = 0
@@ -31,5 +31,26 @@ def find_celebrity_v1(n):
     # Last thing we don't know: Does everyone after candidate know candidate ?
     for i in range(candidate + 1, n):
         if not knows(i, candidate):
+            return -1
+    return candidate
+
+
+def find_celebrity_v2(n):
+    """ Stack based solution. The idea is to push all people to the stack, and then start popping every 2 people.
+        If a knows b, so a is not the celebrity, but b may be. If a doesn't know b, so b is not the celebrity, but a
+        may be. The only remaining stack element is a potential celebrity. Double check if they are.
+    Time complexity: O(n)
+    Space complexity: O(n)
+    """
+    stack = [i for i in range(n)]
+    while len(stack) > 1:
+        a, b = stack.pop(), stack.pop()
+        if knows(a, b):
+            stack.append(b)
+        else:
+            stack.append(a)
+    candidate = stack.pop()
+    for i in range(n):
+        if i != candidate and (knows(candidate, i) or not knows(i, candidate)):
             return -1
     return candidate
