@@ -21,6 +21,8 @@ def search(nums, target):
                non-rotated.
                If target is in that non-rotated part as well: go right: start = mid + 1.
                Otherwise: go left: end = mid - 1.
+    Time complexity: O(logN)
+    Space complexity: O(1)
     """
     left, right = 0, len(nums) - 1
     while left <= right:
