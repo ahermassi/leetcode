@@ -8,7 +8,7 @@ Given the initial state of the prison, return the state of the prison after N da
 import unittest2 as unittest
 
 
-def prison_after_n_days_v1(cells, N):
+def prison_after_n_days(cells, N):
     """ Because there are at most 256 possible states for the prison, eventually the states repeat into a cycle
     rather quickly. Somehow, the cycle is equal to 14.
     Time complexity: O(1)
@@ -34,7 +34,7 @@ class Test(unittest.TestCase):
 
     def test_prison_after_n_days(self):
         for test_cells, test_days, result in self.data:
-            self.assertEqual(result, prison_after_n_days_v1(test_cells, test_days))
+            self.assertEqual(result, prison_after_n_days(test_cells, test_days))
 
 
 if __name__ == '__main__':
