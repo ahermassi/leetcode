@@ -29,6 +29,27 @@ def reverse_words_v1(s):
     return words
 
 
+def reverse_words_v2(s):
+    """ Same idea but reversing the words of the reversed string itself.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    s = list(' '.join(s.split()))[::-1]  # Get rid of spaces and transform the string to list as strings are immutable
+    n, i = len(s), 0
+    while i < n:
+        left = i  # Left end of the word to reverse
+        while i < n and s[i] != ' ':
+            i += 1
+        right = i - 1  # Right end of the word to reverse
+        while left < right:  # The actual reversing
+            s[left], s[right] = s[right], s[left]
+            left += 1
+            right -= 1
+        while i < n and s[i] == ' ':  # Advance till the first non-space character
+            i += 1
+    return ''.join(s)
+
+
 class Test(unittest.TestCase):
     data = [
         ('the sky is blue', 'blue is sky the'), ('  hello world!  ', 'world! hello'),
@@ -38,6 +59,7 @@ class Test(unittest.TestCase):
     def test_reverse_words(self):
         for test_string, result in self.data:
             self.assertEqual(result, reverse_words_v1(test_string))
+            self.assertEqual(result, reverse_words_v2(test_string))
 
 
 if __name__ == '__main__':
