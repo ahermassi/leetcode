@@ -75,8 +75,7 @@ def find_peak_element_v3(nums):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    i = 0
-    while i <= len(nums) - 1:
-        while i < len(nums) - 1 and nums[i] < nums[i + 1]:
-            i += 1
-        return i
+    for i in range(1, len(nums)):
+        if nums[i] < nums[i - 1]:
+            return i - 1
+    return len(nums) - 1
