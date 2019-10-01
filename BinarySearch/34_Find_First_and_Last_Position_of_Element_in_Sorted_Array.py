@@ -63,7 +63,7 @@ def search_range_v2(nums, target):
 class Test(unittest.TestCase):
     data = [([5, 7, 7, 8, 8, 10], 8, [3, 4]), ([5, 7, 7, 8, 8, 10], 6, [-1, -1])]
 
-    def test_can_finish(self):
+    def test_search_range(self):
         for test_array, test_target, result in self.data:
             self.assertEqual(result, search_range_v1(test_array, test_target))
             self.assertEqual(result, search_range_v2(test_array, test_target))
