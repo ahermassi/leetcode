@@ -68,3 +68,15 @@ def find_peak_element_v2(nums):
             return helper(nums, mid + 1, right)
 
     return helper(nums, 0, len(nums) - 1)
+
+
+def find_peak_element_v3(nums):
+    """ Linear scan.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    i = 0
+    while i <= len(nums) - 1:
+        while i < len(nums) - 1 and nums[i] < nums[i + 1]:
+            i += 1
+        return i
