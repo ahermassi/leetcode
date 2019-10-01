@@ -2,8 +2,6 @@
 Given an input array nums, where nums[i] ≠ nums[i+1], find a peak element and return its index.
 The array may contain multiple peaks, in that case return the index to any one of the peaks is fine. """
 
-import unittest2 as unittest
-
 
 def find_peak_element_v1(nums):
     """ We can view any given sequence in numsnums array as alternating ascending and descending sequences. By making
@@ -21,6 +19,27 @@ def find_peak_element_v1(nums):
         Thus, we reduce the search space to the right of mid and perform the same process on the right subarray.
         In this way, we keep on reducing the search space till we eventually reach a state where only one element is
         remaining in the search space. This single element is the peak element.
+
+        | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
+        |---|---|---|---|---|---|---|---|---|
+        | l | _ | _ | _ | m | _ | _ | _ | r |
+        a[m] > a[m+1] -> r=m (Not m-1 since m is larger and it itself can be the answer)
+
+        | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
+        |---|---|---|---|---|---|---|---|---|
+        | l | m | _ | _ | r | X | X | X | X |
+        a[m] < a[m+1] -> l = m+1 (Since m is smaller than m+1, m will for sure be not the answer)
+
+        | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
+        |---|---|---|---|---|---|---|---|---|
+        | X | X | l | m | r | X | X | X | X |
+        a[m] < a[m+1] -> l = m+1 (Since m is smaller than m+1, m will for sure be not the answer)
+
+        | 1 | 2 | 3 | 4 | 5   | 4 | 3 | 2 | 1 |
+        |---|---|---|---|-----|---|---|---|---|
+        | X | X | X | X | l,r | X | X | X | X |
+        l is the answer
+
     Time complexity: (logN)
     Space complexity: O(1)
     """
