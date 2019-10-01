@@ -10,7 +10,7 @@ Given a non-empty string containing only digits, determine the total number of w
 import unittest2 as unittest
 
 
-def num_decodings_v1(s):
+def num_decodings(s):
     """ Let dp[i] = the number of ways to parse the first i characters of s, or the number of ways to decode a string
     of length i
     Time complexity: O(N)
@@ -43,7 +43,7 @@ class Test(unittest.TestCase):
 
     def test_num_decodings(self):
         for test_string, result in self.data:
-            self.assertEqual(result, num_decodings_v1(test_string))
+            self.assertEqual(result, num_decodings(test_string))
 
 
 if __name__ == '__main__':
