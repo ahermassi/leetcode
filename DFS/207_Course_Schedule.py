@@ -2,11 +2,12 @@
 Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed
 as a pair: [0,1]
 Given the total number of courses and a list of prerequisite pairs, is it possible for you to finish all courses? """
+import collections
 
 import unittest2 as unittest
 
 
-def can_finish_v1(numCourses, prerequisites):
+def can_finish_dfs(numCourses, prerequisites):
     """ This is a direct application of topological sort. Note that this type of sort can only be applied on Directed
         Graphs. a Directed Acyclic Graph fails to yield a topological sort because of the presence of a cycle. This
         property is the intuition of this questions's algorithm.
@@ -44,12 +45,35 @@ def can_finish_v1(numCourses, prerequisites):
     return True
 
 
+def can_finish_bfs(numCourses, prerequisites):
+    """ Same as above but in DFS fashion.
+    Time complexity: O(|V| + |E|)
+    Space complexity: O(|V| + |E|)
+    """
+    graph = [[] for _ in range(numCourses)]
+    indegree = [0, ] * numCourses
+    for to_, from_ in prerequisites:
+        graph[from_].append(to_)
+        indegree[to_] += 1
+    queue = collections.deque(v for v in range(numCourses) if indegree[v] == 0)
+    n = len(queue)
+    while queue and n != numCourses:  # adding n != numCourses to terminate loop earlier
+        v = queue.popleft()
+        for to_ in graph[v]:
+            indegree[to_] -= 1
+            if indegree[to_] == 0:
+                n += 1
+                queue.append(to_)
+    return n == numCourses
+
+
 class Test(unittest.TestCase):
     data = [(2, [[1, 0]], True), (2, [[1, 0],[0, 1]], False)]
 
     def test_can_finish(self):
         for test_num_courses, test_prerequisites, result in self.data:
-            self.assertEqual(result, can_finish_v1(test_num_courses, test_prerequisites))
+            self.assertEqual(result, can_finish_dfs(test_num_courses, test_prerequisites))
+            self.assertEqual(result, can_finish_bfs(test_num_courses, test_prerequisites))
 
 
 if __name__ == '__main__':
