@@ -27,14 +27,17 @@ def min_meeting_rooms_v1(intervals):
         return 0
     intervals.sort()
     heap = []
-    heappush(heap, intervals[0][1])
+    heappush(heap, intervals[0][1])  # Add the first meeting. We have to give a new room to the first meeting
     for i in range(1, len(intervals)):
         interval = intervals[i]
-        if interval[0] >= heap[0]:
+        if interval[0] >= heap[0]:  # If the room due to free up the earliest is free, assign that room to this meeting
             heapreplace(heap, interval[1])
         else:
-            heappush(heap, interval[1])
+            heappush(heap, interval[1])  # If a new room is to be assigned, then also we add to the heap
     return len(heap)
+
+def min_meeting_rooms_v2(intervals):
+
 
 
 class Test(unittest.TestCase):
