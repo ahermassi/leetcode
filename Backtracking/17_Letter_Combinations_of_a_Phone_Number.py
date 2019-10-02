@@ -6,7 +6,7 @@ A mapping of digit to letters (just like on the telephone buttons) is given. Not
 import unittest2 as unittest
 
 
-def letter_combinations(digits):
+def letter_combinations_v1(digits):
     """ If there is no more digits to check that means that the current combination 's' is done (marked by len(s) == n)
         If there are still digits to check :
             Iterate over the letters mapping the next available digit (at index i of digits)
@@ -34,12 +34,32 @@ def letter_combinations(digits):
     return res
 
 
+def letter_combinations_v2(digits):
+    """ Iterative approach.
+    Time complexity: O(3 ** N + 4 ** M)
+    Space complexity: O(3 ** N + 4 ** M)
+    """
+    if not digits:
+        return None
+    d = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
+    result = ['']
+    for digit in digits:
+        chars = d[digit]
+        new_result = []
+        for char in chars:
+            for str in result:
+                new_result.append(str + char)
+        result = new_result
+    return result
+
+
 class Test(unittest.TestCase):
     data = [('23', ['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf'])]
 
     def test_min_meeting_rooms(self):
         for test_digits, result in self.data:
-            self.assertEqual(result, letter_combinations(test_digits))
+            self.assertEqual(result, letter_combinations_v1(test_digits))
+            self.assertEqual(result, sorted(letter_combinations_v2(test_digits)))
 
 
 if __name__ == '__main__':
