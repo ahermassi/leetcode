@@ -47,7 +47,7 @@ def find_kth_largest_v4(nums, k):
         right of the pivot are larger or equal to pivot.
         Compare pos and N - k to choose the side of array to proceed recursively
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(1)
     """
 
     def partition(left, right):
