@@ -2,6 +2,8 @@
 not the kth distinct element. """
 
 from heapq import heappush, heappop, nlargest
+from random import randint
+
 import unittest2 as unittest
 
 
@@ -36,6 +38,38 @@ def find_kth_largest_v3(nums, k):
     return nlargest(k, nums)[-1]
 
 
+def find_kth_largest_v4(nums, k):
+    """ This approach is basically the same as for quick sort. For simplicity let's notice that kth largest element is
+        the same as N - kth smallest element, hence we could implement kth smallest algorithm for this problem.
+        First we choose a pivot, and define its position in a sorted array in a linear time. This could be done with
+        the help of partition algorithm. As an output we have an array where pivot is on its perfect position in the
+        ascending sorted array, all elements on the left of the pivot are smaller than pivot, and all elements on the
+        right of the pivot are larger or equal to pivot.
+        Compare pos and N - k to choose the side of array to proceed recursively
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def partition(left, right):
+        ri = randint(left, right)
+        nums[right], nums[ri] = nums[ri], nums[right]
+        for i, v in enumerate(nums[left: right + 1], left):
+            if v >= nums[right]:
+                nums[left], nums[i] = nums[i], nums[left]
+                left += 1
+        return left - 1
+
+    left, right, k = 0, len(nums) - 1, k - 1
+    while True:
+        pivot = partition(left, right)
+        if pivot < k:
+            left = pivot + 1
+        elif pivot > k:
+            right = pivot - 1
+        else:
+            return nums[pivot]
+
+
 class Test(unittest.TestCase):
     data = [([3, 2, 1, 5, 6, 4], 2, 5), ([3, 2, 3, 1, 2, 4, 5, 5, 6], 4, 4)]
 
@@ -44,6 +78,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, find_kth_largest_v1(test_array, test_k))
             self.assertEqual(result, find_kth_largest_v2(test_array, test_k))
             self.assertEqual(result, find_kth_largest_v3(test_array, test_k))
+            self.assertEqual(result, find_kth_largest_v4(test_array, test_k))
 
 
 if __name__ == '__main__':
