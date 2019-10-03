@@ -40,12 +40,15 @@ def find_kth_largest_v3(nums, k):
 
 def find_kth_largest_v4(nums, k):
     """ This approach is basically the same as for quick sort. For simplicity let's notice that kth largest element is
-        the same as N - kth smallest element, hence we could implement kth smallest algorithm for this problem.
+        the same as (N - k)th smallest element, hence we could implement kth smallest algorithm for this problem.
         First we choose a pivot, and define its position in a sorted array in a linear time. This could be done with
         the help of partition algorithm. As an output we have an array where pivot is on its perfect position in the
         ascending sorted array, all elements on the left of the pivot are smaller than pivot, and all elements on the
         right of the pivot are larger or equal to pivot.
-        Compare pos and N - k to choose the side of array to proceed recursively
+        If the pivot's rank is smaller than the rank we want to find, we are sure all elements before pivot actually
+        have even smaller rank, we search the target at the part after pivot.
+        If the pivot's rank is larger than the rank we want to find, we search the target at the left part before pivot.
+        The idea is so powerful and beautiful.
     Time complexity: O(N)
     Space complexity: O(1)
     """
