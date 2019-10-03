@@ -1,7 +1,7 @@
 """ Find the kth largest element in an unsorted array. Note that it is the kth largest element in the sorted order,
 not the kth distinct element. """
 
-from heapq import heappush, heappop
+from heapq import heappush, heappop, nlargest
 import unittest2 as unittest
 
 
@@ -27,6 +27,15 @@ def find_kth_largest_v2(nums, k):
     return heappop(heap)
 
 
+def find_kth_largest_v3(nums, k):
+    """ Using the built-in nlargest.
+    Time complexity: The time complexity of adding an element in a heap is O(log(k)) (binary tree of k elements) and
+    we do it N times, that means O(N log(k))). Hence the overall complexity of the algorithm is O(N log(k))
+    Space complexity: O(k) to store the heap elements
+    """
+    return nlargest(k, nums)[-1]
+
+
 class Test(unittest.TestCase):
     data = [([3, 2, 1, 5, 6, 4], 2, 5), ([3, 2, 3, 1, 2, 4, 5, 5, 6], 4, 4)]
 
@@ -34,6 +43,7 @@ class Test(unittest.TestCase):
         for test_array, test_k, result in self.data:
             self.assertEqual(result, find_kth_largest_v1(test_array, test_k))
             self.assertEqual(result, find_kth_largest_v2(test_array, test_k))
+            self.assertEqual(result, find_kth_largest_v3(test_array, test_k))
 
 
 if __name__ == '__main__':
