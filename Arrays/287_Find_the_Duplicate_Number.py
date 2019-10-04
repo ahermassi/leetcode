@@ -27,6 +27,42 @@ def find_duplicate_v2(nums):
         seen.add(num)
 
 
+def find_duplicate_v3(nums):
+    """ Floyd's Tortoise and Hare (Cycle Detection).
+        Because each number in nums is between 11 and nn, it will necessarily point to an index that exists. Therefore,
+        the list can be traversed infinitely, which implies that there is a cycle. Additionally, because 0 cannot
+        appear as a value in nums, nums[0] cannot be part of the cycle. Therefore, traversing the array in this manner
+        from nums[0] is equivalent to traversing a cyclic linked list.
+        Note: We need second loop because in first loop both pointers might end up at the same index and hence we will
+        get a number which might not be a duplicate. The first loop just gives us the intersection of the indexes, the
+        second loop returns the index to the duplicate number.
+        According to Floyd's algorithm, first step, if a cycle does exist, and you advance the tortoise one node each
+        unit of time but the hare two nodes each unit of time, then they will eventually meet. This is what the first
+        while loop does. The first while loop finds their meeting point.
+        Second step, take tortoise or hare to the start point of the list (i.e. let one of the animal be 0) and keep
+        the other one staying at the meeting point. Now, advance both of the animals one node each unit of time, the
+        meeting point is the starting point of the cycle. This is what the second while loop does. The second while
+        loop finds their meeting point.
+        Find proof of step 2 in 'Notes on Problems' document.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    tortoise = hare = nums[0]
+    while True:
+        tortoise = nums[tortoise]
+        hare = nums[nums[hare]]
+        if tortoise == hare:
+            break
+
+    # Find the "entrance" to the cycle.
+    hare = nums[0]
+    while tortoise != hare:
+        tortoise = nums[tortoise]
+        hare = nums[hare]
+
+    return tortoise
+
+
 class Test(unittest.TestCase):
     data = [([1, 3, 4, 2, 2], 2), ([3, 1, 3, 4, 2], 3)]
 
@@ -34,6 +70,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, find_duplicate_v1(test_array))
             self.assertEqual(result, find_duplicate_v2(test_array))
+            self.assertEqual(result, find_duplicate_v3(test_array))
 
 
 if __name__ == '__main__':
