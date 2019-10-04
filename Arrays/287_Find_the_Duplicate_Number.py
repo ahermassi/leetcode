@@ -15,12 +15,25 @@ def find_duplicate_v1(nums):
             return nums[i]
 
 
+def find_duplicate_v2(nums):
+    """ If we store each element in a set as we iterate over the array, we can simply check each element as we iterate.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    seen = set()
+    for num in nums:
+        if num in seen:
+            return num
+        seen.add(num)
+
+
 class Test(unittest.TestCase):
     data = [([1, 3, 4, 2, 2], 2), ([3, 1, 3, 4, 2], 3)]
 
     def test_find_duplicate(self):
         for test_array, result in self.data:
             self.assertEqual(result, find_duplicate_v1(test_array))
+            self.assertEqual(result, find_duplicate_v2(test_array))
 
 
 if __name__ == '__main__':
