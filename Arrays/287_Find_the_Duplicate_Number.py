@@ -53,14 +53,38 @@ def find_duplicate_v3(nums):
         hare = nums[nums[hare]]
         if tortoise == hare:
             break
-
     # Find the "entrance" to the cycle.
     hare = nums[0]
     while tortoise != hare:
         tortoise = nums[tortoise]
         hare = nums[hare]
-
     return tortoise
+
+
+def find_duplicate_v4(nums):
+    """ This solution is based on binary search, based on pigeonhole principle.
+        Originally, there are n + 1 objects and n holes, this condition complies to pigeonhole principle, so at least
+        one hole has two objects, that is one number appears twice.
+        Each time we select a number mid (which is the one in the middle) and count all the numbers equal to or less
+        than mid. Then if the count is more than mid, the search space will be [1 .. mid] otherwise [mid+1 .. n]. We do
+        this until search space is only one number.
+        Or less formally:
+        We know that the whole range is "too crowded" and thus that the first half or the second half of the range is
+        too crowded (if both weren't, then neither would be the whole range). So you check to know whether the first
+        half is too crowded, and if it isn't, you know that the second half is.
+    Time complexity: O(log N)
+    Space complexity: O(1)
+    """
+    left = 1
+    right = len(nums) - 1
+    while left < right:
+        mid = (left + right) // 2
+        count = sum(i <= mid for i in nums)
+        if count <= mid:
+            left = mid + 1
+        else:
+            right = mid
+    return left
 
 
 class Test(unittest.TestCase):
