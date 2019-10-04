@@ -4,6 +4,7 @@ Note:
 The same word in the dictionary may be reused multiple times in the segmentation.
 You may assume the dictionary does not contain duplicate words. """
 
+from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -21,13 +22,41 @@ def word_break_v1(s, word_dict):
     def break_word(i):
         if i == n:
             return True
-        for j in range(i + 1, n + 1):
+        for j in range(i + 1, n + 1):  # We go up to n + 1 to guarantee that the entire string is processed
             if s[i:j] in word_dict and break_word(j):
                 return True
         return False
 
     n = len(s)
     word_dict = set(word_dict)
+    return break_word(0)
+
+
+def word_break_v2(s, word_dict):
+    """ In the previous approach we can see that many sub problems were redundant, i.e we were calling the recursive
+        function multiple times for a particular string. To avoid this we can use memoization method, where an array
+        memo is used to store the result of the sub problems. Now, when the function is called again for a particular
+        string, value will be fetched and returned using the memo array, if its value has been already evaluated.
+        With memoization many redundant sub problems are avoided and recursion tree is pruned and thus it reduces the
+        time complexity by a large factor.
+    Time complexity: O(N ** 2)
+    Space complexity: O(N)
+    """
+
+    def break_word(i):
+        if i == n:
+            return True
+        if i in memo:
+            return memo[i]
+        for j in range(i + 1, n + 1):
+            if s[i:j] in word_dict and break_word(j):
+                memo[i] = True
+                return True
+        memo[i] = False
+        return False
+
+    n = len(s)
+    word_dict, memo = set(word_dict), defaultdict(bool)
     return break_word(0)
 
 
@@ -38,6 +67,7 @@ class Test(unittest.TestCase):
     def test_subsets(self):
         for test_string, test_dict, result in self.data:
             self.assertEqual(result, word_break_v1(test_string, test_dict))
+            self.assertEqual(result, word_break_v2(test_string, test_dict))
 
 
 if __name__ == '__main__':
