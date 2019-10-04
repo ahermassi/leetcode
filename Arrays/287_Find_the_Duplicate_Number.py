@@ -32,7 +32,7 @@ def find_duplicate_v3(nums):
         Because each number in nums is between 11 and nn, it will necessarily point to an index that exists. Therefore,
         the list can be traversed infinitely, which implies that there is a cycle. Additionally, because 0 cannot
         appear as a value in nums, nums[0] cannot be part of the cycle. Therefore, traversing the array in this manner
-        from nums[0] is equivalent to traversing a cyclic linked list.
+        from nums[0] is equivalent to traversing a cyclic linked list. nums[a] = b can be seen as a.next = b
         Note: We need second loop because in first loop both pointers might end up at the same index and hence we will
         get a number which might not be a duplicate. The first loop just gives us the intersection of the indexes, the
         second loop returns the index to the duplicate number.
