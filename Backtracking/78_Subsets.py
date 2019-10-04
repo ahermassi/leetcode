@@ -35,12 +35,29 @@ def subsets_v1(nums):
     return res
 
 
+def subsets_v2(nums):
+    """ DFS recursively.
+    Time complexity: O(2 ** N)
+    Space complexity: O(N) for call stack
+    """
+
+    def dfs(index, path):
+        res.append(path)
+        for i in range(index, len(nums)):
+            dfs(i + 1, path + [nums[i]])
+
+    res = []
+    dfs(0, [])
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3], [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]])]
 
     def test_subsets(self):
         for test_array, result in self.data:
             self.assertEqual(result, sorted(subsets_v1(test_array)))
+            self.assertEqual(result, sorted(subsets_v2(test_array)))
 
 
 if __name__ == '__main__':
