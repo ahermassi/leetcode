@@ -5,6 +5,7 @@ put(key, value) - Set or insert the value if the key is not already present. Whe
 should invalidate the least recently used item before inserting a new item.
 The cache is initialized with a positive capacity. """
 
+from collections import OrderedDict
 import unittest2 as unittest
 
 
@@ -81,6 +82,50 @@ class LRUCacheV1(object):
         node.prev = p
         node.next = self.tail
         self.tail.prev = node
+
+
+class LRUCacheV2(object):
+    """ We're asked to implement the structure which provides the following operations in O(1) time :
+            Get the key / Check if the key exists
+            Put the key
+            Delete the first added key
+        The first two operations in O(1) time are provided by the standard hash map, and the last one - by linked list.
+        There is a structure called ordered dictionary, it combines behind both hash map and linked list. In Python
+        this structure is called OrderedDict
+
+    """
+
+    def __init__(self, capacity):
+        """
+        :type capacity: int
+        """
+        self.dict = OrderedDict()
+        self.capacity = capacity
+
+    def get(self, key):
+        """
+        :type key: int
+        :rtype: int
+        """
+        if key in self.dict:
+            val = self.dict[key]
+            self.dict.pop(key)  # Remove the element ..
+            self.dict[key] = val  # and put it back to produce a new order in the dict
+            return val
+        return -1
+
+    def put(self, key, value):
+        """
+        :type key: int
+        :type value: int
+        :rtype: None
+        """
+        if key in self.dict:
+            self.dict.pop(key)
+        elif len(self.dict) == self.capacity:  # Full dictionary
+            self.dict.popitem(last=False)  # The popitem() method for ordered dictionaries returns and removes a (
+            # key, value) pair. The pairs are returned in LIFO order if last is true or FIFO order if false.
+        self.dict[key] = value
 
 
 class Test(unittest.TestCase):
