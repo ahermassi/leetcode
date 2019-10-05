@@ -60,6 +60,27 @@ def word_break_v2(s, word_dict):
     return break_word(0)
 
 
+def word_break_v3(s, word_dict):
+    """ The intuition behind this approach is that the given problem (s) can be divided into subproblems s1 and s2. If
+        these sub problems individually satisfy the required conditions, the complete problem, ss also satisfies the
+        same. e.g. 'catsanddog' can be split into two substrings 'catsand', 'dog'. The sub problem 'catsand' can be
+        further divided into 'cats','and', which individually are a part of the dictionary making 'catsand' satisfy the
+        condition. Going further backwards, 'catsand', 'dog' also satisfy the required criteria individually leading to
+        the complete string 'catsanddog' also to satisfy the criteria.
+    Time complexity: O(N ** 2)
+    Space complexity: O(N) for dp array
+
+    """
+    dp = [False] * (len(s) + 1)
+    dp[0] = True
+    for i in range(len(s)):
+        if dp[i]:
+            for j in range(i + 1, len(s) + 1):
+                if s[i:j] in word_dict:
+                    dp[j] = True
+    return dp[-1]
+
+
 class Test(unittest.TestCase):
     data = [('leetcode', ['leet', 'code'], True), ('applepenapple', ['apple', 'pen'], True),
             ('catsandog', ['cats', 'dog', 'sand', 'and', 'cat'], False)]
@@ -68,6 +89,7 @@ class Test(unittest.TestCase):
         for test_string, test_dict, result in self.data:
             self.assertEqual(result, word_break_v1(test_string, test_dict))
             self.assertEqual(result, word_break_v2(test_string, test_dict))
+            self.assertEqual(result, word_break_v3(test_string, test_dict))
 
 
 if __name__ == '__main__':
