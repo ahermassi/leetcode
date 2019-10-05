@@ -61,15 +61,15 @@ def word_break_v2(s, word_dict):
 
 
 def word_break_v3(s, word_dict):
-    """ The intuition behind this approach is that the given problem (s) can be divided into subproblems s1 and s2. If
-        these sub problems individually satisfy the required conditions, the complete problem, ss also satisfies the
+    """ Dynamic programming approach.
+        The intuition behind this approach is that the given problem (s) can be divided into sub problems s1 and s2. If
+        these sub problems individually satisfy the required conditions, the complete problem, s also satisfies the
         same. e.g. 'catsanddog' can be split into two substrings 'catsand', 'dog'. The sub problem 'catsand' can be
         further divided into 'cats','and', which individually are a part of the dictionary making 'catsand' satisfy the
         condition. Going further backwards, 'catsand', 'dog' also satisfy the required criteria individually leading to
         the complete string 'catsanddog' also to satisfy the criteria.
     Time complexity: O(N ** 2)
     Space complexity: O(N) for dp array
-
     """
     dp = [False] * (len(s) + 1)
     dp[0] = True
