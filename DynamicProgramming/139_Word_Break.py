@@ -62,6 +62,8 @@ def word_break_v2(s, word_dict):
 
 def word_break_v3(s, word_dict):
     """ Dynamic programming approach.
+        d[i] is True if there is a word in the dictionary that ends at ith index of s AND d is also True at the
+        beginning of the word.
         The intuition behind this approach is that the given problem (s) can be divided into sub problems s1 and s2. If
         these sub problems individually satisfy the required conditions, the complete problem, s also satisfies the
         same. e.g. 'catsanddog' can be split into two substrings 'catsand', 'dog'. The sub problem 'catsand' can be
