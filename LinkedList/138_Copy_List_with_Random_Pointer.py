@@ -71,4 +71,51 @@ def copy_random_list_v2(head):
     return copies[head]
 
 
+def copy_random_list_v3(head):
+    """ Instead of a separate dictionary to keep the old node --> new node mapping, we can tweak the original linked
+        list and keep every cloned node next to its original node. This interleaving of old and new nodes allows us to
+        solve this problem without any extra space.
+        1- Traverse the original list and clone the nodes as you go and place the cloned copy next to its original node.
+           This new linked list is essentially a interweaving of original and cloned nodes.
+        2- Iterate the list having both the new and old nodes intertwined with each other and use the original nodes'
+           random pointers to assign references to random pointers for cloned nodes. For eg. If B has a random pointer
+           to A, this means B' has a random pointer to A'.
+        3- Now that the random pointers are assigned to the correct node, the next pointers need to be correctly
+        assigned to unweave the current linked list and get back the original list and the cloned list.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    if not head:
+        return None
+    # Creating a new weaved list of original and copied nodes.
+    temp = head
+    while temp:
+        node = Node(temp.val, temp.next, None)   # Cloned node
+        # Inserting the cloned node just next to the original node.
+        # If A->B->C is the original linked list,
+        # Linked list after weaving cloned nodes would be A->A'->B->B'->C->C'
+        node.next = temp.next
+        temp.next = node
+        temp = temp.next.next
+    temp = head
+    # Now link the random pointers of the new nodes created.
+    # Iterate the newly created list and use the original nodes random pointers,
+    # to assign references to random pointers for cloned nodes.
+    while temp:
+        if temp.random:
+            temp.next.random = temp.random.next
+        temp = temp.next.next
+    # Unweave the linked list to get back the original linked list and the cloned list.
+    # i.e. A->A'->B->B'->C->C' would be broken to A->B->C and A'->B'->C'
+    ptr_old_list = head
+    ptr_new_list = head.next
+    new_head = head.next
+    while ptr_old_list:
+        ptr_old_list.next = ptr_old_list.next.next
+        ptr_new_list.next = ptr_new_list.next.next if ptr_new_list.next else None
+        ptr_old_list = ptr_old_list.next
+        ptr_new_list = ptr_new_list.next
+    return new_head
+
+
 
