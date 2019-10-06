@@ -36,7 +36,7 @@ def convert(s, num_rows):
 class Test(unittest.TestCase):
     data = [('PAYPALISHIRING', 3, 'PAHNAPLSIIGYIR'), ('PAYPALISHIRING', 4, 'PINALSIGYAHRPI')]
 
-    def test_is_alien_sorted1(self):
+    def test_convert(self):
         for test_string, test_rows, result in self.data:
             self.assertEqual(result, convert(test_string, test_rows))
 
