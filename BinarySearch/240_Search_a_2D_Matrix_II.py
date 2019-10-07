@@ -47,6 +47,37 @@ def search_matrix_v1(matrix, target):
     return search_submatrix(0, len(matrix[0]) - 1, 0, len(matrix) - 1)
 
 
+def search_matrix_v2(matrix, target):
+    """ Because the rows and columns of the matrix are sorted (from left-to-right and top-to-bottom, respectively), we
+        can prune O(m) or O(n) elements when looking at any particular value.
+        First, we initialize a (row,col) pointer to the bottom-left of the matrix. Then, until we find target and
+        return True (or the pointer points to a (row,col) that lies outside of the dimensions of the matrix), we do the
+        following: if the currently-pointed-to value is larger than target we can move one row "up". Otherwise, if the
+        currently-pointed-to value is smaller than target, we can move one column "right". It is not too tricky to see
+        why doing this will never prune the correct answer; because the rows are sorted from left-to-right, we know
+        that every value to the right of the current value is larger. Therefore, if the current value is already larger
+        than target, we know that every value to its right will also be too large. A very similar argument can be made
+        for the columns, so this manner of search will always find target in the matrix (if it is present).
+    Time complexity: O(N + M), the key to the time complexity analysis is noticing that, on every iteration (during
+    which we do not return True) either row or col is is decremented/incremented exactly once. Because row can only be
+    decremented N times and col can only be incremented M times before causing the while loop to terminate, the loop
+    cannot run for more than N + M iterations.
+    Space complexity: O(1)
+    """
+    if not matrix or not matrix[0]:
+        return False
+    n, m = len(matrix), len(matrix[0])
+    row, col = n - 1, 0
+    while row >= 0 and col < m:
+        if matrix[row][col] == target:
+            return True
+        if matrix[row][col] < target:
+            col += 1
+        else:
+            row -= 1
+    return False
+
+
 class Test(unittest.TestCase):
     data = [([
   [1,   4,  7, 11, 15],
@@ -67,6 +98,7 @@ class Test(unittest.TestCase):
     def test_search_matrix(self):
         for test_matrix, test_target, result in self.data:
             self.assertEqual(result, search_matrix_v1(test_matrix, test_target))
+            self.assertEqual(result, search_matrix_v2(test_matrix, test_target))
 
 
 if __name__ == '__main__':
