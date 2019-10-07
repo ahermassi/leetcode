@@ -26,12 +26,34 @@ def length_of_LIS_v1(nums):
     return max_len
 
 
+def length_of_LIS_v2(nums):
+    """ For an explanation:
+        https://leetcode.com/problems/longest-increasing-subsequence/discuss/74824/JavaPython-Binary-search-O(nlogn)-time-with-explanation
+    Time complexity: O(N logN), binary search takes logN time and it is called N times
+    Space complexity: O(N)
+    """
+    increasing_subsequence = [0] * len(nums)
+    size = 0
+    for x in nums:
+        left, right = 0, size
+        while left != right:
+            mid = (left + right) // 2
+            if increasing_subsequence[mid] < x:
+                left = mid + 1
+            else:
+                right = mid
+        increasing_subsequence[left] = x
+        size = max(left + 1, size)
+    return size
+
+
 class Test(unittest.TestCase):
     data = [([10, 9, 2, 5, 3, 7, 101, 18], 4)]
 
     def test_length_of_LIS(self):
         for test_array, result in self.data:
             self.assertEqual(result, length_of_LIS_v1(test_array))
+            self.assertEqual(result, length_of_LIS_v2(test_array))
 
 
 if __name__ == '__main__':
