@@ -27,7 +27,13 @@ def length_of_LIS_v1(nums):
 
 
 def length_of_LIS_v2(nums):
-    """ For an explanation:
+    """ This approach is known as Patience Sorting.
+        We try to build increasing_subsequence where elements are sorted increasingly. We iterate over nums array. If
+        the current element in greater than the largest (last) element in increasing_subsequence, we simply append it.
+        Otherwise, we determine the insertion index of the current element in increasing_subsequence if we were to keep
+        increasing_subsequence sorted, using binary search. We eventually end up with a list of elements sorted
+        increasingly whose length is the length of (one of) longest increasing subsequence in nums.
+        For an explanation:
         https://leetcode.com/problems/longest-increasing-subsequence/discuss/74824/JavaPython-Binary-search-O(nlogn)-time-with-explanation
     Time complexity: O(N logN), binary search takes logN time and it is called N times
     Space complexity: O(N)
@@ -35,6 +41,7 @@ def length_of_LIS_v2(nums):
     increasing_subsequence = [0] * len(nums)
     size = 0
     for x in nums:
+        # Binary search
         left, right = 0, size
         while left != right:
             mid = (left + right) // 2
