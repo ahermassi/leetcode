@@ -46,6 +46,71 @@ def sort_list_v1(head):
     return merge(left, right)
 
 
+def sort_list_v2(head):
+    """ This solution is bottom-up merge sort.It first merges pairs of adjacent arrays of 1 elements. Then merges pairs
+    of adjacent arrays of 2 elements. Next merges pairs of adjacent arrays of 4 elements... Until the whole array is
+    merged.
+    http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/7-Sort/merge-sort5.html
+    Time complexity: O(N logN)
+    Space complexity: O(1)
+    """
+
+    # merge 2 sorted lists, and append the result to head
+    # return the tail
+    def merge2(p1, p2, head):
+        dummy = ListNode(0)
+        p = dummy
+        while p1 and p2:
+            if p1.val <= p2.val:
+                p.next = p1
+                p1 = p1.next
+                p = p.next
+            else:
+                p.next = p2
+                p2 = p2.next
+                p = p.next
+        p.next = p1 or p2
+        head.next = dummy.next
+        while p.next:
+            p = p.next
+        return p
+
+    # divide the linked list into two lists
+    # first linked list contains n nodes
+    # return the head of second linked list
+    def split(head, n):
+        for _ in range(n - 1):
+            if head:
+                head = head.next
+            else:
+                break
+        if not head:
+            return None
+        second = head.next
+        head.next = None
+        return second
+
+    if not head or not head.next:
+        return head
+    dummy = ListNode(0)
+    dummy.next = head
+    tmp = head
+    length = 0
+    while tmp:
+        tmp = tmp.next
+        length += 1
+    step = 1
+    while step < length:
+        cur, tail = dummy.next, dummy
+        while cur:
+            left = cur
+            right = split(left, step)
+            cur = split(right, step)
+            tail = merge2(left, right, tail)
+        step *= 2
+    return dummy.next
+
+
 class Test(unittest.TestCase):
     head = ListNode(-1)
     head.next = ListNode(5)
