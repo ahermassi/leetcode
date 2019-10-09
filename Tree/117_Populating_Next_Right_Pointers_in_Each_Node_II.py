@@ -6,8 +6,8 @@ struct Node {
   Node *right;
   Node *next;
 }
-Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
-
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be
+set to NULL.
 Initially, all next pointers are set to NULL.
 """
 
@@ -24,7 +24,7 @@ class Node(object):
 def connect(root):
     """ The algorithm is a BFS or level order traversal. We go through the tree level by level. node is the pointer in
         the parent level, tail is the tail pointer in the child level.
-        The parent level can be view as a singly linked list or queue, which we can traversal easily with a pointer.
+        The parent level can be viewed as a singly linked list or queue, which we can traverse easily with a pointer.
         Connect the tail with every one of the possible nodes in child level, update it only if the connected node is
         not None. Do this one level by one level. The whole thing is quite straightforward.
     Time complexity: O(N)
