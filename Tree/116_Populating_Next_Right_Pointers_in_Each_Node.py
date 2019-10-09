@@ -54,3 +54,17 @@ def connect_v2(root):
             next_queue.extend([kid for kid in (node.left, node.right) if kid])
         queue = next_queue
     return root
+
+
+def connect_v3(root):
+    """ Doing it recursively. We use the fact that the tree is perfect binary tree in the base case of recursion.
+    Time complexity: O(N)
+    Space complexity: O(logN) as recursion tree can go as deep as height of the tree
+    """
+    if root and root.left and root.right:
+        root.left.next = root.right
+        if root.next:
+            root.right.next = root.next.left
+        root.left = connect_v3(root.left)
+        root.right = connect_v3(root.right)
+    return root
