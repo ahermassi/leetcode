@@ -11,6 +11,8 @@ Populate each next pointer to point to its next right node. If there is no next 
 set to NULL.
 Initially, all next pointers are set to NULL. """
 
+from collections import deque
+
 
 def connect_v1(root):
     """ Since we are manipulating tree nodes on the same level, it's easy to come up with a very standard BFS solution
@@ -33,4 +35,22 @@ def connect_v1(root):
         else:  # Exchange cur and next every time cur is the last node at each level
             cur = next
             next = next.left
+    return root
+
+
+def connect_v2(root):
+    """ Standard BFS using Python deque.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not root:
+        return None
+    queue = deque([root])
+    while queue:
+        next_queue = deque()
+        while queue:
+            node = queue.popleft()
+            node.next = queue[0] if queue else None
+            next_queue.extend([kid for kid in (node.left, node.right) if kid])
+        queue = next_queue
     return root
