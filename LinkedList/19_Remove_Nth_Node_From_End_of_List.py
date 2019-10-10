@@ -11,7 +11,7 @@ class ListNode(object):
 
 
 def remove_nth_from_end_v1(head, n):
-    """ Two pass approach.
+    """ Two-pass approach.
         We notice that the problem could be simply reduced to another one : Remove the (L - n + 1)th node from the
         beginning in the list , where L is the list length. This problem is easy to solve once we found list length L.
     Time complexity: O(L), where L is list length
@@ -21,13 +21,34 @@ def remove_nth_from_end_v1(head, n):
     while temp:
         length += 1
         temp = temp.next
-    if n == length:
+    if n == length:  # This is for the case of n == length of list, which means removing head of list
         return head.next
     length -= n
     temp = head
     for _ in range(length - 1):
         temp = temp.next
     temp.next = temp.next.next
+    return head
+
+
+def remove_nth_from_end_v2(head, n):
+    """ One-pass approach.
+        The above algorithm could be optimized to one pass. Instead of one pointer, we could use two pointers. The
+        first pointer advances the list by n+1 steps from the beginning, while the second pointer starts from the
+        beginning of the list. Now, both pointers are exactly separated by n nodes apart. We maintain this constant gap
+        by advancing both pointers together until the first pointer arrives past the last node. The second pointer will
+        be pointing at the nnth node counting from the last.
+    Time complexity: O(L), where L is list length
+    Space complexity: O(1)
+    """
+    slow, fast = head, head
+    for _ in range(n):
+        fast = fast.next
+    if not fast:
+        return head.next
+    while fast.next:
+        slow, fast = slow.next, fast.next
+    slow.next = slow.next.next
     return head
 
 
