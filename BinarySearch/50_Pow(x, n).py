@@ -28,6 +28,22 @@ def my_pow_v1(x, n):
     return get_power(x, n)
 
 
+def my_pow_v2(x, n):
+    """ Iterative Fast Power.
+    Time complexity: O(logn)
+    Space complexity: O(1)
+    """
+    x = 1 / x if n < 0 else x
+    n = -n if n < 0 else n
+    res = 1
+    while n:
+        if n % 2 == 1:
+            res *= x
+        x *= x
+        n /= 2
+    return res
+
+
 class Test(unittest.TestCase):
     data = [(2.00000, 10, 1024.00000), (2.10000, 3, 9.261000000000001), (2.00000, -2, 0.25000)]
 
