@@ -35,8 +35,8 @@ def max_product_v2(A):
         of array.
         If the number of negative values is odd, the result can be reached from either start or end of array, split by
         that negative value.
-        This approach handles the first case by counting from both ends of array. It handles the second with the 'or 1'
-        clause that resets the value any time A[i - 1] or B[i - 1] are 0.
+        This approach handles the first case by multiplying from both ends of array. It handles the second with the
+        'or 1' clause that resets the product to 1 any time A[i - 1] or B[i - 1] are 0.
     Time complexity: O(N)
     Space complexity: O(N)
     """
