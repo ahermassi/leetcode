@@ -27,12 +27,33 @@ def max_product_v1(nums):
     return global_max
 
 
+def max_product_v2(A):
+    """ Calculate prefix product in A. Calculate suffix product in A. Return the max.
+        It turns out that the only reason you'd ever need to use a sub-array is if there was an odd number of negative
+        numbers in the array or a 0.
+        If the number of negative values is even, the result is the total product, can be reached from start and end
+        of array.
+        If the number of negative values is odd, the result can be reached from either start or end of array, split by
+        that negative value.
+        This approach handles the first case by counting from both ends of array. It handles the second with the 'or 1'
+        clause that resets the value any time A[i - 1] or B[i - 1] are 0.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    B = A[::-1]
+    for i in range(1, len(A)):
+        A[i] *= A[i - 1] or 1
+        B[i] *= B[i - 1] or 1
+    return max(A + B)
+
+
 class Test(unittest.TestCase):
     data = [([2, 3, -2, 4], 6), ([-2, 0, -1], 0)]
 
     def test_max_product(self):
         for test_array, result in self.data:
             self.assertEqual(result, max_product_v1(test_array))
+            self.assertEqual(result, max_product_v2(test_array))
 
 
 if __name__ == '__main__':
