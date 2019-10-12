@@ -94,7 +94,7 @@ class Test(unittest.TestCase):
     data = [('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog'], 5),
             ('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log'], 0)]
 
-    def test_max_product(self):
+    def test_ladder_length(self):
         for test_begin_word, test_end_word, test_word_list, result in self.data:
             self.assertEqual(result, ladder_length_v1(test_begin_word, test_end_word, test_word_list))
             self.assertEqual(result, ladder_length_v2(test_begin_word, test_end_word, test_word_list))
