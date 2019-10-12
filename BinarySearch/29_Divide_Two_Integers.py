@@ -42,7 +42,7 @@ def divide(dividend, divisor):
             substract += substract
             count += count
     if not positive:
-        return max(-ans, -2147483648)  # Dealing with case ans = Integer.MAX_VALUE
+        return max(-ans, -2147483648)  # Dealing with case ans > Integer.MAX_VALUE
     return min(ans, 2147483647)
 
 
