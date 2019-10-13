@@ -35,7 +35,7 @@ def my_atoi(str):
 class Test(unittest.TestCase):
     data = [('42', 42), ('   -42', -42), ('4193 with words', 4193), ('words and 987', 0), ('-91283472332', -2147483648)]
 
-    def test_divide(self):
+    def test_my_atoi(self):
         for test_string, result in self.data:
             self.assertEqual(result, my_atoi(test_string))
 
