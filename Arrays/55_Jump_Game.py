@@ -6,7 +6,7 @@ import unittest2 as unittest
 
 
 def can_jump_v1(nums):
-    """ Idea is to work backwards from the last index. Keep track of the smallest index 'last_pos' that can "jump" to
+    """ The idea is to work backwards from the last index. Keep track of the smallest index 'last_pos' that can "jump" to
         the last index. Check whether the current index i can jump to this smallest index.
     Time complexity: O(N)
     Space complexity: O(1)
