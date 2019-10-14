@@ -11,9 +11,11 @@ import unittest2 as unittest
 
 
 def least_interval(tasks, n):
-    """ The main idea is to schedule the most frequent tasks as frequently as possible. Begin with scheduling the most
-        frequent task. Then cool-off for n, and in that cool-off period schedule tasks in order of frequency, or if no
-        tasks are available, then be idle.
+    """ The main idea is to schedule the most frequent tasks as frequently as possible. The reason for this is that
+        if we run the most frequent task first, we have a better chance of not running into the idle state. So ideally
+        the CPU needs to be idle as little as possible.
+        Begin with scheduling the most frequent task. Then cool-off for n, and in that cool-off period schedule tasks
+        in order of frequency, or if no tasks are available, then be idle.
         The trick is that Python does not have a max heap queue, so we must make every number's negative value when we
         add it into the heap.
         We start by picking up the largest task from the heap for current execution and increment the 'worktime as well.
