@@ -34,12 +34,43 @@ def min_sub_array_len_v1(s, nums):
     return res if res != float('inf') else 0
 
 
+def min_sub_array_len_v2(s, nums):
+    """ Use nums[i] store the sum of nums from 0 to i, then nums is a sorted array, and then we can use binary search.
+        Then, a sub array sum can expressed as the difference between two cumulative sum. Hence, given a start index
+        for the cumulative sum array, the other end index can be searched using binary search.
+    Time complexity: O(N logN), the time required is O(N) for iteration over the array and O(logN) for finding the
+    sub array for each index using binary search.
+    Space complexity: O(1)
+    """
+
+    def find_left(left, right, target):
+        while left < right:
+            mid = (left + right) // 2
+            if target - nums[mid] >= s:
+                left = mid + 1
+            else:
+                right = mid
+        return left
+
+    res = float('inf')
+    for i in range(1, len(nums)):  # Cumulative sum, resulting in a sorted nums array
+        nums[i] += nums[i - 1]
+    left = 0
+    for i, num in enumerate(nums):
+        if num >= s:  # If cumulative sum up to this index i is greater than s, then i should be the right end of a
+            # sub array that satisfies the problem property. Use binary search to find its left end.
+            left = find_left(left, i, num)
+            res = min(res, i - left + 1)
+    return res if res != float('inf') else 0
+
+
 class Test(unittest.TestCase):
     data = [(7, [2, 3, 1, 2, 4, 3], 2)]
 
     def test_min_sub_array_len(self):
         for test_sum, test_nums, result in self.data:
             self.assertEqual(result, min_sub_array_len_v1(test_sum, test_nums))
+            self.assertEqual(result, min_sub_array_len_v2(test_sum, test_nums))
 
 
 if __name__ == '__main__':
