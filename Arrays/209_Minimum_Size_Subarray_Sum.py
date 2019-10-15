@@ -4,6 +4,9 @@ which the sum ≥ s. If there isn't one, return 0 instead. """
 import unittest2 as unittest
 
 
+# Refer to this thread for a summary of sliding windows techniques:
+# https://leetcode.com/problems/minimum-window-substring/discuss/26808/Here-is-a-10-line-template-that-can-solve-most-'substring'-problems
+
 def min_sub_array_len_v1(s, nums):
     """ Keep 2 pointers, one for the start and another for the end of the current sub array (window) and make optimal
         moves so as to keep the sum greater than s as well as maintain the lowest size possible.
