@@ -7,7 +7,7 @@ from heapq import heappush, heappop
 import unittest2 as unittest
 
 
-def reorganize_string_v1(S):
+def reorganize_string(S):
     """ This is similar to 621- Task Scheduler problem, with the cooling interval is equal to 2.
         This is a greedy approach that tries to write the most common letter followed by the second most common letter
         and so on.
@@ -44,7 +44,7 @@ class Test(unittest.TestCase):
 
     def test_reorganize_string(self):
         for test_string, result in self.data:
-            self.assertEqual(result, reorganize_string_v1(test_string))
+            self.assertEqual(result, reorganize_string(test_string))
 
 
 if __name__ == '__main__':
