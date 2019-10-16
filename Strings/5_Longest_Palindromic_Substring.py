@@ -32,7 +32,7 @@ def longest_palindrome_v2(s):
         We define dp[i][j] as following:
         dp[i][j] is True is substring s[i:j + 1] is palindrome
         Therefore:
-        dp[i][j] = s[i] == s[j] and dp[i+1][j-1]
+        dp[i][j] = (s[i] == s[j]) AND (dp[i+1][j-1])
         This yields a straight forward DP solution, which we first initialize the one letter palindromes, and work our
         way up finding all two letters palindromes, and so on...
     Time complexity: O(N ** 2)
