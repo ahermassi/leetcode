@@ -28,12 +28,40 @@ def count_substrings_v1(s):
     return res
 
 
+def count_substrings_v2(s):
+    """ Bottom-up Dynamic Programming.
+        We observe how we can avoid unnecessary re-computation while validating palindromes. Consider the case "ababa".
+        If we already knew that "bab" is a palindrome, it is obvious that "ababa" must be a palindrome since the two
+        left and right end letters are the same.
+        We define dp[i][j] as following:
+        dp[i][j] is True is substring s[i:j + 1] is palindrome
+        Therefore:
+        dp[i][j] = (s[i] == s[j]) AND (dp[i+1][j-1])
+        This yields a straight forward DP solution, which we first initialize the one letter palindromes, and work our
+        way up finding all two letters palindromes, and so on...
+    Time complexity: O(N ** 2)
+    Space complexity: O(N ** 2) to store dp array
+    """
+    n, res = len(s), 0
+    dp = [[False] * n for _ in range(n)]
+    for i in range(n):
+        dp[i][i] = True
+        res += 1
+    for i in reversed(range(n)):
+        for j in range(i + 1, n):
+            if s[i] == s[j] and (j - i < 2 or dp[i + 1][j - 1]):
+                dp[i][j] = True
+                res += 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [('abc', 3), ('aaa', 6)]
 
     def test_count_substrings(self):
         for test_string, result in self.data:
             self.assertEqual(result, count_substrings_v1(test_string))
+            self.assertEqual(result, count_substrings_v2(test_string))
 
 
 if __name__ == '__main__':
