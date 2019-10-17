@@ -43,6 +43,19 @@ def top_k_frequent_v1(words, k):
     # as the heap is a min heap
 
 
+def top_k_frequent_v2(words, k):
+    """ Count the frequency of each word, and sort the words with a custom ordering relation that uses these
+    frequencies. Then take the best k of them.
+    Time complexity: O(N logN), where N is the length of words. We count the frequency of each word in O(N) time, then
+    we sort the given words in O(N logN) time
+    Space complexity: O(N)
+    """
+    counter = Counter(words)
+    keys = counter.keys()
+    keys = sorted(keys, key=lambda word: (-counter[word], word))
+    return keys[:k]
+
+
 class Test(unittest.TestCase):
     data = [(['i', 'love', 'leetcode', 'i', 'love', 'coding'], 2, ['i', 'love']),
             (['the', 'day', 'is', 'sunny', 'the', 'the', 'the', 'sunny', 'is', 'is'], 4, ['the', 'is', 'sunny', 'day'])]
@@ -50,6 +63,7 @@ class Test(unittest.TestCase):
     def test_remove_stones(self):
         for test_words, test_k, result in self.data:
             self.assertEqual(result, top_k_frequent_v1(test_words, test_k))
+            self.assertEqual(result, top_k_frequent_v2(test_words, test_k))
 
 
 if __name__ == '__main__':
