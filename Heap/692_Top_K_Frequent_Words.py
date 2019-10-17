@@ -44,6 +44,21 @@ def top_k_frequent_v1(words, k):
 
 
 def top_k_frequent_v2(words, k):
+    """ We build a max heap of size N, length of words list. To get the k most frequent words, we simply pop the first
+        k items from the heap.
+    Time complexity: O(k logN), we pop k elements from a heap of size N
+    Space complexity: O(N)
+    """
+    heap, res = [], []
+    counter = Counter(words)
+    for key, value in counter.items():
+        heappush(heap, (-value, key))
+    for _ in range(k):
+        res.append(heappop(heap)[1])
+    return res
+
+
+def top_k_frequent_v3(words, k):
     """ Count the frequency of each word, and sort the words with a custom ordering relation that uses these
     frequencies. Then take the best k of them.
     Time complexity: O(N logN), where N is the length of words. We count the frequency of each word in O(N) time, then
@@ -64,6 +79,7 @@ class Test(unittest.TestCase):
         for test_words, test_k, result in self.data:
             self.assertEqual(result, top_k_frequent_v1(test_words, test_k))
             self.assertEqual(result, top_k_frequent_v2(test_words, test_k))
+            self.assertEqual(result, top_k_frequent_v3(test_words, test_k))
 
 
 if __name__ == '__main__':
