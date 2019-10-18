@@ -38,3 +38,27 @@ def tree_to_doubly_list_v1(root):
     prev.right = dummy.right
     dummy.right.left = prev
     return dummy.right
+
+
+def tree_to_doubly_list_v2(root):
+    """ Same as previous algorithm, but iteratively.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not root:
+        return None
+    dummy = Node(0, None, None)
+    prev = dummy
+    stack, node = [], root
+    while stack or node:
+        while node:
+            stack.append(node)
+            node = node.left
+        node = stack.pop()
+        prev.right = node
+        node.left = prev
+        prev = node
+        node = node.right
+    prev.right = dummy.right
+    dummy.right.left = prev
+    return dummy.right
