@@ -55,6 +55,53 @@ def boundary_of_binary_tree_v1(root):
     return res
 
 
+def boundary_of_binary_tree_v2(root):
+    """ To get nodes from the left boundary, we start from root.left and move left if we can, else right, until we
+        can't move anymore. The right boundary is similar.
+        To get nodes from the leaves, we DFS until we hit a leaf (until node.left and node.right are both None).
+        We should take care to add to our stack in the order (right, left) so that they are popped in the order
+        (left, right).
+        Now armed with all the nodes we could visit, let's visit them in order. As we visit a node, we should skip over
+        the ones we've seen before.
+    Time complexity: O(N), where N is the number of nodes in the tree
+    Space complexity: O(log N) a balanced binary tree, O(N) worst case for skewed binary tree
+    """
+    if not root:
+        return None
+    res = [root.val]
+    left_boundary = []
+    node = root.left
+    while node:
+        left_boundary.append(node.val)
+        node = node.left or node.right
+    right_boundary = []
+    node = root.right
+    while node:
+        right_boundary.append(node.val)
+        node = node.right or node.left
+    leaves, stack = [], [root]
+    while stack:
+        node = stack.pop()
+        if node.val != root.val and not node.left and not node.right:
+            leaves.append(node.val)
+        else:
+            stack.extend([kid for kid in (node.right, node.left) if kid])
+    visited = set()
+
+    def visit(val):
+        if val not in visited:
+            visited.add(val)
+            res.append(val)
+
+    for i in left_boundary:
+        visit(i)
+    for i in leaves:
+        visit(i)
+    for i in reversed(right_boundary):
+        visit(i)
+    return res
+
+
 class Test(unittest.TestCase):
     root = TreeNode(1)
     root.right = TreeNode(2)
