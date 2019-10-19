@@ -33,11 +33,39 @@ def maximal_square_v1(matrix):
     dp, max_len = [[0] * m for _ in range(n)], 0
     for i in range(n):
         for j in range(m):
-            if i == 0 or j == 0:
+            if i == 0 or j == 0:  # First row and first column are not changed as each square whose bottom right is
+                # at first row/column has only 1 element. So if matrix[i][j] == c --> dp[i][j] = c; c in {0, 1}
                 dp[i][j] = int(matrix[i][j])
             elif matrix[i][j] == '1':
-                dp[i][j] = min(dp[i - 1][j - 1], dp[i][j - 1], dp[i - 1][j]) + 1
-            max_len = max(max_len, dp[i][j])
+                dp[i][j] = min(dp[i - 1][j],dp[i][j - 1], dp[i - 1][j - 1]) + 1  # min(top, left, top-left/diagonal) + 1
+                max_len = max(max_len, dp[i][j])
+    return max_len * max_len
+
+# Review the following code. There is a bug somewhere.
+
+
+def maximal_square_v2(matrix):
+    """ In the previous approach for calculating dp of ith row, we are using only the previous element and the (i−1)th
+        row. Therefore, we don't need 2D dp matrix as 1D dp array will be sufficient for this.
+        Initially, the dp array contains all 0's. As we scan the elements of the original matrix across a row, we keep
+        on updating the dp array as per the equation:
+            dp[j] = min(dp[j-1],dp[j],prev)
+        where prev refers to the old dp[j-1]. For every row, we repeat the same process and update in the same dp array.
+    Time complexity: O(N * M)
+    Space complexity: O(M)
+    """
+    if not matrix:
+        return 0
+    n, m = len(matrix), len(matrix[0])
+    dp, max_len = [0] * m, 0
+    prev = 0
+    for i in range(1, n):
+        for j in range(1, m):
+            temp = dp[j]
+            if matrix[i][j] == '1':
+                dp[j] = min(dp[j], dp[j - 1], prev) + 1
+                max_len = max(max_len, dp[j])
+            prev = temp
     return max_len * max_len
 
 
@@ -48,6 +76,7 @@ class Test(unittest.TestCase):
     def test_maximal_square(self):
         for test_matrix, result in self.data:
             self.assertEqual(result, maximal_square_v1(test_matrix))
+            self.assertEqual(result, maximal_square_v2(test_matrix))
 
 
 if __name__ == '__main__':
