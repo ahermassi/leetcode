@@ -22,3 +22,26 @@ def frequency_sort_v1(s):
     return res
 
 
+def frequency_sort_v2(s):
+    """ This solution is based on counting sort.
+        Build a map of characters to the number of times it occurs in the string.
+        Create an array where the index of the array represents how many times that character occurred in the string.
+        Iterate from the end of the array to the beginning, and at each index, append each character to the return
+        string that number of times.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    counter, res = Counter(s), ''
+    bucket = [None] * (len(s) + 1)
+    for key, value in counter.items():
+        if not bucket[value]:
+            bucket[value] = [key]
+        else:
+            bucket[value].append(key)
+    for i in reversed(range(len(bucket))):
+        if bucket[i]:
+            for c in bucket[i]:
+                res += c * i
+    return res
+
+
