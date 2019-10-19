@@ -32,7 +32,8 @@ def frequency_sort_v2(s):
     Space complexity: O(N)
     """
     counter, res = Counter(s), ''
-    bucket = [None] * (len(s) + 1)
+    bucket = [None] * (len(s) + 1)  # Array size is len(s) + 1 because, in the worst case, all characters are the
+    # same, so we end up with an array where only the last index is occupied and that index would be len(s) + 1
     for key, value in counter.items():
         if not bucket[value]:
             bucket[value] = [key]
