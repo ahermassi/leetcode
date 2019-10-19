@@ -15,7 +15,10 @@ def combination_sum_v1(candidates, target):
         Sorting is not for correctness but for speed. What we do by sorting is we limit the range of numbers on which
         we call DFS recursively, as we know the numbers outside the range cannot be in our solution. For small inputs
         this speed up may not be substantial but for larger inputs, sorting will definitely give a faster solution.
-    Time complexity: O(#candidates ^ target)
+    Time complexity: O(#candidates ^ (target/min(candidates))), the largest number of elements in a combination sum
+    would be [min(candidates), min(candidates), min(candidates) ...] (think when candidates = [1, 2, 3] and
+    target = 1000), and to get the upper bound, we can say that for each element in the max length combination array,
+    we can pick from any of the elements we are given.
     Space complexity: Space complexity: O(target) for call stack
     """
 
