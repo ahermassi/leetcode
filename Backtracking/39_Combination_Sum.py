@@ -39,12 +39,37 @@ def combination_sum_v1(candidates, target):
     return res
 
 
+def combination_sum_v2(candidates, target):
+    """ Same as above, but passing an extra index parameter to DFS call to indicate where to start adding candidates.
+        The original candidates array is sorted. And at every step that is taken to complete a path, only elements
+        explored from that points onwards are considered. As a result extending the path always involves adding a
+        larger or equal number to what was previously present. That is why it stays unique.
+    Time complexity: O(#candidates ^ target)
+    Space complexity: Space complexity: O(target) for call stack
+    """
+
+    def dfs(remaining, index, path):
+        if remaining == 0:
+            res.append(path)
+            return
+        for i in range(index, len(candidates)):
+            if candidates[i] > remaining:
+                break
+            dfs(remaining - candidates[i], i, path + [candidates[i]])
+
+    res = []
+    candidates.sort()
+    dfs(target, 0, [])
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([2, 3, 6, 7], 7, [[7], [2, 2, 3]]), ([2, 3, 5], 8, [[2, 2, 2, 2], [2, 3, 3], [3, 5]])]
 
     def test_combination_sum(self):
         for test_candidates, test_target, result in self.data:
             self.assertEqual(sorted(result), combination_sum_v1(test_candidates, test_target))
+            self.assertEqual(sorted(result), combination_sum_v2(test_candidates, test_target))
 
 
 if __name__ == '__main__':
