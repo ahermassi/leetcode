@@ -7,6 +7,8 @@ import unittest2 as unittest
 
 def find_itinerary_v1(tickets):
     """ All the airports are vertices and tickets are directed edges. Then all these tickets form a directed graph.
+        The graph must be Hamiltonian (visit each vertex once and only once) since we know that a Hamiltonian path
+        exists.
         Since the problem asks for lexical order smallest solution, we can put the neighbors in a min-heap. This way we
         always visit the smallest possible neighbor first in our trip.
     Time complexity: O(N logN), where N is the number of tickets
@@ -23,6 +25,10 @@ def find_itinerary_v1(tickets):
         else:
             res.append(stack.pop())
     return res[::-1]
+
+
+def find_itinerary_v2(tickets):
+    pass
 
 
 class Test(unittest.TestCase):
