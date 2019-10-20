@@ -6,6 +6,27 @@ import unittest2 as unittest
 
 
 def min_path_sum_v1(grid):
+    """ Brute force. TLE
+        The Brute Force approach involves recursion. For each element, we consider two paths, rightwards and downwards
+        and find the minimum sum out of those two. It specifies whether we need to take a right step or downward step
+        to minimize the sum.
+            cost(i,j) = grid[i][j] + min(cost(i+1,j), cost(i,j+1))
+    Time complexity: O(2^N * 2^M), for every move, we have at most 2 options
+    Space complexity: O(M + N), recursion of depth M + N
+    """
+
+    def helper(i, j):
+        if i == n or j == m:
+            return float('inf')
+        if i == n - 1 and j == m - 1:
+            return grid[i][j]
+        return grid[i][j] + min(helper(i, j + 1), helper(i + 1, j))
+
+    n, m = len(grid), len(grid[0])
+    return helper(0, 0)
+
+
+def min_path_sum_v2(grid):
     """ Similar to 62- Unique paths.
         dp(i,j) represents the minimum sum of the path from top left to the index (i, j). We start by initializing the
         top left element of dp as the first element of the given matrix. Then for each element starting from the top
@@ -32,7 +53,7 @@ def min_path_sum_v1(grid):
     return dp[n - 1][m - 1]
 
 
-def min_path_sum_v2(grid):
+def min_path_sum_v3(grid):
     """ instead of using a 2D matrix for dp, we can do the same work using a dp array of the row size, since for making
         the current entry all we need is the dp entry for the top and the left element. Thus, we start by initializing
         only the first element of dp as the first element of the given matrix. Then, we start moving towards the right
@@ -56,7 +77,7 @@ def min_path_sum_v2(grid):
     return dp[m - 1]
 
 
-def min_path_sum_v3(grid):
+def min_path_sum_v4(grid):
     """ Instead of using another dp matrix, we can store the minimum sums in the original matrix itself, since we need
         not retain the original matrix here. Thus, the governing equation now becomes:
             grid(i,j) = grid(i,j) + min(grid(i+1,j), grid(i,j+1))
@@ -84,6 +105,8 @@ class Test(unittest.TestCase):
         for test_grid, result in self.data:
             self.assertEqual(result, min_path_sum_v1(test_grid))
             self.assertEqual(result, min_path_sum_v2(test_grid))
+            self.assertEqual(result, min_path_sum_v3(test_grid))
+            self.assertEqual(result, min_path_sum_v4(test_grid))
 
 
 if __name__ == '__main__':
