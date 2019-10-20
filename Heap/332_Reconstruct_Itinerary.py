@@ -28,7 +28,25 @@ def find_itinerary_v1(tickets):
 
 
 def find_itinerary_v2(tickets):
-    pass
+    """ Recursive version of above algorithm.
+        First keep going forward until you get stuck. That's a good main path already. Remaining tickets form cycles
+        which are found on the way back and get merged into that main path.
+    Time complexity: O(N logN)
+    Space complexity: O(N)
+    """
+
+    def travel(airport):
+        arrivals = d[airport]
+        while arrivals:
+            travel(heappop(arrivals))
+        res.append(airport)
+
+    d = defaultdict(list)
+    for origin, dest in tickets:
+        heappush(d[origin], dest)
+    res = []
+    travel('JFK')
+    return res[::-1]
 
 
 class Test(unittest.TestCase):
