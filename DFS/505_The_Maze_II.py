@@ -55,6 +55,10 @@ def shortest_distance_v1(maze, start, destination):
 
 
 def shortest_distance_v2(maze, start, destination):
+    """ DFS. TLE
+        In the average case, BFS would be a much better result because more paths will be pruned since the first few
+        moves.
+    """
     def dfs(i, j):
         for x, y in (-1, 0), (1, 0), (0, -1), (0, 1):
             new_i, new_j, d = i + x, j + y, 0
