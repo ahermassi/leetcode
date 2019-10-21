@@ -5,6 +5,7 @@ destination. The distance is defined by the number of empty spaces traveled by t
 (excluded) to the destination (included). If the ball cannot stop at the destination, return -1. """
 
 from collections import deque
+from heapq import heappop, heappush
 import unittest2 as unittest
 
 
@@ -79,6 +80,40 @@ def shortest_distance_v2(maze, start, destination):
     return res if res != float('inf') else -1
 
 
+def shortest_distance_v3(maze, start, destination):
+    """ Dijkstra's algorithm using priority queue.
+        This is similar to what we did previously. Except that:
+            1- It uses a Priority Queue instead of a normal Queue to find the Node with the least distance from the
+               starting point
+            2- Once that node is popped out from the queue, we know that the distance is definitely the LEAST from the
+               starting point and that value cannot be altered anymore.
+            3- Thus, we can terminate once we the destination node is polled from the queue. If that doesn't happen,
+               it means it didn't reach the destination.
+        Dijkstra's Algorithm seems to be an optimization of the first solution, since we always select the node with
+        the least cost and terminate early when we find the destination.
+    Time complexity: O(N * M * log(N * M))
+    Space complexity: O(N * M), distance array of size N * M is used and heap size can grow up to N * M in worst case.
+    """
+    n, m = len(maze), len(maze[0])
+    distance = [[float('inf') for _ in range(m)] for _ in range(n)]
+    distance[start[0]][start[1]] = 0
+    heap = [(0, start[0], start[1])]
+    while heap:
+        dis, i, j = heappop(heap)
+        if [i, j] == destination:
+            return dis
+        for x, y in (-1, 0), (1, 0), (0, -1), (0, 1):
+            new_i, new_j, d = i + x, j + y, 0
+            while 0 <= new_i < n and 0 <= new_j < m and maze[new_i][new_j] == 0:
+                d += 1
+                new_i += x
+                new_j += y
+            if distance[i][j] + d < distance[new_i - x][new_j - y]:
+                distance[new_i - x][new_j - y] = distance[i][j] + d
+                heappush(heap, (distance[i][j] + d, new_i - x, new_j - y))
+    return -1
+
+
 class Test(unittest.TestCase):
     data = [
         ([[0, 0, 1, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 1, 0], [1, 1, 0, 1, 1], [0, 0, 0, 0, 0]], [0, 4], [4, 4], 12)]
@@ -87,6 +122,7 @@ class Test(unittest.TestCase):
         for test_maze, test_start, test_destination, result in self.data:
             self.assertEqual(result, shortest_distance_v1(test_maze, test_start, test_destination))
             self.assertEqual(result, shortest_distance_v2(test_maze, test_start, test_destination))
+            self.assertEqual(result, shortest_distance_v3(test_maze, test_start, test_destination))
 
 
 if __name__ == '__main__':
