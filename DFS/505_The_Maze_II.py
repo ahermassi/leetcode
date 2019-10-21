@@ -8,6 +8,8 @@ from collections import deque
 from heapq import heappop, heappush
 import unittest2 as unittest
 
+# TODO: Dijkstra's Algorithm. https://leetcode.com/articles/the-maze-ii/
+
 
 def shortest_distance_v1(maze, start, destination):
     """" BFS. DFS version is below but it TLEs.
