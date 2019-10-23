@@ -1,0 +1,49 @@
+""" Given a non-empty array containing only positive integers, find if the array can be partitioned into two subsets
+such that the sum of elements in both subsets is equal. """
+
+import unittest2 as unittest
+
+
+def can_partition_v1(nums):
+    """ This problem is essentially finding whether there are some numbers in a set which sum to a specific value. In
+        this problem, the value is sum/2.
+        Actually, this is a 0/1 knapsack problem. For each number, we can pick it or not. Let us assume that
+        dp[i][j] == whether the specific sum j can be gotten from some of the first i numbers. If we can find such a
+        series of numbers from 0-i whose sum is j, dp[i][j] is true, otherwise it is false.
+        Base case: dp[0][0] is true (zero numbers consist of sum 0 is true)
+        Transition function: For each number, if we don't pick it, dp[i][j] = dp[i-1][j], which means if some of the
+        first i-1 elements has made it to j, dp[i][j] would also make it to j (we can just ignore nums[i]). If we pick
+        nums[i], dp[i][j] = dp[i-1][j-nums[i]], which means that j is composed of the current value nums[i] and the
+        remaining composed of other previous numbers. Thus, the transition function is:
+            dp[i][j] = dp[i-1][j] OR dp[i-1][j-nums[i]]
+    Time complexity: O(N * sum/2)
+    Space complexity: O(N * sum/2)
+    """
+    total = sum(nums)
+    if total % 2 == 1:
+        return False
+    target, n = total // 2, len(nums)
+    dp = [[False for _ in range(target + 1)] for _ in range(n)]
+    dp[0][0] = True
+    for i in range(1, n):
+        dp[i][0] = True
+    for i in range(1, n):
+        for j in range(1, target + 1):
+            if j < nums[i]:
+                dp[i][j] = dp[i - 1][j]
+            else:
+                dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i]]
+    return dp[n - 1][target]
+
+
+class Test(unittest.TestCase):
+    data = [([1, 5, 11, 5], True), ([1, 2, 3, 5], False)]
+
+    def test_can_partition(self):
+        for test_nums, result in self.data:
+            self.assertEqual(result, can_partition_v1(test_nums))
+
+
+if __name__ == '__main__':
+    unittest.main()
+
