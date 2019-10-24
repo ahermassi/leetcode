@@ -12,7 +12,29 @@ def flatten_v1(head):
         Return to p and proceed until finding next node with child.
         Repeat until reaching the end of list.
     Time complexity: O(N)
-    Space complexity: O(N) for the call stack
+    Space complexity: O(1)
+    """
+    temp = head
+    while temp:
+        if temp.child:
+            child = temp.child
+            while child.next:
+                child = child.next
+            nxt = temp.next
+            temp.next = temp.child
+            temp.next.prev = temp
+            temp.child = None
+            child.next = nxt
+            if nxt:
+                child.next.prev = child
+        temp = temp.next
+    return head
+
+
+def flatten_v2(head):
+    """ Recursive version of above algorithm.
+    Time complexity: O(N)
+    Space complexity: O(N) for call stack
     """
     temp = head
     while temp:
@@ -28,4 +50,7 @@ def flatten_v1(head):
                 temp.next.prev = temp
         temp = temp.next
     return head
+
+
+
 
