@@ -5,6 +5,30 @@ import unittest2 as unittest
 
 
 def can_partition_v1(nums):
+    """ Brute force.
+        Each number in the array can be picked or not picked to form the subset of array to have a target sum. Here we
+        can scan through the array, and store the sums of the subsets that include or not include the current number.
+        We can use a set to store the sums to avoid duplicates.
+    Time complexity: O(N * sum/2)
+    Space complexity: O(N * sum/2)
+    """
+    total = sum(nums)
+    if total % 2 == 1:
+        return False
+    target = total / 2
+    sums = {0}
+    for num in nums:
+        sums_with_num = []
+        for s in sums:
+            if num + s == target:
+                return True
+            if num + s < target:
+                sums_with_num.append(num + s)
+        sums.update(sums_with_num)
+    return False
+
+
+def can_partition_v2(nums):
     """ This problem is essentially finding whether there are some numbers in a set which sum to a specific value. In
         this problem, the value is sum/2.
         Actually, this is a 0/1 knapsack problem. For each number, we can pick it or not. Let us assume that
@@ -42,6 +66,7 @@ class Test(unittest.TestCase):
     def test_can_partition(self):
         for test_nums, result in self.data:
             self.assertEqual(result, can_partition_v1(test_nums))
+            self.assertEqual(result, can_partition_v2(test_nums))
 
 
 if __name__ == '__main__':
