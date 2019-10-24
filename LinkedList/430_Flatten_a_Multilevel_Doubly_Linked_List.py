@@ -4,6 +4,16 @@ of their own, and so on, to produce a multilevel data structure, as shown in the
 Flatten the list so that all the nodes appear in a single-level, doubly linked list. You are given the head of the
 first level of the list. """
 
+# Definition for a Node.
+
+
+class Node(object):
+    def __init__(self, val, prev, next, child):
+        self.val = val
+        self.prev = prev
+        self.next = next
+        self.child = child
+
 
 def flatten_v1(head):
     """ Start form the head , move one step each time to the next node.
@@ -11,6 +21,10 @@ def flatten_v1(head):
         p.next, by doing this we merge the child chain back to the main list.
         Return to p and proceed until finding next node with child.
         Repeat until reaching the end of list.
+        This is more like a top down flattening, when encounter a node with child node, we directly flatten the current
+        node, then move to the next node.
+        This solution performs Multiple passes over the list as nodes could be visited more than once, as many as there
+        are levels in the list.
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -32,7 +46,8 @@ def flatten_v1(head):
 
 
 def flatten_v2(head):
-    """ Recursive version of above algorithm.
+    """ Recursive version of above algorithm. This is more like a bottom up flattening or DFS, when we encounter a
+        node with child node, we flatten the child node first, then flatten the current node.
     Time complexity: O(N)
     Space complexity: O(N) for call stack
     """
@@ -40,7 +55,7 @@ def flatten_v2(head):
     while temp:
         if temp.child:
             nxt = temp.next
-            temp.next = flatten_v1(temp.child)
+            temp.next = flatten_v2(temp.child)
             temp.next.prev = temp
             temp.child = None
             while temp.next:
@@ -50,6 +65,33 @@ def flatten_v2(head):
                 temp.next.prev = temp
         temp = temp.next
     return head
+
+
+def flatten_v3(head):
+    """ Stack based solution. It performs a single pass through the list and saves next and child pointers in a stack
+        to connect them to the parent node in each iteration.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not head:
+        return None
+    dummy = Node(0, None, head, None)
+    stack = [head]
+    prev = dummy
+    while stack:
+        root = stack.pop()
+        root.prev = prev  # Connect current node to the previous
+        prev.next = root  # Set previous' next pointer to current node
+        # We append next followed by child so we can pop/process the child node before the next node
+        if root.next:
+            stack.append(root.next)
+            root.next = None  # Disconnect current node from its next because next might change
+        if root.child:
+            stack.append(root.child)
+            root.child = None  # Disconnect current node from its child
+        prev = root  # Set prev to current node so whatever node is processed next is connected to current node
+    dummy.next.prev = None  # Making sure that the prev pointer of the head (which is dummy.next) is NULL
+    return dummy.next
 
 
 
