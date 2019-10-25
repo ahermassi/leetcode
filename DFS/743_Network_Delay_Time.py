@@ -4,7 +4,7 @@ node, and w is the time it takes for a signal to travel from source to target.
 Now, we send a signal from a certain node K. How long will it take for all nodes to receive the signal? If it is
 impossible, return -1 """
 
-from collections import defaultdict
+from collections import defaultdict, deque
 from heapq import heappop, heappush
 import unittest2 as unittest
 
@@ -79,6 +79,25 @@ def network_delay_time_v3(times, N, K):
         for v, w in graph[node]:
             heappush(heap, (t + w, v))
     return -1
+
+
+def network_delay_time_v4(times, N, K):
+    """ This is the standard Dijkstra's algorithm using a normal queue.
+    Time complexity: O(N ** 2 + E), where E is the length of times
+    Space complexity: O(N + E), the size of the graph (O(E)) plus the size of the queue (O(N)) and hash map
+    """
+    graph = defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+    time = {i: float('inf') for i in range(1, N + 1)}
+    queue = deque([(0, K)])
+    while queue:
+        t, node = queue.popleft()
+        if t < time[node]:
+            time[node] = t
+            for v, w in graph[node]:
+                queue.append((t + w, v))
+    return max(time.values()) if max(time.values()) != float('inf') else -1
 
 
 class Test(unittest.TestCase):
