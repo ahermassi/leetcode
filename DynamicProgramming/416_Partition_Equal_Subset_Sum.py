@@ -60,6 +60,25 @@ def can_partition_v2(nums):
     return dp[n - 1][target]
 
 
+def can_partition_v3(nums):
+    """ We can optimize in space. We used a two dimensional array to solve the problem, but we can also use a one
+        dimensional array of size (target+1).
+    Time complexity: O(N * sum/2)
+    Space complexity: O(sum/2)
+    """
+    total = sum(nums)
+    if total % 2 == 1:
+        return False
+    target, n = total // 2, len(nums)
+    dp = [False for _ in range(target + 1)]
+    dp[0] = True
+    for i in range(1, n):
+        for j in range(1, target + 1):
+            if j >= nums[i]:
+                dp[j] = dp[j - 1] or dp[j - nums[i]]
+    return dp[target]
+
+
 class Test(unittest.TestCase):
     data = [([1, 5, 11, 5], True), ([1, 2, 3, 5], False)]
 
@@ -67,6 +86,7 @@ class Test(unittest.TestCase):
         for test_nums, result in self.data:
             self.assertEqual(result, can_partition_v1(test_nums))
             self.assertEqual(result, can_partition_v2(test_nums))
+            self.assertEqual(result, can_partition_v3(test_nums))
 
 
 if __name__ == '__main__':
