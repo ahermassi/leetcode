@@ -23,7 +23,7 @@ def calc_equation_v1(equations, values, queries):
             return -1.0
         if num == denom:
             return 1.0
-        queue, visited = deque([(num, 1.0)]), set()
+        queue, visited = deque([(num, 1.0)]), set()  # A separate 'visited' set for each query
         while queue:
             i, current_product = queue.popleft()
             if i == denom:
@@ -42,6 +42,31 @@ def calc_equation_v1(equations, values, queries):
     return res
 
 
+def calc_equation_v2(equations, values, queries):
+    """ DFS version of above algorithm.
+    Time complexity: TODO
+    Space complexity: TODO
+    """
+
+    def dfs(num, denom, visited, current_product):
+        if num not in graph or denom not in graph or num in visited:
+            return -1.0
+        if num == denom:
+            return current_product
+        visited.add(num)
+        for neighbor, coef in graph[num]:
+            temp = dfs(neighbor, denom, visited, current_product * coef)
+            if temp != -1.0:
+                return temp
+        return -1.0
+
+    graph, visited = defaultdict(list), set()
+    for (num, denom), coef in zip(equations, values):
+        graph[num].append((denom, coef))
+        graph[denom].append((num, 1 / coef))
+    return [dfs(x, y, set(), 1.0) for x, y in queries]  # Note that we have to pass a new 'visited' set for each query
+
+
 class Test(unittest.TestCase):
     data = [([['a', 'b'], ['b', 'c']], [2.0, 3.0], [['a', 'c'], ['b', 'a'], ['a', 'e'], ['a', 'a'], ['x', 'x']],
              [6.0, 0.5, -1.0, 1.0, -1.0])]
@@ -49,6 +74,7 @@ class Test(unittest.TestCase):
     def test_calc_equation(self):
         for test_equations, test_values, test_queries, result in self.data:
             self.assertEqual(result, calc_equation_v1(test_equations, test_values, test_queries))
+            self.assertEqual(result, calc_equation_v2(test_equations, test_values, test_queries))
 
 
 if __name__ == '__main__':
