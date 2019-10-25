@@ -5,6 +5,7 @@ Now, we send a signal from a certain node K. How long will it take for all nodes
 impossible, return -1 """
 
 from collections import defaultdict
+from heapq import heappop, heappush
 import unittest2 as unittest
 
 
@@ -35,12 +36,33 @@ def network_delay_time_v1(times, N, K):
     return max(time.values()) if max(time.values()) != float('inf') else -1
 
 
+def network_delay_time_v2(times, N, K):
+    """ Dijkstra's algorithm using priority queue (heap).
+    Time complexity: O(E logE), since heap might store E number of edges and each operation takes log E
+    Space complexity: O(E), graph and heap store at most E number of entries
+    """
+    graph = defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+    time = {}
+    heap = [(0, K)]
+    while heap:
+        t, node = heappop(heap)
+        if node in time:
+            continue
+        time[node] = t
+        for v, w in graph[node]:
+            heappush(heap, (t + w, v))
+    return max(time.values()) if len(time) == N else -1
+
+
 class Test(unittest.TestCase):
     data = [([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2, 2)]
 
     def test_network_delay_time(self):
         for test_times, test_n, test_k, result in self.data:
             self.assertEqual(result, network_delay_time_v1(test_times, test_n, test_k))
+            self.assertEqual(result, network_delay_time_v2(test_times, test_n, test_k))
 
 
 if __name__ == '__main__':
