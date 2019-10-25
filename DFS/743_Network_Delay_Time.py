@@ -15,6 +15,9 @@ def network_delay_time_v1(times, N, K):
         elapsed, if this is the currently-fastest signal at this node, let's broadcast signals from this node.
         To speed things up, at each visited node we'll consider signals exiting the node that are faster first, by
         sorting the edges.
+    Time complexity: O(N ** N + ElogE), where E is the length of times. We can only fully visit each node up to N-1
+    times, one per each other node. Plus, we have to explore every edge and sort them.
+    Space complexity: O(N + E), the size of the graph (O(E), plus the size of the implicit call stack in DFS (O(N))
     """
 
     def dfs(node, t):
