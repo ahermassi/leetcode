@@ -56,6 +56,31 @@ def network_delay_time_v2(times, N, K):
     return max(time.values()) if len(time) == N else -1
 
 
+def network_delay_time_v3(times, N, K):
+    """ Slight improvement over Dijkstra's algorithm using priority queue (heap). In fact, we don't have to pop all
+        the elements from the heap, and we can terminate early when N = 0, since when N = 0 we have visited all the
+        nodes along the shortest path from the source node,
+    Time complexity: O(E logE)
+    Space complexity: O(E)
+    """
+    graph = defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+    time = {}
+    heap = [(0, K)]
+    while heap:
+        t, node = heappop(heap)
+        if node in time:
+            continue
+        time[node] = t
+        N -= 1  # Improvement
+        if not N:
+            return max(time.values())
+        for v, w in graph[node]:
+            heappush(heap, (t + w, v))
+    return -1
+
+
 class Test(unittest.TestCase):
     data = [([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2, 2)]
 
@@ -63,6 +88,7 @@ class Test(unittest.TestCase):
         for test_times, test_n, test_k, result in self.data:
             self.assertEqual(result, network_delay_time_v1(test_times, test_n, test_k))
             self.assertEqual(result, network_delay_time_v2(test_times, test_n, test_k))
+            self.assertEqual(result, network_delay_time_v3(test_times, test_n, test_k))
 
 
 if __name__ == '__main__':
