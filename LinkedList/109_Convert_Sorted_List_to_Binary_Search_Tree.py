@@ -48,4 +48,43 @@ def sorted_list_to_bst_v1(head):
     return helper(0, len(vals) - 1)
 
 
+def sorted_list_to_bst_v2(head):
+    """ The middle element of the given list would form the root of the binary search tree. All the elements to the
+        left of the middle element would form the left subtree recursively. Similarly, all the elements to the right
+        of the middle element will form the right subtree of the binary search tree. This would ensure the height
+        balance required in the resulting binary search tree.
+        We can use the two pointer approach for finding out the middle element of a linked list. For an even sized list,
+        any of the two middle elements can act as the root of the BST.
+        Once we have the middle element of the linked list, we disconnect the portion of the list to the left of the
+        middle element. The way we do this is by keeping a 'prev' pointer as well which points to one node before the
+        'slow' pointer, i.e. prev.next = slow. For disconnecting the left portion we simply do prev.next = None
+        We only need to pass the head of the linked list to the function that converts it to a height balances BST. So,
+        we recurse on the left half of the linked list by passing the original head of the list and on the right half
+        by passing slow.next as the head.
+    Time complexity: O(N logN), suppose our linked list consists of N elements. For every list we pass to our recursive
+    function, we have to calculate the middle element for that list. For a list of size N, it takes N/2 steps to find
+    the middle element i.e. O(N) to find the middle. We do this for every half of the original linked list
+    Space complexity: O(LogN), since we are resorting to recursion, there is always the added space complexity of the
+    recursion stack that comes into picture. This could have been O(N) for a skewed tree, but the question clearly
+    states that we need to maintain the height balanced property. This ensures the height of the tree to be bounded by
+    O(logN)
+    """
+    if not head:
+        return None
+    if not head.next:  # Base case when there is just one element in the linked list
+        return TreeNode(head.val)
+    slow, fast, prev = head, head, None  # 'prev' is # the pointer used to disconnect the left half from the mid node
+    while slow and fast and fast.next:
+        prev = slow
+        slow = slow.next
+        fast = fast.next.next
+    if prev:  # Handling the case when 'slow' was equal to head ('prev' is then null)
+        prev.next = None
+    root = TreeNode(slow.val)  # # The mid becomes the root of the BST
+    # Recursively form balanced BSTs using the left and right halves of the original list
+    root.left = sorted_list_to_bst_v2(head)
+    root.right = sorted_list_to_bst_v2(slow.next)
+    return root
+
+
 
