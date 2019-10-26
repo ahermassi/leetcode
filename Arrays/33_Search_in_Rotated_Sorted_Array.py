@@ -49,7 +49,7 @@ class Test(unittest.TestCase):
         ([4, 5, 6, 7, 0, 1, 2], 3, -1)
     ]
 
-    def test_two_sum(self):
+    def test_search(self):
         for test_array, test_target, result in self.data:
             self.assertEqual(result, search(test_array, test_target))
 
