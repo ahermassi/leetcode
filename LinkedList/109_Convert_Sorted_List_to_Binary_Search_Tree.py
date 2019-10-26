@@ -64,7 +64,7 @@ def sorted_list_to_bst_v2(head):
     Time complexity: O(N logN), suppose our linked list consists of N elements. For every list we pass to our recursive
     function, we have to calculate the middle element for that list. For a list of size N, it takes N/2 steps to find
     the middle element i.e. O(N) to find the middle. We do this for every half of the original linked list
-    Space complexity: O(LogN), since we are resorting to recursion, there is always the added space complexity of the
+    Space complexity: O(logN), since we are resorting to recursion, there is always the added space complexity of the
     recursion stack that comes into picture. This could have been O(N) for a skewed tree, but the question clearly
     states that we need to maintain the height balanced property. This ensures the height of the tree to be bounded by
     O(logN)
@@ -74,7 +74,7 @@ def sorted_list_to_bst_v2(head):
     if not head.next:  # Base case when there is just one element in the linked list
         return TreeNode(head.val)
     slow, fast, prev = head, head, None  # 'prev' is # the pointer used to disconnect the left half from the mid node
-    while slow and fast and fast.next:
+    while fast and fast.next:
         prev = slow
         slow = slow.next
         fast = fast.next.next
@@ -85,6 +85,7 @@ def sorted_list_to_bst_v2(head):
     root.left = sorted_list_to_bst_v2(head)
     root.right = sorted_list_to_bst_v2(slow.next)
     return root
+
 
 
 
