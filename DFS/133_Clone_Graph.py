@@ -1,6 +1,8 @@
 """ Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph. Each node in
 the graph contains a val (int) and a list (List[Node]) of its neighbors. """
 
+from collections import deque
+
 # Definition for a Node.
 
 
@@ -45,3 +47,22 @@ def clone_graph_v2(node):
                 clones[neighbor.val] = Node(neighbor.val, [])
             clones[top.val].neighbors.append(clones[neighbor.val])
     return new_node
+
+
+def clone_graph_v3(node):
+    """ BFS version.
+    Time complexity: O(V + E)
+    Space complexity: O(V)
+    """
+    new_node = Node(node.val, [])
+    clones = {node.val: new_node}
+    queue = deque([node])  # The queue is used to to store ORIGINAL nodes that need to be cloned
+    while queue:
+        top = queue.popleft()
+        for neighbor in top.neighbors:
+            if neighbor.val not in clones:  # Add to map and queue if this node hasn't been searched/cloned before
+                queue.append(neighbor)
+                clones[neighbor.val] = Node(neighbor.val, [])
+            clones[top.val].neighbors.append(clones[neighbor.val])  # Add neighbor to newly cloned node
+    return new_node
+
