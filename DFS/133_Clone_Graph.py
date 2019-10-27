@@ -27,3 +27,21 @@ def clone_graph_v1(node):
 
     clones = {}
     return dfs(node)
+
+
+def clone_graph_v2(node):
+    """ Iterative version of above DFS.
+    Time complexity: O(V + E)
+    Space complexity: O(V)
+    """
+    new_node = Node(node.val, [])
+    clones = {node.val: new_node}
+    stack = [node]
+    while stack:
+        top = stack.pop()
+        for neighbor in top.neighbors:
+            if neighbor.val not in clones:
+                stack.append(neighbor)
+                clones[neighbor.val] = Node(neighbor.val, [])
+            clones[top.val].neighbors.append(clones[neighbor.val])
+    return new_node
