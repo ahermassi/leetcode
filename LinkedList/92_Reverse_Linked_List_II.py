@@ -63,16 +63,20 @@ def reverse_between_v2(head, m, n):
     """
     dummy = ListNode(0)
     dummy.next = head
-    pre = dummy
+    pre = dummy  # Make a pointer 'pre' as a marker for the node before reversing
     for _ in range(m - 1):
         pre = pre.next
-    cur = pre.next
-    third = cur.next
+    cur = pre.next  # Pointer to the beginning of the sub-list that will be reversed
+    third = cur.next  # Pointer to the node that will be reversed
+    # 1 - 2 -3 - 4 - 5 ; m=2; n =4 ---> pre = 1, cur = 2, third = 3
+    # dummy-> 1 -> 2 -> 3 -> 4 -> 5
     for _ in range(n - m):
         cur.next = third.next
         third.next = pre.next
         pre.next = third
         third = cur.next
+    # First reversing : dummy->1 -> 3 -> 2 -> 4 -> 5; pre = 1, cur = 2, third = 4
+    # Second reversing: dummy->1 -> 4 -> 3 -> 2 -> 5; pre = 1, cur = 2, third = 5 (finish)
     return dummy.next
 
 
