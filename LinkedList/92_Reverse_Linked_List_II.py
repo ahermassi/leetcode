@@ -56,6 +56,26 @@ def reverse_between_v1(head, m, n):
     return head
 
 
+def reverse_between_v2(head, m, n):
+    """ Another iterative version using a dummy head.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    dummy = ListNode(0)
+    dummy.next = head
+    pre = dummy
+    for _ in range(m - 1):
+        pre = pre.next
+    cur = pre.next
+    third = cur.next
+    for _ in range(n - m):
+        cur.next = third.next
+        third.next = pre.next
+        pre.next = third
+        third = cur.next
+    return dummy.next
+
+
 class Test(unittest.TestCase):
     head = ListNode(1)
     head.next = ListNode(2)
