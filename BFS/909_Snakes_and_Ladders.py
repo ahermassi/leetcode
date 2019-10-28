@@ -40,6 +40,35 @@ def snakes_and_ladders_v1(board):
     return -1
 
 
+def snakes_and_ladders_v2(board):
+    """ Transform the board to a 1D array then perform BFS. This way, we don't need to figure out the corresponding
+        row and column for every move we take.
+    Time complexity: O(N ** 2)
+    Space complexity: O(N ** 2)
+    """
+    n = len(board) ** 2
+    visited, queue = set(), deque([1])
+    moves = 0
+    arr = [0]
+    for i, row in enumerate(board[::-1]):
+        arr += row[::-1] if i % 2 else row
+    while queue:
+        new_queue = []
+        for num in queue:
+            if num == n:
+                return moves
+            for i in range(num + 1, num + 7):
+                if i > n:
+                    break
+                if arr[i] != -1:
+                    i = arr[i]
+                if i not in visited:
+                    visited.add(i)
+                    new_queue.append(i)
+        queue, moves = new_queue, moves + 1
+    return -1
+
+
 class Test(unittest.TestCase):
     data = [([
                  [-1, -1, -1, -1, -1, -1],
@@ -52,6 +81,7 @@ class Test(unittest.TestCase):
     def test_snakes_and_ladders(self):
         for test_board, result in self.data:
             self.assertEqual(result, snakes_and_ladders_v1(test_board))
+            self.assertEqual(result, snakes_and_ladders_v2(test_board))
 
 
 if __name__ == '__main__':
