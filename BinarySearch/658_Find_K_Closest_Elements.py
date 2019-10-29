@@ -32,12 +32,28 @@ def find_closest_elements_v1(arr, k, x):
     return arr[left:left + k]
 
 
+def find_closest_elements_v2(arr, k, x):
+    """ Simpler version without using binary search. However, the objective is the same: find the first index i so
+        that arr[i] is better than arr[i+k]
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    left, right = 0, len(arr) - 1
+    while right - left >= k:
+        if x - arr[left] > arr[right] - x:
+            left += 1
+        else:
+            right -= 1
+    return arr[left:right + 1]
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3, 4, 5], 4, 3, [1, 2, 3, 4]), ([1, 2, 3, 4, 5], 4, -1, [1, 2, 3, 4])]
 
     def test_find_closest_elements(self):
         for test_arr, test_k, test_x, result in self.data:
             self.assertEqual(result, find_closest_elements_v1(test_arr, test_k, test_x))
+            self.assertEqual(result, find_closest_elements_v2(test_arr, test_k, test_x))
 
 
 if __name__ == '__main__':
