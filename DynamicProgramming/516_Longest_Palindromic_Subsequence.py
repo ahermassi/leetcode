@@ -41,7 +41,7 @@ def longest_palindrome_subseq_v2(s):
         If the two ends of a string are the same, then they must be included in the longest palindrome sub sequence.
         Otherwise, both ends cannot be included in the longest palindrome sub sequence.
     Time complexity: O(2^N)
-    Space complexity: O(N)
+    Space complexity: O(N), recursion call stack
     """
     def helper(i, j):
         if i == j:
@@ -56,6 +56,27 @@ def longest_palindrome_subseq_v2(s):
     return helper(0, n - 1)
 
 
+def longest_palindrome_subseq_v3(s):
+    """ Improving the brute force with memoization of intermediate calculations. No TLE.
+    Time complexity: O(N ** 2)
+    Space complexity: O(N), recursion call stack and 'memo' hash map
+    """
+    def helper(i, j):
+        if i > j:
+            return 0
+        if (i, j) in memo:
+            return memo[(i, j)]
+        if s[i] == s[j]:
+            memo[(i + 1, j - 1)] = helper(i + 1, j - 1)
+            return 2 + memo[(i + 1, j - 1)]
+        memo[(i + 1, j)], memo[(i, j - 1)] = helper(i + 1, j), helper(i, j - 1)
+        return max(memo[(i + 1, j)], memo[(i, j - 1)])
+
+    n = len(s)
+    memo = {(i, i): 1 for i in range(n)}  # Base case (i == j)
+    return helper(0, n - 1)
+
+
 class Test(unittest.TestCase):
     data = [('bbbab', 4), ('cbbd', 2)]
 
@@ -63,6 +84,7 @@ class Test(unittest.TestCase):
         for test_s, result in self.data:
             self.assertEqual(result, longest_palindrome_subseq_v1(test_s))
             self.assertEqual(result, longest_palindrome_subseq_v2(test_s))
+            self.assertEqual(result, longest_palindrome_subseq_v3(test_s))
 
 
 if __name__ == '__main__':
