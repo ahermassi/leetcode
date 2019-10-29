@@ -36,12 +36,33 @@ def longest_palindrome_subseq_v1(s):
     return dp[0][n - 1]
 
 
+def longest_palindrome_subseq_v2(s):
+    """ Brute force. TLE
+        If the two ends of a string are the same, then they must be included in the longest palindrome sub sequence.
+        Otherwise, both ends cannot be included in the longest palindrome sub sequence.
+    Time complexity: O(2^N)
+    Space complexity: O(N)
+    """
+    def helper(i, j):
+        if i == j:
+            return 1
+        if i > j:
+            return 0
+        if s[i] == s[j]:
+            return 2 + helper(i + 1, j - 1)
+        return max(helper(i + 1, j), helper(i, j - 1))
+
+    n = len(s)
+    return helper(0, n - 1)
+
+
 class Test(unittest.TestCase):
     data = [('bbbab', 4), ('cbbd', 2)]
 
     def test_longest_palindrome(self):
         for test_s, result in self.data:
             self.assertEqual(result, longest_palindrome_subseq_v1(test_s))
+            self.assertEqual(result, longest_palindrome_subseq_v2(test_s))
 
 
 if __name__ == '__main__':
