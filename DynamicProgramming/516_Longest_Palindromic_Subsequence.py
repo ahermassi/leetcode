@@ -5,6 +5,55 @@ import unittest2 as unittest
 
 
 def longest_palindrome_subseq_v1(s):
+    """ Brute force. TLE
+        If the two ends of a string are the same, then they must be included in the longest palindrome sub sequence.
+        Otherwise, both ends cannot be included in the longest palindrome sub sequence.
+    Time complexity: O(2^N)
+    Space complexity: O(N), recursion call stack
+    """
+    def helper(i, j):
+        if i == j:
+            return 1
+        if i > j:
+            return 0
+        if s[i] == s[j]:
+            return 2 + helper(i + 1, j - 1)
+        return max(helper(i + 1, j), helper(i, j - 1))
+
+    n = len(s)
+    return helper(0, n - 1)
+
+
+def longest_palindrome_subseq_v2(s):
+    """ Top-down dynamic programming. Improving the brute force with memoization of intermediate calculations. No TLE.
+        Without memoization, the time complexity would be O(2^N). This follows from the fact that any recursive
+        function's time complexity is O(branches^depth). However, because we are memoizing, we 'prune' the recursive
+        tree and do not recurse into/solve the same sub-problem twice. We can prove this by drawing the recursive call
+        tree without memoization, we will see that there will be MANY overlapping sub problems. But because we memoize,
+        in the worst case, we only need to solve all sub problems ONCE, of which there are an upper bound of N^2 total.
+    Time complexity: O(N ** 2)
+    Space complexity: O(2 ^ N), recursion call stack and 'memo' hash map
+    """
+    def helper(i, j):
+        if i > j:
+            return 0
+        if (i, j) in memo:
+            return memo[(i, j)]
+        if s[i] == s[j]:
+            memo[(i + 1, j - 1)] = helper(i + 1, j - 1)
+            return 2 + memo[(i + 1, j - 1)]
+        memo[(i + 1, j)], memo[(i, j - 1)] = helper(i + 1, j), helper(i, j - 1)
+        return max(memo[(i + 1, j)], memo[(i, j - 1)])
+
+    n = len(s)
+    memo = {(i, i): 1 for i in range(n)}  # Base case (i == j)
+    return helper(0, n - 1)
+
+
+# Checkout:
+# https://leetcode.com/problems/longest-palindromic-subsequence/discuss/216717/Python-DP-solution-w-explanation
+
+def longest_palindrome_subseq_v3(s):
     """ Bottom-up Dynamic Programming.
         Let dp[i][j] be the longest palindromic sub sequence length of substring(i, j).
         State transition:
@@ -34,47 +83,6 @@ def longest_palindrome_subseq_v1(s):
             else:
                 dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])
     return dp[0][n - 1]
-
-
-def longest_palindrome_subseq_v2(s):
-    """ Brute force. TLE
-        If the two ends of a string are the same, then they must be included in the longest palindrome sub sequence.
-        Otherwise, both ends cannot be included in the longest palindrome sub sequence.
-    Time complexity: O(2^N)
-    Space complexity: O(N), recursion call stack
-    """
-    def helper(i, j):
-        if i == j:
-            return 1
-        if i > j:
-            return 0
-        if s[i] == s[j]:
-            return 2 + helper(i + 1, j - 1)
-        return max(helper(i + 1, j), helper(i, j - 1))
-
-    n = len(s)
-    return helper(0, n - 1)
-
-
-def longest_palindrome_subseq_v3(s):
-    """ Improving the brute force with memoization of intermediate calculations. No TLE.
-    Time complexity: O(N ** 2)
-    Space complexity: O(N), recursion call stack and 'memo' hash map
-    """
-    def helper(i, j):
-        if i > j:
-            return 0
-        if (i, j) in memo:
-            return memo[(i, j)]
-        if s[i] == s[j]:
-            memo[(i + 1, j - 1)] = helper(i + 1, j - 1)
-            return 2 + memo[(i + 1, j - 1)]
-        memo[(i + 1, j)], memo[(i, j - 1)] = helper(i + 1, j), helper(i, j - 1)
-        return max(memo[(i + 1, j)], memo[(i, j - 1)])
-
-    n = len(s)
-    memo = {(i, i): 1 for i in range(n)}  # Base case (i == j)
-    return helper(0, n - 1)
 
 
 class Test(unittest.TestCase):
