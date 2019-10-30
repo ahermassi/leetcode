@@ -1,5 +1,6 @@
 """ Read description on Leetcode """
 
+from heapq import heappush, heappop
 import unittest2 as unittest
 
 
@@ -22,6 +23,35 @@ def assign_bikes_v1(workers, bikes):
             if res[worker] == -1 and bike not in used_bikes:
                 res[worker] = bike
                 used_bikes.add(bike)
+    return res
+
+
+def assign_bikes_v2(workers, bikes):
+    """ Heap solution. TLE
+        Initiate a priority queue of bike and worker pairs. The heap order should be Distance ASC, WorkerIndex ASC,
+        Bike ASC.
+        Loop through all workers and bikes, calculate their distance, and then throw it to the queue.
+        Initiate a set to keep track of the bikes that have been assigned.
+        Initiate a result array and fill it with -1. (unassigned)
+        Poll every possible pair from the priority queue and check if the person already got his bike or the bike has
+        been assigned.
+        Early exit when everyone gets their bike.
+        The reason of TLE is the huge number of elements in the heap which can go up to N * M, with push/pop operations
+        that take O(log(N*M)).
+    Time complexity: O(log(N*M)), as the heap can have at most N * M elements
+    Space complexity: O(N *M) for the heap
+    """
+    heap = []
+    for i, (a, b) in enumerate(workers):
+        for j, (c, d) in enumerate(bikes):
+            distance = abs(a - c) + abs(b - d)
+            heappush(heap, (distance, i, j))
+    res, used_bikes = [-1] * len(workers), set()
+    while len(used_bikes) < len(workers):
+        distance, worker, bike = heappop(heap)
+        if res[worker] == -1 and bike not in used_bikes:
+            res[worker] = bike
+            used_bikes.add(bike)
     return res
 
 
