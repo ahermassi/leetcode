@@ -38,8 +38,8 @@ def assign_bikes_v2(workers, bikes):
         Early exit when everyone gets their bike.
         The reason of TLE is the huge number of elements in the heap which can go up to N * M, with push/pop operations
         that take O(log(N*M)).
-    Time complexity: O(log(N*M)), as the heap can have at most N * M elements
-    Space complexity: O(N *M) for the heap
+    Time complexity: O(N*M log(N*M)), as the heap can have at most N * M elements
+    Space complexity: O(N * M) for the heap
     """
     heap = []
     for i, (a, b) in enumerate(workers):
@@ -52,6 +52,43 @@ def assign_bikes_v2(workers, bikes):
         if res[worker] == -1 and bike not in used_bikes:
             res[worker] = bike
             used_bikes.add(bike)
+    return res
+
+
+def assign_bikes_v3(workers, bikes):
+    """ Heap solution.
+        For each worker, create a sorted list of distances to each bike. The elements of the list are tuples (distance,
+        worker, bike).
+        For each worker, add the tuple with the shortest distance to the heap.
+        Until each worker has a bike, pop the smallest distance from the heap.
+        If this bike is not used, update the result for this worker, else add the next closest tuple for this worker to
+        the heap.
+    Time complexity: O(N*M (log N + log M)) == O(N*M log(N*M)). For each worker, making list of distances to each bike
+    is O(N * M). For each worker, sort the list of distances is O(N (M log M)), which dominates making the lists above.
+    There is one distance on the heap for each worker, so each pop or push is O(log M).
+    In the worst case where the closest bike on the heap is always used, there may be O(N * M) pops, so O((N*M) log M))
+    for the heap. So in the best case the first bike on the heap is always free and there will be O(N) pops.
+    So O(N log N) for the heap and overall O(N (M log M + log N))
+    Space complexity: TODO
+    """
+    n = len(workers)
+    heap, distances = [], [[] for _ in range(n)]  # distances[i] is tuple of (distance, worker, bike) for each worker i
+    for i, (a, b) in enumerate(workers):
+        for j, (c, d) in enumerate(bikes):
+            distance = abs(a - c) + abs(b - d)
+            distances[i].append((distance, i, j))
+        distances[i].sort(reverse=True)  # Reverse so we can pop the smallest distance we construct the heap
+        # At the end of each iteration 'i', distance[i] is a list of (distance, worker, bike) for worker 'i'
+    for distance in distances:
+        heappush(heap, distance.pop())  # Smallest distance for each worker, so we get a heap of size n = len(workers)
+    res, used_bikes = [-1] * n, set()
+    while len(used_bikes) < n:
+        distance, worker, bike = heappop(heap)
+        if bike not in used_bikes:
+            res[worker] = bike
+            used_bikes.add(bike)
+        else:
+            heappush(heap, distances[worker].pop())  # Bike used, so add next closest bike
     return res
 
 
