@@ -5,6 +5,7 @@ equals target. If the task is impossible, return -1. """
 
 import bisect
 from collections import defaultdict
+
 import unittest2 as unittest
 
 
@@ -107,6 +108,36 @@ def shortest_way_v3(source, target):
     return res
 
 
+# Following solution is not very intuitive
+
+def shortest_way_v4(source, target):
+    """ First, iterate through the source to find the characters that follow the current one. If there are more than
+        one following character, consider the least index character.
+        For source = 'abba' the table looks like this:
+            {3: {'a': 4}, 2: {'a': 4, 'b': 3}, 1: {'a': 4, 'b': 2}, 0: {'a': 1, 'b': 2}}
+        Then, iterate through the target characters and
+        greedily construct target from source characters.
+    Time complexity: O(N + M), where N is the length of source and M is the length of target
+    Space complexity: O(N)
+    """
+    indices, n = {}, len(source)
+    for i in reversed(range(n)):
+        c = source[i]
+        indices[i] = {} if i + 1 not in indices else indices[i + 1].copy()
+        indices[i][c] = i + 1
+    res = index = 0
+    for c in target:
+        if c not in indices[0]:  # indices[0] contains all characters in the source
+            return -1
+        if index == n or c not in indices[index]:  # If 'index' points to the last character of the source or the
+            # current character does not exist in the possible set of characters indicated by 'index', this means a new
+            # sub sequence has started
+            index = 0
+            res += 1
+        index = indices[index][c]  # Update the index
+    return res + 1  # After the last increment (two lines above), at least one valid character has been observed
+
+
 class Test(unittest.TestCase):
     data = [('abc', 'abcbc', 2), ('abc', 'acdbc', -1), ('xyz', 'xzyxz', 3)]
 
@@ -115,6 +146,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, shortest_way_v1(test_source, test_target))
             self.assertEqual(result, shortest_way_v2(test_source, test_target))
             self.assertEqual(result, shortest_way_v3(test_source, test_target))
+            self.assertEqual(result, shortest_way_v4(test_source, test_target))
 
 
 if __name__ == '__main__':
