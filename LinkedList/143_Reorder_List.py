@@ -22,13 +22,42 @@ def reorder_list_v1(head):
     slow, fast = head, head
     while fast and fast.next:
         slow, fast = slow.next, fast.next.next
-    pre, node = None, slow
+    node, pre = slow, None
+    # while node:
+    #     pre, node.next, node = node, pre, node.next
     while node:
-        pre, node.next, node = node, pre, node.next
+        next_node = node.next
+        node.next = pre
+        pre = node
+        node = next_node
     first, second = head, pre  # 'pre' points to the head of second reversed half, which used to be the last node
     while second.next:
         first.next, first = second, first.next
         second.next, second = first, second.next
+    return head
+
+
+def reorder_list_v2(head):
+    """ Straightforward  stack solution. Push all nodes to stack and connect them by alternation.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not head:
+        return None
+    stack, temp = [], head
+    while temp:
+        stack.append(temp)
+        temp = temp.next
+    count = (len(stack) - 1) // 2
+    ptr = head
+    while count:
+        temp = ptr.next
+        top = stack.pop()
+        ptr.next = top
+        top.next = temp
+        ptr = temp
+        count -= 1
+    stack[-1].next = None
     return head
 
 
