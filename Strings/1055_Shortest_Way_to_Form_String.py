@@ -30,12 +30,37 @@ def shortest_way_v1(source, target):
     return count
 
 
+def shortest_way_v2(source, target):
+    """ We traverse the target string while matching source string multiple times.
+        i: index for target string
+        j: index for source string
+        Improving space complexity: at the end of each loop, we want to ensure that i index moves forward instead of
+        staying steady. Not moving forward means that the current character in target pointed at by i doesn't exist in
+        source string.
+    Time complexity: O(N * M), where N is the length of source and M is the length of target
+    Space complexity: O(1)
+    """
+    res, n = 0, len(target)
+    i = 0
+    while i < n:
+        ptr = i
+        for j, c in enumerate(source):
+            if i < n and c == target[i]:
+                i += 1
+            j += 1
+        if i == ptr:
+            return -1
+        res += 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [('abc', 'abcbc', 2), ('abc', 'acdbc', -1), ('xyz', 'xzyxz', 3)]
 
     def test_shortest_way(self):
         for test_source, test_target, result in self.data:
             self.assertEqual(result, shortest_way_v1(test_source, test_target))
+            self.assertEqual(result, shortest_way_v2(test_source, test_target))
 
 
 if __name__ == '__main__':
