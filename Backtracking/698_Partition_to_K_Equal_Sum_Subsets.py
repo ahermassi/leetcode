@@ -79,6 +79,12 @@ def can_partition_k_subsets_v2(nums, k):
     return dfs(0)
 
 
+def can_partition_k_subsets_v3(nums, k):
+    pass
+    # DP with bit masking
+    # https://leetcode.com/problems/partition-to-k-equal-sum-subsets/discuss/335668/DP-with-Bit-Masking-Solution-%3A-Best-for-Interviews
+
+
 class Test(unittest.TestCase):
     data = [([4, 3, 2, 3, 5, 2, 1], 4, True)]
 
