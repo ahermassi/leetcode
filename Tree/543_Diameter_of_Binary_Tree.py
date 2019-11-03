@@ -24,6 +24,12 @@ def diameter_of_binary_tree(root):
         height of right child
         If the longest path does not include the root node, this problem is divided into 2 sub-problem: set left child
         and right child as the new root separately, and repeat previous step.
+        Conclusion:
+        Diameter of a tree w.r.t root can be defined as:
+            Maximum(Diameter of left subtree, Diameter of right subtree, Longest path between two nodes which passes
+                through the root)
+        Now the diameter of left and right subtree’s can be solved recursively. And Longest path between two nodes
+        which passes through the root can be calculated as (1 + height of left subtree + height of right subtree)
     Time complexity: O(N)
     Space complexity: O(N)
     """
