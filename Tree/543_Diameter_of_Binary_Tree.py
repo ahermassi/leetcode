@@ -14,29 +14,29 @@ class TreeNode(object):
 
 
 def diameter_of_binary_tree(root):
-    """ height() function returns the height of the deepest subtree of the passed in node (which is the max of
-        either the left child subtree or the right child subtree). diameter (which is what we return at the end) should
-        contain information about the largest diameter observed (which would be the maximum of the previous largest
-        diameter or the current nodes “diameter”, which the sum of the left and right sub trees). Every node will
-        return the two information in the same iteration , height of that node and diameter of tree with respect to
-        that node.
+    """ The diameter is the maximum of either:
+            1- Passing through the root, in which case the longest path would be using the maximum height of left and
+            right child
+            2- The diameter of the left child
+            3- The diameter of the right child
+        So, we can solve this problem with two different cases:
+        If the longest path will include the root node, then the longest path must be the height of left child +
+        height of right child
+        If the longest path does not include the root node, this problem is divided into 2 sub-problem: set left child
+        and right child as the new root separately, and repeat previous step.
     Time complexity: O(N)
     Space complexity: O(N)
     """
-
-    def height(root):
-        global diameter
-        diameter = 0
+    def dfs(root):
         if not root:
-            return 0
-        left_height = height(root.left)
-        right_height = height(root.right)
-        diameter = max(diameter, left_height + right_height)  # Update diameter as we recursively iterate over each node
-        return 1 + max(left_height, right_height)  # The output of the height(root) call just returns the maximum
-        # height of the root tree and not the diameter.
+            return 0, 0  # Returning diameter, height
+        left_diameter, left_height = dfs(root.left)
+        right_diameter, right_height = dfs(root.right)
+        cur_height = max(left_height, right_height) + 1
+        cur_diameter = max(left_height + right_height, left_diameter, right_diameter)  # Cases 1, 2, 3 respectively
+        return cur_diameter, cur_height
 
-    height(root)
-    return diameter
+    return dfs(root)[0]
 
 
 class Test(unittest.TestCase):
