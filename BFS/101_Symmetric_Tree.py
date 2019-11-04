@@ -50,7 +50,7 @@ def is_symmetric_v2(root):
     def is_mirror(left, right):
         if not left and not right:
             return True
-        if not left or not right:
+        if not left or not right:  # As soon as a pair fails the test, we can short circuit the check to false
             return False
         if left.val == right.val:
             return is_mirror(left.left, right.right) and is_mirror(left.right, right.left)
