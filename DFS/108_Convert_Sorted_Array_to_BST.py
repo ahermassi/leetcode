@@ -35,7 +35,8 @@ def sorted_array_to_bst_v1(nums):
 def sorted_array_to_bst_v2(nums):
     """ Slicing the array is expensive. It is better to pass the left and right bounds into recursive calls instead.
     Time complexity: O(log N)
-    Space complexity: O(log N)
+    Space complexity: O(log N), there is no case of skewed binary tree because we're creating a balanced BST from the
+    start, by picking the middle element every time. It's not possible to have a skewed input or output
     """
 
     def convert(left, right):
