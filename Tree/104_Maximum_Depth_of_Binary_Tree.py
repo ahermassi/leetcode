@@ -63,7 +63,7 @@ def max_depth_v3(root):
     if not root:
         return 0
     res, queue = 0, deque([root])
-    while queue:
+    while queue:  # At every iteration,queue holds the nodes of one level of the tree: there is no need to track depth
         res += 1
         n = len(queue)
         for _ in range(n):
