@@ -50,24 +50,22 @@ def binary_tree_paths_v1(root):
 
 def binary_tree_paths_v2(root):
     """ Initiate the stack by a root node and then at each step we pop out one node and its path. If the popped node
-    is a leaf, update the list of all paths. If not, push its child nodes and corresponding paths into stack till all
-    nodes are checked.
+        is a leaf, update the list of all paths. If not, push its child nodes and corresponding paths into stack till
+        all nodes are checked.
     Time complexity: O(N) since each node is visited exactly once
-    Space complexity: O(N)
+    Space complexity: O(N) in the worst case of a skewed tree
     """
     if not root:
-        return []
-    paths, stack = [], [(root, '')]
+        return None
+    res, stack = [], [(root, '')]
     while stack:
         node, path = stack.pop()
+        path += str(node.val)
         if not node.left and not node.right:
-            path += str(node.val)
-            paths.append(path)
-        if node.right:
-            stack.append((node.right, path + str(node.val) + '->'))
-        if node.left:
-            stack.append((node.left, path + str(node.val) + '->'))
-    return paths
+            res.append(path)
+        else:
+            stack.extend([(kid, path + '->') for kid in (node.left, node.right) if kid])
+    return res
 
 
 class Test(unittest.TestCase):
