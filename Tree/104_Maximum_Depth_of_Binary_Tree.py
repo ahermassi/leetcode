@@ -7,6 +7,7 @@ The maximum depth is the number of nodes along the longest path from the root no
    15   7
 return its depth = 3.
 """
+from collections import deque
 
 import unittest2 as unittest
 
@@ -54,6 +55,23 @@ def max_depth_v2(root):
     return res + 1
 
 
+def max_depth_v3(root):
+    """ Same solution nut using a queue and traversing the tree in BFS.
+    Time complexity: O(N)
+    Space complexity: O(logN) best case, O(N) worst case
+    """
+    if not root:
+        return 0
+    res, queue = 0, deque([root])
+    while queue:
+        res += 1
+        n = len(queue)
+        for _ in range(n):
+            node = queue.popleft()
+            queue.extend([kid for kid in (node.left, node.right) if kid])
+    return res
+
+
 class Test(unittest.TestCase):
     root = TreeNode(3)
     root.left = TreeNode(9)
@@ -64,6 +82,7 @@ class Test(unittest.TestCase):
     def test_max_depth(self):
         self.assertEqual(3, max_depth_v1(self.root))
         self.assertEqual(3, max_depth_v2(self.root))
+        self.assertEqual(3, max_depth_v3(self.root))
 
 
 if __name__ == '__main__':
