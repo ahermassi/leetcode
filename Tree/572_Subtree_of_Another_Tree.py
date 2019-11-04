@@ -17,9 +17,9 @@ class TreeNode(object):
 
 
 def is_subtree_v1(s, t):
-    """ We do a BFS traversal of the first tree s. At each node whose value is is_identical to the second tree t root value,
-        we perform a recursive check to verify if the subtree at the current node is is_identical to the tree t. If it's not
-        the case, we carry on the BFS until the stack is empty or a match is found.
+    """ We do a BFS traversal of the first tree s. At each node whose value is is_identical to the second tree t root
+        value, we perform a recursive check to verify if the subtree at the current node is is_identical to the tree t.
+        If it's not the case, we carry on the BFS until the stack is empty or a match is found.
     Time complexity: O(N * M) where N is the number of s nodes and M is the number of t nodes. In worst case(skewed
     tree) the traversal takes O(N * M)
     Space complexity: O(N), the depth of the recursion tree can go up to N
@@ -34,15 +34,12 @@ def is_subtree_v1(s, t):
             return False
         return is_identical(s.left, t.left) and is_identical(s.right, t.right)
 
-    queue = deque()
-    queue.append(s)
+    queue = deque([s])
     while queue:
         node = queue.popleft()
-        if node:
-            if node.val == t.val and is_identical(node, t):
-                return True
-            queue.append(node.left)
-            queue.append(node.right)
+        if node.val == t.val and is_identical(node, t):
+            return True
+        queue.extend([kid for kid in (node.left, node.right) if kid])
     return False
 
 
