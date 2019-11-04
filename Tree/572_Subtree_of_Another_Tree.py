@@ -50,10 +50,10 @@ def is_subtree_v2(s, t):
     """ Same as above but recursively.
     Time complexity: O(N * M) where N is the number of s nodes and M is the number of t nodes. In worst case (skewed
     tree) the traversal takes O(N * M)
-    Space complexity: O(N), the depth of the recursion tree can go up to N
+    Space complexity: O(N), the depth of the recursion tree can go up to N, draw the recursion tree to visualize that
     """
 
-    def is_identical(s, t):
+    def is_identical(s, t):  # Dumb comprehensive comparison off all nodes of s and t
         if not s and not t:
             return True
         if not s or not t:
@@ -64,9 +64,9 @@ def is_subtree_v2(s, t):
 
     if not s:
         return False
-    if is_identical(s, t):
+    if is_identical(s, t):  # If s and t are equal right off the bat, we're done !
         return True
-    return is_subtree_v1(s.left, t) or is_subtree_v1(s.right, t)
+    return is_subtree_v2(s.left, t) or is_subtree_v2(s.right, t)  # Check if we can find t to the left or right of s
 
 
 class Test(unittest.TestCase):
