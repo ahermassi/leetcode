@@ -24,30 +24,28 @@ class TreeNode(object):
 
 def binary_tree_paths_v1(root):
     """ The most intuitive way is to use a recursion. Go through the tree by considering at each step the node itself
-    and its children. If node is not a leaf, extend the current path by a node value and call recursively the path
-    construction for its children. If node is a leaf, close the current path and add it into the list of paths.
+        and its children. If node is not a leaf, extend the current path by a node value and call recursively the path
+        construction for its children. If node is a leaf, close the current path and add it into the list of paths.
     Time complexity: O(N), we visit each node exactly once
-    Space complexity: O(log N), paths contains as many elements as leafs in the tree and hence couldn't be larger than
-    log N for the trees containing more than one element. Hence the space complexity is determined by a stack call.
-    In the worst case, when the tree is completely unbalanced, e.g. each node has only one child node, the recursion
-    call would occur NN times (the height of the tree), therefore the storage to keep the call stack would be O(N).
-    But in the best case (the tree is balanced), the height of the tree would be log N.
+    Space complexity: O(logN),in the worst case when the tree is completely unbalanced, e.g. each node has only one
+    child node, the recursion call would occur N times (the height of the tree), therefore the storage to keep the call
+    stack would be O(N). But in the best case (the tree is balanced), the height of the tree would be logN.
     """
+    def find_paths(root, path):
+        path += str(root.val)
+        if not root.left and not root.right:
+            res.append(path)
+            return
+        if root.left:
+            find_paths(root.left, path + '->')
+        if root.right:
+            find_paths(root.right, path + '->')
+
     if not root:
-        return []
-    paths = []
-    find_paths(root, '', paths)
-    return paths
-
-
-def find_paths(root, path, paths):
-    path += str(root.val)
-    if root.left:
-        find_paths(root.left, path + '->', paths)
-    if root.right:
-        find_paths(root.right, path + '->', paths)
-    if not root.left and not root.right:
-        paths.append(path)
+        return None
+    res = []
+    find_paths(root, '')
+    return res
 
 
 def binary_tree_paths_v2(root):
