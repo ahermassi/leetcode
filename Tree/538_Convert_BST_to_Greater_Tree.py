@@ -16,21 +16,23 @@ class TreeNode(object):
 
 
 def convert_bst_v1(root):
-    """ This technique is known as reverse in-order traversal. The basic idea of such a traversal is that before
-        visiting any node in the tree, we must first visit all nodes with greater value, keeping sum of all values that
-        we have already visited and adding that sum to the node's values as we traverse the tree. Where are all of these
-        nodes conveniently located? In the right subtree.
+    """ The key to this solution would be a way to visit nodes in DESCENDING order, keeping a sum of all values that we
+        have already visited and adding that sum to the node's values as we traverse the tree.This technique is known
+        as reverse in-order traversal. The basic idea of such a traversal is that before visiting any node in the tree,
+        we must first visit all nodes with greater value, keeping sum of all values that we have already visited and
+        adding that sum to the node's values as we traverse the tree. Where are all of these nodes conveniently
+        located? In the right subtree.
     Time complexity: O(N), function gets called on each node no more than once
     Space complexity: O(N) in the worst case
     """
 
+    # This code might look difficult to read because we avoid using global variables
     def reverse_inorder(root, total):
-        if root:
-            total = reverse_inorder(root.right, total)
-            total += root.val
-            root.val = total
-            total = reverse_inorder(root.left, total)
-        return total
+        if not root:
+            return total
+        total = reverse_inorder(root.right, total)  # Go get all the values greater than myself: in the right subtree !
+        root.val += total
+        return reverse_inorder(root.left, root.val)  # Recurse to the left subtree with total = total + root.val
 
     reverse_inorder(root, 0)
     return root
@@ -65,7 +67,7 @@ class Test(unittest.TestCase):
     root.left.right = TreeNode(4)
     root.right.left = TreeNode(7)
     root.right.right = TreeNode(9)
-    root = convert_bst_v1(root)
+    root = convert_bst_v2(root)
 
     def test_convert_bst(self):
         self.assertEqual(29, self.root.val)
