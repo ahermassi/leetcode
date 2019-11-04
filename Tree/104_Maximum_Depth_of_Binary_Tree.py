@@ -42,17 +42,16 @@ def max_depth_v2(root):
     Time complexity: O(N)
     Space complexity: O(log N)
     """
-    stack = []
-    if root:
-        stack.append((1, root))
-    depth = 0
+    if not root:
+        return 0
+    res, stack = 0, [(root, 0)]
     while stack:
-        current_depth, root = stack.pop()
-        if root:
-            depth = max(depth, current_depth)
-            stack.append((current_depth + 1, root.left))
-            stack.append((current_depth + 1, root.right))
-    return depth
+        node, depth = stack.pop()
+        if not node.left and not node.right:
+            res = max(res, depth)
+        else:
+            stack.extend([(kid, depth + 1) for kid in (node.left, node.right) if kid])
+    return res + 1
 
 
 class Test(unittest.TestCase):
