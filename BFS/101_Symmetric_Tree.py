@@ -13,11 +13,13 @@ class TreeNode(object):
 
 
 def is_symmetric_v1(root):
-    """ Each two consecutive nodes in the nodes list should be equal. The algorithm works similarly to BFS,
-    with some key differences. Each time, two nodes are extracted and their values compared. Then, the right and left
-    children of the two nodes are inserted in the queue in opposite order.
+    """ Level order traversal using BFS.
+        Each two consecutive nodes in the nodes list should be equal. The algorithm works similarly to BFS, with some
+        key differences. Each time, two nodes are extracted and their values compared. Then, the right and left
+        children of the two nodes are inserted in the queue in opposite order.
     Time complexity: O(N)
-    Space complexity: O(N). In the worst case, we have to insert O(n) nodes in the list
+    Space complexity: O(N), a full binary tree of n nodes has roughly half of those nodes at the lowest level, hence
+    O(n) space
     """
     if not root:
         return True
@@ -30,10 +32,8 @@ def is_symmetric_v1(root):
             return False
         if left_node.val != right_node.val:
             return False
-        nodes.append(left_node.left)
-        nodes.append(right_node.right)
-        nodes.append(left_node.right)
-        nodes.append(right_node.left)
+        nodes.extend([left_node.left, right_node.right])
+        nodes.extend([right_node.left, left_node.right])
     return True
 
 
