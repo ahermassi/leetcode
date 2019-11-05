@@ -39,12 +39,15 @@ def is_balanced_v1(root):
     return is_balanced_v1(root.left) and is_balanced_v1(root.right)
 
 
-def is_balanced(root):
+def is_balanced_v2(root):
     """ Bottom up approach using DFS. We return the height of the current node in DFS recursion. When the subtree of
         the current node (inclusive) is balanced, the function height() returns a non-negative value as the height.
         Otherwise -1 is returned. According to the left height and right height of the two children, the parent node
         could check if the subtree is balanced, and decides its return value.
-    Time complexity: O(N) in the worst case of a skewed tree
+        In other words:
+        Check if the child subtrees are balanced. If they are, use their heights to determine if the current subtree is
+        balanced as well as to calculate the current subtree's height.
+    Time complexity: O(N) in the worst case of a skewed tree, each node in the tree only need to be accessed once
     Space complexity: O(N) in the worst case
     """
     def height(root):
@@ -74,8 +77,8 @@ class Test(unittest.TestCase):
     root2.left.left.right = TreeNode(4)
 
     def test_is_balanced(self):
-        self.assertTrue(is_balanced(self.root1))
-        self.assertFalse(is_balanced(self.root2))
+        self.assertTrue(is_balanced_v1(self.root1))
+        self.assertFalse(is_balanced_v1(self.root2))
 
 
 if __name__ == '__main__':
