@@ -50,6 +50,35 @@ def find_target_v2(root, k):
     return dfs(root)
 
 
+def find_target_v3(root, k):
+    """ We make use of the fact that the given tree is a Binary Search Tree. We know that the in-order traversal of a
+        BST gives the nodes in ascending order. Thus, we do the in-order traversal of the given tree and put the
+        results in a list which contains the nodes sorted in ascending order. Then, we use two pointers which begin
+        from the start and end of the array to find if there is a sum k.
+    Time complexity: O(N), we need to traverse over the whole tree once to do the inorder traversal
+    Space complexity: O(N)
+    """
+
+    def inorder(root):
+        if not root:
+            return
+        inorder(root.left)
+        vals.append(root.val)
+        inorder(root.right)
+
+    vals = []
+    inorder(root)
+    left, right = 0, len(vals) - 1
+    while left < right:
+        if vals[left] + vals[right] == k:
+            return True
+        if vals[left] + vals[right] < k:
+            left += 1
+        else:
+            right -= 1
+    return False
+
+
 class Test(unittest.TestCase):
     root = TreeNode(5)
     root.left = TreeNode(3)
@@ -63,6 +92,8 @@ class Test(unittest.TestCase):
         self.assertFalse(find_target_v1(self.root, 28))
         self.assertTrue(find_target_v2(self.root, 9))
         self.assertFalse(find_target_v2(self.root, 28))
+        self.assertTrue(find_target_v3(self.root, 9))
+        self.assertFalse(find_target_v3(self.root, 28))
 
 
 if __name__ == '__main__':
