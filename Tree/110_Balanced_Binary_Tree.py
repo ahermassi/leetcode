@@ -62,6 +62,22 @@ def is_balanced_v2(root):
     return height(root) != -1
 
 
+def is_balanced_v3(root):
+    """ Exact same logic of second solution, but the code is more self-explanatory. """
+
+    def helper(root):
+        if not root:
+            return True, 0  # First value of the return value indicates if tree is balanced, and if balanced the
+            # second value of the return value is the height of tree
+        left_balanced, left_height = helper(root.left)
+        right_balanced, right_height = helper(root.right)
+        if not left_balanced or not right_balanced or abs(left_height - right_height) > 1:
+            return False, 0
+        return True, 1 + max(left_height, right_height)
+
+    return helper(root)[0]
+
+
 class Test(unittest.TestCase):
     root1 = TreeNode(3)
     root1.left = TreeNode(9)
