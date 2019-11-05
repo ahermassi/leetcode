@@ -16,7 +16,7 @@ def has_path_sum_v1(root, sum):
         complement in either left or right subtree.
     Time complexity: O(N), in the worst case we visit each node exactly once
     Space complexity: in the worst case, the tree is completely unbalanced and the recursion call would occur N times
-    so O(N); in the best case (the tree is completely balanced), it is O(log N) which is the height of the tree
+    so O(N); in the best case (the tree is completely balanced), it is O(logN) which is the height of the tree
     """
     if not root:
         return False
@@ -29,23 +29,20 @@ def has_path_sum_v1(root, sum):
 def has_path_sum_v2(root, sum):
     """ We start from a stack which contains the root node and the corresponding remaining sum which is
         (sum - root.val). Then we proceed to the iterations: pop the current node out of the stack and return True if
-        the remaining sum is 0 and we're on the leaf node. If the remaining sum is not zero or we're not on the leaf yet
-        then we push the child nodes and corresponding remaining sums into stack.
+        the remaining sum is 0 and we're on the leaf node. If the remaining sum is not zero or we're not on the leaf
+        yet, then we push the child nodes and corresponding remaining sums into stack.
     Time complexity: O(N)
     Space complexity: in the worst case, the tree is completely unbalanced and we would keep all N nodes in the stack
-    so O(N); in the best case (the tree is completely balanced), it is O(log N) which is the height of the tree
+    so O(N); in the best case (the tree is completely balanced), it is O(logN) which is the height of the tree
     """
     if not root:
         return False
     stack = [(root, sum)]
     while stack:
-        node, sum_till_now = stack.pop()
-        if not node.left and not node.right and node.val == sum_till_now:
+        node, cur_sum = stack.pop()
+        if not node.left and not node.right and node.val == cur_sum:
             return True
-        if node.left:
-            stack.append((node.left, sum_till_now - node.val))
-        if node.right:
-            stack.append((node.right, sum_till_now - node.val))
+        stack.extend([(kid, cur_sum - node.val) for kid in (node.left, node.right) if kid])
     return False
 
 
