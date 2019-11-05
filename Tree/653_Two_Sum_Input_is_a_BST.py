@@ -13,25 +13,41 @@ class TreeNode(object):
         self.right = None
 
 
-def find_target(root, k):
+def find_target_v1(root, k):
     """ Check out problem 1. Two Sum. Same logic.
     While we traverse the tree and insert nodes' values into the set, we also look back to check if current node's
     complement already exists in the set. If it exists, we have found a solution and return immediately.
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    vals, nodes = set(), []
-    if root:
-        nodes.append(root)
+    if not root:
+        return False
+    vals, nodes = set(), [root]
     while nodes:
         node = nodes.pop()
-        if node:
-            if k - node.val in vals:
-                return True
-            vals.add(node.val)
-            nodes.append(node.left)
-            nodes.append(node.right)
+        if k - node.val in vals:
+            return True
+        vals.add(node.val)
+        nodes.extend([kid for kid in (node.left, node.right) if kid])
     return False
+
+
+def find_target_v2(root, k):
+    """ Recursive DFS version of above solution.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def dfs(root):
+        if not root:
+            return False
+        if k - root.val in vals:
+            return True
+        vals.add(root.val)
+        return dfs(root.left) or dfs(root.right)
+
+    vals = set()
+    return dfs(root)
 
 
 class Test(unittest.TestCase):
@@ -43,8 +59,10 @@ class Test(unittest.TestCase):
     root.left.right = TreeNode(4)
 
     def test_find_target(self):
-        self.assertTrue(find_target(self.root, 9))
-        self.assertFalse(find_target(self.root, 28))
+        self.assertTrue(find_target_v1(self.root, 9))
+        self.assertFalse(find_target_v1(self.root, 28))
+        self.assertTrue(find_target_v2(self.root, 9))
+        self.assertFalse(find_target_v2(self.root, 28))
 
 
 if __name__ == '__main__':
