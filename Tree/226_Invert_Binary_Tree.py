@@ -35,29 +35,29 @@ def invert_tree_v1(root):
     Space complexity: O(N). Because of recursion, O(h) function calls will be placed on the stack in
     the worst case, where h is the height of the tree.
     """
-    if root:
-        root.left, root.right = root.right, root.left
-        invert_tree_v1(root.left)
-        invert_tree_v1(root.right)
-        return root
+    if not root:
+        return None
+    root.left, root.right = root.right, root.left
+    invert_tree_v1(root.left)
+    invert_tree_v1(root.right)
+    return root
 
 
 def invert_tree_v2(root):
     """ Iterative approach, in a manner similar to DFS.
-    As long as the queue is not empty, remove the next node from  the queue, swap its children, and add the children
-    to the queue. Eventually, the queue will be empty and all the children swapped.
+    As long as the stack is not empty, remove the next node from  the stack, swap its children, and add the children
+    to the stack. Eventually, the stack will be empty and all the children swapped.
     Time complexity: O(N)
-    Space complexity: O(N) since in the worst case, the queue will contain all nodes in one level of the binary tree.
+    Space complexity: O(N) since in the worst case, the stack will contain all nodes in one level of the binary tree
     """
-    stack = []
-    if root:
-        stack.append(root)
+    if not root:
+        return None
+    stack = [root]
     while stack:
         node = stack.pop()
         if node:
             node.left, node.right = node.right, node.left
-            stack.append(node.left)
-            stack.append(node.right)
+            stack.extend([node.left, node.right])
     return root
 
 
@@ -67,14 +67,14 @@ def invert_tree_v3(root):
     to the left of the queue. Eventually, the queue will be empty and all the children swapped.
     Time complexity: O(N)
     Space complexity: O(N) since in the worst case, the queue will contain all nodes in one level of the binary tree.
+    For a full binary tree, the leaf level has ⌈N/2⌉= O(N) leaves.
     """
-    queue = deque()
-    if root:
-        queue.appendleft(root)
+    if not root:
+        return None
+    queue = deque([root])
     while queue:
-        node = queue.pop()
+        node = queue.popleft()
         if node:
             node.left, node.right = node.right, node.left
-            queue.appendleft(node.left)
-            queue.appendleft(node.right)
+            queue.extend([node.left, node.right])
     return root
