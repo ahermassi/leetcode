@@ -16,12 +16,22 @@ class TreeNode(object):
 def lowest_common_ancestor_v1(root, p, q):
     """ Lowest common ancestor for two nodes p and q would be the last ancestor node common to both of them. Here last
         is defined in terms of the depth of the node.
-        Note: One of p or q would be in the left subtree and the other in the right subtree of the LCA node.
+        Without loss of generality, assume the key at p is smaller. (Since the problem specified keys are distinct, it
+        cannot be that p and q hold equal keys) Consider the key stored at the root of the BST.
+        There are 4 possibilities:
+            1- If the root's key is the same as that stored at p or at q, we are done: The root is the LCA.
+            2- If the key at p is smaller than the key at the root, and the key at q is greater than the key at the
+               root, the root is the LCA.
+            3- If the keys at p and q are both smaller than that at the root, the LCA must lie in the left subtree of
+               the root.
+            4- If both keys are larger than that at the root, then the LCA must lie in the right subtree of the root.
+        Instead of recursively calling the function, we traverse down the tree iteratively. This is possible without
+        using a stack or recursion since we don't need to backtrace to find the LCA node.
         Start traversing the tree from the root node.
         If both the nodes p and q are in the right subtree, then continue the search with right subtree starting step 1.
         If both the nodes p and q are in the left subtree, then continue the search with left subtree starting step 1.
         If both step 2 and step 3 are not true, this means we have found the node which is common to node p's and q's
-        subtrees. and hence we return this common node as the LCA.
+        subtrees, and hence we return this common node as the LCA.
     Time complexity: O(N), in the worst case we might be visiting all the nodes of the BST.
     Space complexity: O(1)
     """
@@ -35,8 +45,7 @@ def lowest_common_ancestor_v1(root, p, q):
 
 
 def lowest_common_ancestor_v2(root, p, q):
-    """ Recursive approach. Instead of recursively calling the function, we traverse down the tree iteratively. This is
-        possible without using a stack or recursion since we don't need to backtrace to find the LCA node.
+    """ Recursive approach.
     Time complexity: O(N), in the worst case we might be visiting all the nodes of the BST.
     Space complexity: O(N) in the worst case (skewed tree), O(logN) in the case of a balanced BST
     """
