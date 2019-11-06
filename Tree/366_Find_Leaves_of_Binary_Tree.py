@@ -35,6 +35,28 @@ def find_leaves_v1(root):
     return list(heights.values())
 
 
+def find_leaves_v2(root):
+    """ Same solution but without using a hash map. The height of a node is also the its index in the result list 'res'.
+        For example, leaves, whose heights are 0, are stored in res[0]. Once we find the height of a node, we can put
+        it directly into the result.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def find_height(root):
+        if not root:
+            return -1
+        height = 1 + max(find_height(root.left), find_height(root.right))
+        if height == len(res):  # This is where check that we have a new height not encountered previously
+            res.append([])
+        res[height].append(root.val)
+        return height
+
+    res = []
+    find_height(root)
+    return res
+
+
 class Test(unittest.TestCase):
     root = TreeNode(1)
     root.left = TreeNode(2)
@@ -45,6 +67,7 @@ class Test(unittest.TestCase):
 
     def test_find_leaves(self):
         self.assertEqual(self.output, find_leaves_v1(self.root))
+        self.assertEqual(self.output, find_leaves_v2(self.root))
 
 
 if __name__ == '__main__':
