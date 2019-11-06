@@ -21,7 +21,7 @@ def inorder(root):
 
 
 def inorder_v2(root):
-    """ For a given node root, the next smallest element will always be the leftmost element in its tree. So,
+    """ For a given node root of a BST, the next smallest element will always be the leftmost element in its tree. So,
         for a given root node, we keep on following the leftmost branch until we reach a node which doesn't have a left
         child and that will be the next smallest element. For the root of our BST, this leftmost node would be the
         smallest node in the tree. Rest of the nodes are added to the stack because they are pending processing.

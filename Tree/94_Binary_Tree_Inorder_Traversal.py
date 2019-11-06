@@ -29,27 +29,6 @@ def inorder_traversal_v1(root):
 
 
 def inorder_traversal_v2(root):
-    """ This iterative solution uses a 'visited' flag. If a node is not visited, push its left child. If a node is
-        is visited, get its value, pop it, and push its right child.
-    Time complexity: O(N) as we visit each node once
-    Space complexity: O(N)
-    """
-    values, stack = [], [[root, False]]
-    while stack:
-        node, visited = stack[-1]
-        if not node:
-            stack.pop()
-        elif not visited:
-            stack[-1][1] = True
-            stack.append([node.left, False])
-        else:
-            values.append(node.val)
-            stack.pop()
-            stack.append([node.right, False])
-    return values
-
-
-def inorder_traversal_v3(root):
     """ Second iterative solution. Use stack to store value and iteratively construct list.
     Time complexity: O(N)
     Space complexity: O(N)
@@ -76,7 +55,6 @@ class Test(unittest.TestCase):
     def test_inorder_traversal(self):
         self.assertEqual(self.result, inorder_traversal_v1(self.root))
         self.assertEqual(self.result, inorder_traversal_v2(self.root))
-        self.assertEqual(self.result, inorder_traversal_v3(self.root))
 
 
 if __name__ == '__main__':
