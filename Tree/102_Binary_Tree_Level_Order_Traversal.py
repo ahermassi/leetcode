@@ -19,7 +19,7 @@ class TreeNode(object):
 def level_order_v1(root):
     """ Let's keep nodes of each tree level in the queue structure.
         Initiate queue with a root. While queue is not empty :
-            Compute how many elements should be on the current level : it's a queue length.
+            Compute how many elements should be on the current level : it's queue length.
             Pop out all these elements from the queue and add them into the current level.
             Push their child nodes into the queue for the next level.
     Time complexity: O(N) where N is the number of nodes
@@ -27,39 +27,36 @@ def level_order_v1(root):
     """
     if not root:
         return None
-    queue, level, ans = deque(), [], []
-    queue.append(root)
+    res, queue = [], deque([root])
     while queue:
-        level = []
-        for _ in range(len(queue)):
-            node = queue.pop()
+        n, level = len(queue), []
+        for _ in range(n):
+            node = queue.popleft()
             level.append(node.val)
-            if node.left:
-                queue.appendleft(node.left)
-            if node.right:
-                queue.appendleft(node.right)
-        ans.append(level)
-    return ans
+            queue.extend([kid for kid in (node.left, node.right) if kid])
+        res.append(level)
+    return res
 
 
 def level_order_v2(root):
-    """ This solution uses a list instead of deque. 'level' is a list of the nodes in the current level. Keep appending
-        a list of the values of these nodes to ans and then updating level with all the nodes in the next level (leaves)
-        until it reaches an empty level. Python's list comprehension makes it easier to deal with many conditions in a
-        concise manner.
+    """ Recursive solution which resembles the pre-order traversal. The dfs() function uses the current node level as
+        an index of 'res' list. With each call to node's left/right, increment the level as we go deeper in the tree.
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(N) in the worst case of a skewed tree, O(logN) average case
     """
-    if not root:
-        return None
-    level, ans = [root], []
-    while level:
-        ans.append([node.val for node in level])
-        leaves = []
-        for node in level:
-            leaves.extend([node.left, node.right])
-        level = [leaf for leaf in leaves if leaf]
-    return ans
+
+    def dfs(root, level):
+        if not root:  # This catches the edge case (root == None)
+            return
+        if level == len(res):  # Add a new level to 'res'
+            res.append([])
+        res[level].append(root.val)
+        dfs(root.left, level + 1)
+        dfs(root.right, level + 1)
+
+    res = []
+    dfs(root, 0)  # We start initially at level 0
+    return res
 
 
 class Test(unittest.TestCase):
