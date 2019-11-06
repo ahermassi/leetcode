@@ -35,7 +35,10 @@ def inorder_traversal_v2(root):
     function call stack for the recursive implementation, O(N) worst case
     """
     values, stack = [], []
-    while root or stack:
+    while root or stack:  # If you are wondering why it is 'while root or stack' and not 'while stack', take the
+        # example of the tree [1,null,2,3]. 1 is pushed to stack, and since it has no left, it will be promptly popped
+        # and 1 added to 'res' list. After that, we move to the right subtree with root = node.right, but the stack is
+        # empty at this stage because 1 was the only node in the stack.
         while root:
             stack.append(root)
             root = root.left
