@@ -61,6 +61,18 @@ class BSTIteratorV2(object):
     def next(self):
         """ Return the next smallest number """
         node = self.stack.pop()  # Node at the top of the stack is the next smallest element
+        # Suppose we get a call to the next() function. The node which we have to return i.e. the next smallest
+        # element in the binary search tree iterator is the one sitting at the top of our stack. So, for the example
+        # above, that node would be 2 which is the correct value. Now, there are two possibilities that we have to
+        # deal with:
+        # One is where the node at the top of the stack is actually a leaf node. This is the best case and
+        # here we don't have to do anything. Simply pop the node off the stack and return its value. So, this would
+        # be a constant time operation.
+        # Second is where the node has a right child. We don't need to check for the  left child because of the way we
+        # have added nodes onto the stack. The topmost node either won't have a left child or would already have the
+        # left subtree processed. If it has a right child, then we call our helper function on the node's right child.
+        # We keep on maintaining the invariant this way in the function call for next and this way we will always be
+        # able to return the next smallest element in the BST from the top of the stack.
         self.process_leftmost(node.right)  # Need to maintain the invariant. If the node has a right child, call the
         # helper function for the right child
         return node.val
