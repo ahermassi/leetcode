@@ -15,24 +15,24 @@ class TreeNode(object):
         self.right = None
 
 
-def find_leaves(root):
+def find_leaves_v1(root):
     """ The idea is to store together the nodes that have same height in a hash map and associate that height to them.
     Time complexity: O(N)
     Space complexity: O(N)
     """
 
-    def find_height(root, d):
+    def find_height(root):
         if not root:
             return 0
-        left_height = find_height(root.left, d)
-        right_height = find_height(root.right, d)
-        height = max(left_height, right_height) + 1
-        d[height].append(root.val)
+        left_height = find_height(root.left)
+        right_height = find_height(root.right)
+        height = 1 + max(left_height, right_height)
+        heights[height].append(root.val)
         return height
 
-    d = collections.defaultdict(list)
-    find_height(root, d)
-    return list(d.values())
+    heights = collections.defaultdict(list)
+    find_height(root)
+    return list(heights.values())
 
 
 class Test(unittest.TestCase):
@@ -44,7 +44,7 @@ class Test(unittest.TestCase):
     output = [[4, 5, 3], [2], [1]]
 
     def test_find_leaves(self):
-        self.assertEqual(self.output, find_leaves(self.root))
+        self.assertEqual(self.output, find_leaves_v1(self.root))
 
 
 if __name__ == '__main__':
