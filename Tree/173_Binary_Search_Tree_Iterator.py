@@ -6,39 +6,29 @@ Calling next() will return the next smallest number in the BST. """
 
 class BSTIteratorV1(object):
 
-    """ Usually, an iterator simply goes over each of the elements of the container one by one. For the BST,
-        we want the iterator to return elements in an ascending order.
+    """ Usually, an iterator simply goes over each of the elements of the container one by one. For the BST, we want
+        the iterator to return elements in an ascending order.
         We will be using additional memory and we will flatten the binary search tree into an array. Since we need the
-        elements to be in a sorted order, we will do an inorder traversal over the tree and store the elements in a new
-        array and then build the iterator functions using this new array.
+        elements to be in a sorted order, we will do an in-order traversal over the tree and store the elements in a
+        new array and then build the iterator functions using this new array.
     Time complexity: O(N) is the time taken by the constructor for the iterator as we have to visit each node once.
     next() and hasNext() are both O(1)
-    Space complexity: O(N) occupied by values array, and O(log N) occupied by the recursion stack for inorder traversal.
+    Space complexity: O(N) occupied by values array, and O(logN) occupied by the recursion stack for in-order traversal.
     So overall, space complexity is O(N)
     """
 
     def __init__(self, root):
-        """
-        :type root: TreeNode
-        """
         self.values = []
         self.index = 0  # Pointer to the next smallest element in the BST
-
         self.inorder(root)  # Call to flatten the input binary search tree
 
     def next(self):
-        """
-        @return the next smallest number
-        :rtype: int
-        """
+        """ Return the next smallest number """
         self.index += 1
         return self.values[self.index - 1]
 
     def hasNext(self):
-        """
-        @return whether we have a next smallest number
-        :rtype: bool
-        """
+        """ Return whether we have a next smallest number """
         return self.index < len(self.values)
 
     def inorder(self, root):
@@ -50,10 +40,10 @@ class BSTIteratorV1(object):
 
 
 class BSTIteratorV2(object):
-    """ if we could simulate a controlled recursion for an inorder traversal, we wouldn't really need to use any
+    """ If we could simulate a controlled recursion for an in-order traversal, we wouldn't really need to use any
         additional space other than the space used by the stack for our recursion simulation.
-        So, this approach essentially uses a custom stack to simulate the inorder traversal i.e. we will be taking an
-        iterative approach to inorder traversal rather than going with the recursive approach and in doing so, we will
+        So, this approach essentially uses a custom stack to simulate the in-order traversal, i.e. we will be taking an
+        iterative approach to in-order traversal rather than going with the recursive approach and in doing so, we will
         be able to easily implement the two function calls without any other additional space.
     Time complexity: O(1) for hasNext(); next() involves two major operations. One is where we pop an element from the
     stack which becomes the next smallest element to return. This is a O(1) operation. However, we then make a call
@@ -61,31 +51,22 @@ class BSTIteratorV2(object):
     here is that we only make such a call for nodes which have a right child. Otherwise, we simply return. Also, even
     if we end up calling the helper function, it won't always process N nodes. They will be much less.
     Thus, the amortized (average) time complexity for this function would still be O(1)
-    Space complexity: O(log N) = O(height) which is occupied by our custom stack for simulating the inorder traversal
+    Space complexity: O(logN) = O(height) which is occupied by our custom stack for simulating the in-order traversal
     """
 
     def __init__(self, root):
-        """
-        :type root: TreeNode
-        """
         self.stack = []
         self.process_leftmost(root)
 
     def next(self):
-        """
-        @return the next smallest number
-        :rtype: int
-        """
+        """ Return the next smallest number """
         node = self.stack.pop()  # Node at the top of the stack is the next smallest element
         self.process_leftmost(node.right)  # Need to maintain the invariant. If the node has a right child, call the
         # helper function for the right child
         return node.val
 
     def hasNext(self):
-        """
-        @return whether we have a next smallest number
-        :rtype: bool
-        """
+        """ Return whether we have a next smallest number """
         return self.stack
 
     def process_leftmost(self, root):
