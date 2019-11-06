@@ -13,7 +13,7 @@ class TreeNode(object):
 def inorder_traversal_v1(root):
     """ Recursive approach. Most straightforward.
     Time complexity: O(N) as we visit each node once
-    Space complexity: O(N)
+    Space complexity: O(N) worst case, O(logN) average case
     """
 
     def process(root):
@@ -31,7 +31,8 @@ def inorder_traversal_v1(root):
 def inorder_traversal_v2(root):
     """ Second iterative solution. Use stack to store value and iteratively construct list.
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(logN), this space is allocated dynamically, specifically it is the maximum depth of the
+    function call stack for the recursive implementation, O(N) worst case
     """
     values, stack = [], []
     while root or stack:
