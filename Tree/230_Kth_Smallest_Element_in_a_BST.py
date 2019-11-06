@@ -13,11 +13,11 @@ class TreeNode(object):
 
 
 def kth_smallest_v1(root, k):
-    """ Iterative approach using stack (inorder). There is no need to build the entire inorder traversal,
-    and we can stop after the kth element.
+    """ Iterative approach using stack (in-order). There is no need to build the entire in-order traversal, and we can
+    stop after the kth element.
     Time complexity: O(N + k) in the worst case of a skewed BST, since before starting to pop out we have to go down to
     a leaf. O(logN + k) in the best case of a balanced BST.
-    Space complexity: O(logN + k) or O(N + k) for same reasons
+    Space complexity: O(logN) average case, O(N) worst case
     """
     stack = []
     while stack or root:
