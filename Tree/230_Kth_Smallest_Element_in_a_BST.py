@@ -34,8 +34,8 @@ def kth_smallest_v1(root, k):
 def kth_smallest_v2(root, k):
     """ Recursive solution. View comments in inorder_traversal_iterative.py, inorder_v2()
     Time complexity: O(N + k) in the worst case of a skewed BST, since before starting to pop out we have to go down to
-    a leaf. O(logN + k) in the best case of a balanced BST.
-    Space complexity: O(logN + k) or O(N + k) for same reasons
+    a leaf. O(logN) in the best case of a balanced BST.
+    Space complexity: O(logN) average case, O(N) worst case
     """
 
     def push_leftmost(root):
