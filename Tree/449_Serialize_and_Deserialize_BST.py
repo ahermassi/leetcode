@@ -16,24 +16,20 @@ class TreeNode(object):
 
 
 class CodecPreorder:
-    """ Let's use here the fact that BST could be constructed from preorder or postorder traversal only.
-        Inorder traversal is not a unique identifier for the BST. For example, 1-2-3 inorder traversal could correspond
-        to at least 3 different trees: with the root equal to 1, with the root 2, and with the root 3.
-        By contrary, both preorder and postorder traversals are unique identifiers of BST. That’s because from these
-        traversals one could restore the inorder one: inorder = sorted(postorder) = sorted(preorder).
+    """ Let's use here the fact that BST could be constructed from pre-order or post-order traversal only.
+        In-order traversal is not a unique identifier for the BST. For example, 1-2-3 in-order traversal could
+        correspond to at least 3 different trees: with the root equal to 1, with the root 2, and with the root 3.
+        By contrary, both pre-order and post-order traversals are unique identifiers of BST. That’s because from these
+        traversals one could restore the in-order one: in-order = sorted(post-order) = sorted(pre-order).
 
-        This class uses preorder traversal for serialization. To deserialized, use a queue to recursively get root
+        This class uses pre-order traversal for serialization. To deserialize, use a queue to recursively get root
         node, left subtree and right subtree. In this case, root will be always the first element in the stack.
-        Pre order traversal of BST will output root node first, then left children, then right:
+        Pre-order traversal of BST will output root node first, then left children, then right:
         root left1 left2 leftX right1 rightX
     """
 
     def serialize(self, root):
-        """Encodes a tree to a single string.
-
-        :type root: TreeNode
-        :rtype: str
-        """
+        """ Encodes a tree to a single string. """
         values = []
 
         def preorder(root):
@@ -46,11 +42,7 @@ class CodecPreorder:
         return ' '.join([str(val) for val in values])
 
     def deserialize(self, data):
-        """Decodes your encoded data to tree.
-
-        :type data: str
-        :rtype: TreeNode
-        """
+        """ Decodes your encoded data to tree. """
 
         def build(lower, upper):
             if queue and lower < queue[0] < upper:  # Verifying if first element in queue meets BST properties
@@ -69,16 +61,12 @@ class CodecPreorder:
 
 
 class CodecPostorder:
-    """ This class uses postorder traversal for serialization. To deserialize, use a stack to recursively get root
+    """ This class uses post-order traversal for serialization. To deserialize, use a stack to recursively get root
         node, left subtree and right subtree. In this case, root will be always the last element in the stack.
     """
 
     def serialize(self, root):
-        """Encodes a tree to a single string.
-
-        :type root: TreeNode
-        :rtype: str
-        """
+        """ Encodes a tree to a single string. """
         values = []
 
         def postorder(root):
@@ -91,11 +79,7 @@ class CodecPostorder:
         return ' '.join([str(val) for val in values])
 
     def deserialize(self, data):
-        """Decodes your encoded data to tree.
-
-        :type data: str
-        :rtype: TreeNode
-        """
+        """ Decodes your encoded data to tree. """
 
         def build(lower, upper):
             if values and lower < values[-1] < upper:
@@ -118,7 +102,7 @@ class Test(unittest.TestCase):
     root.left.left = TreeNode(1)
     root.left.right = TreeNode(4)
 
-    def test_is_alien_sorted1(self):
+    def test_codec(self):
         codec_preorder = CodecPreorder()
         root_preorder = codec_preorder.deserialize(codec_preorder.serialize(self.root))
         self.assertEqual(5, root_preorder.val)
