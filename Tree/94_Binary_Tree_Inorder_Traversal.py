@@ -48,6 +48,42 @@ def inorder_traversal_v2(root):
     return values
 
 
+def inorder_traversal_v3(root):
+    """ Morris traversal.
+        The basic idea is that we create links to the in-order successor and add the data to the result list using the
+        links we created, and finally revert the changes.
+        1- Start from root
+        2- While root is not null:
+            2.1- If root has a left child:
+                 Make root as right child of the rightmost node in root's left subtree, which is root's in-order
+                 predecessor
+                 Go to this left child, i.e., root = root.left
+            2.2- If root has no left child:
+                 Print root’s data
+                 Go to the right, i.e., root = root.right
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    res = []
+    while root:
+        if root.left:
+            pre = root.left
+            while pre.right and pre.right != root:  # Find the in-order predecessor of current, which is the
+                # rightmost node in root's left subtree. The second condition in while loop is used when reverting
+                pre = pre.right
+            if not pre.right:
+                pre.right = root  # Make root as right child of the rightmost node in root's left subtree
+                root = root.left  # Go to this left child
+            else:  # Revert back the changes
+                pre.right = None
+                res.append(root.val)
+                root = root.right
+        else:
+            res.append(root.val)
+            root = root.right
+    return res
+
+
 class Test(unittest.TestCase):
     root = TreeNode(7)
     root.left = TreeNode(3)
@@ -59,6 +95,7 @@ class Test(unittest.TestCase):
     def test_inorder_traversal(self):
         self.assertEqual(self.result, inorder_traversal_v1(self.root))
         self.assertEqual(self.result, inorder_traversal_v2(self.root))
+        self.assertEqual(self.result, inorder_traversal_v3(self.root))
 
 
 if __name__ == '__main__':
