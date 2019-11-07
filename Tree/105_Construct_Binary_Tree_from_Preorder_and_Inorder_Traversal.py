@@ -34,7 +34,7 @@ def build_tree_v1(preorder, inorder):
         within in-order traversal, and split into two sub problems.
         Example: pre-order = [3, 9, 20, 15, 7], in-order = [9, 3, 15, 20, 7]
                 3 is root, [9] is the left subtree, [15, 20, 7] is the right subtree, and so on (recursively)
-    Time complexity: O(N^2), since index lookup in in-order takes O(N)
+    Time complexity: O(N^2), since index lookup in in-order list takes O(N)
     Space complexity: O(N)
     """
 
@@ -52,6 +52,27 @@ def build_tree_v1(preorder, inorder):
 
 
 def build_tree_v2(preorder, inorder):
+    """ We can improve the previous solution by mapping values to indices of in-order list. This way, we can look up
+        the index of root in in-order in constant time.
+    Time complexity: O(N)
+    Space complexity: O(N) worst case, O(logN) average case
+    """
+
+    def get_tree(preorder, inorder_start, inorder_end):
+        if inorder_start > inorder_end:
+            return None
+        root = TreeNode(preorder.popleft())
+        index = indices[root.val]
+        root.left = get_tree(preorder, inorder_start, index - 1)
+        root.right = get_tree(preorder, index + 1, inorder_end)
+        return root
+
+    preorder = deque(preorder)
+    indices = {v: i for i, v in enumerate(inorder)}
+    return get_tree(preorder, 0, len(inorder) - 1)
+
+
+def build_tree_v3(preorder, inorder):
     """ Iterative, stack based solution. """
     if not preorder:
         return None
@@ -89,7 +110,7 @@ class Test(unittest.TestCase):
     root.right.right = TreeNode(7)
 
     def test_build_tree(self):
-        root = build_tree_v1(self.preorder, self.inorder)
+        root = build_tree_v2(self.preorder, self.inorder)
         self.assertEqual(3, root.val)
         self.assertEqual(9, root.left.val)
         self.assertEqual(20, root.right.val)
