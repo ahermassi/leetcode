@@ -55,7 +55,7 @@ def build_tree_v2(preorder, inorder):
     """ We can improve the previous solution by mapping values to indices of in-order list. This way, we can look up
         the index of root in in-order in constant time.
     Time complexity: O(N)
-    Space complexity: O(N) worst case, O(logN) average case
+    Space complexity: O(N) for hash map, O(N) worst case / O(logN) average case for call stack
     """
 
     def get_tree(inorder_start, inorder_end):
