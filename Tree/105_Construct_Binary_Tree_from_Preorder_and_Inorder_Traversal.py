@@ -30,11 +30,11 @@ class TreeNode(object):
 
 
 def build_tree_v1(preorder, inorder):
-    """ Looking at preorder traversal, the first value (node 1) must be the root. Then, we find the index of root within
-        in-order traversal, and split into two sub problems.
-        Example: preorder = [3, 9, 20, 15, 7], inorder = [9, 3, 15, 20, 7]
+    """ Looking at pre-order traversal, the first value (node 1) must be the root. Then, we find the index of root
+        within in-order traversal, and split into two sub problems.
+        Example: pre-order = [3, 9, 20, 15, 7], in-order = [9, 3, 15, 20, 7]
                 3 is root, [9] is the left subtree, [15, 20, 7] is the right subtree, and so on (recursively)
-    Time complexity: O(N)
+    Time complexity: O(N^2), since index lookup in in-order takes O(N)
     Space complexity: O(N)
     """
 
@@ -47,7 +47,7 @@ def build_tree_v1(preorder, inorder):
             root.right = get_tree(preorder, inorder[index + 1:])
             return root
 
-    preorder = deque(preorder)  # Speed up a bit by making preorder a queue (cheap left pops as opposed to list.pop(0))
+    preorder = deque(preorder)  # Speed up a bit by making pre-order a queue (cheap left pops as opposed to list.pop(0))
     return get_tree(preorder, inorder)
 
 
