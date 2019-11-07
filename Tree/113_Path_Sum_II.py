@@ -40,7 +40,7 @@ def path_sum_v2(root, sum):
         if not root:
             return
         if root.val == sum and not root.left and not root.right:
-            path.append(root.val)
+            path.append(root.val)  # Only when we're sure that this node leads to a correct path we add it to final list
             res.append(path)
         else:
             dfs(root.left, path + [root.val], sum - root.val)
@@ -48,6 +48,33 @@ def path_sum_v2(root, sum):
 
     res = []
     dfs(root, [], sum)
+    return res
+
+
+def path_sum_v3(root, sum):
+    """ Same as previous solution, but with a backtracking flavor .
+        During the execution, we first blindly add (or use) the node, and check if it satisfies the condition we expect
+        to meet. If it does, we add the path to the resulting list. After removing ourselves from the partial list, we
+        basically say "let's try this without me" and explore other branches of decision tree.
+        Here, we are using the same vector path to save the result. If we don't use path.pop(), after we call helper()
+        on the left branch, the path will contain all the elements that it were pushed on the left branch. This way,
+        when we call helper() on the right branch, the result on the right branch will be screwed.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    def helper(root, sum, path):
+        if not root:
+            return
+        path.append(root.val)
+        if not root.left and not root.right and root.val == sum:
+            res.append(path[:])  # Notice how we add a copy, otherwise we'll store a REFERENCE to path not path itself
+        else:
+            helper(root.left, sum - root.val, path)
+            helper(root.right, sum - root.val, path)
+        path.pop()  # Remove current node
+
+    res = []
+    helper(root, sum, [])
     return res
 
 
@@ -71,6 +98,7 @@ class Test(unittest.TestCase):
     def test_path_sum(self):
         self.assertEqual(self.result, path_sum_v1(self.root, self.sum))
         self.assertEqual(self.result, path_sum_v2(self.root, self.sum))
+        self.assertEqual(self.result, path_sum_v3(self.root, self.sum))
 
 
 if __name__ == '__main__':
