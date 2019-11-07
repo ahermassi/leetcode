@@ -38,17 +38,17 @@ def build_tree_v1(preorder, inorder):
     Space complexity: O(N)
     """
 
-    def get_tree(preorder, inorder):
+    def get_tree(inorder):
         if inorder:
             val = preorder.popleft()
             index = inorder.index(val)
             root = TreeNode(inorder[index])
-            root.left = get_tree(preorder, inorder[:index])
-            root.right = get_tree(preorder, inorder[index + 1:])
+            root.left = get_tree(inorder[:index])
+            root.right = get_tree(inorder[index + 1:])
             return root
 
     preorder = deque(preorder)  # Speed up a bit by making pre-order a queue (cheap left pops as opposed to list.pop(0))
-    return get_tree(preorder, inorder)
+    return get_tree(inorder)
 
 
 def build_tree_v2(preorder, inorder):
@@ -58,18 +58,18 @@ def build_tree_v2(preorder, inorder):
     Space complexity: O(N) worst case, O(logN) average case
     """
 
-    def get_tree(preorder, inorder_start, inorder_end):
+    def get_tree(inorder_start, inorder_end):
         if inorder_start > inorder_end:
             return None
         root = TreeNode(preorder.popleft())
         index = indices[root.val]
-        root.left = get_tree(preorder, inorder_start, index - 1)
-        root.right = get_tree(preorder, index + 1, inorder_end)
+        root.left = get_tree(inorder_start, index - 1)
+        root.right = get_tree(index + 1, inorder_end)
         return root
 
     preorder = deque(preorder)
     indices = {v: i for i, v in enumerate(inorder)}
-    return get_tree(preorder, 0, len(inorder) - 1)
+    return get_tree(0, len(inorder) - 1)
 
 
 def build_tree_v3(preorder, inorder):
@@ -77,7 +77,7 @@ def build_tree_v3(preorder, inorder):
     if not preorder:
         return None
     inorder_indexes = {num: i for i, num in enumerate(inorder)}  # build a map of the indices of the values as they
-    # appear in the inorder array
+    # appear in the in-order array
     root = TreeNode(preorder[0])
     stack = [root]  # Initialize the stack of tree nodes
     for i in range(1, len(preorder)):
