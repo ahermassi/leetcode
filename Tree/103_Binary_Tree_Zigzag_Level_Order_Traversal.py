@@ -14,6 +14,7 @@ return its zigzag level order traversal as:
   [15,7]
 ] """
 
+from collections import deque
 import unittest2 as unittest
 
 
@@ -27,25 +28,51 @@ class TreeNode(object):
         self.right = None
 
 
-def zigzag_level_order(root):
-    """ Simple BFS traversal. Use a 'direction' flag to indicate the order of appending nodes to the next level.
+def zigzag_level_order_v1(root):
+    """ Simple BFS traversal. Use 'zigzag' flag to indicate whether to append nodes to the next level in zigzag or not.
     Time complexity: O(N)
     Space complexity: O(N)
     """
     if not root:
         return None
-    level, direction, res = [root], 1, []
+    level, zigzag, res = [root], 1, []
     while level:
         values, next_level = [], []
         for _ in range(len(level)):
             node = level.pop()
             values.append(node.val)
-            if direction == 1:
+            if zigzag == 1:
                 next_level.extend([child for child in (node.left, node.right) if child])
             else:
                 next_level.extend([child for child in (node.right, node.left) if child])
         res.append(values)
-        direction, level = -direction, next_level
+        zigzag, level = -zigzag, next_level
+    return res
+
+
+def zigzag_level_order_v2(root):
+    """ The previous solution uses a stack to mimic the queue. This version uses an actual deque.
+        If zigzag = 1, pop_back, push_front, left then right
+        If zigzag = -1, pop_front, push_back, right then left
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not root:
+        return None
+    res, queue, zigzag = [], deque([root]), 1
+    while queue:
+        n, level = len(queue), []
+        for _ in range(n):
+            if zigzag == 1:
+                node = queue.pop()
+                level.append(node.val)
+                queue.extendleft([kid for kid in (node.left, node.right) if kid])
+            else:
+                node = queue.popleft()
+                level.append(node.val)
+                queue.extend([kid for kid in (node.right, node.left) if kid])
+        res.append(level)
+        zigzag = -zigzag
     return res
 
 
@@ -62,7 +89,8 @@ class Test(unittest.TestCase):
     ]
 
     def test_zigzag_level_order(self):
-        self.assertEqual(self.result, zigzag_level_order(self.root))
+        self.assertEqual(self.result, zigzag_level_order_v1(self.root))
+        self.assertEqual(self.result, zigzag_level_order_v2(self.root))
 
 
 if __name__ == '__main__':
