@@ -19,36 +19,33 @@ def right_side_view_v1(root):
     """
     if not root:
         return None
-    queue, ans = deque([root]), []
+    res, queue = [], deque([root])
     while queue:
-        ans.append(queue[-1].val)
+        res.append(queue[-1].val)
         n = len(queue)
         for _ in range(n):
-            node = queue.pop()
-            if node.right:
-                queue.appendleft(node.right)
-            if node.left:
-                queue.appendleft(node.left)
-    return ans
+            node = queue.popleft()
+            queue.extend([kid for kid in (node.left, node.right) if kid])
+    return res
 
 
 def right_side_view_v2(root):
-    """ BFS stack version. The stack holds the current 'level' at each iteration, with the right side being always in
-        the rear of the list.
+    """ Do a reverse pre-order traversal where the right child is always visited after the root is processed. The idea
+        is that this order guarantees that the FIRST node to be seen at each level is the one that is visible from the
+        right side view. We use the level as index of the result list.
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(N) worst case, O(logN) average case
     """
-    if not root:
-        return None
-    level, res = [root], []
-    while level:
-        res.append(level[-1].val)
-        next_level = []
-        for node in level:
-            for kid in (node.left, node.right):
-                if kid:
-                    next_level.append(kid)
-        level = next_level
+    def dfs(root, depth):
+        if not root:
+            return
+        if depth == len(res):  # Make sure the first element of that level will be added to the result list
+            res.append(root.val)
+        dfs(root.right, depth + 1)
+        dfs(root.left, depth + 1)
+
+    res = []
+    dfs(root, 0)
     return res
 
 
@@ -62,6 +59,7 @@ class Test(unittest.TestCase):
 
     def test_level_order(self):
         self.assertEqual(self.result, right_side_view_v1(self.root))
+        self.assertEqual(self.result, right_side_view_v2(self.root))
 
 
 if __name__ == '__main__':
