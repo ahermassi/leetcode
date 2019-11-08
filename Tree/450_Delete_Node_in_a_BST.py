@@ -27,19 +27,15 @@ def delete_node(root, key):
     elif root.val > key:
         root.left = delete_node(root.left, key)
     else:  # Now the key is the root of a subtree
-        if not root.left:  # If the subtree does not have a left child, we just return its right child to its father,
-            # and they will be connected on the higher level recursion
-            return root.right
-        else:  # If it has a left child, we want to find the max val on the left subtree to replace the node we want
-            # to delete. This is also called the predecessor of the node, or the previous node in in-order traversal
-            temp = root.left
-            while temp.right:
-                temp = temp.right
-            root.val = temp.val
-            # Since we have replaced the node we want to delete with temp, now we don't want to keep temp on this
-            # tree, so we just use our function to delete it. Pass the val of temp to the left subtree and repeat the
-            # whole approach
-            root.left = delete_node(root.left, temp.val)
+        if not root.left and not root.right:  # The node is a leaf
+            root = None
+        elif root.right:  # The node is not a leaf and has a right child
+            root.val = successor(root)
+            root.right = delete_node(root.right, root.val)
+        else:  # The node is not a leaf, has no right child, and has a left child
+            root.val = predecessor(root)
+            root.left = delete_node(root.left, root.val)
+        return root
     return root
 
 # Utility functions
