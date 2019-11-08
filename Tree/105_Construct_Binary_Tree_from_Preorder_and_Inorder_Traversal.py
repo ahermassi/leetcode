@@ -69,7 +69,7 @@ def build_tree_v2(preorder, inorder):
 
     preorder = deque(preorder)
     indices = {v: i for i, v in enumerate(inorder)}
-    return get_tree(0, len(inorder) - 1)
+    return get_tree(0, len(inorder) - 1)  # These boundaries are used only to check if the subtree is empty or not.
 
 
 def build_tree_v3(preorder, inorder):

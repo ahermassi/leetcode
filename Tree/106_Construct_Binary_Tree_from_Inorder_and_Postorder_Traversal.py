@@ -22,12 +22,15 @@ def build_tree(inorder, postorder):
             return None
         root = TreeNode(postorder.pop())
         index = indexes[root.val]
-        root.right = helper(index + 1, inorder_right)
+        root.right = helper(index + 1, inorder_right)  # Pay attention to the order: right THEN left. Post-order
+        # traversal goes 'Left-Right-Parent', and postorder.pop() keeps picking the right-most element of the list,
+        # that means it should go 'Parent-(one of parents of) Right (subtree) - Left'. So, switching the order
+        # doesn't work.
         root.left = helper(inorder_left, index - 1)
         return root
 
-    indexes = {v: i for i, v in enumerate(inorder)}  # Build a map of indices of the values as they appear in inorder
-    return helper(0, len(inorder) - 1)
+    indexes = {v: i for i, v in enumerate(inorder)}  # Build a map of indices of the values as they appear in in-order
+    return helper(0, len(inorder) - 1)  # These boundaries are used only to check if the subtree is empty or not
 
 
 class Test(unittest.TestCase):
@@ -39,7 +42,7 @@ class Test(unittest.TestCase):
     root.right.left = TreeNode(15)
     root.right.right = TreeNode(7)
 
-    def test_is_balanced(self):
+    def test_build_tree(self):
         root = build_tree(self.inorder, self.postorder)
         self.assertEqual(3, root.val)
         self.assertEqual(9, root.left.val)
