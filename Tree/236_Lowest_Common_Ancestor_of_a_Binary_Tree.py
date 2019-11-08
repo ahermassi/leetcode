@@ -44,21 +44,35 @@ def lowest_common_ancestor_v1(root, p, q):
     return q
 
 
+# Check this out: https://www.youtube.com/watch?v=py3R23aAPCA
+
 def lowest_common_ancestor_v2(root, p, q):
-    """ Recursive approach. """
-    if root == p or root == q:  # # If looking for me, return myself
+    """ Recursive approach.
+        The key is that we want to root ourselves at a node and then search left and then right for either of the 2
+        nodes given.
+        If we see either node, we will return it. If we do not find the node in a subtree, the value of null will be
+        returned and bubbled up.
+        After we search both left and right, we ask ourselves what our results mean.
+        If we found nothing to the left, we just bubble up what is on the right (whatever that search result may be).
+        This node we sit at cannot be the LCA since the left and right did not yield the 2 nodes we want.
+        If we found nothing to the right, we just bubble up what is on the left (whatever that search result may be).
+        This node we sit at cannot be the LCA since the left and right did not yield the 2 nodes we want.
+        If both the right and left result are not null, we have found our LCA. Why? We know it is an ancestor at the
+        least but we definitely know it is the lowest common ancestor because we went bottom upwards, whatever we hit
+        will be the LCA and it will bubble up.
+    Time complexity: O(N), in the worst case we might be visiting all the nodes of the binary tree
+    Space complexity: O(N) worst case, O(logN) average case
+    """
+    if root == p or root == q:  # If we find either value, return ourselves to the caller
         return root
-    left = right = None
-    # Else look in left and right children
-    if root.left:
-        left = lowest_common_ancestor_v2(root.left, p, q)
-    if root.right:
-        right = lowest_common_ancestor_v2(root.right, p, q)
-    if left and right:  # if both children returned a node, it means both p and q found, so parent is LCA
+    # 'root' doesn't satisfy any of our base cases. Search left and then search right
+    left = lowest_common_ancestor_v2(root.left, p, q)
+    right = lowest_common_ancestor_v2(root.right, p, q)
+    if left and right:  # We got something back on the left AND right. That means this node is the LCA because our
+        # recursion returns from bottom to up, so we return what we hold: 'root'
         return root
-    # Either one of the children returned a node, meaning either p or q found on left or right branch.
-    # Example: assuming 'p' found in left child, right child returned 'None'. This means 'q' is somewhere below node
-    # where 'p' was found we don't need to search all the way,  because in such scenarios, node where 'p' found is LCA
+    # Either one of the children returned a node, meaning either p or q found on left or right branch. Return whatever
+    # we got.
     return left or right
 
 
