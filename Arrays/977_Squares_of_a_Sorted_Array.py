@@ -1,24 +1,22 @@
 """ Given an array of integers A sorted in non-decreasing order, return an array of the squares of each number,
 also in sorted non-decreasing order. """
+
 from collections import deque
 import unittest2
 
 
 def sorted_squares_v1(A):
-    """ 
-    :param A: List[int]
-    :return: List[int]
-    This is the most straightforward way, using sorted() built-in.
-    Time complexity: O(N log N) for the Timsort
+    """ This is the most straightforward way, using sorted() built-in.
+    Time complexity: O(N logN) for the Tim sort
     Space complexity: O(N) for the new created list
     """
     return sorted([i ** 2 for i in A])
 
 
 def sorted_squares_v2(A):
-    """ Use two pointers, one at each end, to iteratively collect the larger square
-    to a list. However, collecting the larger square in a list with list's append, results in elements sorted in
-    descending order. To circumvent this, we need to append to the left of the list.
+    """ Use two pointers, one at each end, to iteratively collect the larger square to a list. However, collecting the
+        larger square in a list with list's append, results in elements sorted in descending order. To circumvent this,
+        we need to append to the left of the list.
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -37,26 +35,25 @@ def sorted_squares_v2(A):
 
 def sorted_squares_v3(A):
     """ Use two pointers, but this time without a deque. Instead, add the larger square from the back of the list,
-    denoted by the index r - l
+        denoted by the index (right - left)
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    result = [None] * len(A)
-    l, r = 0, len(A) - 1
-    while l <= r:
-        left, right = abs(A[l]), abs(A[r])
-        if left > right:
-            result[r - l] = left ** 2
-            l += 1
+    res = [0] * len(A)
+    left, right = 0, len(A) - 1
+    while left <= right:
+        if abs(A[right]) >= abs(A[left]):
+            res[right - left] = A[right] ** 2
+            right -= 1
         else:
-            result[r - l] = right ** 2
-            r -= 1
-    return result
+            res[right - left] = A[left] ** 2
+            left += 1
+    return res
 
 
 def sorted_squares_v4(A):
     """ Sorting in-place and then calculating squares
-     Time complexity: O(N log N) for Timsort
+    Time complexity: O(N log N) for Timsort
     Space complexity: O(1) since first sorting is in-place
      """
     A.sort(key=abs)
