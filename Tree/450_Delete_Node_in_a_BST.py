@@ -26,7 +26,7 @@ def delete_node(root, key):
             # and they will be connected on the higher level recursion
             return root.right
         else:  # If it has a left child, we want to find the max val on the left subtree to replace the node we want
-            # to delete
+            # to delete. This is also called the predecessor of the node, or the previous node in in-order traversal
             temp = root.left
             while temp.right:
                 temp = temp.right
@@ -42,7 +42,7 @@ def delete_node(root, key):
 
 def successor(root):
     """ Successor = "after node", i.e. the next node, or the smallest node after the current one.
-        It's also the next node in the inorder traversal.
+        It's also the next node in the in-order traversal.
         Successor == one step right and then left as you can
     """
     root = root.right
@@ -53,7 +53,7 @@ def successor(root):
 
 def predecessor(root):
     """ Predecessor = "before node", i.e. the previous node, or the largest node before the current one.
-        It's also the previous node in the inorder traversal.
+        It's also the previous node in the in-order traversal.
         Predecessor == one step left and then right as you can
     """
     root = root.left
