@@ -34,20 +34,22 @@ def sorted_squares_v2(A):
 
 
 def sorted_squares_v3(A):
-    """ Use two pointers, but this time without a deque. Instead, add the larger square from the back of the list,
-        denoted by the index (right - left)
+    """ Use two pointers, but this time without a deque. Instead, add the larger square from the back of the result
+    list, denoted by the index i
     Time complexity: O(N)
     Space complexity: O(N)
     """
     res = [0] * len(A)
     left, right = 0, len(A) - 1
+    i = len(A) - 1
     while left <= right:
         if abs(A[right]) >= abs(A[left]):
-            res[right - left] = A[right] ** 2
+            res[i] = A[right] ** 2
             right -= 1
         else:
-            res[right - left] = A[left] ** 2
+            res[i] = A[left] ** 2
             left += 1
+        i -= 1
     return res
 
 
