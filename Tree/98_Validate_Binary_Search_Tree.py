@@ -11,10 +11,10 @@ class TreeNode(object):
 
 
 def is_valid_bst_v1(root):
-    """ Iterative inorder traversal.
-        Do we need to keep the whole inorder traversal list? Actually, no. The last added inorder element is enough to
+    """ Iterative in-order traversal.
+        Do we need to keep the whole in-order traversal list? Actually, no. The last added in-order element is enough to
         ensure at each step that the tree is BST (or not). In fact, 'inorder' variable is what should've been inserted
-        into an inorder list at this point of iteration if 'inorder' was a list.
+        into an in-order list at this point of iteration if 'inorder' was a list.
     Time complexity: O(N) in the worst case when the tree is BST or the "bad" element is a rightmost leaf.
     Space complexity: O(N) to keep stack
     """
@@ -25,7 +25,7 @@ def is_valid_bst_v1(root):
             stack.append(root)
             root = root.left
         node = stack.pop()
-        if node.val <= inorder:
+        if node.val <= inorder:  # We encountered a value which is less than previous one in in-order traversal
             return False
         inorder = node.val
         root = node.right
