@@ -7,7 +7,12 @@ Note: Time complexity should be O(height of tree). """
 
 
 def delete_node(root, key):
-    """ Read the comments.
+    """ There are three possible situations here:
+            1- Node is a leaf, and one could delete it straightforward : node = null.
+            2- Node is not a leaf and has a right child. Then the node could be replaced by its successor which is
+               somewhere lower in the right subtree. Then we could proceed down recursively to delete the successor.
+            3- Node is not a leaf, has no right child and has a left child. The node could be replaced by its
+               predecessor and then we could proceed down recursively to delete the predecessor.
     Time complexity: (logN), during the algorithm execution we go down the tree all the time - on the left or on the
     right, first to search the node to delete (O(H1)) and then to actually delete it. H1 is a tree height from the root
     to the node to delete. Delete process takes O(H2), where H2 is a tree height from the root to delete to the leafs.
