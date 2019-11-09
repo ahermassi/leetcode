@@ -40,10 +40,10 @@ def count_nodes_v1(root):
 def count_nodes_v2(root):
     """ The height of a tree can be found by just going left. Find the height of left sub tree and right sub tree.
         If left and right subtrees have the same height, then the last node on the last tree row is in the right subtree
-        and the left subtree is a full tree of height 'left_height'. So we take the 2^left_height nodes of the left
+        and the left subtree is a PERFECT tree of height 'left_height'. So we take the 2^left_height nodes of the left
         subtree plus the 1 root node plus recursively the number of nodes in the right subtree.
-        If not, then the last node on the last tree row is in the left subtree and the right subtree is a full tree of
-        height 'right_height'. So we take the 2^'right_height' nodes of the right subtree plus the 1 root node plus
+        If not, then the last node on the last tree row is in the left subtree and the right subtree is a PERFECT tree
+        of height 'right_height'. So we take the 2^'right_height' nodes of the right subtree plus the 1 root node plus
         recursively the number of nodes in the left subtree.
         In other words:
         If left sub tree height equals right sub tree height then,
@@ -64,10 +64,14 @@ def count_nodes_v2(root):
 
     if not root:
         return 0
-    left_height = get_height(root.left)
-    right_height = get_height(root.right)
+    height = get_height(root)
+    left_height, right_height = get_height(root.left), get_height(root.right)
     if left_height == right_height:
-        return pow(2, left_height) + count_nodes_v2(root.right)
+        # left_height = height - 1
+        # --> pow(2, height - 1) = (pow(2, left_height) - 1) + 1: number of nodes of left subtree + 1 for root
+        # --> pow(2, left_height) - 1 + 1 = pow(2, left_height
+        return pow(2, height - 1) + count_nodes_v2(root.right)
+        # Same as return pow(2, left_height) + count_nodes_v2(root.right)
     return pow(2, right_height) + count_nodes_v2(root.left)
 
 
@@ -82,6 +86,7 @@ class Test(unittest.TestCase):
 
     def test_count_nodes(self):
         self.assertEqual(self.result, count_nodes_v1(self.root))
+        self.assertEqual(self.result, count_nodes_v2(self.root))
 
 
 if __name__ == '__main__':
