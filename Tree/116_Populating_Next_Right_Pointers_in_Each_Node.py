@@ -18,23 +18,19 @@ def connect_v1(root):
     """ Since we are manipulating tree nodes on the same level, it's easy to come up with a very standard BFS solution
         using queue. But because of next pointer, we actually don't need a queue to store the order of tree nodes at
         each level, we just use a next pointer like it's a linked list at each level.
-        Simply do it level by level, using the next-pointers of the current level to go through the current level and
-        set the next-pointers of the next level.
+        Simply do it level by level, using the next pointers of the current level to go through the current level and
+        set the next pointers of the next level.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    if not root:
-        return None
     cur = root  # Assign root to cur and operate on cur to avoid losing the pointer to original root
-    next = cur.left
-    while cur.left:
-        cur.left.next = cur.right
-        if cur.next:
-            cur.right.next = cur.next.left
+    while cur and cur.left:  # We don't operate on last level as its nodes have been already connected in previous level
+        left = cur.left  # We keep this pointer to the leftmost node of next level
+        while cur:
+            cur.left.next = cur.right
+            cur.right.next = cur.next.left if cur.next else None
             cur = cur.next
-        else:  # Exchange cur and next every time cur is the last node at each level
-            cur = next
-            next = next.left
+        cur = left  # Exchange cur and left every time cur is the last node at each level to move on to next level
     return root
 
 
@@ -57,7 +53,7 @@ def connect_v2(root):
 
 
 def connect_v3(root):
-    """ Doing it recursively. We use the fact that the tree is perfect binary tree in the base case of recursion.
+    """ Doing it recursively. We use the fact that the tree is a perfect binary tree in the base case of recursion.
     Time complexity: O(N)
     Space complexity: O(logN) as recursion tree can go as deep as height of the tree
     """
