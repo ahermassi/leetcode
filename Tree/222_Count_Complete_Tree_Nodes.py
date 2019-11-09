@@ -5,6 +5,7 @@ Definition of a complete binary tree from Wikipedia:
 In a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level
 are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h. """
 
+from collections import deque
 import unittest2 as unittest
 
 
@@ -19,25 +20,21 @@ class TreeNode(object):
 
 
 def count_nodes_v1(root):
-    """ Iterative solution. Perform a BFS on the tree and record each level. When the number of nodes in the current
-        level is less than 2 ** depth, we know that we are in the last level (definition of complete binary tree).
-        We eventually end up with an empty level which means the BFS traversal is done (perfect binary tree).
+    """ Iterative solution. Perform a BFS on the tree and record each level and add the number of nodes to final count.
     Time complexity: O(N)
-    Space complexity: O(2 ** h) = O(2 ** log N), since the maximum number of nodes at each level is 2 ** height of
-    that level, and height == log N
+    Space complexity: O(2 ** h) = O(2 ** logN), since the maximum number of nodes at each level is 2 ** height of
+    that level, and height == logN
     """
     if not root:
         return 0
-    level, depth, count = [root], 0, 1
-    while True:
-        next_level = []
-        for node in level:
-            next_level.extend([kid for kid in (node.left, node.right) if kid])
-        depth += 1
-        if len(next_level) < pow(2, depth):
-            return count + len(next_level)
-        count += len(next_level)
-        level = next_level
+    queue, count = deque([root]), 1
+    while queue:
+        n = len(queue)
+        for _ in range(n):
+            node = queue.popleft()
+            queue.extend([kid for kid in (node.left, node.right) if kid])
+        count += len(queue)
+    return count
 
 
 def count_nodes_v2(root):
