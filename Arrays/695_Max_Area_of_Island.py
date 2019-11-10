@@ -10,25 +10,30 @@ def max_area_of_island_v1(grid):
         If we are on a land square and explore every square connected to it 4-directionally (and recursively squares
         connected to those squares, and so on), then the total number of squares explored will be the area of that
         connected shape.
-        To ensure we don't count squares in a shape more than once, let's use seen to keep track of squares we haven't
-        visited before. It will also prevent us from counting the same shape more than once.
+        To ensure we don't count squares in a shape more than once, let's use 'visited' set to keep track of squares
+        we have visited before. It will also prevent us from counting the same shape more than once.
     Time complexity: O(N * M) where N is the number of rows in the given grid and M is the number of columns. We visit
     every square once.
     Space complexity: O(N * M) for both visited set and recursion call stack
     """
 
-    def area(x, y):
-        if 0 <= x < rows and 0 <= y < cols and grid[x][y] and (x, y) not in visited:
-            visited.add((x, y))
-            return 1 + area(x - 1, y) + area(x + 1, y) + area(x, y - 1) + area(x, y + 1)
-        return 0
+    def helper(i, j):
+        if not 0 <= i < n or not 0 <= j < m or (i, j) in visited or grid[i][j] == 0:
+            return 0
+        visited.add((i, j))
+        area = 1
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            area += helper(x, y)
+        return area
 
-    rows, cols, max_area, visited = len(grid), len(grid[0]), 0, set()
-    for i in range(rows):
-        for j in range(cols):
-            if grid[i][j]:
-                max_area = max(max_area, area(i, j))
-    return max_area
+    n, m = len(grid), len(grid[0])
+    visited, res = set(), 0
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == 1 and (i, j) not in visited:
+                area = helper(i, j)
+                res = max(res, area)
+    return res
 
 
 def max_area_of_island_v2(grid):
