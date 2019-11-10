@@ -34,29 +34,27 @@ def num_islands_v1(grid):
 
 
 def num_islands_v2(grid):
-    """ Same solution as above, but without using a 'seen' set. Instead, mark every visited cell as '0'.
+    """ Same solution as above, but without using a 'visited' set. Instead, mark every visited cell as '0'. This is
+        also known as 'sinking' the islands.
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
     def dfs(i, j):
-        if i < 0 or i >= row or j < 0 or j >= col or grid[i][j] == '0':
+        if not 0 <= i < n or not 0 <= j < m or grid[i][j] == '0':
             return
         grid[i][j] = '0'
-        dfs(i - 1, j)
-        dfs(i + 1, j)
-        dfs(i, j - 1)
-        dfs(i, j + 1)
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            dfs(x, y)
 
     if not grid:
         return 0
-    count, seen = 0, set()
-    row, col = len(grid), len(grid[0])
-    for i in range(row):
-        for j in range(col):
+    n, m, res = len(grid), len(grid[0]), 0
+    for i in range(n):
+        for j in range(m):
             if grid[i][j] == '1':
                 dfs(i, j)
-                count += 1
-    return count
+                res += 1
+    return res
 
 
 class Test(unittest.TestCase):
