@@ -2,6 +2,7 @@
 water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the
 grid are all surrounded by water. """
 
+from collections import deque
 import unittest2 as unittest
 
 
@@ -53,6 +54,29 @@ def num_islands_v2(grid):
         for j in range(m):
             if grid[i][j] == '1':
                 dfs(i, j)
+                res += 1
+    return res
+
+
+def num_islands_v3(grid):
+    """ BFS version. Pretty straightforward.
+    Time complexity: O(N * M)
+    Space complexity: O(min(N, M))
+    """
+    if not grid:
+        return 0
+    n, m, res = len(grid), len(grid[0]), 0
+    visited = set()
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == '1' and (i, j) not in visited:
+                queue = deque([(i, j)])
+                while queue:
+                    x, y = queue.popleft()
+                    if not 0 <= x < n or not 0 <= y < m or (x, y) in visited or grid[x][y] == '0':
+                        continue
+                    visited.add((x, y))
+                    queue.extend([(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)])
                 res += 1
     return res
 
