@@ -34,7 +34,6 @@ def flood_fill_v2(image, sr, sc, new_color):
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
-
     def fill(i, j):
         if not 0 <= i < n or not 0 <= j < m or image[i][j] != starting_color or image[i][j] == new_color:
             return
@@ -48,6 +47,23 @@ def flood_fill_v2(image, sr, sc, new_color):
     return image
 
 
+def flood_fill_v3(image, sr, sc, new_color):
+    """ Iterative version using an actual stack.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, m = len(image), len(image[0])
+    starting_color = image[sr][sc]
+    stack = [(sr, sc)]
+    while stack:
+        i, j = stack.pop()
+        if not 0 <= i < n or not 0 <= j < m or image[i][j] == new_color or image[i][j] != starting_color:
+            continue
+        image[i][j] = new_color
+        stack.extend([(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)])
+    return image
+
+
 class Test(unittest.TestCase):
     data = [([[1, 1, 1], [1, 1, 0], [1, 0, 1]], 1, 1, 2, [[2, 2, 2], [2, 2, 0], [2, 0, 1]])]
 
@@ -55,6 +71,7 @@ class Test(unittest.TestCase):
         for test_image, sr, sc, new_color, result in self.data:
             self.assertEqual(result, flood_fill_v1(test_image, sr, sc, new_color))
             self.assertEqual(result, flood_fill_v2(test_image, sr, sc, new_color))
+            self.assertEqual(result, flood_fill_v3(test_image, sr, sc, new_color))
 
 
 if __name__ == '__main__':
