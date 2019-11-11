@@ -5,17 +5,18 @@ import unittest2 as unittest
 
 
 def num_unique_emails(emails):
-    """ Time complexity: O(N)
-        Space complexity: O(N)
+    """ Pretty straightforward. Process the emails and apply the necessary modifications. Use a set to store the new,
+        modified addresses.
+    Time complexity: O(N * k), where k is the number of emails and N is the length of the longest email
+    Space complexity: O(N)
     """
-    unique_addresses = set()  # Use set() instead of list() or []
+    unique_addresses = set()  # Use a set instead of a list to avoid duplicates
     for email in emails:
         local, domain = email.split('@')  # Note this beautiful unpacking in action
-        if '+' in local:
-            local = local[:local.find('+')]
         local = local.replace('.', '')
+        local = local.split('+')[0]
         unique_addresses.add('@'.join([local, domain]))
-    return len(unique_addresses)  # If [] was used in the beginning, this would be return len(set(unique_addresses))
+    return len(unique_addresses)
 
 
 class Test(unittest.TestCase):
