@@ -49,19 +49,22 @@ def can_finish_bfs(numCourses, prerequisites):
     """
     graph = [[] for _ in range(numCourses)]
     indegree = [0, ] * numCourses
-    for i, j in prerequisites:  # Create graph
-        graph[i].append(j)
-        indegree[j] += 1
+    for i, j in prerequisites:  # Create graph, better be seen as is_prerequisite_of graph: graph[j] = i means j is a
+        # prerequisite of i
+        graph[j].append(i)
+        indegree[i] += 1  # Recording the number of prerequisites each course i has
     queue = deque(v for v in range(numCourses) if indegree[v] == 0)  # Iterate the indegree map and find the node that
-    # has 0 indegree. If none is found, then there must be a cycle.
-    n = len(queue)
+    # has 0 indegree, which maps to 0 prerequisites. If none is found, then there must be a cycle.
+    n = len(queue)  # n is initialized to len(queue) because the queue contains the courses that have 0 prerequisites
+    # so they can be finished without any pre-processing
     while queue and n != numCourses:  # adding n != numCourses to terminate loop earlier
         v = queue.popleft()
-        for neighbor in graph[v]:
-            indegree[neighbor] -= 1
-            if indegree[neighbor] == 0:
-                n += 1
-                queue.append(neighbor)
+        for neighbor in graph[v]:  # Iterate through the courses that have 'v' as prerequisite
+            indegree[neighbor] -= 1  # This is equivalent to removing the edge neighbor -> v, which in other words
+            # means taking course 'v' and 'v' is no longer in the list of prerequisite of 'neighbor'
+            if indegree[neighbor] == 0:  # We've taken all the prerequisites of course 'neighbor' ..
+                n += 1  # .. so one more course has been finished
+                queue.append(neighbor)  # Now explore the courses that have 'neighbor' as prerequisite
     return n == numCourses
 
 
