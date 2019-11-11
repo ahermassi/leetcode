@@ -1,20 +1,24 @@
-""" Convert an English string to Goat Latin """
+""" Convert an English string to Goat Latin. """
 
 import unittest2 as unittest
 
 
 def to_goat_latin(S):
     """ Apply the transformations. Pretty straightforward.
+        Build a vowel set.
+        Split 'S' to words.
+        For each word, check if it starts with a vowel. If it does, keep going. If it does not, rotate the first letter
+        to the end.
+        Add the modified word to result string.
     Time complexity: O(N ** 2): O(N) outer loop, O(N) word rotation in the worst case
     Space complexity: O(N)
     """
+    vowels = set('aeiouAEIOU')
     words, res = S.split(' '), []
     for i, word in enumerate(words, 1):
-        if word[0].lower() in set('aeiou'):
-            word = word + 'ma'
-        else:
-            word = word[1:] + word[0] + 'ma'
-        word = word + 'a' * i
+        if word[0].lower() not in vowels:
+            word = word[1:] + word[0]
+        word += 'ma' + 'a' * i
         res.append(word)
     return ' '.join(res)
 
@@ -24,7 +28,7 @@ class Test(unittest.TestCase):
             ('The quick brown fox jumped over the lazy dog',
              'heTmaa uickqmaaa rownbmaaaa oxfmaaaaa umpedjmaaaaaa overmaaaaaaa hetmaaaaaaaa azylmaaaaaaaaa '
              'ogdmaaaaaaaaaa')
-           ]
+            ]
 
     def test_goat_latin(self):
         for test_string, result in self.data:
