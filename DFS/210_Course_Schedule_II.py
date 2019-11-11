@@ -6,10 +6,10 @@ finish all courses.
 There may be multiple correct orders, you just need to return one of them. If it is impossible to finish all courses,
 return an empty array. """
 
-from collections import defaultdict
+from collections import defaultdict, deque
 
 
-# Refer to this excellent article for both soolutions: https://leetcode.com/articles/course-schedule-ii/
+# Refer to this excellent article for both solutions: https://leetcode.com/articles/course-schedule-ii/
 
 def find_order_v1(numCourses, prerequisites):
     """ DFS approach. Same logic as 207-Course Schedule.
@@ -44,11 +44,11 @@ def find_order_v1(numCourses, prerequisites):
 
 
 def find_order_v2(numCourses, prerequisites):
-    """ BFS using node in-degree.
+    """ BFS using node in-degree. Very similar to 207- Course Schedule. This is called Kahn's algorithm
         The first node in the topological ordering will be the node that doesn't have any incoming edges. Essentially,
         any node that has an in-degree of 0 can start the topologically sorted order. If there are multiple such nodes,
         their relative order doesn't matter and they can appear in any order.
-        We first process all the nodes/course with 0 in-degree implying no prerequisite courses required. If we remove
+        We first process all the nodes/courses with 0 in-degree implying no prerequisite courses required. If we remove
         all these courses from the graph, along with their outgoing edges, we can find out the courses/nodes that
         should be processed next. These would again be the nodes with 0 in-degree. We can continuously do this until
         all the courses have been accounted for.
@@ -56,19 +56,20 @@ def find_order_v2(numCourses, prerequisites):
     Space complexity: O(N), where N is the number of courses, since we use an intermediate queue to keep all the nodes
     with 0 in-degree
     """
-    adj_list = defaultdict(list)
-    in_degree = defaultdict(int)
+    graph, indegree = defaultdict(list), [0] * numCourses
+    for i, j in prerequisites:
+        graph[j].append(i)
+        indegree[i] += 1  # Recording the number of prerequisites each course i has
+    queue = deque(course for course in range(numCourses) if indegree[course] == 0)  # Iterate the in-degree list and
+    # find the node that has 0 in-degree, which maps to 0 prerequisites. If none is found, then there must be a cycle.
     res = []
-    for src, dest in prerequisites:
-        adj_list[dest].append(src)
-        in_degree[src] += 1
-    zero_indegree_queue = [node for node in range(numCourses) if in_degree[node] == 0]
-    while zero_indegree_queue:
-        node = zero_indegree_queue.pop()
-        res.append(node)
-        for adj in adj_list[node]:  # Reduce in-degree for all the neighbors
-            in_degree[adj] -= 1
-            if in_degree[adj] == 0:  # Add neighbor to queue if in-degree becomes 0
-                zero_indegree_queue.append(adj)
-    return res if len(res) == numCourses else []
+    while queue:
+        course = queue.popleft()
+        res.append(course)
+        for neighbor in graph[course]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                queue.append(neighbor)
+    return res if len(res) == numCourses else None
+
 
