@@ -43,7 +43,7 @@ def can_finish_dfs(numCourses, prerequisites):
 
 
 def can_finish_bfs(numCourses, prerequisites):
-    """ Same as above but in BFS fashion.
+    """ Same as above but in BFS fashion. This is called Kahn's algorithm
     Time complexity: O(|V| + |E|)
     Space complexity: O(|V| + |E|)
     """
