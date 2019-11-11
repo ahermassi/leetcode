@@ -49,19 +49,19 @@ def can_finish_bfs(numCourses, prerequisites):
     """
     graph = [[] for _ in range(numCourses)]
     indegree = [0, ] * numCourses
-    for to_, from_ in prerequisites:
-        graph[from_].append(to_)
-        indegree[to_] += 1
-    queue = deque(v for v in range(numCourses) if indegree[v] == 0)  # Iterate the inDegree map, find the
-    # Node has 0 inDegree. (If none, there must be a circle)
+    for i, j in prerequisites:  # Create graph
+        graph[i].append(j)
+        indegree[j] += 1
+    queue = deque(v for v in range(numCourses) if indegree[v] == 0)  # Iterate the indegree map and find the node that
+    # has 0 indegree. If none is found, then there must be a cycle.
     n = len(queue)
     while queue and n != numCourses:  # adding n != numCourses to terminate loop earlier
         v = queue.popleft()
-        for to_ in graph[v]:
-            indegree[to_] -= 1
-            if indegree[to_] == 0:
+        for neighbor in graph[v]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
                 n += 1
-                queue.append(to_)
+                queue.append(neighbor)
     return n == numCourses
 
 
