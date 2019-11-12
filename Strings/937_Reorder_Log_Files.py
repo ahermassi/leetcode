@@ -7,8 +7,8 @@ import unittest2 as unittest
 
 def reorder_log_files(logs):
     """ Pretty straightforward.
-    Time complexity: O(N)
-    Space complexity: O(N)
+    Time complexity: O(N logN), where N is the number of words in the logs
+    Space complexity: O(N) for the strings splitting and slicing
     """
     letter_logs = [log for log in logs if log.split()[1].isalpha()]
     digit_logs = [log for log in logs if log.split()[1].isdigit()]
@@ -23,7 +23,7 @@ class Test(unittest.TestCase):
     data = [(["a1 9 2 3 1", "g1 act car", "zo4 4 7", "ab1 off key dog", "a8 act zoo"],
              ["g1 act car", "a8 act zoo", "ab1 off key dog", "a1 9 2 3 1", "zo4 4 7"])]
 
-    def test_next_greater_element(self):
+    def test_reorder_log_files(self):
         for test_logs, result in self.data:
             self.assertEqual(result, reorder_log_files(test_logs))
 
