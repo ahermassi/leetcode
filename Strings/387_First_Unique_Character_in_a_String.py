@@ -1,6 +1,7 @@
 """ Given a string, find the first non-repeating character in it and return it's index. If it doesn't exist,
 return -1. """
 
+from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -10,16 +11,13 @@ def first_uniq_char(s):
     if a character is unique or not.
     Time complexity: O(N)
     Space complexity: O(1), if English alphabet is assumed the algorithm is iterating over a constant (26) number of
-    bins as keys for hashmap.
+    bins as keys for hash map.
     """
-    chars = {}
-    for i, ch in enumerate(s):
-        try:
-            chars[ch] += 1
-        except KeyError:
-            chars[ch] = 1
-    for i, ch in enumerate(s):
-        if chars[ch] == 1:
+    counter = defaultdict(int)
+    for c in s:
+        counter[c] += 1
+    for i, c in enumerate(s):
+        if counter[c] == 1:
             return i
     return -1
 
