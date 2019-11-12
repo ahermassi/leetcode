@@ -1,6 +1,8 @@
 """ Given a string, find the first non-repeating character in it and return it's index. If it doesn't exist,
-return -1. """
+return -1.
+Note: You may assume the string contain only lowercase letters. """
 
+import string
 from collections import defaultdict
 import unittest2 as unittest
 
@@ -40,6 +42,25 @@ def first_uniq_char_v2(s):
         if v != -1:
             res = min(res, v)
     return res if res != float('inf') else -1
+
+
+def first_uniq_char_v3(s):
+    """ Single pass over the string. This is the fastest of all solutions.
+        The idea is to iterate over the set of lowercase letters instead of the characters of s, and for each of these
+        characters get its index in s if it appears only once in s and append it to 'indices' list. Finally, return
+        the minimum value in 'indices' which corresponds to the smallest index of a non-repeating character in s.
+    Time complexity: O(N), s.count() takes O(N) and is called |Σ| times, where |Σ| is the size of the alphabet. This
+    takes O( |Σ| * n). Since the alphabet in question is just lowercase letters, |Σ| = 26 so this is O(26 * N).
+    s.index() also takes O(N) and is called |Σ| times. This takes O( |Σ| * N), or O(N) since |Σ| is constant.
+    min() takes O(|Σ|) -> O(1) time.
+    Space complexity: O(1), since 'indices' list can hold at most |Σ| values.
+    """
+    characters = string.ascii_lowercase
+    indices = []
+    for c in characters:
+        if s.count(c) == 1:
+            indices.append(s.index(c))
+    return min(indices) if indices else -1
 
 
 class Test(unittest.TestCase):
