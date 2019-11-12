@@ -1,10 +1,8 @@
 """ Given an array of characters, compress it in-place.
 Every element of the array should be a character (not int) of length 1.
 After you are done modifying the input array in-place, return the new length of the array.
-
 Input:
 ['a','a','b','b','c','c','c']
-
 Output:
 Return 6, and the first 6 characters of the input array should be: ['a','2','b','2','c','3']
 """
@@ -22,7 +20,7 @@ def compress(chars):
     Space complexity: O(1)
     """
     left, right = 0, 1
-    while right <= len(chars):
+    while right < len(chars):
         while right < len(chars) and chars[left] == chars[right]:
             right += 1
         count = right - left
@@ -34,7 +32,7 @@ def compress(chars):
         else:
             left = right
             right += 1
-    return left
+    return left + 1  # 'left' would always point to the last character in the string, so the array length is left+1
 
 
 class Test(unittest.TestCase):
