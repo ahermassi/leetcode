@@ -21,8 +21,8 @@ def compress(chars):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    left, right, n = 0, 1, len(chars)
-    while right <= n:
+    left, right = 0, 1
+    while right <= len(chars):
         while right < len(chars) and chars[left] == chars[right]:
             right += 1
         count = right - left
