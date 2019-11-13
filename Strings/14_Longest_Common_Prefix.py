@@ -23,8 +23,8 @@ def longest_common_prefix_v1(strings):
         compare them to get common prefix 'f'
         The reason is the max string has the longest or shortest common prefix with words that are not min or max.
         So, we can get accurate results through comparing max and min.
-    Time complexity: O(S) where S is the length of the shortest string in the array
-    Space complexity: O(L) where L is the length of the longest string
+    Time complexity: O(S), where S is the length of the shortest string in the array
+    Space complexity: O(L), where L is the length of the longest string
     """
     if not strings:
         return ''
@@ -54,15 +54,14 @@ def longest_common_prefix_v2(strings):
 
 def longest_common_prefix_v3(strings):
     """ This one uses zip() in a rather elegant way. Use zip() to look at respective characters in order.
-    Time complexity: O(N)
-    Space complexity: O(N)
+    Time complexity: O(S), where S is the length of the shortest string in the array
+    Space complexity: O(L), where L is the length of the longest string
     """
     prefix = ''
-    zipped_chars = zip(*strings)
-    for zipped in zipped_chars:
-        if len(set(zipped)) > 1:  # If not all respective characters are the same
-            return prefix
-        prefix += zipped[0]  # If all characters are equal (equal to same character), append that character
+    for letters in zip(*strings):
+        if len(set(letters)) > 1:  # If not all respective characters are the same
+            break
+        prefix += letters[0]  # If all characters are equal (equal to same character), append that character
     return prefix
 
 
@@ -75,6 +74,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, longest_common_prefix_v1(test_array))
             self.assertEqual(result, longest_common_prefix_v2(test_array))
+            self.assertEqual(result, longest_common_prefix_v3(test_array))
 
 
 if __name__ == '__main__':
