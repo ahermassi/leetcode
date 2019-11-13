@@ -18,11 +18,11 @@ def longest_common_prefix_v1(strings):
         verifier that all strings BEFORE the last have this common prefix. Otherwise, it wouldn't have been the last
         string in sorted order.
     Time complexity: O(S) where S is the length of the shortest string in the array
-    Space complexity: O(1)
+    Space complexity: O(L) where L is the length of the longest string
     """
     if not strings:
         return ''
-    shortest, longest = min(strings), max(strings)
+    shortest, longest = min(strings), max(strings)  # These are the first and last in the alphabetical order, NOT length
     i = 0
     while i < len(shortest) and shortest[i] == longest[i]:
         i += 1
@@ -30,6 +30,23 @@ def longest_common_prefix_v1(strings):
 
 
 def longest_common_prefix_v2(strings):
+    """ Now we use the fact that the longest common prefix can only be as long as the shortest string in the list.
+        For each character in the shortest string, we check if the other strings have the same character at the
+        corresponding index. Return the string up to the valid index.
+    Time complexity: O(S * L), where S is the length of the shortest string and L is the length of the longest string
+    Space complexity: O(S), where S is the length of the shortest string in the array
+    """
+    if not strings:
+        return ''
+    shortest = min(strings, key=len)
+    for i, c in enumerate(shortest):
+        for other in strings:
+            if other[i] != c:
+                return shortest[:i]
+    return shortest
+
+
+def longest_common_prefix_v3(strings):
     """ This one uses zip() in a rather elegant way. Use zip() to look at respective characters in order.
     Time complexity: O(N)
     Space complexity: O(N)
