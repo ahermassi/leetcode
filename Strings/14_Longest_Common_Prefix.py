@@ -5,36 +5,31 @@ import unittest2 as unittest
 
 
 def longest_common_prefix_v1(strings):
-    """ Look at each character sequentially while all strings share that character respectively.
-    Time complexity: O(N)
-    Space complexity: O(N) because the length of prefix list linearly varies with N
-    """
-    i = 0
-    longest_prefix = ''
-    prefix = [string[i:i+1] for string in strings]  # Using [i:i+1] to circumvent index out of bound error
-    while len(set(prefix)) == 1 and '' not in prefix:  # While all strings start with same character
-        longest_prefix += prefix[0]
-        i += 1
-        prefix = [string[i:i + 1] for string in strings]
-    return longest_prefix
-
-
-def longest_common_prefix_v2(strings):
-    """ This solution is based on the idea that longest common prefix is included in or equal to the shortest string.
+    """ This solution is based on the idea that the longest common prefix is included in or equal to the first string
+        in the alphabetical order of the strings list.
+        The first thing to understand is that the longest common prefix can only be as long as the shortest string with
+        a common prefix in the array. So, when we sort, the shortest string with a common prefix will be the first
+        string (assuming ascending order).
+        Then, we have to understand that the longest common prefix must apply for ALL array elements. If there's an
+        array element that does not have the longest common prefix we've found so far, then there is no prefix, it's
+        empty string. So, for example, if the first (in the alphabetical order) string is "aaa" and last string comes
+        out to be "baa", then there is no common prefix.
+        The first string stands as a BASE LINE for the longest possible common prefix, while the last string acts as a
+        verifier that all strings BEFORE the last have this common prefix. Otherwise, it wouldn't have been the last
+        string in sorted order.
     Time complexity: O(S) where S is the length of the shortest string in the array
-    Space complexity: O(L), where L is the length of the longest string in the array
+    Space complexity: O(1)
     """
     if not strings:
         return ''
-    shortest = min(strings)
-    longest = max(strings)
-    for i, c in enumerate(shortest):
-        if c != longest[i]:
-            return shortest[:i]  # Return the string up to this index. Clever use of enumerate()
-    return shortest
+    shortest, longest = min(strings), max(strings)
+    i = 0
+    while i < len(shortest) and shortest[i] == longest[i]:
+        i += 1
+    return shortest[:i]
 
 
-def longest_common_prefix_v3(strings):
+def longest_common_prefix_v2(strings):
     """ This one uses zip() in a rather elegant way. Use zip() to look at respective characters in order.
     Time complexity: O(N)
     Space complexity: O(N)
@@ -57,7 +52,6 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, longest_common_prefix_v1(test_array))
             self.assertEqual(result, longest_common_prefix_v2(test_array))
-            self.assertEqual(result, longest_common_prefix_v3(test_array))
 
 
 if __name__ == '__main__':
