@@ -20,6 +20,8 @@ def str_str_v1(haystack, needle):
     return -1
 
 
+# Check out: https://leetcode.com/problems/implement-strstr/discuss/12883/KMP-in-C%2B%2B-explanation-included
+
 def str_str_v2(haystack, needle):
     """ KMP (Knuth–Morris–Pratt) algorithm.
         The key behind KMP is that it takes advantage of the successful character checks during an unsuccessful pattern
