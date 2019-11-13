@@ -34,6 +34,28 @@ def is_valid_v1(s):
     return not stack
 
 
+def is_valid_v2(s):
+    """ A similar stack-based version.
+        Whenever we encounter an opening bracket, we push its counterpart closing bracket to the stack (kind of
+        anticipating the closing pair). If a closing bracket is met, we see if the element sitting on the top of the
+        stack is the same bracket, since we already anticipated the current closing bracket. If not, the expression is
+        invalid.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    stack = []
+    for c in s:
+        if c == '(':
+            stack.append(')')
+        elif c == '{':
+            stack.append('}')
+        elif c == '[':
+            stack.append(']')
+        elif not stack or stack.pop() != c:
+            return False
+    return not stack
+
+
 class Test(unittest.TestCase):
     data = [('()', True),
             ('()[]{}', True),
@@ -45,6 +67,7 @@ class Test(unittest.TestCase):
     def test_is_valid(self):
         for test_string, result in self.data:
             self.assertEqual(result, is_valid_v1(test_string))
+            self.assertEqual(result, is_valid_v2(test_string))
 
 
 if __name__ == '__main__':
