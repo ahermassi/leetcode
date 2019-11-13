@@ -50,8 +50,8 @@ def is_palindrome_v3(x):
         reverse = reverse * 10 + p % 10
         p = p // 10
     # When the length is an odd number, we can get rid of the middle digit by reverse // 10. For example, when the
-    # input is 12321, at the end of the while loop we get x = 12, reverse = 123, since the middle digit doesn't matter
-    # in palindrome(it will always equal to itself), we can simply get rid of it.
+    # input is 12321, at the end of the while loop we get p = 12, reverse = 123. Since the middle digit doesn't matter
+    # in palindrome (it will always equal to itself), we can simply get rid of it.
     return reverse == p or p == reverse // 10
 
 
