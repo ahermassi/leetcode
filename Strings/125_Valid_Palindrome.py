@@ -5,15 +5,18 @@ import unittest2 as unittest
 
 
 def is_palindrome(s):
-    """ Good old two pointers technique. Attention should be paid to the non alphanumeric characters, though.
-    Time complexity: O(N) where N is the length of s
+    """ Good old two pointers technique.
+        We use two indices to traverse the string, one forwards, the other backwards, skipping non alphanumeric
+        characters, performing case-insensitive comparison on the alphanumeric characters. We return False as soon as
+        there is a mismatch. If the indices cross, we have verified that the string is a palindrome.
+    Time complexity: O(N), where N is the length of s
     Space complexity: O(1)
     """
     left, right = 0, len(s) - 1
     while left < right:
-        while left < right and not s[left].isalnum():
-            left += 1  # Move on to next character as long as current one is not alphanumeric
-        while left < right and not s[right].isalnum():
+        while left < right and not s[left].isalnum():  # 'left' skips non-alphanumeric characters
+            left += 1
+        while left < right and not s[right].isalnum():  # 'right' skips non-alphanumeric characters
             right -= 1
         if s[left].lower() != s[right].lower():
             return False
