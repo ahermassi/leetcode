@@ -5,7 +5,7 @@ should truncate toward zero. """
 import unittest2 as unittest
 
 
-def calculate(s):
+def calculate_v1(s):
     """ This solution is stack based. The stack is used to hold temporary results for partial expressions with lower
         precedence levels, which are + and -. This helps delaying calculations until an operator with a higher
         precedence is met.
@@ -26,12 +26,12 @@ def calculate(s):
         Finally, the stack content is just 22, the multiplication of -31 by 52, and 22. The result is sum of the stack.
     Time complexity: O(N) where N is the length of s
     Space complexity: O(N)
-     """
+    """
     num, stack, last_operation = 0, [], '+'
-    for i in range(len(s)):
-        if s[i].isdigit():
-            num = num * 10 + int(s[i])
-        if s[i] in '+-*/' or i == len(s) - 1:
+    for i, c in enumerate(s):
+        if c.isdigit():
+            num = num * 10 + int(c)
+        if c in '+-*/' or i == len(s) - 1:
             if last_operation == '+':  # I have a new operation sign in hand and the accumulated integer 'num' is
                 # part of an PREVIOUS addition operation
                 stack.append(num)
@@ -47,8 +47,41 @@ def calculate(s):
                 # that's been waiting in the stack by the accumulated integer 'num' since division is a higher level
                 # operation
             num = 0
-            last_operation = s[i]
+            last_operation = c
     return sum(stack)
+
+
+# Check out:
+# https://leetcode.com/problems/basic-calculator-ii/discuss/63088/Explanation-for-Java-O(n)-time-and-O(1)-space-solution
+
+def calculate_v2(s):
+    """ Same logic but constant space.
+    To have O(1) space solution, we have to drop the stack. To see why we can drop it, we need to reexamine the main
+    purpose of the stack: it is used to hold temporary results for partial expressions with lower precedence levels.
+    We only have two precedence levels, lower level with '+' and '-' operations and higher level with '*' and '/'
+    operations. So the stack can be replaced by two variables, one for the lower level and the other for the higher
+    level.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    pre, cur, ans, last_operation = 0, 0, 0, "+"
+    for i, c in enumerate(s):
+        if c.isdigit():
+            cur = cur * 10 + int(c)
+        if c in "+-*/" or i == len(s) - 1:
+            if last_operation == "+":
+                ans += pre
+                pre = cur
+            elif last_operation == "-":
+                ans += pre
+                pre = -cur
+            elif last_operation == "*":
+                pre *= cur
+            else:
+                pre = int(pre / cur)
+            cur = 0
+            last_operation = c
+    return ans + pre
 
 
 class Test(unittest.TestCase):
@@ -56,7 +89,8 @@ class Test(unittest.TestCase):
 
     def test_calculate(self):
         for test_string, result in self.data:
-            self.assertEqual(result, calculate(test_string))
+            self.assertEqual(result, calculate_v1(test_string))
+            self.assertEqual(result, calculate_v2(test_string))
 
 
 if __name__ == '__main__':
