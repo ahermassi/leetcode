@@ -6,6 +6,7 @@ import unittest2 as unittest
 
 def two_sum_v1(nums, target):
     """ Brute force approach. Not the best performance.
+        Loop through each element x and find if there is another value that equals to target - x
     Time complexity: O(N ** 2)
     Space complexity: O(1)
     """
@@ -18,6 +19,9 @@ def two_sum_v1(nums, target):
 
 def two_sum_v2(nums, target):
     """ Using a hash table and one array pass. Trading space for time complexity.
+        In the first iteration, we add each element's value and its index to the table. Then, in the second iteration,
+        we check if each element's complement (target - nums[i]) exists in the table. Beware that the complement must
+        not be nums[i] itself.
     Time complexity: O(N) for array pass
     Space complexity: O(N)
     """
