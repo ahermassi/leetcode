@@ -1,7 +1,7 @@
 """ See description on Leetcode """
 
 
-class LogSystem(object):
+class LogSystemV1(object):
     """ Because the number of operations is very small, we do not need a complicated structure to store the logs: a
         simple list will do.
         Let's focus on the retrieve function. For each granularity, we should consider all timestamps to be truncated
@@ -12,7 +12,7 @@ class LogSystem(object):
     """
 
     def __init__(self):
-        self.d = {'Year': 4, 'Month': 7, 'Day': 10, 'Hour': 13, 'Minute': 16, 'Second': 19}
+        self.granularities = {'Year': 4, 'Month': 7, 'Day': 10, 'Hour': 13, 'Minute': 16, 'Second': 19}
         self.logs = []
 
     def put(self, id, timestamp):
@@ -30,9 +30,33 @@ class LogSystem(object):
         :type gra: str
         :rtype: List[int]
         """
-        idx = self.d[gra]
+        idx = self.granularities[gra]
         s, e, res = s[:idx], e[:idx], []
         for id, timestamp in self.logs:
             if s <= timestamp[:idx] <= e:
                 res.append(id)
+        return res
+
+
+class LogSystemV2(object):
+    """ Using the same idea of truncating/pruning the timestamp as per granularity, but converting the timestamp to a
+        tuple by splitting at ':' before storing/comparing (For Year, prune the timestamp tuple from index 1 and
+        onwards, for Month prune from index 2 and onwards, etc).
+    Time complexity: O(1) for put(), O(N) for retrieve()
+    """
+
+    def __init__(self):
+        self.granularities = {'Year': 1, 'Month': 2, 'Day': 3, 'Hour': 4, 'Minute': 5, 'Second': 6}
+        self.logs = {}
+
+    def put(self, id: int, timestamp: str):
+        self.logs[id] = tuple(timestamp.split(':'))
+
+    def retrieve(self, s: str, e: str, gra: str):
+        index, res = self.granularities[gra], []
+        start = tuple(s.split(':')[:index])
+        end = tuple(e.split(':')[:index])
+        for k, v in self.logs.items():
+            if start <= v[:index] <= end:
+                res.append(k)
         return res
