@@ -37,6 +37,17 @@ def find_replace_string_v2(S, indexes, sources, targets):
     return ''.join(res)
 
 
+def find_replace_string_v3(S, indexes, sources, targets):
+    """ This solution looks like an in-place replacement, but in fact a new string is created with each replacement.
+        We do it from right to left so the new replacement can’t override the indices that come after in the string.
+    Time complexity: TODO
+    Space complexity: TODO
+    """
+    for index, source, target in sorted(zip(indexes, sources, targets), reverse=True):
+        S = S[:index] + target + S[index + len(source):] if S[index:index + len(source)] == source else S
+    return S
+
+
 class Test(unittest.TestCase):
     data = [('abcd', [0, 2], ['a', 'cd'], ['eee', 'ffff'], 'eeebffff'),
             ('abcd', [0, 2], ['ab', 'ec'], ['eee', 'ffff'], 'eeecd')]
@@ -45,6 +56,7 @@ class Test(unittest.TestCase):
         for test_string, indexes, sources, targets, result in self.data:
             self.assertEqual(result, find_replace_string_v1(test_string, indexes, sources, targets))
             self.assertEqual(result, find_replace_string_v2(test_string, indexes, sources, targets))
+            self.assertEqual(result, find_replace_string_v3(test_string, indexes, sources, targets))
 
 
 if __name__ == '__main__':
