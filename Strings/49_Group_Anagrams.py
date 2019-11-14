@@ -1,7 +1,5 @@
 """ Given an array of strings, group anagrams together.
-
 Example:
-
 Input: ["eat", "tea", "tan", "ate", "nat", "bat"],
 Output:
 [
@@ -22,11 +20,11 @@ def group_anagrams_v1(strs):
     The outer loop has complexity O(N) as we iterate through each string. Then, we sort each string in O(KlogK) time.
     Space Complexity: O(N)
     """
-    d = defaultdict(list)
+    anagrams = defaultdict(list)
     for s in strs:
-        d[''.join(sorted(s))].append(s)  # sorted('abc') == ['a', 'b', 'c'], array is not hashable, which means it is
-        # not allowed to be a key
-    return d.values()
+        anagrams[''.join(sorted(s))].append(s)  # sorted('abc') == ['a', 'b', 'c'], array is not hashable, which
+        # means it is not allowed to be a key
+    return anagrams.values()
 
 
 def group_anagrams_v2(strs):
@@ -37,13 +35,14 @@ def group_anagrams_v2(strs):
     Time complexity: O(N * K)  where N is the length of strs, and K is the maximum length of a string in strs.
     Space complexity: O(N * K)
     """
-    d = defaultdict(list)
+    anagrams = defaultdict(list)
     for s in strs:
         char_count = [0] * 26
         for c in s:
             char_count[ord(c) - ord('a')] += 1
-        d[tuple(char_count)].append(s)  # List is not hashable and can't serve as dict key, so we transform it to tuple
-    return d.values()
+        anagrams[tuple(char_count)].append(s)  # List is not hashable and can't serve as dict key, so we transform it
+        # to tuple
+    return anagrams.values()
 
 
 class Test(unittest.TestCase):
