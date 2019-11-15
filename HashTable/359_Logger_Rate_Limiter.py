@@ -6,7 +6,7 @@ timestamp, otherwise returns false. """
 import unittest2 as unittest
 
 
-class Logger(object):
+class LoggerV1(object):
     """ Possible optimization (follow-up):
         for a Logger, probably the solution is not that practical since the hash table soon will blow up.
         We can have another thread running cron job to evict timeout entries from the hash map who existed for more
@@ -28,17 +28,14 @@ class Logger(object):
         :type message: str
         :rtype: bool
         """
-        if message not in self.log:
-            self.log[message] = timestamp
-            return True
-        if timestamp - self.log[message] >= 10:
+        if message not in self.log or timestamp - self.log[message] >= 10:
             self.log[message] = timestamp
             return True
         return False
 
 
 class Test(unittest.TestCase):
-    logger = Logger()
+    logger = LoggerV1()
     foo1 = logger.shouldPrintMessage(1, "foo")
     bar1 = logger.shouldPrintMessage(2, "bar")
     foo2 = logger.shouldPrintMessage(3, "foo")
