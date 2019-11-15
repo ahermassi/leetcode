@@ -4,58 +4,49 @@ also represented as a string. """
 import unittest2 as unittest
 
 
-def multiply_v1(num1, num2):
-    """ Multiply each digit of num1 by num2. Sum the partial results. Exactly as humans do.
+# Check out: https://leetcode.com/problems/multiply-strings/discuss/17605/Easiest-JAVA-Solution-with-Graph-Explanation
+
+def multiply(num1, num2):
+    """ Start from right to left, perform multiplication on every pair of digits, and add them together.
+        We can immediately conclude that:
+            num1[i] * num2[j] will be placed at indices [i + j, i + j + 1]
+        Traverse from the end of the num1 and num2 strings, respectively, extract the characters at the
+        corresponding positions, convert them into integers, and multiply them. Then determine the positions 'left' and
+        'right' where the multiplied two digits are going to be placed. Since 'right' is lower than 'left', the
+        resulting two-digit mul is first added to whatever is in the 'right' index, which may cause the number on the
+        'right' to be greater than 9, so the number on the tens place is added to the high position 'left', leaving
+        only the remainder at the 'right' position.
+        Remember that leading zeros should be skipped. If skipping them leaves us with an empty list, then return '0'.
+        Otherwise, return the result 'res'
     Time complexity: O(N * M) where N is the length of num1 and M is the length of num2
     Space complexity: O(N + M)
     """
-    res = []
-    for c in num1[::-1]:
-        s, carry, factor, acc = 0, 0, 1, 0
-        for d in num2[::-1]:
-            s = int(c) * int(d) + carry
-            acc += (s % 10) * factor
-            carry = s // 10
-            factor *= 10
-        if carry:
-            acc += carry * factor
-        res.append(acc)
-    factor, ans = 1, 0
-    for i in res:
-        ans += i * factor
-        factor *= 10
-    return str(ans)
-
-
-def multiply_v2(num1, num2):
-    product = [0] * (len(num1) + len(num2))  # placeholder for multiplication n digits by m digits results in n+m digits
-    position = len(product) - 1  # position within the placeholder
-
-    for c in num1[::-1]:
-        temp_pos = position
-        for d in num2[::-1]:
-            product[temp_pos] += int(c) * int(d)  # adding the results of single multiplication
-            product[temp_pos - 1] += product[temp_pos] // 10  # bring out carry number to the left array
-            product[temp_pos] %= 10  # remove the carry out from the current array
-            temp_pos -= 1  # first shifting the multiplication to the end of the first integer
-        position -= 1  # then once first integer is exhausted shifting the second integer and starting
-
-    # once the second integer is exhausted we want to make sure we are not zero padding
-    pointer = 0  # pointer moves through the digit array and locate where the zero padding finishes
-    while pointer < len(product) - 1 and product[pointer] == 0:  # if we have zero before the numbers shift the
-        # pointer to the right
-        pointer += 1
-
-    return ''.join(map(str, product[pointer:]))  # only report the digits to the right side of the pointer
+    n, m = len(num1), len(num2)
+    res = [0] * (n + m)  # placeholder for multiplication, n digits by m digits results in n+m digits
+    for i in reversed(range(n)):
+        for j in reversed(range(m)):
+            mul = (ord(num1[i]) - ord('0')) * (ord(num2[j]) - ord('0'))
+            # 'left' and 'right' are where we're going to place the result of current multiplication in 'res' list.
+            # We use the observation that 'left' and 'right' are always going to be equal to i+j and i+j+1, respectively
+            left = i + j
+            right = i + j + 1
+            mul += res[right]  # There could be an integer at 'right' index from a previous calculation
+            res[right] = mul % 10
+            res[left] += mul // 10  # res[left] could be 9 and mul > 10, but it will be ultimately taken care of by
+            # res[right] = mul % 10 in later traversal where left will become the right of following iteration
+    i = 0
+    while i < len(res) and res[i] == 0:  # Move through the 'res' array and locate where the zero padding ends
+        i += 1
+    return ''.join(map(str, res[i:])) if i < len(res) else '0'
 
 
 class Test(unittest.TestCase):
+
     data = [('2', '3', '6'), ('123', '456', '56088')]
 
     def test_multiply(self):
         for test_num1, test_num2, result in self.data:
-            self.assertEqual(result, multiply_v1(test_num1, test_num2))
-            self.assertEqual(result, multiply_v2(test_num1, test_num2))
+            self.assertEqual(result, multiply(test_num1, test_num2))
 
 
 if __name__ == '__main__':
