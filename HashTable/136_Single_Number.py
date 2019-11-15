@@ -7,7 +7,7 @@ import unittest2 as unittest
 
 def single_number_v1(nums):
     """ Iterate through all elements in nums. Try if hash table has the key for pop. If not, set up key/value pair.
-    In the end, there is only one element in hash table, so use popitem to get it.
+        In the end, there is only one element in hash table, so use popitem to get it.
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -23,7 +23,7 @@ def single_number_v1(nums):
 
 def single_number_v2(nums):
     """ Knowing that A XOR A = 0 and A XOR 0 = A and the XOR operator is commutative, the solution will be very
-    straightforward.
+        straightforward.
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -31,6 +31,14 @@ def single_number_v2(nums):
     for i in nums:
         single ^= i
     return single
+
+
+def single_number_v3(nums):
+    """ Math: 2 ∗ (a+b+c) − (a+a+b+b+c) = c
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    return 2 * sum(set(nums)) - sum(nums)
 
 
 class Test(unittest.TestCase):
