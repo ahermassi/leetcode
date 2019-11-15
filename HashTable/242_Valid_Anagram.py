@@ -6,7 +6,8 @@ import unittest2 as unittest
 
 def is_anagram(s, t):
     """ To examine if t is a rearrangement of s, we can count occurrences of each letter in the two strings and
-    compare them. First increment the counter for s, then decrement the counter for t.
+    compare them. First increment the counter for s, then decrement the counter for t. If at any point the counter
+    drops below zero, we know that t contains an extra letter not in s and return false immediately.
     Follow up: What if the inputs contain unicode characters? How would you adapt your solution to such case?
     A hash table is a more generic solution and could adapt to any range of characters (which is what we did)
     Time complexity: O(N) where N is the length of s (or t)
@@ -15,13 +16,11 @@ def is_anagram(s, t):
     if len(s) != len(t):
         return False
     chars = defaultdict(int)
-    for ch in s:
-        chars[ch] += 1
-    for ch in t:
-        if ch in chars:
-            chars[ch] -= 1
-    for v in chars.values():
-        if v:
+    for c in s:
+        chars[c] += 1
+    for c in t:
+        chars[c] -= 1
+        if chars[c] < 0:
             return False
     return True
 
