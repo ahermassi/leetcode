@@ -11,7 +11,7 @@ def distance_k_v1(root, target, K):
         We first do a depth first search where we annotate every node with information about its parent. Therefore, we
         need a set to keep track of nodes we have visited so that we do not go back and revisit what has already been
         processed and cause an infinite cycle.
-        After, we do a breadth first search to find all nodes a distance K from the target.
+        After, we do a BFS to find all nodes a distance K from the target.
     Time complexity: O(N), where N is the number of nodes in the given tree
     Space complexity: O(N)
     """
@@ -24,7 +24,7 @@ def distance_k_v1(root, target, K):
 
     annotate(root)
     queue = deque()
-    queue.append((target, 0))  # When our search starts, we are standing at layer 0
+    queue.append((target, 0))  # When our BFS starts, we are standing at layer 0
     seen = {target}
     while queue:
         if queue[0][1] == K:  # Is this the layer we want? If so, extract and return it
@@ -47,7 +47,9 @@ def distance_k_v2(root, target, K):
     Space complexity: O(N)
     """
 
-    def build_graph(node, par):
+    def build_graph(node, par):  # This function serves the purpose of annotation of the previous solution. Since
+        # modifying the tree is not possible, we map each node to its children and each child node to its parent.
+        # This results in an undirected graph, which is a more flexible representation of the given tree.
         if node and par:
             graph[node].append(par)
             graph[par].append(node)
