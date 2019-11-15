@@ -10,22 +10,20 @@ import unittest2 as unittest
 def island_perimeter(grid):
     """ For each cell with land on it, add the number of cells around it that have water. All cells that are not on
         the grid are also considered to have water.
-    Time complexity: O(N * M), where N is the length of grid and M is the length of grid[0]
+    Time complexity: O(N * M), where N is the length of grid and M is the width grid
     Space complexity: O(1)
     """
-    width, height = len(grid[0]), len(grid)
-
     def sum_adjacent(i, j):
-        adjacent = [(i + 1, j), (i - 1, j), (i, j - 1), (i, j + 1)]  # These correspond to top, bottom, left, right
         res = 0
-        for x, y in adjacent:
-            if x < 0 or y < 0 or x == height or y == width or grid[x][y] == 0:
+        for x, y in (i + 1, j), (i - 1, j), (i, j - 1), (i, j + 1):
+            if not 0 <= x < n or not 0 <= y < m or grid[x][y] == 0:
                 res += 1
         return res
 
+    n, m = len(grid[0]), len(grid)
     count = 0
-    for i in range(height):
-        for j in range(width):
+    for i in range(n):
+        for j in range(m):
             if grid[i][j] == 1:
                 count += sum_adjacent(i, j)
     return count
