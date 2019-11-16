@@ -16,11 +16,11 @@ def reverse_words_v1(s):
     s = s[::-1]
     word, words = '', ''
     for i, c in enumerate(s):
-        if c != ' ':  # If it's a space, continue
-            if not word:  # If current reversed 'word' we're building ia empty
+        if not c.isspace():  # If it's a space, continue
+            if not word:  # If current reversed 'word' we're building is empty
                 word = c
-            elif word and s[i - 1] and s[i - 1] == ' ':  # Character is not space, a current word exists,
-                # and previous character is space --> We've hit a NEW word
+            elif s[i-1].isspace():  # Character is not space, a current word exists, and previous character is space
+                # --> We've hit a NEW word
                 words += word + ' '  # Append the last reversed 'word' to 'words'
                 word = c  # Start a new reversed 'word'
             else:
