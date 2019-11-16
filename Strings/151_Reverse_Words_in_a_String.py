@@ -50,6 +50,27 @@ def reverse_words_v2(s):
     return ''.join(s)
 
 
+def reverse_words_v3(s):
+    """ Reversing the individual words in the string without reversing the string itself.
+        Read the original string backwards and construct the reversed words. Each reversed word is appended ot 'res'
+        list. Finally, join the reversed words together and return the final reversed string.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    s = s.strip()
+    i = len(s) - 1
+    res, word = [], ''
+    while i >= 0:
+        while i >= 0 and not s[i].isspace():
+            word = s[i] + word
+            i -= 1
+        res.append(word)
+        word = ''
+        while i >= 0 and s[i].isspace():
+            i -= 1
+    return ' '.join(res)
+
+
 class Test(unittest.TestCase):
     data = [
         ('the sky is blue', 'blue is sky the'), ('  hello world!  ', 'world! hello'),
