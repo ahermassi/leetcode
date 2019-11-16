@@ -30,23 +30,23 @@ def reverse_words_v1(s):
 
 
 def reverse_words_v2(s):
-    """ Same idea but reversing the words of the reversed string itself.
+    """ In-place transformation. Same idea but reversing the words of the reversed string itself.
     Time complexity: O(N)
     Space complexity: O(N)
     """
     s = list(' '.join(s.split()))[::-1]  # Get rid of spaces and transform the string to list as strings are immutable
-    n, i = len(s), 0
-    while i < n:
-        left = i  # Left end of the word to reverse
-        while i < n and s[i] != ' ':
-            i += 1
-        right = i - 1  # Right end of the word to reverse
-        while left < right:  # The actual reversing
-            s[left], s[right] = s[right], s[left]
+    n, right = len(s), 0
+    while right < n:
+        left = right  # Left end of the word to reverse
+        while right < n and s[right] != ' ':
+            right += 1
+        r = right - 1  # Right end of the word to reverse
+        while left < r:  # The actual reversing
+            s[left], s[r] = s[r], s[left]
             left += 1
-            right -= 1
-        while i < n and s[i] == ' ':  # Advance till the first non-space character
-            i += 1
+            r -= 1
+        while right < n and s[right] == ' ':  # Advance till the first non-space character
+            right += 1
     return ''.join(s)
 
 
