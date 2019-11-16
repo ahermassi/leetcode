@@ -1,7 +1,6 @@
 """ Compare two version numbers version1 and version2.
 If version1 > version2 return 1; if version1 < version2 return -1;otherwise return 0.
 You may assume that the version strings are non-empty and contain only digits and the . character. """
-from itertools import zip_longest
 
 import unittest2 as unittest
 
@@ -25,18 +24,21 @@ def compare_version_v1(version1, version2):
 
 
 def compare_version_v2(version1, version2):
-    """ Same as above, but using zip_longest.
+    """ Same as above, but without appending trailing zeroes to the shortest list. An absent value is treated as 0.
     Time complexity: O(N + M)
     Space complexity: O(max(N, M))
     """
-    version1 = map(int, version1.split('.'))
-    version2 = map(int, version2.split('.'))
-    for v1, v2 in zip_longest(version1, version2, fillvalue=0):
+    version1 = [int(i) for i in version1.split('.')]
+    version2 = [int(i) for i in version2.split('.')]
+    n = max(len(version1), len(version2))
+    for i in range(n):
+        v1 = version1[i] if i < len(version1) else 0
+        v2 = version2[i] if i < len(version2) else 0
         if v1 < v2:
             return -1
-        if v1 > v2:
+        elif v1 > v2:
             return 1
-    return 0
+    return 0  # If we've come this far, all sub-version numbers are equal
 
 
 class Test(unittest.TestCase):
