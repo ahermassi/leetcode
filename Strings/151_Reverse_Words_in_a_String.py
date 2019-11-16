@@ -19,8 +19,8 @@ def reverse_words_v1(s):
         if c != ' ':  # If it's a space, continue
             if not word:  # If current reversed 'word' we're building ia empty
                 word = c
-            elif word and s[i - 1] and s[i - 1] == ' ':  # If a previous reversed 'word' exists and we hit a new word
-                # (because the previous character is space)
+            elif word and s[i - 1] and s[i - 1] == ' ':  # Character is not space, a current word exists,
+                # and previous character is space --> We've hit a NEW word
                 words += word + ' '  # Append the last reversed 'word' to 'words'
                 word = c  # Start a new reversed 'word'
             else:
