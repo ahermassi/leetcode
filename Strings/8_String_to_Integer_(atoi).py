@@ -12,19 +12,19 @@ def my_atoi(str):
     Time complexity: O(N) where N is the length of the string
     Space complexity: O(1)
     """
-    str = str.lstrip()  # Discard left whitespaces
-    if len(str) == 0:  # No characters left
+    neg, i, res, n = False, 0, 0, len(str)
+    while i < n and str[i].isspace():  # Discard left whitespaces
+        i += 1
+    if i == n or (not str[i].isdigit() and str[i] not in '+-'):
         return 0
-    res, neg, i = 0, False, 0
     # Handling pos/neg sign
-    if str[0] == '-':
+    if str[i] == '-':
         neg = True
         i += 1
-    elif str[0] == '+':
+    elif str[i] == '+':
         i += 1
-    while i < len(str) and str[i].isdigit():  # Actual conversion to in
-        res *= 10
-        res += ord(str[i]) - ord('0')  # ord() is faster than int()
+    while i < n and str[i].isdigit():  # Actual conversion to int
+        res = res * 10 + (ord(str[i]) - ord('0'))  # ord() is faster than int()
         i += 1
     if neg:
         res = -res
