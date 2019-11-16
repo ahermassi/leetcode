@@ -7,38 +7,26 @@ import unittest2 as unittest
 
 
 def is_monotonic_v1(A):
-    """ The idea is to start searching for the index that sets the tone of the array. This is to account for cases
-    where the array starts with a sequence of equal values, say [1, 1, 1, 1, 2, 3]. Once that index found, set the
-    boolean flag 'increasing' accordingly. From there, iterate and watch for the condition that contradicts the boolean.
-    Time complexity: O(N) where N is the length of A
-    Space complexity: O(1)
-    """
-    i, increasing = 0, False
-    while i < len(A) - 1 and A[i] == A[i + 1]:
-        i += 1
-    if i == len(A) - 1:
-        return True
-    if A[i] < A[i + 1]:
-        increasing = True
-    for j in range(i, len(A) - 1):
-        if A[j] < A[j + 1] and not increasing or A[j] > A[j + 1] and increasing:
-            return False
-    return True
-
-
-def is_monotonic_v2(A):
     """ To perform this check in one pass, we want to remember if it is monotone increasing or monotone decreasing.
         If it is either monotone increasing or monotone decreasing, then A is monotonic.
+        We initially assume that the array is neither increasing nor decreasing.
+        While traversing an array, as long as a number is found to be greater than the number behind it, then
+        'increasing' will be assigned the value True. Similarly, as long as a number is less than the number behind it,
+        'decreasing' will be assigned True. If at any time the array becomes 'increasing' and 'decreasing'
+        simultaneously, then it can't be monotonic.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    increasing = decreasing = True
-    for i in range(len(A) - 1):
+    increasing = decreasing = False
+    n = len(A)
+    for i in range(n - 1):
         if A[i] < A[i + 1]:
-            decreasing = False
+            increasing = True
         elif A[i] > A[i + 1]:
-            increasing = False
-    return increasing or decreasing
+            decreasing = True
+        if increasing and decreasing:
+            return False
+    return True
 
 
 class Test(unittest.TestCase):
@@ -50,7 +38,6 @@ class Test(unittest.TestCase):
     def test_is_monotonic(self):
         for test_array, result in self.data:
             self.assertEqual(result, is_monotonic_v1(test_array))
-            self.assertEqual(result, is_monotonic_v2(test_array))
 
 
 if __name__ == '__main__':
