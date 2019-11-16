@@ -6,25 +6,19 @@ import unittest2 as unittest
 
 
 def move_zeroes_v1(nums):
-    """ First thought. A run on [0,1,0,3,12] produces the following intermediate arrays:
-     1 0 3 0 12
-     1 3 0 12 0
-     1 3 12 0 0
-     Time complexity: O(Nk), where k is the number of 0s in the array
-     Space complexity: O(1)
-     """
-    for _ in range(nums.count(0)):
-        for i in range(len(nums) - 1):
-            if nums[i] == 0:
-                nums[i], nums[i + 1] = nums[i + 1], nums[i]
-            i += 1
+    """ This is a 2 pointer approach. The fast pointer which is denoted by variable i does the job of processing new
+        elements. If the newly found element is not a zero, we record it just after the last found non-zero element.
+        The position of last found non-zero element is denoted by the 'non_zero_index' variable.
+        The code will maintain the following invariants:
+            1- All elements before 'non_zero_index' are non-zeroes.
+            2- All elements between i and 'non_zero_index' are zeroes.
+        Therefore, when we encounter a non-zero element, we need to swap elements pointed by i and 'non_zero_index',
+        then advance both pointers. If it's a zero element, we just advance i pointer.
 
-
-def move_zeroes_v2(nums):
+    Time complexity: O(N), the total number of operations are optimal. The total operations (array writes) that
+    code does is number of non-zero elements.
+    Space complexity: O(1)
     """
-     Time complexity: O(N)
-     Space complexity: O(1)
-     """
     non_zero_index = 0
     for i in range(len(nums)):
         if nums[i] != 0:
@@ -32,10 +26,10 @@ def move_zeroes_v2(nums):
             non_zero_index += 1
 
 
-def move_zeroes_v3(nums):
-    """ Using built-in sort() elegantly. Note that Timsort might introduce temporary arrays making in not in-place
+def move_zeroes_v2(nums):
+    """ Using built-in sort() elegantly. Note that Timsort might introduce temporary arrays making it out-of-place
     Time complexity: O(N log N)
-     Space complexity: O(1) (?)
+    Space complexity: O(N)
     """
     nums.sort(key=lambda x: 1 if x == 0 else 1)
 
@@ -52,9 +46,6 @@ class Test(unittest.TestCase):
             self.assertEqual(result, test_array)
         for test_array, result in self.data:
             move_zeroes_v2(test_array)
-            self.assertEqual(result, test_array)
-        for test_array, result in self.data:
-            move_zeroes_v3(test_array)
             self.assertEqual(result, test_array)
 
 
