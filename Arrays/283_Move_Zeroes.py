@@ -27,6 +27,25 @@ def move_zeroes_v1(nums):
 
 
 def move_zeroes_v2(nums):
+    """ The same as above. However, as we keep finding new non-zero elements, we just overwrite them at the
+        'non_zero_index'. After i index reaches the end of array, we now know that all the non-zero elements have been
+        moved to the beginning of the array in their original order. Now comes the time to fulfil the other requirement:
+        Moving all 0's to the end. We now simply need to fill all the indexes after 'non_zero_index' with 0.
+    Time complexity: O(N), however, the total number of operations is sub-optimal. The total operations (array writes)
+    that the algorithm does is N.
+    Space complexity: O(1)
+    """
+    non_zero_index = 0
+    for i, num in enumerate(nums):
+        if num:  # If the current element is not 0, then we need to append it just in front of last non 0 we found.
+            nums[non_zero_index] = num
+            non_zero_index += 1
+    for i in range(non_zero_index, len(nums)):  # After we have finished processing new elements, all the non-zero
+        # elements are already at beginning of array. We just need to fill remaining array with 0's.
+        nums[i] = 0
+
+
+def move_zeroes_v3(nums):
     """ Using built-in sort() elegantly. Note that Timsort might introduce temporary arrays making it out-of-place
     Time complexity: O(N log N)
     Space complexity: O(N)
@@ -46,6 +65,9 @@ class Test(unittest.TestCase):
             self.assertEqual(result, test_array)
         for test_array, result in self.data:
             move_zeroes_v2(test_array)
+            self.assertEqual(result, test_array)
+        for test_array, result in self.data:
+            move_zeroes_v3(test_array)
             self.assertEqual(result, test_array)
 
 
