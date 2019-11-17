@@ -43,7 +43,8 @@ def connect_v2(root):
         return None
     queue = deque([root])
     while queue:
-        next_queue = deque()
+        next_queue = deque()  # If we don't create a new queue, the last node at each level will get its next pointing
+        # the leftmost node of the next level. This is because we use the same queue to append next level's nodes
         while queue:
             node = queue.popleft()
             node.next = queue[0] if queue else None
