@@ -28,7 +28,8 @@ def maximum_subarray_v2(nums):
             dp[i] = max(nums[i], dp[i - 1] + nums[i])
         If the maximum sum of a contiguous sub array up to index (i-1) is positive, it is possible to make the maximum
         sum value bigger, so we add the current element to the sum.
-        If the maximum sum is negative, we start over with the current element.
+        If the maximum sum is negative, adding it to the current element will only make a smaller sum. So we start over
+        a new sum with the current element.
     Time complexity: O(N)
     Space complexity: O(N)
     """

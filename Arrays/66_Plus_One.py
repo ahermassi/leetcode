@@ -8,7 +8,7 @@ import unittest2 as unittest
 
 
 def plus_one_v1(digits):
-    """ Read array from end, and replace each digit with 0 as long as it is a 9.
+    """ Read array from end, and replace each digit with 0 as long as it is a 9. Otherwise, add 1 and return.
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -19,7 +19,7 @@ def plus_one_v1(digits):
     if i >= 0:
         digits[i] += 1
     else:
-        digits.insert(0, 1)
+        digits = [1] + digits
     return digits
 
 
@@ -46,6 +46,7 @@ class Test(unittest.TestCase):
 
     def test_plus_one(self):
         for test_array, result in self.data:
+            self.assertEqual(result, plus_one_v1(test_array))
             self.assertEqual(result, plus_one_v2(test_array))
 
 
