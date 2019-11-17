@@ -69,7 +69,7 @@ def count_nodes_v2(root):
     if left_height == right_height:
         # left_height = height - 1
         # --> pow(2, height - 1) = (pow(2, left_height) - 1) + 1: number of nodes of left subtree + 1 for root
-        # --> pow(2, left_height) - 1 + 1 = pow(2, left_height
+        # --> pow(2, left_height) - 1 + 1 = pow(2, left_height)
         return pow(2, height - 1) + count_nodes_v2(root.right)
         # Same as return pow(2, left_height) + count_nodes_v2(root.right)
     return pow(2, right_height) + count_nodes_v2(root.left)
