@@ -20,7 +20,15 @@ def maximum_subarray_v1(nums):
 
 
 def maximum_subarray_v2(nums):
-    """ Let's do it the DP way. dp[i] represents the maximum sum of a contiguous subarray ending/starting at index i.
+    """ This is an optimization problem, which can be usually solved using DP. So when it comes to DP, the first thing
+        for us to figure out is the format of the sub problem (or the state of each sub problem).
+        The format of the sub problem is something like: maxSubArray(int A[], int i), which means the maxSubArray for
+        A[0:i] which must has A[i] as the end element. Now the connection between the sub problem and the original one
+        becomes clear. Let dp[i] be the maximum sum of a contiguous sub array ending at index i:
+            dp[i] = max(nums[i], dp[i - 1] + nums[i])
+        If the maximum sum of a contiguous sub array up to index (i-1) is positive, it is possible to make the maximum
+        sum value bigger, so we add the current element to the sum.
+        If the maximum sum is negative, we start over with the current element.
     Time complexity: O(N)
     Space complexity: O(N)
     """
