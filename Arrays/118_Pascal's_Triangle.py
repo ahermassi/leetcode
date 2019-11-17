@@ -4,8 +4,9 @@ import unittest2 as unittest
 
 
 def generate(num_rows):
-    """
-    Time complexity: O(num-rows ** 2)
+    """ The jth entry in the ith row is 1 if j=0 or j=i, otherwise it is the sum of (j-1)th and jth entries in the
+        (i-1)th row.
+    Time complexity: O(num-rows ** 2), since each element takes O(1) time to compute
     Space complexity: O(1)
     """
     pascal = [[1] * (i + 1) for i in range(num_rows)]  # Prepares num_rows rows [1], [1, 1], [1, 1, 1], etc
