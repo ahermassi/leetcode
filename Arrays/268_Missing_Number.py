@@ -17,7 +17,12 @@ def missing_number_v1(nums):
 
 
 def missing_number_v2(nums):
-    """ if we initialize an integer to n and XOR it with every index and value, we will be left with the missing number.
+    """ We can compute the missing number by computing the XOR of all the integers from 0 to n, inclusive, and
+        XORing that with the XOR of all the elements in the array. Every element in the array, except for the missing
+        element, cancels out with an integer from the first set. Therefore, the resulting XOR equals the missing
+        element. Since the INDICES of the given nums list range from 0 to n-1, adding n to this list of indices gives
+        us the list of all the integers from 0 to n. This is the list we need to XOR with the XOR of the array values.
+        For this reason, we XOR n with the XOR of indices with the XOR of nums elements.
     Time complexity: O(N) assuming that XOR is a constant-time operation
     Space complexity: O(1)
     """
