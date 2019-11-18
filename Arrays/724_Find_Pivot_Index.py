@@ -8,8 +8,12 @@ import unittest2 as unittest
 
 
 def pivot_index(nums):
-    """ As we iterate through the array of numbers, we need to keep track of the sum of the values on the current
-        number's left and its right.
+    """ Prefix sum.
+        We need to quickly compute the sum of values to the left and the right of every index.
+        Let's say we knew S as the sum of the numbers, and we are at index i. If we knew the sum of numbers left_sum
+        that are to the left of index i, then the other sum to the right of the index would just be
+        S - nums[i] - left_sum.
+        As such, we only need to know about left_sum to check whether an index is a pivot index in constant time.
     Time complexity: O(N)
     Space complexity: O(1)
     """
