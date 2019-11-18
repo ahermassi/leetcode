@@ -36,17 +36,19 @@ def merge_v2(nums1, m, nums2, n):
     Time complexity: O(n + m)
     Space complexity: O(1)
     """
-    first_zero = len(nums1) - 1  # This is the first slot where a new element can be moved
-    while m > 0 and n > 0:
-        if nums1[m - 1] >= nums2[n - 1]:  # If the last non-zero in nums1 is >= last non-zero in nums2
-            nums1[first_zero] = nums1[m - 1]  # Move that last non-zero of nums1 to the end of nums1
-            m -= 1
+    write_index = m + n - 1  # This is the first slot where a new element can be moved
+    i, j = m - 1, n - 1
+    while i >= 0 and j >= 0:
+        if nums1[i] > nums2[j]:  # If the last non-zero in nums1 is > last non-zero in nums2
+            nums1[write_index] = nums1[i]  # Move that last non-zero of nums1 to the write_index
+            i -= 1
         else:
-            nums1[first_zero] = nums2[n - 1]
-            n -= 1
-        first_zero -= 1
-    if n > 0:
-        nums1[:n] = nums2[:n]
+            nums1[write_index] = nums2[j]
+            j -= 1
+        write_index -= 1
+    if j >= 0:  # There are more elements in nums2 to copy. Take the edge case of all nums2 elements are smaller than
+        # nums1 elements
+        nums1[:j + 1] = nums2[:j + 1]
 
 
 class Test(unittest.TestCase):
