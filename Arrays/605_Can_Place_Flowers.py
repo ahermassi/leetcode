@@ -25,13 +25,43 @@ def can_place_flowers_v1(flowerbed, n):
     return False
 
 
+def can_place_flowers_v2(flowerbed, n):
+    """ This solution is more suitable when the input array is read-only.
+        If there are 'count' zeroes in between two 1s, then how many 1s can we place in those zeroes without violating
+        the given condition? Answer is (count-1)/2. The only cases this doesn't apply are when there are zeroes
+        (1 or more):
+            1- At the beginning of the array.
+            2- At the end of the array.
+        For these 2 cases, the number of 1s that we can place is count/2. But to generalize the algorithm and to
+        simplify code inside loop, 'count' is initialized to 1 for the first time and result += (count-1)/2 effectively
+        becomes result += count/2 for the case 1. For case 2, result is updated outside the loop, again by
+        count/2 times.
+        Finally, we check if the number of possible 1s that we can place is greater than or equal to n. If so, we
+        return true else false.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    if not n:
+        return True
+    count, res = 1, 0
+    for flower in flowerbed:
+        if not flower:
+            count += 1
+        else:
+            res += (count - 1) // 2
+            count = 0
+    if count:
+        res += count // 2
+    return res >= n
+
+
 class Test(unittest.TestCase):
     data = [([1, 0, 0, 0, 1], 1, True), ([1, 0, 0, 0, 1], 2, False)]
 
     def test_can_place_flowers(self):
         for test_array, n, result in self.data:
             self.assertEqual(result, can_place_flowers_v1(test_array, n))
-            # self.assertEqual(result, can_place_flowers_v2(test_array, n))
+            self.assertEqual(result, can_place_flowers_v2(test_array, n))
 
 
 if __name__ == '__main__':
