@@ -38,23 +38,31 @@ def rotate_v2(nums, k):
 
 def rotate_v3(nums, k):
     """ The idea is the following:
-        1- Reverse the first n - k elements
+        1- Reverse the first (n - k) elements
         2- Reverse the rest of the elements
         3- Reverse the entire array
+        nums = "----->-->"; k =3
+        result = "-->----->";
+
+        reverse "----->" we can get "<------->"
+        reverse "-->" we can get "<-----<--"
+        reverse "<-----<--" we can get "-->----->"
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    k = k % len(nums)
-
-    def reverse(nums, left, right):
-        while left <= right:
+    def reverse(left, right):
+        while left < right:
             nums[left], nums[right] = nums[right], nums[left]
             left += 1
             right -= 1
 
-    reverse(nums, 0, len(nums) - k - 1)
-    reverse(nums, len(nums) - k, len(nums) - 1)
-    reverse(nums, 0, len(nums) - 1)
+    if not k:
+        return nums
+    n = len(nums)
+    k = k % n
+    reverse(0, n-k-1)
+    reverse(n-k, n-1)
+    reverse(0, n-1)
 
 
 class Test(unittest.TestCase):
