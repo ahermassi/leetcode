@@ -7,28 +7,9 @@ import unittest2 as unittest
 
 
 def can_place_flowers_v1(flowerbed, n):
-    """ The idea is to find the maximum number of flowers that can be planted between each two consecutive 1s.
-        We construct a list 'ones' that contains the indices of flowerbed that have value 1. After that, we examine
-        each 2 consecutive indices in 'ones' list and do the math to calculate how many flowers can be planted between
-        these 2 indices.
-    """
-    count, ones = 0, [i for i, num in enumerate(flowerbed) if num == 1]
-    if not ones:
-        return n <= (len(flowerbed) + 1) // 2
-    for i in range(len(ones) - 1):
-        prev_one, next_one = ones[i], ones[i + 1]
-        count += (next_one - prev_one - 2) // 2
-    first_one, last_one = ones[0], ones[-1]  # This is to account for cases where the first and/or last one is not
-    # the first / last element in flowerbed
-    a = first_one // 2
-    b = (len(flowerbed) - last_one - 1) // 2
-    count += a + b
-    return count >= n
-
-
-def can_place_flowers_v2(flowerbed, n):
     """ Iterate over the flowerbed and verify if slots of 3 consecutive zeros can be found. Update the array
-    accordingly.
+        accordingly. We can stop the process of checking the positions for planting the flowers as soon as 'count'
+        becomes equal to n. If 'count' never becomes equal to n, n flowers can't be planted at the empty positions.
     Time complexity: O(N)
     Space complexity: O(N) for the new flowerbed array
     """
@@ -39,7 +20,9 @@ def can_place_flowers_v2(flowerbed, n):
         if flowerbed[i - 1] == flowerbed[i] == flowerbed[i + 1] == 0:
             flowerbed[i] = 1
             count += 1
-    return count >= n
+            if count == n:
+                return True
+    return False
 
 
 class Test(unittest.TestCase):
@@ -48,7 +31,7 @@ class Test(unittest.TestCase):
     def test_can_place_flowers(self):
         for test_array, n, result in self.data:
             self.assertEqual(result, can_place_flowers_v1(test_array, n))
-            self.assertEqual(result, can_place_flowers_v2(test_array, n))
+            # self.assertEqual(result, can_place_flowers_v2(test_array, n))
 
 
 if __name__ == '__main__':
