@@ -19,8 +19,8 @@ def rotate_v1(nums, k):
     """
     if not k:
         return nums
-    k, n = k % len(nums), len(nums)
-    nums[:] = nums[n - k:] + nums[:n - k]
+    k = k % len(nums)
+    nums[:] = nums[-k:] + nums[:-k]
 
 
 def rotate_v2(nums, k):
