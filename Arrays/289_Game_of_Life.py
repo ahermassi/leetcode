@@ -72,20 +72,16 @@ def game_of_life_v3(board):
         not be in the counter). Afterwards, we just collect the new set of living cells by picking those with the right
         amount of neighbors.
     """
-    def get_neighbors(i, j):
-        neighbors = [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1),
-                     (i - 1, j - 1), (i + 1, j + 1), (i - 1, j + 1), (i + 1, j - 1)]
-        return [neighbor for neighbor in neighbors
-                if 0 <= neighbor[0] < n and 0 <= neighbor[1] < m]
-
     n, m = len(board), len(board[0])
     live = {(i, j) for i in range(n) for j in range(m) if board[i][j]}
     all_live, new_live = defaultdict(int), set()
     for i, j in live:
-        for neighbor in get_neighbors(i, j):
-            all_live[neighbor] += 1
-    for cell in all_live.keys():
-        if all_live[cell] == 2 or all_live[cell] == 3 and cell in live:
+        for neighbor in (i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1):
+            if 0 <= neighbor[0] < n and 0 <= neighbor[1] < m:
+                all_live[neighbor] += 1
+    for cell in all_live:
+        if (cell in live and all_live[cell] in {2, 3}) or (cell not in live and all_live[cell] == 3):  # If the cell
+            # is initially alive and has 2 or 3 live neighbors, or the cell is initially dead and has 3 live neighbors
             new_live.add(cell)
     for i in range(n):
         for j in range(m):
