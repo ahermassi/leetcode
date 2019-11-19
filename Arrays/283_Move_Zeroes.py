@@ -14,9 +14,8 @@ def move_zeroes_v1(nums):
             2- All elements between i and 'non_zero_index' are zeroes.
         Therefore, when we encounter a non-zero element, we need to swap elements pointed by i and 'non_zero_index',
         then advance both pointers. If it's a zero element, we just advance i pointer.
-
-    Time complexity: O(N), the total number of operations are optimal. The total operations (array writes) that
-    code does is number of non-zero elements.
+    Time complexity: O(N), the total number of operations is optimal. The total operations (array writes) that code
+    does is number of non-zero elements.
     Space complexity: O(1)
     """
     non_zero_index = 0
@@ -29,8 +28,9 @@ def move_zeroes_v1(nums):
 def move_zeroes_v2(nums):
     """ The same as above. However, as we keep finding new non-zero elements, we just overwrite them at the
         'non_zero_index'. After i index reaches the end of array, we now know that all the non-zero elements have been
-        moved to the beginning of the array in their original order. Now comes the time to fulfil the other requirement:
-        Moving all 0's to the end. We now simply need to fill all the indexes after 'non_zero_index' with 0.
+        moved to the beginning of the array in their original order. Now comes the time to fulfill the other
+        requirement: Moving all 0's to the end. We now simply need to fill all the indexes after 'non_zero_index'
+        with 0.
     Time complexity: O(N), however, the total number of operations is sub-optimal. The total operations (array writes)
     that the algorithm does is N.
     Space complexity: O(1)
@@ -47,7 +47,7 @@ def move_zeroes_v2(nums):
 
 def move_zeroes_v3(nums):
     """ Using built-in sort() elegantly. Note that Timsort might introduce temporary arrays making it out-of-place
-    Time complexity: O(N log N)
+    Time complexity: O(N logN)
     Space complexity: O(N)
     """
     nums.sort(key=lambda x: 1 if x == 0 else 1)
