@@ -12,9 +12,19 @@ import unittest2 as unittest
 class RandomizedSet(object):
     """ When we store everything in a dictionary, it's fine when we insert or remove.
         But if we want to achieve O(1) on getRandom(), it's impossible. We have to turn it into a list first, which
-        is O(n).
+        is O(N). The idea of GetRandom is to choose a random index and then to retrieve an element with that index.
+        There is no indexes in hash map, and hence to get true random value, we have first to convert hash map keys
+        into a list, and that would take linear time.
         For this reason, we use a dictionary to just keep track of the index of the added elements, so when we remove
         them, we copy the last one into it. An array/list holds the inserted values.
+        To delete a value at arbitrary index takes linear time. The solution here is to always delete the last value:
+            - Swap the element to delete with the last one.
+            - Pop the last element out.
+        For that, we have to compute the index of each element in constant time, and hence we need a hash map which
+        stores element -> its index dictionary.
+        Both ways converge into the same combination of data structures:
+            - Hash map element -> its index.
+            - List of elements.
         This way, we achieve average O(1) for insert, remove, and getRandom.
     """
 
@@ -22,7 +32,7 @@ class RandomizedSet(object):
         """
         Initialize your data structure here.
         """
-        self.indexes = {}
+        self.indices = {}
         self.nums = []
 
     def insert(self, val):
@@ -31,31 +41,33 @@ class RandomizedSet(object):
         :type val: int
         :rtype: bool
         """
-        if val in self.indexes:
+        if val in self.indices:
             return False
         self.nums.append(val)
-        self.indexes[val] = len(self.nums) - 1  # Insert value along with its index in nums list
+        self.indices[val] = len(self.nums) - 1  # Insert value along with its index in nums list
         return True
 
     def remove(self, val):
         """
         Removes a value from the set. Returns true if the set contained the specified element.
-        :type val: int
-        :rtype: bool
+        Retrieve an index of element to delete from the hash map.
+        Move the last element to the place of the element to delete, O(1) time.
+        Pop the last element out, O(1) time.
         """
-        if val not in self.indexes:
+        if val not in self.indices:
             return False
-        index = self.indexes[val]  # Get val index in list
+        index = self.indices[val]  # Get val index in list
         last = self.nums[-1]  # Get the last added element
         self.nums[index] = last  # Overwrite val index with last element
-        self.nums.pop()  # Get rid of the last element from it's original spot. It now has a new home elsewhere
-        self.indexes[last] = index  # Update the last element's index to its new spot
-        del self.indexes[val]  # Delete value along with its index from the dictionary
+        self.nums.pop()  # Get rid of the last element from its original spot. It now has a new home elsewhere.
+        self.indices[last] = index  # Update the last element's index to its new spot
+        del self.indices[val]  # Delete value along with its index from the dictionary
         return True
 
     def getRandom(self):
         """
         Get a random element from the set.
+        GetRandom could be implemented in O(1) time with the help of standard random.choice in Python.
         :rtype: int
         """
         return random.choice(self.nums)
@@ -70,7 +82,7 @@ class Test(unittest.TestCase):
     param_5 = randomized_set.remove(1)
     param_6 = randomized_set.getRandom()
 
-    def test_level_order(self):
+    def test_randomized_set(self):
         self.assertTrue(self.param_1)
         self.assertFalse(self.param_2)
         self.assertTrue(self.param_4)
