@@ -19,7 +19,7 @@ def length_of_longest_substring(s):
     for i, c in enumerate(s):  # i is the right end of that string, or the right end of our sliding window
         if c in chars:
             start = max(start, chars[c] + 1)  # The variable 'start' is used to indicate the index of first character of
-            # this substring. If the repeated character's index is less than j itself, this means the repeated
+            # this substring. If the repeated character's index is less than 'start' itself, this means the repeated
             # character in the hash map is no longer available at this time and is already outside the window.
             # Consider the input: 'tmsmfdut'
             # When i = s.length()-1, then start = 2 after we've encountered the first repeated 'm', so the current
