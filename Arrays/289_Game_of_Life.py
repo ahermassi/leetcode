@@ -15,15 +15,10 @@ def game_of_life_v1(board):
     """
     live_neighbors, n, m = defaultdict(int), len(board), len(board[0])
 
-    def get_neighbors(i, j):
-        neighbors = [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1),
-                     (i - 1, j - 1), (i + 1, j + 1), (i - 1, j + 1), (i + 1, j - 1)]
-        return [neighbor for neighbor in neighbors if 0 <= neighbor[0] < n and 0 <= neighbor[1] < m]
-
     for i in range(n):
         for j in range(m):
-            for neighbor in get_neighbors(i, j):
-                if board[neighbor[0]][neighbor[1]] == 1:
+            for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1):
+                if 0 <= x < n and 0 <= y < m and board[x][y] == 1:
                     live_neighbors[(i, j)] += 1
     for i in range(n):
         for j in range(m):
