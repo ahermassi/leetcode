@@ -8,26 +8,28 @@ def three_sum_closest(nums, target):
     """ First, sort the list. Then, use 3 pointers to point current element, next element and the last element. If the
         sum is less than target, it means we have to add a larger element so next element move to the next. If the sum
         is greater, it means we have to add a smaller element so last element move to the second last element. Keep
-        doing this until the end. Each time compare the difference between sum and target, if it is less than minimum
-        difference so far, then replace result with it, otherwise keep iterating.
+        doing this until the end. Each time compare the gap between sum and target, and if it is less than the minimum
+        gap found so far, then the current sum is the best we could achieve so far.
     Time complexity: O(N ** 2)
     Space complexity: O(1)
     """
     nums.sort()
-    min_sum = float('inf')
-    for i in range(len(nums) - 2):
-        left, right = i + 1, len(nums) - 1
+    n, res, min_gap = len(nums), 0, float('inf')
+    for i in range(n - 2):
+        left, right = i + 1, n - 1
         while left < right:
             s = nums[i] + nums[left] + nums[right]
-            if s == target:
+            if s == target:  # A gap of 0 between target and s. We can't achieve better.
                 return s
-            if abs(target - s) < abs(target - min_sum):
-                min_sum = s
+            cur_gap = abs(target - s)
+            if cur_gap < min_gap:
+                min_gap = cur_gap
+                res = s
             if s < target:
                 left += 1
-            elif s > target:
+            else:
                 right -= 1
-    return min_sum
+    return res
 
 
 class Test(unittest.TestCase):
