@@ -28,20 +28,22 @@ def product_except_self_v1(nums):
 
 def product_except_self_v2(nums):
     """ This approach is essentially an extension of the approach above. The only change in this approach is that we
-    don't explicitly build the right (b) array from before. Instead, we simply use a variable p to keep track of the
-    running product of elements to the right and we keep updating the answer array by doing a[i] = a[i] * p
-    Time complexity: O(N) where NN is the number of elements in the input array
-    Space complexity: O(1) since we don't use any additional array for our computations.
+        don't explicitly build the 'right' array from before. Instead, we simply use a variable 'prod' to keep track
+        of the running product of elements to the right and we keep updating the answer array by doing
+        left[i] = left[i] * prod
+    Time complexity: O(N), where N is the number of elements in the input array
+    Space complexity: O(1), since we don't use any additional array for our computations
     """
-    a = [0] * len(nums)
-    a[0] = 1
-    for i in range(1, len(nums)):
-        a[i] = a[i - 1] * nums[i - 1]
-    p = 1
-    for i in reversed(range(len(nums) - 1)):
-        p *= nums[i + 1]
-        a[i] *= p
-    return a
+    n = len(nums)
+    left = [0] * n
+    left[0] = 1
+    for i in range(1, n):
+        left[i] = left[i - 1] * nums[i - 1]
+    prod = 1
+    for i in reversed(range(n)):
+        left[i] *= prod
+        prod *= nums[i]
+    return left
 
 
 class Test(unittest.TestCase):
