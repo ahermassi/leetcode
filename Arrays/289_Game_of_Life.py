@@ -87,3 +87,10 @@ def game_of_life_v3(board):
         for j in range(m):
             board[i][j] = int((i, j) in new_live)
 
+# The only problem with this solution would be when the entire board cannot fit into memory. If that is indeed the case,
+# then we would have to approach this problem in a different way.
+# For that scenario, we assume that the contents of the matrix are stored in a file, one row at a time. In order for us
+# to update a particular cell, we only have to look at its 8 neighbors which essentially lie in the row above and below
+# it. So, for updating the cells of a row, we just need the row above and the row below. Thus, we read one row at a
+# time from the file and at max we will have 3 rows in memory. We will keep discarding rows that are processed and then
+# we will keep reading new rows from the file, one at a time.
