@@ -27,6 +27,10 @@ def max_area_v2(height):
         to be beneficial, as per the same argument, despite the reduction in the width. This is done since a relatively
         longer line obtained by moving the shorter line's pointer might overcome the reduction in area caused by the
         width reduction.
+        In other words:
+        1- The widest container (using first and last line) is a good candidate, because of its width. Its water level
+        is the height of the smaller one of first and last line.
+        2- All other containers are less wide and thus would need a higher water level in order to hold more water.
         Proof by contradiction: We have two heights H_left and H_right, and H_right < H_left, then we know we have two
         choices, we want to move one of them. If we move the larger one, we cannot increase the height for the simple
         reason that we are always limited by the shortest, and we would be decreasing j-i, the width as well.
