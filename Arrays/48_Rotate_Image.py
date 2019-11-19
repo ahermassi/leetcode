@@ -13,6 +13,17 @@ def rotate(matrix):
         exchanges the row and column of the same index: 1st row becomes 1st column, 2nd row becomes 2nd column etc.
         Rotating the matrix by 90 degrees (clockwise) puts the 1st row to the last column, 2nd row to the 2nd-to-last
         column, etc.
+        Clockwise rotate:
+            First swap the symmetry, then reverse rows:
+            1 2 3     1 4 7     7 4 1
+            4 5 6  => 2 5 8  => 8 5 2
+            7 8 9     3 6 9     9 6 3
+        Anti-clockwise rotate:
+            First swap the symmetry, then reverse the matrix:
+            1 2 3     1 4 7     3 6 9
+            4 5 6  => 2 5 8  => 2 5 8
+            7 8 9     3 6 9     1 4 7
+
     Time complexity : O(N ** 2)
     Space complexity : O(1) since we do a rotation in place
     """
