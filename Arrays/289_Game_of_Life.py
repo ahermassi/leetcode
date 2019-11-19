@@ -43,22 +43,15 @@ def game_of_life_v2(board):
     Space complexity: O(1)
     """
     n, m = len(board), len(board[0])
-
-    def get_neighbors(i, j):
-        neighbors = [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1),
-                     (i - 1, j - 1), (i + 1, j + 1), (i - 1, j + 1), (i + 1, j - 1)]
-        return [neighbor for neighbor in neighbors
-                if 0 <= neighbor[0] < n and 0 <= neighbor[1] < m]
-
     for i in range(n):
         for j in range(m):
-            live_neighbors = 0
-            for neighbor in get_neighbors(i, j):
-                if board[neighbor[0]][neighbor[1]] in (1, 2):  # 1 means now alive, 2 means was previously alive
-                    live_neighbors += 1
-            if board[i][j] == 1 and (live_neighbors < 2 or live_neighbors > 3):
+            live = 0
+            for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1):
+                if 0 <= x < n and 0 <= y < m and board[x][y] in {1, 2}:  # 1 means now alive, 2 means was alive
+                    live += 1
+            if board[i][j] and (live < 2 or live > 3):
                 board[i][j] = 2
-            elif board[i][j] == 0 and live_neighbors == 3:
+            elif board[i][j] == 0 and live == 3:
                 board[i][j] = 3
     for i in range(n):
         for j in range(m):
