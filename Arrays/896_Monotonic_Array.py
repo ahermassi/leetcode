@@ -6,11 +6,11 @@ Return true if and only if the given array A is monotonic. """
 import unittest2 as unittest
 
 
-def is_monotonic_v1(A):
-    """ To perform this check in one pass, we want to remember if it is monotone increasing or monotone decreasing.
-        If it is either monotone increasing or monotone decreasing, then A is monotonic.
+def is_monotonic(A):
+    """ To perform this check in one pass, we want to remember if the array is monotone increasing or monotone
+        decreasing. If it is either monotone increasing or monotone decreasing, then A is monotonic.
         We initially assume that the array is neither increasing nor decreasing.
-        While traversing an array, as long as a number is found to be greater than the number behind it, then
+        While traversing the array, as long as a number is found to be greater than the number behind it, then
         'increasing' will be assigned the value True. Similarly, as long as a number is less than the number behind it,
         'decreasing' will be assigned True. If at any time the array becomes 'increasing' and 'decreasing'
         simultaneously, then it can't be monotonic.
@@ -37,7 +37,7 @@ class Test(unittest.TestCase):
 
     def test_is_monotonic(self):
         for test_array, result in self.data:
-            self.assertEqual(result, is_monotonic_v1(test_array))
+            self.assertEqual(result, is_monotonic(test_array))
 
 
 if __name__ == '__main__':
