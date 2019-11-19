@@ -6,22 +6,21 @@ import unittest2 as unittest
 
 def product_except_self_v1(nums):
     """ For every given index i, we will make use of the product of all the numbers to the left of it and multiply
-    it by the product of all the numbers to the right. This will give us the product of all the numbers except the
-    one at the given index i.
-    Time complexity: O(N) where NN is the number of elements in the input array
+        it by the product of all the numbers to the right. This will give us the product of all the numbers except the
+        one at the given index i.
+    Time complexity: O(N), where N is the number of elements in the input array
     Space complexity: O(N)
     """
-    a, b, output = [0] * len(nums), [0] * len(nums), [0] * len(nums)
-    # For the element at index '0', there are no elements to the left, so a[0] would be 1
-    # for the element at index 'length - 1', there are no elements to the right, so b[-1] would be 1
-    a[0], b[-1] = 1, 1
-    for i in range(1, len(nums)):
-        a[i] = a[i - 1] * nums[i - 1]  # a[i] is the product of elements to the left of index i in nums
-    for i in reversed(range(len(nums) - 1)):
-        b[i] = b[i + 1] * nums[i + 1]  # b[i] is the product of elements to the right of index i in nums
-    for i in range(len(nums)):
-        output[i] = a[i] * b[i]
-    return output
+    n = len(nums)
+    left, right = [0] * n, [0] * n
+    # For the element at index 0, there are no elements to the left, so left[0] would be 1
+    # For the element at index n-1, there are no elements to the right, so right[-1] would be 1
+    left[0] = right[-1] = 1
+    for i in range(1, n):
+        left[i] = left[i - 1] * nums[i - 1]  # left[i] is the product of elements to the left of index i in nums
+    for i in reversed(range(n - 1)):
+        right[i] = right[i + 1] * nums[i + 1]  # right[i] is the product of elements to the right of index i in nums
+    return [left[i] * right[i] for i in range(n)]
 
 
 # Follow up: Could you solve it with constant space complexity? (The output array does not count as extra space for
