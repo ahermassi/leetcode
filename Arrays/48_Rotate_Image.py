@@ -8,24 +8,7 @@ another 2D matrix and do the rotation.
 import unittest2 as unittest
 
 
-def rotate_v1(matrix):
-    """ The idea is to notice that every (i, j) in the rotated matrix corresponds to (n - 1 - j, i) in the original.
-        When updating the cells, keep the old values in a hash map as they will be needed.
-    Time complexity: O(N ** 2)
-    Space complexity: O(N ** 2)
-    """
-    n, d = len(matrix), {}
-    for i in range(n):
-        for j in range(n):
-            if (i, j) not in d:
-                d[(i, j)] = matrix[i][j]
-            if (n - 1 - j, i) in d:
-                matrix[i][j] = d[(n - 1 - j, i)]
-            else:
-                matrix[i][j] = matrix[n - 1 - j][i]
-
-
-def rotate_v2(matrix):
+def rotate(matrix):
     """ The obvious idea would be to transpose the matrix first and then reverse each row. Transposing a matrix
         exchanges the row and column of the same index: 1st row becomes 1st column, 2nd row becomes 2nd column etc.
         Rotating the matrix by 90 degrees (clockwise) puts the 1st row to the last column, 2nd row to the 2nd-to-last
@@ -67,7 +50,7 @@ class Test(unittest.TestCase):
 
     def test_rotate(self):
         for test_matrix, result in self.data:
-            rotate_v1(test_matrix)
+            rotate(test_matrix)
             self.assertEqual(result, test_matrix)
 
 
