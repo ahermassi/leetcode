@@ -20,18 +20,24 @@ def can_jump_v1(nums):
 
 
 def can_jump_v2(nums):
-    """ Looking from the start and selecting the locally optimum in the hope of reaching global optimum.
+    """ We want to know whether we can reach the end from the starting index. 'farthest_reach' variable indicates the
+        farthest position that can be reached from any index i, initialized to 0. As we iterate through the array, we
+        track the farthest index we know we can advance to. The farthest we can advance from index i is (i + nums[i]).
+        As soon as 'farthest_reach' is greater than or equal to the last index, we know we can reach the last position.
+        If at any moment we arrive at an index that is strictly greater than 'farthest_reach', we return False.
+        Otherwise, we update 'farthest_reach' to the maximum between 'farthest_reach' and (i + nums[i]) which indicates
+        the farthest index that the can be reached from the current position.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    furthest_jump, n = 0, len(nums) - 1
+    farthest_reach, last_index = 0, len(nums) - 1
     for i, v in enumerate(nums):
-        if furthest_jump < i:  # If previous furthest_jump is smaller than i, it means we cannot reach location i,
+        if farthest_reach < i:  # If previous farthest_reach is smaller than i, it means we cannot reach location i,
             # thus return false.
             return False
-        if furthest_jump >= n:
+        if farthest_reach >= last_index:
             return True
-        furthest_jump = max(furthest_jump, i + v)
+        farthest_reach = max(farthest_reach, i + v)
 
 
 class Test(unittest.TestCase):
