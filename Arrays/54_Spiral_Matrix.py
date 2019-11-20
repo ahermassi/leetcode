@@ -42,6 +42,41 @@ def spiral_order_v2(matrix):
     return res
 
 
+def spiral_order_v3(matrix):
+    """ We simulate peeling off the layers as in the previous solution, but without modifying the input matrix.
+        We traverse right and increment row_begin, then traverse down and decrement col_end, then we traverse left
+        and decrement row_end, and finally we traverse up and increment col_begin.
+        Note that row_begin, row_end, col_begin, col_end are the boundaries of rows and columns.
+    Time complexity: O(N * M)
+    Space complexity: O(1)
+    """
+    if not matrix:
+        return None
+    row_begin, row_end = 0, len(matrix) - 1
+    col_begin, col_end = 0, len(matrix[0]) - 1
+    res = []
+    while row_begin <= row_end and col_begin <= col_end:
+        # Traverse Right
+        for i in range(col_begin, col_end + 1):
+            res.append(matrix[row_begin][i])
+        row_begin += 1
+        # Traverse Down
+        for i in range(row_begin, row_end + 1):
+            res.append(matrix[i][col_end])
+        col_end -= 1
+        # Traverse Left
+        if row_begin <= row_end:
+            for i in reversed(range(col_begin, col_end + 1)):
+                res.append(matrix[row_end][i])
+        row_end -= 1
+        # Traverse Up
+        if col_begin <= col_end:
+            for i in reversed(range(row_begin, row_end + 1)):
+                res.append(matrix[i][col_begin])
+        col_begin += 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([[
         [1, 2, 3],
@@ -58,7 +93,7 @@ class Test(unittest.TestCase):
     def test_spiral_order(self):
         for test_array, result in self.data:
             self.assertEqual(result, spiral_order_v1(test_array))
-            # self.assertEqual(result, spiral_order_v2(test_array))
+            self.assertEqual(result, spiral_order_v3(test_array))
 
 
 if __name__ == '__main__':
