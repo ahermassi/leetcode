@@ -6,17 +6,17 @@ import unittest2 as unittest
 
 
 def can_jump_v1(nums):
-    """ The idea is to work backwards from the last index. Keep track of the smallest index 'last_pos' that can "jump" to
-        the last index. Check whether the current index i can jump to this smallest index.
+    """ The idea is to work backwards from the last index and keep track of the smallest index 'last_pos' that can jump
+        to the last index. Check whether the current index i can jump to this smallest index.
     Time complexity: O(N)
     Space complexity: O(1)
     """
     n = len(nums)
-    last_pos = n - 1
-    for i in reversed(range(n)):
-        if i + nums[i] >= last_pos:
+    last_pos = n - 1  # (last_pos = i) means 'from index i, we can jump and reach the end of array'
+    for i in reversed(range(n-1)):
+        if i + nums[i] >= last_pos:  # If I can jump to last_pos, I'm going to be the new last_pos
             last_pos = i
-    return last_pos == 0
+    return last_pos == 0  # This means from index 0 we can jump and reach the end of array
 
 
 def can_jump_v2(nums):
