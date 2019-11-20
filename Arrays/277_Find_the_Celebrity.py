@@ -40,6 +40,19 @@ def find_celebrity_v1(n):
             return -1
     return candidate
 
+    # Can be also written:
+    # candidate = 0
+    # for i in xrange(n):
+    #     if knows(candidate, i):
+    #         candidate = i
+    # for i in range(candidate):
+    #     if knows(candidate, i):
+    #         return -1
+    # for i in range(n):
+    #     if not knows(i, candidate):
+    #         return -1
+    # return candidate
+
 
 def find_celebrity_v2(n):
     """ Stack based solution. The idea is to push all people to the stack, and then start popping every 2 people.
