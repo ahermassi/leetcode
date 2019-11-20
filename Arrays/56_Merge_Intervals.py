@@ -9,18 +9,18 @@ def merge(intervals):
         overlap and we can append the current interval to 'res'. Otherwise, they do overlap, and we merge them by
         updating the end of the previous interval if it is less than the end of the current interval.
         When the intervals are sorted, and then all mergeable intervals form contiguous blocks.
-    Time complexity: O(N log N), the complexity of sorting
+    Time complexity: O(N logN), the complexity of sorting
     Space complexity: O(N), if we can sort intervals in place, we do not need more than constant additional space.
     Otherwise, we must allocate linear space to store a copy of intervals and sort that.
     """
     intervals.sort()
     res = []
     for interval in intervals:
-        if not res or interval[0] > res[-1][1]:  # If the list of merged intervals is empty or if the current
-            # interval does not overlap with the previous, simply append it.
-            res.append(interval)
-        else:  # Otherwise, there is overlap, so we merge the current and previous intervals.
+        if res and interval[0] <= res[-1][1]:  # If the list of merged intervals is not empty and if the current
+            # interval overlaps with the previous, merge the current and previous intervals.
             res[-1][1] = max(res[-1][1], interval[1])
+        else:  # Otherwise, simply append the current interval
+            res.append(interval)
     return res
 
 
