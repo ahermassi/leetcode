@@ -8,6 +8,11 @@ import unittest2 as unittest
 def can_jump_v1(nums):
     """ The idea is to work backwards from the last index and keep track of the smallest index 'last_pos' that can jump
         to the last index. Check whether the current index i can jump to this smallest index.
+        Iterating right-to-left, for each position we check if there is a potential jump that reaches a 'good' index
+        (currPosition + nums[currPosition] >= leftmostGoodIndex). If we can reach a 'good' index, then our position is
+        itself 'good'. Also, this new 'good' position will be the new leftmost 'good' index. Iteration continues until
+        the beginning of the array. If index 0 is a 'good' index, then we can reach the last index from the first
+        index.
     Time complexity: O(N)
     Space complexity: O(1)
     """
