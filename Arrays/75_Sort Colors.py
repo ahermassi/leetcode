@@ -3,12 +3,11 @@ are adjacent, with the colors in the order red, white and blue.
 Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively. """
 
 from collections import defaultdict
-
 import unittest2 as unittest
 
 
 def sort_colors_v1(nums):
-    """ A rather straight forward solution is a two-pass algorithm using counting sort.
+    """ A rather straightforward solution is a two-pass algorithm using counting sort.
         First, iterate the array counting number of 0's, 1's, and 2's, then overwrite array with total number of 0's,
         then 1's and followed by 2's.
     Time complexity: O(N)
@@ -21,10 +20,25 @@ def sort_colors_v1(nums):
 
 
 def sort_colors_v2(nums):
-    """ Let's use here three pointers to track the rightmost boundary of zeros, the leftmost boundary of twos and the
+    """ Let's use here three pointers to track the rightmost boundary of zeros, the leftmost boundary of twos, and the
         current element under the consideration.
-        The idea of solution is to move curr pointer along the array, if nums[curr] = 0 - swap it with nums[p0], if
-        nums[curr] = 2 - swap it with nums[p2].
+        The idea of solution is to move curr pointer along the array.
+        If nums[curr] = 0, swap it with nums[left] and move both left and curr pointer forward.
+        If nums[curr] = 1, the element is already in correct place, so we don't have to swap, just move the curr
+        pointer forward.
+        If nums[curr] = 2, swap it with nums[right] and move right pointer backwards.
+        We don't increment curr pointer after swapping the value with nums[right] because we know that nums[cur] == 2
+        but we don't know the value of nums[right]. After swapping, we need to take another look at this position
+        again, e.g. the number we swapped might be 0, wo we have to check it once again.
+        For example, suppose we have nums like this:
+            0, 0, 1(left), 1, 2(curr), 1, 0(right), 2, 2
+            nums[curr] is 2 --> so we swap it with nums[right], and we get:
+            0, 0, 1(left), 1, 0(curr), 1, 2(right), 2, 2
+            We have to handle that 0(nums[curr]).
+        Note that the invariant we have to maintain is:
+            nums[:left] are 0s
+            nums[left:right+1] are 1s
+            nums[right+1:] are 2s
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -36,7 +50,7 @@ def sort_colors_v2(nums):
         num = nums[curr]
         if num == 0:
             nums[left], nums[curr] = nums[curr], nums[left]
-            left += 1  # Move both pointers to the right
+            left += 1
             curr += 1
         elif num == 1:
             curr += 1
@@ -56,3 +70,4 @@ class Test(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
