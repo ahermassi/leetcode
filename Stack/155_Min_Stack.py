@@ -8,8 +8,7 @@ getMin() -- Retrieve the minimum element in the stack.
 import unittest2 as unittest
 
 
-class MinStack(object):
-
+class MinStackV1(object):
     """ The idea is to store tuples (value, min_value_till_now) in the stack. This makes getMin() an O(1) operation. """
 
     def __init__(self):
@@ -49,8 +48,43 @@ class MinStack(object):
         return self.stack[-1][1]
 
 
+class MinStackV2:
+    """ Only push the old minimum value when the current minimum value changes after pushing the new value x.
+        If pop operation could result in changing the current minimum value, pop twice and change the current minimum
+        value to the last minimum value.
+        Core Idea:
+            1- Minimum value is always followed by the second minimum value (duplicate value of the second minimum
+               value, to ensure that when pop function removes the 2nd min, it does not disrupt the stack order).
+            2- While popping we pop min and 2nd min so that we get the correct min value for the remaining stack and
+               the remaining stack top also points to the correct value.
+    """
+
+    def __init__(self):
+        """
+        initialize your data structure here.
+        """
+        self.stack = []
+        self.min = float('inf')
+
+    def push(self, x):
+        if x <= self.min:
+            self.stack.append(self.min)
+            self.min = x
+        self.stack.append(x)
+
+    def pop(self):
+        if self.stack.pop() == self.min:
+            self.min = self.stack.pop()
+
+    def top(self):
+        return self.stack[-1]
+
+    def getMin(self):
+        return self.min
+
+
 class Test(unittest.TestCase):
-    minStack = MinStack()
+    minStack = MinStackV2()
     minStack.push(-2)
     minStack.push(0)
     minStack.push(-3)
@@ -59,7 +93,7 @@ class Test(unittest.TestCase):
     top = minStack.top()
     min2 = minStack.getMin()
 
-    def test_is_valid(self):
+    def test_min_stack(self):
         self.assertEqual(-3, self.min1)
         self.assertEqual(0, self.top)
         self.assertEqual(-2, self.min2)
