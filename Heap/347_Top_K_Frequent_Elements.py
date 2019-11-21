@@ -22,7 +22,7 @@ def top_k_frequent_v1(nums, k):
 def top_k_frequent_v2(nums, k):
     """ Build a frequency hash map, 'counter'. Then build another hash map that maps frequencies to the elements that
         appear with that frequency, 'freq'. Now, in a reversed range [len(nums) + 1 .. 0], if any index in that range
-        is in 'frequency' map, append the corresponding elements in final output list 'res'. Return when 'res' has
+        is in 'freq' map, append the corresponding elements in final output list 'res'. Return when 'res' has
         already k elements.
         Note: we use a reversed range because we want the top k or most frequent k, so it makes sense to start with
         the max index.
@@ -41,6 +41,25 @@ def top_k_frequent_v2(nums, k):
                 return res[:k]
 
 
+def top_k_frequent_v3(nums, k):
+    """ Same idea as previous solution but using bucket sort. In this version, 'bucket' array replaces 'frequencies'
+        hash map.
+    Time complexity: O(N)
+    Space complexity: O(N) for 'counter' hash map
+    """
+    bucket = [[] for _ in range(len(nums) + 1)]
+    counter, res = defaultdict(int), []
+    for num in nums:
+        counter[num] += 1
+    for key, value in counter.items():
+        bucket[value].append(key)
+    for i in reversed(range(len(bucket))):  # Traverse the bucket right-to-left to get the greatest counts first
+        if bucket[i]:
+            res.extend(bucket[i])
+            if len(res) >= k:
+                return res[:k]
+
+
 class Test(unittest.TestCase):
     data = [([1, 1, 1, 2, 2, 3], 2, [1, 2]), ([1], 1, [1])]
 
@@ -48,6 +67,7 @@ class Test(unittest.TestCase):
         for test_array, test_k, result in self.data:
             self.assertEqual(result, top_k_frequent_v1(test_array, test_k))
             self.assertEqual(result, top_k_frequent_v2(test_array, test_k))
+            self.assertEqual(result, top_k_frequent_v3(test_array, test_k))
 
 
 if __name__ == '__main__':
