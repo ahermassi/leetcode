@@ -18,7 +18,6 @@ def four_sum_v1(nums, target):
     """
     if len(nums) < 4:
         return None
-    nums.sort()
     n, res, two_sums = len(nums), set(), defaultdict(list)
     for i in range(n - 1):
         for j in range(i + 1, n):
