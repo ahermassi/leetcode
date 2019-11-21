@@ -16,17 +16,17 @@ def find_kth_largest_v1(nums, k):
 
 
 def find_kth_largest_v2(nums, k):
-    """ Build a min heap from nums. Since kth largest element == (n - k + 1)th smallest element, pop (n - k) elements
-        from the heap to get to the kth largest element.
-    Time complexity: O(N) for constructing the heap, O((N- k)logN) for popping (N - k) elements, so O(N + (N - k)logN)
-    Space complexity: O(N) to store heap elements
+    """ Build a min heap that stores the K largest values. The algorithm iterates over the whole input and maintains
+        the size of the heap as k.
+    Time complexity: O(N logK) for heap construction
+    Space complexity: O(k) to store heap elements
     """
     heap = []
     for num in nums:
         heappush(heap, num)
-    for _ in range(len(nums) - k):
-        heappop(heap)
-    return heappop(heap)
+        if len(heap) > k:
+            heappop(heap)
+    return heap[0]
 
 
 def find_kth_largest_v3(nums, k):
