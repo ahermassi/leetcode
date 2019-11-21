@@ -5,7 +5,7 @@ initial elements from the stream. For each call to the method KthLargest.add, re
 largest element in the stream. """
 
 import unittest2 as unittest
-from heapq import heapify, heappush, heappop, heapreplace
+from heapq import heappush, heappop
 
 
 class KthLargest(object):
@@ -18,25 +18,27 @@ class KthLargest(object):
         of the stream. """
 
     def __init__(self, k, nums):
-        """
-        :type k: int
-        :type nums: List[int]
+        """ We can build a min heap that contains only k largest elements.
+        Time complexity: O(N logK), where N is the length of nums, we push N items into a heap of size k
+        Space complexity: O(k)
         """
         self.k = k
-        self.heap = nums
-        heapify(self.heap)
+        self.heap = []
+        for num in nums:
+            heappush(self.heap, num)
         while len(self.heap) > self.k:  # Keep only k largest elements
             heappop(self.heap)  # Take off smallest elements (popping returns the min element because it's min heap)
 
     def add(self, val):
-        """
-        :type val: int
-        :rtype: int
+        """ Compare the new element val with min to decide if we should pop min and insert val.
+        Time complexity: O(logK)
+        Space complexity: O(1)
         """
         if len(self.heap) < self.k:
             heappush(self.heap, val)
-        elif val > self.heap[0]:
-            heapreplace(self.heap, val)  # Pop smallest element and replace it with val, making val the smallest
+        elif val > self.heap[0]:  # Pop smallest element (kth largest) and replace it with val, making val kth largest
+            heappop(self.heap)
+            heappush(self.heap, val)
         return self.heap[0]  # Because the heap contains the k largest elements, the one at index 0 is the kth largest
 
 
@@ -48,7 +50,7 @@ class Test(unittest.TestCase):
     d = kth_largest.add(9)
     e = kth_largest.add(4)
 
-    def test_roman_to_int(self):
+    def test_kth_largest(self):
         self.assertEqual(4, self.a)
         self.assertEqual(5, self.b)
         self.assertEqual(5, self.c)
