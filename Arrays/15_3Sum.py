@@ -10,7 +10,7 @@ def three_sum(nums):
     """ The way to think about it is since it's 3 sum, there's only going to be 3 numbers. So to find the combinations
         of 3 numbers,we iterate through the list with the first pointer, and then try to find two extra numbers to sum
         to 0. Since the list is ordered, the right pointer will always be higher than the left pointer.
-        We do not need to consider i after nums[i]>0, since sum of 3 positive will be always greater than zero. [1]
+        We do not need to consider i after nums[i]>0, since sum of 3 positives will be always greater than zero. [1]
         If the number is the same as the number before, then it is equivalent to repeating the previous calculation. [2]
         Now we calculate the total:
             If the total is less than zero, we need it to be larger, so we move the left pointer
@@ -18,29 +18,28 @@ def three_sum(nums):
             If the total is zero, bingo! [5]
             We need to move the left and right pointers to the next different numbers, so we do not get repeating result
             [3], [4]
-    Time complexity: O(N logN + (N ** 2)) ~= O(N ** 2)
+    Time complexity: O(N logN + (N^2)) ~= O(N^2)
     Space complexity: O(N) for the Timsort
     """
     nums.sort()
-    res = []
-    for i in range(len(nums) - 2):
+    n, res = len(nums), []
+    for i in range(n - 2):
         if nums[i] > 0:  # [1]
             break
-        if i > 0 and nums[i] == nums[i - 1]:  # [2]
+        if i > 0 and nums[i] == nums[i-1]:  # [2]
             continue
-        s = nums[i]
-        left, right = i + 1, len(nums) - 1
+        left, right = i + 1, n - 1
         while left < right:
-            t = nums[left] + nums[right]
-            if s + t == 0:
+            s = nums[i] + nums[left] + nums[right]
+            if s == 0:
                 res.append([nums[i], nums[left], nums[right]])
-                while left < right and nums[left] == nums[left + 1]:  # [3]
+                while left < right and nums[left] == nums[left+1]:  # [3]
                     left += 1
-                while left < right and nums[right] == nums[right - 1]:  # [4]
+                while left < right and nums[right] == nums[right-1]:  # [4]
                     right -= 1
                 left += 1
                 right -= 1
-            elif s + t < 0:
+            elif s < 0:
                 left += 1
             else:
                 right -= 1
