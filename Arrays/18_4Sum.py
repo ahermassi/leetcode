@@ -13,8 +13,8 @@ def four_sum_v1(nums, target):
     """ This is essentially 2sum + 2sum. Save every sum of 2 different elements in nums in a hash map along with
         corresponding indices. After that, for every sum s, check if (target - s) is in the hash map. Be careful not no
         add duplicate elements to the final result.
-    Time complexity: O(N ** 3)
-    Space complexity: O(N ** 2)
+    Time complexity: O(N^3)
+    Space complexity: O(N^2)
     """
     if len(nums) < 4:
         return None
@@ -35,6 +35,40 @@ def four_sum_v1(nums, target):
     return map(list, res)
 
 
+def four_sum_v2(nums, target):
+    """ Searching for the quadruplet in the standard way of 3 nested loops, and 4 different checks are performed at
+        each loop to eliminate the duplicates.
+    Time complexity: O(N^3)
+    Space complexity: O(1)
+    """
+    if len(nums) < 4:
+        return None
+    nums.sort()
+    n, res = len(nums), []
+    for i in range(n - 3):
+        if i > 0 and nums[i] == nums[i - 1]:
+            continue
+        for j in range(i + 1, n - 2):
+            if j > i + 1 and nums[j] == nums[j - 1]:
+                continue
+            left, right = j + 1, n - 1
+            while left < right:
+                s = nums[i] + nums[j] + nums[left] + nums[right]
+                if s == target:
+                    res.append([nums[i], nums[j], nums[left], nums[right]])
+                    while left < right and nums[left] == nums[left + 1]:
+                        left += 1
+                    while left < right and nums[right] == nums[right - 1]:
+                        right -= 1
+                    left += 1
+                    right -= 1
+                elif s > target:
+                    right -= 1
+                else:
+                    left += 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [1, 0, -1, 0, -2, 2]
     target = 0
@@ -46,6 +80,7 @@ class Test(unittest.TestCase):
 
     def test_four_sum(self):
         self.assertEqual(self.result, four_sum_v1(self.data, self.target))
+        self.assertEqual(self.result, four_sum_v2(self.data, self.target))
 
 
 if __name__ == '__main__':
