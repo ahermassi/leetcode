@@ -11,19 +11,19 @@ class ListNode(object):
         self.next = None
 
 
-def delete_duplicates(head):
+def delete_duplicates_v1(head):
     """ Because the input list is sorted, we can determine if a node is a duplicate by comparing its value to the
-    node after it in the list. If it is a duplicate, we change the next pointer of the current node so that it skips
-    the next node and points directly to the one after the next node.
+        node after it in the list. If it is a duplicate, we change the next pointer of the current node so that it
+        skips the next node and points directly to the one after the next node.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    temp = head
-    while temp and temp.next:
-        if temp.val == temp.next.val:
-            temp.next = temp.next.next
+    cur = head
+    while cur:
+        if cur.next and cur.next.val == cur.val:
+            cur.next = cur.next.next
         else:
-            temp = temp.next
+            cur = cur.next
     return head
 
 
