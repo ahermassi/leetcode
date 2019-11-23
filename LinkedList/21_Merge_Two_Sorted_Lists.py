@@ -53,7 +53,9 @@ def merge_two_lists_v2(l1, l2):
             tail.next = l2
             l2 = l2.next
         tail = tail.next
-    tail.next = l1 or l2
+    tail.next = l1 or l2  # If we exhausted either list, we just append the other list to the end of the merged list
+    # since the list still standing will have all elements greater than the last item in the merged list so far (and
+    # be in sorted order)
     return head.next
 
 
