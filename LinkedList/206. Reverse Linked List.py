@@ -32,8 +32,8 @@ def reverse_list_v1(head):
 
 def reverse_list_v2(head):
     """ While traversing the list, change the current node's next pointer to point to its previous element.
-    Since a node does not have reference to its previous node, store its previous element beforehand. Another pointer
-     is also needed to store the next node before changing the reference.
+        Since a node does not have reference to its previous node, store its previous element beforehand. Another
+        pointer is also needed to store the next node before changing the reference.
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -48,7 +48,12 @@ def reverse_list_v2(head):
 
 def reverse_list_v3(head):
     """ Recursive approach. Traverse the list recursively until the tail is reached. From there, reverse each two
-    consecutive nodes and return the new head.
+        consecutive nodes and return the new head.
+        Assume that the rest of the list had already been reversed, now how do we reverse the front part? Let's assume
+        the list is: n1 → … → nk-1 → nk → nk+1 → … → nm → Ø
+        Assume from node nk+1 to nm had been reversed and we are at node nk.
+        n1 → … → nk-1 → nk → nk+1 ← … ← nm
+        We want nk+1’s next node to point to nk. So, nk.next.next = nk;
     Time complexity: O(N)
     Space complexity: O(N), the recursion could go up to N levels deep
     """
