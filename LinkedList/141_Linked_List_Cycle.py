@@ -12,49 +12,41 @@ class ListNode(object):
 
 
 def has_cycle_v1(head):
-    """ The idea is to visit each node and replace its value with -infinity. If visited again, -infinity indicates
-    the presence of a cycle.
-    Time complexity: O(N), where N is the length of the linked list
+    """ Floyd's cycle detection algorithm, or 'the tortoise and the hare' algorithm.
+        Consider two pointers at different speed - a slow pointer and a fast pointer. The slow pointer moves one step
+        at a time while the fast pointer moves two steps at a time. If there is no cycle in the list, the fast pointer
+        will eventually reach the end and we can return false in this case.
+        Now consider a cyclic list and imagine the slow and fast pointers are two runners racing around a circle track.
+        The fast runner will eventually meet the slow runner. Why? Consider this case (we name it case A) - The fast
+        runner is just one step behind the slow runner. In the next iteration, they both increment one and two steps
+        respectively and meet each other.
+        How about other cases? For example, we have not considered cases where the fast runner is two or three steps
+        behind the slow runner yet. This is simple, because in the next or next's next iteration, this case will be
+        reduced to case A mentioned above.
+    Time complexity: O(N)
     Space complexity: O(1)
     """
-    while head:
-        if head.val == float('-inf'):
+    slow, fast = head, head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
             return True
-        head.val = float('-inf')
-        head = head.next
     return False
 
 
 def has_cycle_v2(head):
-    """ Use fast and slow pointers. Fast pointer runs 2 steps at a time and slow pointer runs 1 step at a time. They
-    both start from beginning. If faster pointer catches slow pointer some time, it means linked list has a cycle.
-    This algorithm is called Floyd's cycle detection algorithm, or 'the tortoise and the hare' algorithm.
-    Time complexity: O(N)
-    Space complexity: O(1)
-    """
-    try:
-        slow, fast = head, head.next
-        while slow is not fast:
-            slow = slow.next
-            fast = fast.next.next
-        return True
-    except AttributeError:  # The "trick" is to not check all the time whether we have reached the end but to handle
-        # it via an exception. This technique is known as Easier to Ask for Forgiveness than Permission, or EAFP.
-        return False
-
-
-def has_cycle_v3(head):
-    """ We go through each node one by one and record each node's reference in a hash table. If
-    the current node is null, we have reached the end of the list and it must not be cyclic. If current node’s
-    reference is in the hash table, then return true.
+    """ We go through each node one by one and record each node's reference in a hash set. If the current node is null,
+        we have reached the end of the list and it must not be cyclic. If current node’s reference is in the hash set,
+        then return true.
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    nodes = {}
+    nodes = set()
     while head:
-        if head.val in nodes:
+        if head in nodes:
             return True
-        nodes[head] = head.val
+        nodes.add(head)
         head = head.next
     return False
 
@@ -75,8 +67,6 @@ class Test(unittest.TestCase):
         self.assertFalse(has_cycle_v1(self.head2))
         self.assertTrue(has_cycle_v2(self.head1))
         self.assertFalse(has_cycle_v2(self.head2))
-        self.assertTrue(has_cycle_v3(self.head1))
-        self.assertFalse(has_cycle_v3(self.head2))
 
 
 if __name__ == '__main__':
