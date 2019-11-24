@@ -13,12 +13,17 @@ class ListNode:
 
 def get_intersection_node_v1(headA, headB):
     """ Maintain two pointers pa and pb initialized at the head of A and B, respectively. Then let them both traverse
-        through the lists, one node at a time. When pa reaches the end of list A, then redirect it to the head of B ;
-        similarly when pb reaches the end of list B, redirect it the head of A. If at any point pa meets pb, then pa
+        through the lists, one node at a time. When pa reaches the end of list A, then redirect it to the head of B;
+        similarly when pb reaches the end of list B, redirect it to the head of A. If at any point pa meets pb, then pa
         (or pb) is the intersection node.
         The idea is if you switch head, the possible difference between lengths would be countered. On the second
         traversal, they either hit or miss. If they didn't meet, they will hit the end at the same iteration,
         pa == pb == None, return either one of them is the same, None.
+        This works because pointer A walks through List A AND List B (since once it hits null, it goes to List B's
+        head). Pointer B also walks through List B AND List A. Regardless of the length of the two lists, the sum of
+        the lengths are the same (i.e. a+b = b+a), which means that the pointers sync up at the point of intersection.
+        If the lists never intersected, it's fine too, because they'll sync up at the end of each list, both of which
+        are null.
     Time complexity: O(M + N)
     Space complexity: O(1), exactly two pointers are used whatever N and M.
     """
