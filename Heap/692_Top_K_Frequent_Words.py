@@ -63,11 +63,28 @@ def top_k_frequent_v2(words, k):
     return res
 
 
+def top_k_frequent_v3(words, k):
+    """ The good old bucket sort.
+    Time complexity: O(K logK)
+    Space complexity: O(N)
+    """
+    n = len(words)
+    bucket, res = [[] for _ in range(n + 1)], []
+    counter = Counter(words)
+    for key, v in counter.items():
+        bucket[v].append(key)
+    for i in reversed(range(n + 1)):
+        if bucket[i]:
+            res.extend(sorted(bucket[i]))  # Sort the elements alphabetically
+        if len(res) >= k:
+            return res[:k]
+
+
 class Test(unittest.TestCase):
     data = [(['i', 'love', 'leetcode', 'i', 'love', 'coding'], 2, ['i', 'love']),
             (['the', 'day', 'is', 'sunny', 'the', 'the', 'the', 'sunny', 'is', 'is'], 4, ['the', 'is', 'sunny', 'day'])]
 
-    def test_remove_stones(self):
+    def test_top_k_frequent(self):
         for test_words, test_k, result in self.data:
             self.assertEqual(result, top_k_frequent_v1(test_words, test_k))
             self.assertEqual(result, top_k_frequent_v2(test_words, test_k))
