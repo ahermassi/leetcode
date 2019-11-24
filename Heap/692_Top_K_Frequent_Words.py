@@ -15,7 +15,12 @@ class Element:
     def __lt__(self, other):
         if self.count == other.count:
             return self.word > other.word  # Pay attention to this ! Because the result will be reversed, we reverse
-            # the __lt__ logic here
+            # the __lt__ logic here. Example: heap = [(3, 'x'), (4, 'a')], and we want to push (4, 'b').
+            # If we allow the default lexicographical order, the heap will be: [(3, 'x'), (4, 'a'), (4, 'b')]
+            # After we pop the elements and reverse the result: res = ['b', 'a', 'x'], which is NOT the desired output.
+            # For this reason, we reverse the lexicographical order of elements which have same count.
+            # --> heap = [(3, 'x'), (4, 'b'), (4, 'a')], in which we considered (4, 'b') 'less' than (4, 'a')
+            # --> res = ['a', 'b', 'x']
         return self.count < other.count
 
     def __eq__(self, other):
@@ -26,7 +31,7 @@ def top_k_frequent_v1(words, k):
     """ Count the frequency of each word, then add it to heap that stores the best k candidates. Each time a new word
         is encountered, the front element of heap (min frequency) is popped. We end up with a heap containing the k
         most frequent words.
-    Time complexity: O(N + N logk) = O(N logk); O(N) to build frequency map, and O(N logk) to build the heap of size k
+    Time complexity: O(N + N logK) = O(N logK); O(N) to build frequency map, and O(N logK) to build the heap of size k
     Space complexity: O(N)
     """
     heap, res = [], []
@@ -56,19 +61,6 @@ def top_k_frequent_v2(words, k):
     for _ in range(k):
         res.append(heappop(heap)[1])
     return res
-
-
-def top_k_frequent_v3(words, k):
-    """ Count the frequency of each word, and sort the words with a custom ordering relation that uses these
-    frequencies. Then take the best k of them.
-    Time complexity: O(N logN), where N is the length of words. We count the frequency of each word in O(N) time, then
-    we sort the given words in O(N logN) time
-    Space complexity: O(N)
-    """
-    counter = Counter(words)
-    keys = counter.keys()
-    keys = sorted(keys, key=lambda word: (-counter[word], word))
-    return keys[:k]
 
 
 class Test(unittest.TestCase):
