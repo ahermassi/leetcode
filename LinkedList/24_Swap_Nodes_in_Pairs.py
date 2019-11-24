@@ -22,12 +22,11 @@ def swap_pairs(head):
     """
     if not head or not head.next:
         return head
-    node = swap_pairs(head.next.next)  # Navigate to the last/before-last node (depends on even/odd length of the list)
-    temp = head
-    head = head.next
-    temp.next = node
-    head.next = temp
-    return head  # After swapping, return the 'local' new head. The last one returned is the head of the entire new list
+    p = swap_pairs(head.next.next)  # Navigate to the last/before-last node (depends on even/odd length of the list)
+    nxt = head.next
+    nxt.next = head
+    head.next = p
+    return nxt  # After swapping, return the 'local' new head. The last one returned is the head of the entire new list
 
 
 class Test(unittest.TestCase):
@@ -36,7 +35,7 @@ class Test(unittest.TestCase):
     head.next.next = ListNode(3)
     head.next.next.next = ListNode(4)
 
-    def test_has_cycle(self):
+    def test_swap_pairs(self):
         head = swap_pairs(self.head)
         self.assertEqual(2, head.val)
         self.assertEqual(1, head.next.val)
