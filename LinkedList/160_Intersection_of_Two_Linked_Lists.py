@@ -27,12 +27,13 @@ def get_intersection_node_v1(headA, headB):
     Time complexity: O(M + N)
     Space complexity: O(1), exactly two pointers are used whatever N and M.
     """
-    if headA and headB:
-        pa, pb = headA, headB
-        while pa != pb:
-            pa = pa.next if pa else headB
-            pb = pb.next if pb else headA
-        return pa
+    if not headA or not headB:
+        return None
+    pa, pb = headA, headB
+    while pa != pb:
+        pa = pa.next if pa else headB
+        pb = pb.next if pb else headA
+    return pa
 
 
 def get_intersection_node_v2(headA, headB):
