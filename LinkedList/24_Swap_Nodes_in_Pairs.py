@@ -39,10 +39,12 @@ def swap_pairs_v2(head):
     cur = dummy
     while cur.next and cur.next.next:
         first, second = cur.next, cur.next.next
+        cur.next = second  # This will set the stage to swapping the following pair and makes dummy.next point to the
+        # first swapped pair
         first.next = second.next
-        cur.next = second
         second.next = first
-        cur = second.next
+        cur = second.next  # second.next = first and first.next = second.next which is the first node in the (following)
+        # pair to swap. This ensures that cur's next always points to the first node in the pair, which is an invariant.
     return dummy.next
 
 
