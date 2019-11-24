@@ -13,7 +13,7 @@ class ListNode(object):
         self.next = None
 
 
-def add_two_numbers(l1, l2):
+def add_two_numbers_v1(l1, l2):
     """ Start by adding leading zeroes to the shortest linked list. Once that done, it's easy to add the 2 linked lists
         when they have equal length. Recursively, traverse to the end of each list and then start adding values going
         backwards. Pay attention to cases that produce an addition carry. With each call, return that carry and the
@@ -59,6 +59,36 @@ def combine_lists(l1, l2):
     return carry, new_node
 
 
+def add_two_numbers_v2(l1, l2):
+    """ Iterative, stack based solution. Instead of reversing the linked lists or traveling to their tails to add the
+        numbers recursively, traverse the two lists and store the values of their nodes in 2 separate stacks. Then pop
+        elements off the stacks to construct a new list.
+    Time complexity: O(N + M)
+    Space complexity: O(max(N, M))
+    """
+    stack1, stack2 = [], []
+    p1, p2 = l1, l2
+    while p1:
+        stack1.append(p1.val)
+        p1 = p1.next
+    while p2:
+        stack2.append(p2.val)
+        p2 = p2.next
+    nxt, carry = None, 0
+    while stack1 or stack2:
+        val1 = stack1.pop() if stack1 else 0
+        val2 = stack2.pop() if stack2 else 0
+        s = val1 + val2 + carry
+        node = ListNode(s % 10)
+        node.next = nxt
+        nxt, carry = node, s // 10
+    if carry:
+        new_node = ListNode(carry)
+        new_node.next = node
+        node = new_node
+    return node
+
+
 class Test(unittest.TestCase):
     l1 = ListNode(7)
     l1.next = ListNode(2)
@@ -69,7 +99,7 @@ class Test(unittest.TestCase):
     l2.next.next = ListNode(4)
 
     def test_add_two_numbers(self):
-        l = add_two_numbers(self.l1, self.l2)
+        l = add_two_numbers_v1(self.l1, self.l2)
         self.assertEqual(7, l.val)
         self.assertEqual(8, l.next.val)
         self.assertEqual(0, l.next.next.val)
