@@ -17,7 +17,10 @@ def add_two_numbers(l1, l2):
     """ Start by adding leading zeroes to the shortest linked list. Once that done, it's easy to add the 2 linked lists
         when they have equal length. Recursively, traverse to the end of each list and then start adding values going
         backwards. Pay attention to cases that produce an addition carry. With each call, return that carry and the
-        last created node that contains the last sum."""
+        last created node that contains the last sum.
+    Time complexity: O(N + M)
+    Space complexity: O(max(N, M)) for the call stack
+    """
     len1, len2 = get_length(l1), get_length(l2)
     l1 = add_leading_zeroes(len2 - len1, l1)
     l2 = add_leading_zeroes(len1 - len2, l2)
