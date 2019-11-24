@@ -31,26 +31,29 @@ def get_intersection_node_v1(headA, headB):
 
 
 def get_intersection_node_v2(headA, headB):
-    """ Store the sizes of list A and list B as lena and lenb. Then reset the pointers to headA and headB and find the
-    difference between lena and lenb, and then let the pointer of the LONGER list proceed by the difference between
-    lena and lenb. Finally, traverse through the lists again, the intersection node can be easily found.
+    """ To find the first overlapping node, we first compute the length of each list. The first overlapping node is
+        determined by advancing through the longer list by the difference in lengths, and then advancing through both
+        lists in tandem, stopping at the first common node. If we reach the end of a list without finding a common
+        node, the lists do not overlap.
     Time complexity: O(N + M)
     Space complexity: O(1)
     """
-    pa, pb, lena, lenb = headA, headB, 0, 0
-    while pa:  # Find length of list A
-        lena, pa = lena + 1, pa.next
-    while pb:  # Find length of list B
-        lenb, pb = lenb + 1, pb.next
-    pa, pb = headA, headB  # Reset pointers for final traversal
-    # Account for difference in length by moving the head of longer list forward by abs(lena - lenb)
-    if lena > lenb:
-        while lena > lenb:
-            lena, pa = lena - 1, pa.next
-    else:
-        while lenb > lena:
-            lenb, pb = lenb - 1, pb.next
-    while pa != pb:  # Traverse again until the two pointers meet
+
+    def length(head):
+        count = 0
+        temp = head
+        while temp:
+            count += 1
+            temp = temp.next
+        return count
+
+    len1, len2 = length(headA), length(headB)
+    pa, pb = headA, headB
+    for _ in range(len1 - len2):
+        pa = pa.next
+    for _ in range(len2 - len1):
+        pb = pb.next
+    while pa != pb:
         pa, pb = pa.next, pb.next
     return pa
 
@@ -67,7 +70,7 @@ class Test(unittest.TestCase):
     head2.next.next = ListNode(1)
     head2.next.next.next = eight
 
-    def test_merge_two_lists(self):
+    def test_get_intersection_node(self):
         self.assertEqual(self.eight, get_intersection_node_v1(self.head1, self.head2))
         self.assertEqual(self.eight, get_intersection_node_v2(self.head1, self.head2))
 
