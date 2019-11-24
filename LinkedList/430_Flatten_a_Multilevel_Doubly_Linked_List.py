@@ -67,32 +67,6 @@ def flatten_v2(head):
     return head
 
 
-def flatten_v3(head):
-    """ Stack based solution. It performs a single pass through the list and saves next and child pointers in a stack
-        to connect them to the parent node in each iteration.
-    Time complexity: O(N)
-    Space complexity: O(N)
-    """
-    if not head:
-        return None
-    dummy = Node(0, None, head, None)
-    stack = [head]
-    prev = dummy
-    while stack:
-        root = stack.pop()
-        root.prev = prev  # Connect current node to the previous
-        prev.next = root  # Set previous' next pointer to current node
-        # We append next followed by child so we can pop/process the child node before the next node
-        if root.next:
-            stack.append(root.next)
-            root.next = None  # Disconnect current node from its next because next might change
-        if root.child:
-            stack.append(root.child)
-            root.child = None  # Disconnect current node from its child
-        prev = root  # Set prev to current node so whatever node is processed next is connected to current node
-    dummy.next.prev = None  # Making sure that the prev pointer of the head (which is dummy.next) is NULL
-    return dummy.next
-
 
 
 
