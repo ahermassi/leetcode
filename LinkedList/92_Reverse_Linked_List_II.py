@@ -43,10 +43,10 @@ def reverse_between_v1(head, m, n):
         cur = cur.next
     con, tail = pre, cur  # The two pointers that will fix the final connections
     for _ in range(n - m + 1):  # Iteratively reverse the nodes
-        third = cur.next
+        node_to_reverse = cur.next
         cur.next = pre
         pre = cur
-        cur = third
+        cur = node_to_reverse
     # Adjust the final connections
     if con:
         con.next = pre
@@ -57,7 +57,20 @@ def reverse_between_v1(head, m, n):
 
 
 def reverse_between_v2(head, m, n):
-    """ Another iterative version using a dummy head.
+    """ Another iterative version using a dummy head. The difference between the 2 solutions is that the first solution
+        makes (n-m+1) reversals starting from the head of the sublist and reversing ALL the nodes of the sublist,
+        while the second solution makes (n-m) reversals starting from the second node of the sublist and reversing
+        (len(sublist) - 1) nodes.
+        The invariants of this algorithm are the followinng:
+            pre.next always points to the last node that's been just reversed
+            cur.next always points to the node to reverse in the following iteration
+        During the execution, pre.next will keep pointing to the last reversed node until the entire sublist is
+        reversed. At this point, pre.next points to the head of the new reversed sublist. This is equivalent to
+        con.next = pre in the previous solution where we connect the node before the head of the sublist (before
+        reversal) to the head of the new reversed sublist.
+        During the execution, cur.next will keep pointing to the following node to reverse until the entire sublist is
+        reversed. At this point, cur.next points to the node just after the tail of the old sublist. This is equivalent
+        to tail.next = cur in the previous solution.
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -67,16 +80,16 @@ def reverse_between_v2(head, m, n):
     for _ in range(m - 1):
         pre = pre.next
     cur = pre.next  # Pointer to the beginning of the sub-list that will be reversed
-    third = cur.next  # Pointer to the node that will be reversed
-    # 1 - 2 -3 - 4 - 5 ; m=2; n =4 ---> pre = 1, cur = 2, third = 3
+    node_to_reverse = cur.next  # Pointer to the node that will be reversed
+    # 1 - 2 -3 - 4 - 5 ; m=2; n =4 ---> pre = 1, cur = 2, node_to_reverse = 3
     # dummy-> 1 -> 2 -> 3 -> 4 -> 5
     for _ in range(n - m):
-        cur.next = third.next
-        third.next = pre.next
-        pre.next = third
-        third = cur.next
-    # First reversing : dummy->1 -> 3 -> 2 -> 4 -> 5; pre = 1, cur = 2, third = 4
-    # Second reversing: dummy->1 -> 4 -> 3 -> 2 -> 5; pre = 1, cur = 2, third = 5 (finish)
+        cur.next = node_to_reverse.next  # cur.next always points to the node to reverse in the following iteration
+        node_to_reverse.next = pre.next
+        pre.next = node_to_reverse  # pre.next always points to the node that's been just reversed
+        node_to_reverse = cur.next  # Move on and reverse the next node
+    # First reversing : dummy->1 -> 3 -> 2 -> 4 -> 5; pre = 1, cur = 2, node_to_reverse = 4
+    # Second reversing: dummy->1 -> 4 -> 3 -> 2 -> 5; pre = 1, cur = 2, node_to_reverse = 5 (finish)
     return dummy.next
 
 
