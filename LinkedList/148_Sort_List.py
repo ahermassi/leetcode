@@ -47,7 +47,7 @@ def sort_list_v1(head):
 
 
 def sort_list_v2(head):
-    """ This solution is bottom-up merge sort.It first merges pairs of adjacent arrays of 1 elements. Then merges pairs
+    """ This solution is bottom-up merge sort. It first merges pairs of adjacent arrays of 1 elements. Then merges pairs
     of adjacent arrays of 2 elements. Next merges pairs of adjacent arrays of 4 elements... Until the whole array is
     merged.
     http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/7-Sort/merge-sort5.html
@@ -55,59 +55,64 @@ def sort_list_v2(head):
     Space complexity: O(1)
     """
 
-    # merge 2 sorted lists, and append the result to head
-    # return the tail
+    # Merge 2 sorted lists, append the result to head, and return the tail of the merged two lists.
     def merge2(p1, p2, head):
         dummy = ListNode(0)
-        p = dummy
+        tail = dummy
         while p1 and p2:
             if p1.val <= p2.val:
-                p.next = p1
+                tail.next = p1
                 p1 = p1.next
-                p = p.next
             else:
-                p.next = p2
+                tail.next = p2
                 p2 = p2.next
-                p = p.next
-        p.next = p1 or p2
+            tail = tail.next
+        tail.next = p1 or p2
         head.next = dummy.next
-        while p.next:
-            p = p.next
-        return p
+        while tail.next:
+            tail = tail.next
+        return tail
 
-    # divide the linked list into two lists
-    # first linked list contains n nodes
-    # return the head of second linked list
+    # Split the linked list into two lists. The first list contains n nodes. Disconnect the two lists and return the
+    # head of second list.
     def split(head, n):
         for _ in range(n - 1):
             if head:
-                head = head.next
+                head = head.next  # Move the head for a window of size n
             else:
                 break
-        if not head:
+        if not head:  # If head is null, then the head of the second list is null.
             return None
         second = head.next
-        head.next = None
+        head.next = None  # Disconnect the first and second lists
         return second
 
     if not head or not head.next:
         return head
     dummy = ListNode(0)
     dummy.next = head
-    tmp = head
-    length = 0
+    tmp, length = head, 0
     while tmp:
         tmp = tmp.next
         length += 1
-    step = 1
+    step = 1  # At each step, merge every 2 consecutive lists of size 2^(step-1)
     while step < length:
-        cur, tail = dummy.next, dummy
+        cur, tail = dummy.next, dummy  # With every iteration, 'cur' points to the head of the list. During the
+        # execution, 'tail' is the pointer whose next points to the merged 2 consecutive lists
         while cur:
             left = cur
-            right = split(left, step)
-            cur = split(right, step)
-            tail = merge2(left, right, tail)
-        step *= 2
+            right = split(left, step)  # Remember that the return value of split() is the head of the second list
+            # after splitting the list at the node at index 'step'
+            cur = split(right, step)  # Now the second list whose head is 'right' has the same size as left list after
+            # splitting at index 'step' again. 'cur' points to the head of the rest of the list on which we'll apply
+            # the same procedure in the next iteration
+            tail = merge2(left, right, tail)  # We connect 'tail' to the head of the merged 2 lists. tail.next =
+            # head_of_merged_lists has the same effect as dummy.next = tail_of_merged_lists the first time this
+            # statement is executed in every iteration. After that, 'tail' can move freely as dummy.next is taking
+            # the stripe of the first merged 2 lists. merge2() returns the tail of the merged 2 lists, to which 'tail'
+            # will now point. This ensures that 'tail' connects the merged 2 lists at iteration (k-1) to those at
+            # iteration k.
+        step *= 2  # Now go and merge consecutive lists of next order of size.
     return dummy.next
 
 
@@ -118,7 +123,7 @@ class Test(unittest.TestCase):
     head.next.next.next = ListNode(4)
     head.next.next.next.next = ListNode(0)
 
-    def test_has_cycle(self):
+    def test_sort_list(self):
         head = sort_list_v1(self.head)
         self.assertEqual(-1, head.val)
         self.assertEqual(0, head.next.val)
