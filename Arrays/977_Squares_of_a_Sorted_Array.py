@@ -15,7 +15,7 @@ def sorted_squares_v1(A):
 
 def sorted_squares_v2(A):
     """ Use two pointers, one at each end, to iteratively collect the larger square to a list. However, collecting the
-        larger square in a list with list's append, results in elements sorted in descending order. To circumvent this,
+        larger square in a list with list's append results in elements sorted in descending order. To circumvent this,
         we need to append to the left of the list.
     Time complexity: O(N)
     Space complexity: O(N)
@@ -37,7 +37,7 @@ def sorted_squares_v3(A):
     """ Use two pointers, but this time without a deque. Instead, add the larger square from the back of the result
     list, denoted by the index i
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(1)
     """
     res = [0] * len(A)
     left, right = 0, len(A) - 1
@@ -55,7 +55,7 @@ def sorted_squares_v3(A):
 
 def sorted_squares_v4(A):
     """ Sorting in-place and then calculating squares
-    Time complexity: O(N log N) for Timsort
+    Time complexity: O(N logN) for Timsort
     Space complexity: O(1) since first sorting is in-place
      """
     A.sort(key=abs)
