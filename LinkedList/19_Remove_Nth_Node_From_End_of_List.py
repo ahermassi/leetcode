@@ -14,7 +14,7 @@ def remove_nth_from_end_v1(head, n):
     """ Two-pass approach.
         We notice that the problem could be simply reduced to another one : Remove the (L - n + 1)th node from the
         beginning in the list , where L is the list length. This problem is easy to solve once we found list length L.
-    Time complexity: O(L), where L is list length
+    Time complexity: O(N), where N is list length
     Space complexity: O(1)
     """
     length, temp = 0, head
@@ -33,23 +33,24 @@ def remove_nth_from_end_v1(head, n):
 
 def remove_nth_from_end_v2(head, n):
     """ One-pass approach.
-        The above algorithm could be optimized to one pass. Instead of one pointer, we could use two pointers. The
-        first pointer advances the list by n+1 steps from the beginning, while the second pointer starts from the
-        beginning of the list. Now, both pointers are exactly separated by n nodes apart. We maintain this constant gap
-        by advancing both pointers together until the first pointer arrives past the last node. The second pointer will
-        be pointing at the nnth node counting from the last.
-    Time complexity: O(L), where L is list length
+        The above algorithm could be optimized to one pass. We use two iterators to traverse the list. The first
+        iterator is advanced by n steps from the head of the list, and then the two iterators advance in tandem. When
+        the first iterator reaches the tail, the second iterator is at the (n + 1)th last node, and we can remove the
+        nth node.
+        We add an auxiliary dummy node, which points to the list head. The dummy node is used to simplify some corner
+        cases such as a list with only one node, or removing the head of the list.
+    Time complexity: O(N), where N is list length
     Space complexity: O(1)
     """
-    slow, fast = head, head
+    dummy = ListNode(0)
+    dummy.next = head
+    slow, fast = dummy, dummy.next
     for _ in range(n):
         fast = fast.next
-    if not fast:
-        return head.next
-    while fast.next:
+    while fast:
         slow, fast = slow.next, fast.next
     slow.next = slow.next.next
-    return head
+    return dummy.next
 
 
 def remove_nth_from_end_v3(head, n):
