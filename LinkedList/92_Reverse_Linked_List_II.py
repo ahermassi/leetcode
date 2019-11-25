@@ -61,7 +61,7 @@ def reverse_between_v2(head, m, n):
         makes (n-m+1) reversals starting from the head of the sublist and reversing ALL the nodes of the sublist,
         while the second solution makes (n-m) reversals starting from the second node of the sublist and reversing
         (len(sublist) - 1) nodes.
-        The invariants of this algorithm are the followinng:
+        The invariants of this algorithm are the following:
             pre.next always points to the last node that's been just reversed
             cur.next always points to the node to reverse in the following iteration
         During the execution, pre.next will keep pointing to the last reversed node until the entire sublist is
