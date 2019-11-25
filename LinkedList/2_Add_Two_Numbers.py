@@ -20,20 +20,19 @@ def add_two_numbers(l1, l2):
     Time complexity: O(max(N, M)), where N and M are the length of l1 and l2 respectively
     Space complexity: O(1)
     """
-    dummy = cur = ListNode(0)
-    carry = 0
-    while l1 or l2 or carry:
-        val = 0
-        if l1:
-            val += l1.val
-            l1 = l1.next
-        if l2:
-            val += l2.val
-            l2 = l2.next
-        val += carry
-        cur.next = ListNode(val % 10)
-        cur = cur.next
-        carry = val // 10
+    dummy = ListNode(0)
+    tail, temp1, temp2, carry = dummy, l1, l2, 0
+    while temp1 or temp2:
+        val1 = temp1.val if temp1 else 0
+        val2 = temp2.val if temp2 else 0
+        s = val1 + val2 + carry
+        tail.next = ListNode(s % 10)
+        carry = s // 10
+        tail = tail.next
+        temp1 = temp1.next if temp1 else None
+        temp2 = temp2.next if temp2 else None
+    if carry:
+        tail.next = ListNode(carry)
     return dummy.next
 
 
