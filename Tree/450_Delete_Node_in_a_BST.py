@@ -30,11 +30,13 @@ def delete_node(root, key):
         if not root.left and not root.right:  # The node is a leaf
             root = None
         elif root.right:  # The node is not a leaf and has a right child
-            root.val = successor(root)
-            root.right = delete_node(root.right, root.val)
+            suc = successor(root)
+            root.val = suc.val
+            root.right = delete_node(root.right, suc.val)
         else:  # The node is not a leaf, has no right child, and has a left child
-            root.val = predecessor(root)
-            root.left = delete_node(root.left, root.val)
+            pre = predecessor(root)
+            root.val = pre.val
+            root.left = delete_node(root.left, pre.val)
         return root
     return root
 
