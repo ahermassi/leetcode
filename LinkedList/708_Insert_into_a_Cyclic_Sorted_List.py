@@ -14,15 +14,23 @@ class Node(object):
 
 
 def insert(head, insertVal):
-    """ If there is tipping point in the list, which means that there are at least 2 distinct values, we name the node
-        that has the max value to be the tipping point, the node after tipping point has the min value (min != max).
-            1- If the to be inserted value x is in a climbing stage, which means there is a node satisfying
-               node.val <= x <= node.next.val, we insert x after this node
-            2- If the to be inserted value x is the new min or max value after its insertion, x needs to be inserted
-               after the tipping point
-        If there is NO tipping point in the list, which means that all nodes in the list have the same value, we just
-        insert x before we traverse back to start node.
-    Time complexity: O(N)
+    """ We iterate through the cyclic list using two pointers, namely 'pre' and 'cur'. When we find a suitable place
+        to insert the new value, we insert it between the 'pre' and 'cur' nodes. The termination condition of the loop
+        is that we get back to the starting point of the two pointers (i.e. pre == head). During the loop, at each
+        step, we check if the current place bounded by the two pointers is the right place to insert the new value.
+        If not, we move both pointers one step forwards.
+        Case 1). The value of new node sits between the values 'pre' and 'cur' pointers. As a result, it should be
+        inserted within the list, right after 'pre'.
+        Case 2). The value of new node goes beyond the minimal and maximal values of the current list, either less than
+        the minimal value or greater than the maximal value. In either case, the new node should be added right after
+        the tail node (i.e. the node with the maximal value of the list). We can locate the position of the tail node
+        by finding a descending order between the adjacent, i.e. the condition (prev.val > curr.val), since the nodes
+        are sorted in ascending order, the tail node 'pre' would have the greatest value of all nodes.
+        Case 3). Finally, there is one case that does not fall into any of the above two cases. This is the case where
+        the list contains uniform values. In this case, we would end up looping through the list and getting back to
+        the starting point. The followup action is just to add the new node after any node in the list, regardless of
+        the value to be inserted.
+    Time complexity: O(N), where N is the size of list. In the worst case, we would iterate through the entire list.
     Space complexity: O(1)
     """
     node = Node(insertVal, None)
@@ -31,14 +39,14 @@ def insert(head, insertVal):
         return node
     pre, cur = head, head.next
     while True:
-        if pre.val <= insertVal <= cur.val:  # Found a spot between smaller and bigger node
+        if pre.val <= insertVal <= cur.val:  # Case 1: found a spot between smaller and bigger node
             break
-        if pre.val > cur.val and (insertVal > pre.val or insertVal < cur.val):  # Reached tipping point. This is
-            # for catching `insertVal`s that are smaller than min or bigger than max
+        if pre.val > cur.val and (insertVal > pre.val or insertVal < cur.val):  # Case 2: reached tipping point.
+            # This is for catching 'insertVal's that are smaller than min or bigger than max
             break
-        pre, cur = pre.next, cur.next  # Put this *before* next 'if' condition to skip the very first loop iteration
-        # when 'pre' is always 'head'
-        if pre == head:  # Means we made a complete cycle without breaking, meaning all nodes are equal
+        pre, cur = pre.next, cur.next  # Case 3. Put this *before* next 'if' condition to skip the very first loop
+        # iteration where 'pre' points to 'head'
+        if pre == head:  # Means we made a complete cycle without breaking, so all nodes have equal values
             break
     node.next = cur
     pre.next = node
