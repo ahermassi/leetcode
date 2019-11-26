@@ -23,32 +23,6 @@ class TreeNode(object):
 
 
 def sorted_list_to_bst_v1(head):
-    """ Essentially, we will convert the given linked list into an array and then use that array to form our binary
-        search tree. In an array fetching the middle element is a O(1)O(1) operation and this will bring down the
-        overall time complexity.
-    Time complexity: O(N), since we convert the linked list to an array initially and then we convert the array into BST
-    Space complexity: O(N)
-    """
-
-    def helper(left, right):
-        if left > right:
-            return None
-        mid = (left + right) // 2
-        root = TreeNode(vals[mid])
-        # Recursively form binary search trees on the two halves of the array
-        root.left = helper(left, mid - 1)
-        root.right = helper(mid + 1, right)
-        return root
-
-    vals = []
-    temp = head
-    while temp:
-        vals.append(temp.val)
-        temp = temp.next
-    return helper(0, len(vals) - 1)
-
-
-def sorted_list_to_bst_v2(head):
     """ The middle element of the given list would form the root of the binary search tree. All the elements to the
         left of the middle element would form the left subtree recursively. Similarly, all the elements to the right
         of the middle element will form the right subtree of the binary search tree. This would ensure the height
@@ -82,9 +56,40 @@ def sorted_list_to_bst_v2(head):
         prev.next = None
     root = TreeNode(slow.val)  # # The mid becomes the root of the BST
     # Recursively form balanced BSTs using the left and right halves of the original list
-    root.left = sorted_list_to_bst_v2(head)
-    root.right = sorted_list_to_bst_v2(slow.next)
+    root.left = sorted_list_to_bst_v1(head)
+    root.right = sorted_list_to_bst_v1(slow.next)
     return root
+
+
+def sorted_list_to_bst_v2(head):
+    """ This approach is a classic example of the time-space trade-off. WE can get the time complexity down by using
+        more space.
+        Essentially, we will convert the given linked list into an array and then use that array to form our binary
+        search tree. In an array fetching the middle element is a O(1) operation and this will bring down the overall
+        time complexity.
+    Time complexity: O(N), since we convert the linked list to an array initially and then we convert the array into BST
+    Space complexity: O(N)
+    """
+
+    def helper(left, right):
+        if left > right:
+            return None
+        mid = (left + right) // 2
+        root = TreeNode(vals[mid])
+        # Recursively form binary search trees on the two halves of the array
+        root.left = helper(left, mid - 1)
+        root.right = helper(mid + 1, right)
+        return root
+
+    vals = []
+    temp = head
+    while temp:
+        vals.append(temp.val)
+        temp = temp.next
+    return helper(0, len(vals) - 1)
+
+
+
 
 
 
