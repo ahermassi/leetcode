@@ -22,16 +22,15 @@ def reorder_list_v1(head):
     slow, fast = head, head
     while fast and fast.next:
         slow, fast = slow.next, fast.next.next
-    node, pre = slow, None
-    # while node:
-    #     pre, node.next, node = node, pre, node.next
-    while node:
-        next_node = node.next
-        node.next = pre
-        pre = node
-        node = next_node
-    first, second = head, pre  # 'pre' points to the head of second reversed half, which used to be the last node
-    while second.next:
+    cur, pre = slow, None
+    # while cur:
+    #     pre, cur.next, cur = cur, pre, cur.next
+    while cur:
+        nxt = cur.next
+        cur.next = pre
+        pre, cur = cur, nxt
+    first, second = head, pre  # 'pre' points to the head of second reversed half, which used to be the last 'cur'
+    while second.next:  # Rewire the nodes
         first.next, first = second, first.next
         second.next, second = first, second.next
     return head
