@@ -20,45 +20,46 @@ def tree_to_doubly_list_v1(root):
     """
 
     def helper(node):
-        global prev
+        global tail
         if not node:
             return
         helper(node.left)
-        prev.right = node
-        node.left = prev
-        prev = node
+        tail.right = node
+        node.left = tail
+        tail = node
         helper(node.right)
 
     if not root:
         return None
     dummy = Node(0, None, None)
-    global prev
-    prev = dummy
+    global tail
+    tail = dummy
     helper(root)
-    prev.right = dummy.right
-    dummy.right.left = prev
+    tail.right = dummy.right
+    dummy.right.left = tail
     return dummy.right
 
 
 def tree_to_doubly_list_v2(root):
-    """ Same as previous algorithm, but iteratively.
+    """ Same as previous algorithm, but iteratively. The classic iterative in-order BST traversal.
     Time complexity: O(N)
     Space complexity: O(N)
     """
     if not root:
         return None
     dummy = Node(0, None, None)
-    prev = dummy
-    stack, node = [], root
-    while stack or node:
-        while node:
-            stack.append(node)
-            node = node.left
+    tail = dummy
+    stack, cur = [], root
+    while stack or cur:
+        while cur:
+            stack.append(cur)
+            cur = cur.left
         node = stack.pop()
-        prev.right = node
-        node.left = prev
-        prev = node
-        node = node.right
-    prev.right = dummy.right
-    dummy.right.left = prev
+        tail.right = node
+        node.left = tail
+        tail = node
+        cur = node.right
+    tail.right = dummy.right  # At this stage, 'tail' points to the last node in the doubly linked list. In order to
+    # close the circle, the last node's next should point to the first node ...
+    dummy.right.left = tail  # ... and the first node's prev should point to the last node.
     return dummy.right
