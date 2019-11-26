@@ -39,11 +39,11 @@ def copy_random_list_v1(head):
     copies = {None: None}  # To avoid constantly checking if next/random is null
     new_head = Node(head.val, None, None)
     copies[head] = new_head
-    temp = head
-    while temp:
-        new_head.next = get_node_copy(temp.next)
-        new_head.random = get_node_copy(temp.random)
-        temp, new_head = temp.next, new_head.next
+    cur = head
+    while cur:
+        new_head.next = get_node_copy(cur.next)
+        new_head.random = get_node_copy(cur.random)
+        cur, new_head = cur.next, new_head.next
     return copies[head]
 
 
@@ -56,15 +56,15 @@ def copy_random_list_v2(head):
     Space complexity: O(N)
     """
     copies = {None: None}
-    temp = head
-    while temp:
-        copies[temp] = Node(temp.val, None, None)
-        temp = temp.next
-    temp = head
-    while temp:
-        copies[temp].next = copies[temp.next]  # Set the next of current node's clone to the clone of curent node's next
-        copies[temp].random = copies[temp.random]
-        temp = temp.next
+    cur = head
+    while cur:
+        copies[cur] = Node(cur.val, None, None)
+        cur = cur.next
+    cur = head
+    while cur:
+        copies[cur].next = copies[cur.next]  # Set next of current node's clone to the clone of current node's next
+        copies[cur].random = copies[cur.random]
+        cur = cur.next
     return copies[head]
 
 
@@ -85,33 +85,31 @@ def copy_random_list_v3(head):
     if not head:
         return None
     # Creating a new weaved list of original and copied nodes.
-    temp = head
-    while temp:
-        node = Node(temp.val, temp.next, None)   # Cloned node
+    cur = head
+    while cur:
+        node = Node(cur.val, cur.next, None)   # Cloned node. Note that node's next points to current node's next
         # Inserting the cloned node just next to the original node.
         # If A->B->C is the original linked list,
         # Linked list after weaving cloned nodes would be A->A'->B->B'->C->C'
-        node.next = temp.next
-        temp.next = node
-        temp = temp.next.next
-    temp = head
+        cur.next = node
+        cur = cur.next.next
+    cur = head
     # Now link the random pointers of the new nodes created.
     # Iterate the newly created list and use the original nodes random pointers,
     # to assign references to random pointers for cloned nodes.
-    while temp:
-        if temp.random:
-            temp.next.random = temp.random.next
-        temp = temp.next.next
+    while cur and cur.next:
+        cur.next.random = cur.random.next if cur.random else None
+        cur = cur.next.next
     # Unweave the linked list to get back the original linked list and the cloned list.
     # i.e. A->A'->B->B'->C->C' would be broken to A->B->C and A'->B'->C'
-    ptr_old_list = head
-    ptr_new_list = head.next
+    p1 = head
+    p2 = head.next
     new_head = head.next
-    while ptr_old_list:
-        ptr_old_list.next = ptr_old_list.next.next
-        ptr_new_list.next = ptr_new_list.next.next if ptr_new_list.next else None
-        ptr_old_list = ptr_old_list.next
-        ptr_new_list = ptr_new_list.next
+    while p1:
+        p1.next = p1.next.next
+        p2.next = p2.next.next if p2.next else None
+        p1 = p1.next
+        p2 = p2.next
     return new_head
 
 
