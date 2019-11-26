@@ -13,8 +13,7 @@ class Node(object):
 
 
 def copy_random_list_v1(head):
-    """ The iterative solution to this problem does not model it as a graph, instead simply treats it as a LinkedList.
-        When we are iterating over the list, we can create new nodes via the random pointer or the next pointer
+    """ When we are iterating over the list, we can create new nodes via the random pointer or the next pointer,
         whichever points to a node that doesn't exist in our old --> new dictionary.
         1- Traverse the linked list starting at head of the linked list.
         2- Random Pointer
@@ -31,22 +30,20 @@ def copy_random_list_v1(head):
     def get_node_copy(node):
         if node in copies:
             return copies[node]
-        else:
-            copy = Node(node.val, None, None)
-            copies[node] = copy
-            return copy
+        copy = Node(node.val, None, None)
+        copies[node] = copy
+        return copy
 
     if not head:
         return None
     copies = {None: None}  # To avoid constantly checking if next/random is null
-    temp = head
     new_head = Node(head.val, None, None)
     copies[head] = new_head
+    temp = head
     while temp:
         new_head.next = get_node_copy(temp.next)
         new_head.random = get_node_copy(temp.random)
-        temp = temp.next
-        new_head = new_head.next
+        temp, new_head = temp.next, new_head.next
     return copies[head]
 
 
