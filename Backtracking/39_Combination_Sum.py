@@ -31,9 +31,8 @@ def combination_sum_v1(candidates, target):
 
 
 def combination_sum_v2(candidates, target):
-    """ Good old DFS. Explore all the possible paths that reduce the target to 0. Sorting is not necessary here. The
-        only help with sorting is that we can stop searching earlier by breaking the for loop when 'candidate' is
-        larger than 'remaining' target.
+    """ Same as above, but after sorting the input array. The only help with sorting is that we can stop searching 
+        earlier by breaking the for loop when candidate is larger than 'remaining' target.
         Sorting is not for correctness but for speed. What we do by sorting is we limit the range of numbers on which
         we call DFS recursively, as we know the numbers outside the range cannot be in our solution. For small inputs
         this speed up may not be substantial but for larger inputs, sorting will definitely give a faster solution.
@@ -44,23 +43,19 @@ def combination_sum_v2(candidates, target):
     Space complexity: Space complexity: O(target) for call stack
     """
 
-    def dfs(remaining, path):
+    def dfs(index, path, remaining):
         if remaining == 0:
             res.append(path)
             return
-        for candidate in candidates:
-            if candidate > remaining:  # If one 'candidate' in bigger than 'remaining', the remaining items must
+        for i in range(index, n):
+            if candidates[i] > remaining:  # If one 'candidate' in bigger than 'remaining', the remaining items must
                 # bigger than 'remaining', so break early
                 break
-            if path and candidate < path[-1]:  # This check is for the purpose of avoiding duplicate paths and
-                # maintaining the answer in increasing order. We do this by avoiding appending values that are
-                # smaller than the last item in path (if the path is not empty).
-                continue
-            dfs(remaining - candidate, path + [candidate])
+            dfs(i, path + [candidates[i]], remaining - candidates[i])
 
-    res = []
+    n, res = len(candidates), []
     candidates.sort()
-    dfs(target, [])
+    dfs(0, [], target)
     return res
 
 
