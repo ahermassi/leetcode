@@ -29,18 +29,22 @@ def subsets_v1(nums):
 
 
 def subsets_v2(nums):
-    """ DFS recursively.
-    Time complexity: O(2 ** N)
+    """ DFS recursively. At each index i, add the current element to the current subset, recursively find the subsets
+        that include nums[i], and finally retract nums[i] from the current subset to explore other possibilities.
+    Time complexity: O(2^N)
     Space complexity: O(N) for call stack
     """
 
-    def dfs(index, path):
-        res.append(path)
-        for i in range(index, len(nums)):
-            dfs(i + 1, path + [nums[i]])
+    def compute_subsets_at_index(index, subset):
+        res.append(subset[:])
+        for i in range(index, n):
+            subset.append(nums[i])  # Finding all subsets that include nums[i]
+            compute_subsets_at_index(i + 1, subset)
+            subset.pop()  # Remove nums[i] from the present subset and move further to explore subsets that don't
+            # contain nums[i]
 
-    res = []
-    dfs(0, [])
+    n, res = len(nums), []
+    compute_subsets_at_index(0, [])
     return res
 
 
