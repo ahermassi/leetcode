@@ -28,42 +28,42 @@ def flatten_v1(head):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    temp = head
-    while temp:
-        if temp.child:
-            child = temp.child
+    cur = head
+    while cur:
+        if cur.child:
+            child = cur.child
             while child.next:
                 child = child.next
-            nxt = temp.next
-            temp.next = temp.child
-            temp.next.prev = temp
-            temp.child = None
+            nxt = cur.next
+            cur.next = cur.child
+            cur.next.prev = cur
+            cur.child = None
             child.next = nxt
             if nxt:
                 child.next.prev = child
-        temp = temp.next
+        cur = cur.next
     return head
 
 
 def flatten_v2(head):
     """ Recursive version of above algorithm. This is more like a bottom up flattening or DFS, when we encounter a
-        node with child node, we flatten the child node first, then flatten the current node.
+        node with a child node, we flatten the child node first, then flatten the current node.
     Time complexity: O(N)
     Space complexity: O(N) for call stack
     """
-    temp = head
-    while temp:
-        if temp.child:
-            nxt = temp.next
-            temp.next = flatten_v2(temp.child)
-            temp.next.prev = temp
-            temp.child = None
-            while temp.next:
-                temp = temp.next
+    cur = head
+    while cur:
+        if cur.child:
+            nxt = cur.next
+            cur.next = flatten_v2(cur.child)
+            cur.next.prev = cur
+            cur.child = None
+            while cur.next:
+                cur = cur.next
             if nxt:
-                temp.next = nxt
-                temp.next.prev = temp
-        temp = temp.next
+                cur.next = nxt
+                cur.next.prev = cur
+        cur = cur.next
     return head
 
 
