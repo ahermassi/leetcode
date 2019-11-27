@@ -59,6 +59,28 @@ def combination_sum_v2(candidates, target):
     return res
 
 
+def combination_sum_v3(candidates, target):
+    """ This is a solution using a clear backtracking template: add current candidate to the path, explore, and finally
+        backtrack.
+    Time complexity: O(#candidates ^ target)
+    Space complexity: Space complexity: O(target) for call stack
+    """
+    def dfs(index, remaining):
+        if remaining == 0:
+            res.append(path[:])  # This is the difference: we append a copy of the path as it is used throughout the
+            # entire backtracking process
+            return
+        for i in range(index, n):  # We include 'index' because we're allowed to choose the same number multiple times
+            if candidates[i] <= remaining:  # There is no use in exploring a combination that sums to beyond target
+                path.append(candidates[i])  # Add current candidate to the path
+                dfs(i, remaining - candidates[i])  # Explore
+                path.pop()  # Backtrack
+
+    n, res, path = len(candidates), [], []
+    dfs(0, target)
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([2, 3, 6, 7], 7, [[7], [2, 2, 3]]), ([2, 3, 5], 8, [[2, 2, 2, 2], [2, 3, 3], [3, 5]])]
 
@@ -66,6 +88,7 @@ class Test(unittest.TestCase):
         for test_candidates, test_target, result in self.data:
             self.assertEqual(sorted(result), combination_sum_v1(test_candidates, test_target))
             self.assertEqual(sorted(result), combination_sum_v2(test_candidates, test_target))
+            self.assertEqual(sorted(result), combination_sum_v3(test_candidates, test_target))
 
 
 if __name__ == '__main__':
