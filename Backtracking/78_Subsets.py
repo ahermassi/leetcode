@@ -6,27 +6,20 @@ import unittest2 as unittest
 
 def subsets_v1(nums):
     """ While iterating through all numbers, for each new number, we can either pick it or not pick it.
-            1- if pick, just add current number to every existing subset.
-            2- if not pick, just leave all existing subsets as they are.
+            1- If pick, just add current number to every existing subset.
+            2- If not pick, just leave all existing subsets as they are.
         We just combine both into our result.
         Here's an example to help understand the code:
-        The set to iterate over/generate the power set for:
-        input_set = [1, 2, 3]
+        The set to iterate over/generate the power set for: input_set = [1, 2, 3]
         Subset initially only has the empty set (empty list), []
-        subset = [[]]
-        In each iteration, concatenate each element/list in subset with the list [n], then extend the results into
-        subset
-        element -> subset list after each iteration
-        In the first iteration, subset's only element is []
-            [ []  + [1] ] = [ [1] ]
+        In each iteration, concatenate each element/list in subset with the list[n], then extend the results into
+        subset.
+            subset = [[]]
+            element -> subset list after each iteration
             num = 1 -> [[], [1]]
-        In the second iteration, we concatenate [] with [2] and [1] with [2]
-            [ [] + [2] ] = [ [2] ], [ [1] + [2] ] = [ [1, 2] ]
             num = 2 -> [[], [1], [2], [1, 2]]
-        In the third iteration, we concatenate [3] with each element in subset
-            [ [] + [3] ] = [ [3] ], [ [1] + [3] ] = [ [1, 3] ], [ [2] + [3] ] = [ [2, 3] ], [ [1, 2] + [3] ] = [ [1, 2, 3] ]
             num = 3 -> [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
-    Time complexity: O(2 ** N)
+    Time complexity: O(2^N)
     Space complexity: O(1)
     """
     res = [[]]
