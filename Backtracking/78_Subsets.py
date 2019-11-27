@@ -48,6 +48,26 @@ def subsets_v2(nums):
     return res
 
 
+def subsets_v3(nums):
+    """ This solution uses a clear backtracking template: add current candidate to the path, explore, and finally
+        backtrack.
+    Time complexity: O(2^N)
+    Space complexity: O(N) for call stack
+    """
+
+    def compute_subsets_at_index(index):
+        res.append(path[:])
+        for i in range(index, n):
+            path.append(nums[i])  # Finding all subsets that include nums[i]. Add current candidate to the path
+            compute_subsets_at_index(i + 1)  # Explore
+            path.pop()  # Backtrack. Remove nums[i] from the present subset and move further to explore subsets that
+            # don't contain nums[i]
+
+    n, path, res = len(nums), [], []
+    compute_subsets_at_index(0)
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3], [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]])]
 
@@ -55,6 +75,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, sorted(subsets_v1(test_array)))
             self.assertEqual(result, sorted(subsets_v2(test_array)))
+            self.assertEqual(result, sorted(subsets_v3(test_array)))
 
 
 if __name__ == '__main__':

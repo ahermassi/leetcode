@@ -60,7 +60,7 @@ def combination_sum_v2(candidates, target):
 
 
 def combination_sum_v3(candidates, target):
-    """ This is a solution using a clear backtracking template: add current candidate to the path, explore, and finally
+    """ This solution uses a clear backtracking template: add current candidate to the path, explore, and finally
         backtrack.
     Time complexity: O(#candidates ^ target)
     Space complexity: Space complexity: O(target) for call stack
