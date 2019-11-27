@@ -40,7 +40,7 @@ def top_k_frequent_v1(words, k):
         heappush(heap, Element(value, key))
         if len(heap) > k:
             heappop(heap)
-    for _ in range(k):  # return [e.word for e in heap] is WRONG. Successive heappop() is what gives correct results
+    while heap:  # return [e.word for e in heap] is WRONG. Successive heappop() is what gives correct results
         # because heap structure (array) is such that heap[k] <= heap[2k] and heap[k] <= heap[2k+1], not that the heap
         # stores its elements in sorted order. The only exception is heap[0] which ALWAYS contains the min value.
         res.append(heappop(heap).word)
