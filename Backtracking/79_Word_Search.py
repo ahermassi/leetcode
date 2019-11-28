@@ -7,8 +7,8 @@ import unittest2 as unittest
 
 def exist_v1(board, word):
     """ DFS that alters the original board. We mark a visited cell as '#' to avoid using the same cell more than once.
-        When we exhaust all search possibilities, we backtrack and unmark the visited cell.
-    Time complexity: O(N * M * (4 ** S)) where N and M are the dimensions of the board and S is the length of the word.
+        When we exhaust all search possibilities, we backtrack and remove the mark of the visited cell.
+    Time complexity: O(N * M * (4^S)), where N and M are the dimensions of the board and S is the length of the word.
     First we have to find the first letter to start, which gives time O(N * M), then for each search step it has 2~4
     neighbours to go, and it has S steps, where S is the length of the word to be searched.
     https://cs.stackexchange.com/questions/96626/whats-the-big-o-runtime-of-a-dfs-word-search-through-a-matrix
@@ -16,16 +16,15 @@ def exist_v1(board, word):
     """
 
     def search(i, j, index):
+        if index == length:  # Nothing left to complete
+            return True
         if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index] or (i, j) in visited:
             return False
-        if index == length - 1:
-            return True
         temp = board[i][j]
-        board[i][j] = '#'  # Mark the visited cell
-        res = search(i - 1, j, index + 1) or search(i + 1, j, index + 1) or search(i, j - 1, index + 1) or \
-              search(i, j + 1, index + 1)
+        board[i][j] = '#'  # Mark the cell as visited
+        found = search(i-1, j, index+1) or search(i+1, j, index+1) or search(i, j-1, index+1) or search(i, j+1, index+1)
         board[i][j] = temp  # Backtrack and remove the mark
-        return res
+        return found
 
     n, m, length = len(board), len(board[0]), len(word)
     visited = set()
@@ -39,18 +38,17 @@ def exist_v1(board, word):
 def exist_v2(board, word):
     """ DFS without altering the input board. Use a 'visited' set to store the visited cells. When we exhaust all
         search possibilities, we backtrack and remove the cell from 'visited' set.
-
     """
+
     def search(i, j, index):
+        if index == length:
+            return True
         if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index] or (i, j) in visited:
             return False
-        if index == length - 1:
-            return True
-        visited.add((i, j))  # Mark the visited cell
-        res = search(i - 1, j, index + 1) or search(i + 1, j, index + 1) or \
-              search(i, j - 1, index + 1) or search(i, j + 1, index + 1)
+        visited.add((i, j))  # Mark the cell as visited
+        found = search(i-1, j, index+1) or search(i+1, j, index+1) or search(i, j-1, index+1) or search(i, j+1, index+1)
         visited.remove((i, j))  # Backtrack and remove the mark
-        return res
+        return found
 
     n, m, length = len(board), len(board[0]), len(word)
     visited = set()
