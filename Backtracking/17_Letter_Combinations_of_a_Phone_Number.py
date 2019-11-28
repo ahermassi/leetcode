@@ -1,54 +1,52 @@
-''' Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could
+""" Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could
 represent.
 A mapping of digit to letters (just like on the telephone buttons) is given. Note that 1 does not map to any letters.
-'''
+"""
 
 import unittest2 as unittest
 
 
 def letter_combinations_v1(digits):
-    """ If there is no more digits to check that means that the current combination 's' is done (marked by len(s) == n)
+    """ If there is no more digits to check, that means that the current combination 'path' is done.
         If there are still digits to check :
-            Iterate over the letters mapping the next available digit (at index i of digits)
-            Append the current letter to the current combination s = s + letter.
-            Proceed to check next digits : backtrack(s + letter, i + 1).
-    Time complexity: O(3 ** N + 4 ** M), where N is the number of digits in the input that maps to 3 letters (e.g. 2,
-    3, 4, 5, 6, 8) and M is the number of digits in the input that maps to 4 letters (e.g. 7, 9), and N+M is the total
-    number digits in the input.
-    Space complexity: O(3 ** N + 4 ** M) since we have to keep O(3 ** N + 4 ** M) solutions
+            Iterate over the letters mapping the next available digit (at index 'index' of digits)
+            Append the current letter to the current combination path = path + letter.
+            Proceed to check next digits : dfs(index + 1, path + letter).
+    Time complexity: O(3^N + 4^M), where N is the number of digits in the input that maps to 3 letters (e.g. 2, 3, 4,
+    5, 6, 8) and M is the number of digits in the input that maps to 4 letters (e.g. 7, 9), and N+M is the total number
+    of digits in the input. So overall O(4^N) worst case where N is the length of digits.
+    Space complexity: O(3^N + 4^M) since we have to keep O(3^N + 4^M) solutions, or O(4^N).
     """
-    n = len(digits)
-    d = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
 
-    def backtrack(s, i):
-        if len(s) == n:
-            res.append(s)
+    def dfs(index, path):
+        if index == n:
+            res.append(path)
             return
-        chars = d[digits[i]]
-        for char in chars:
-            backtrack(s + char, i + 1)
+        for c in mapping[digits[index]]:
+            dfs(index + 1, path + c)
 
-    res = []
-    if digits:
-        backtrack('', 0)
+    if not digits:
+        return None
+    mapping = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
+    n, res = len(digits), []
+    dfs(0, '')
     return res
 
 
 def letter_combinations_v2(digits):
-    """ Iterative approach.
-    Time complexity: O(3 ** N + 4 ** M)
-    Space complexity: O(3 ** N + 4 ** M)
+    """ Iterative approach, similar to BFS where 'result' list is the queue.
+    Time complexity: O(3^N + 4^M)
+    Space complexity: O(3^N + 4^M)
     """
     if not digits:
         return None
-    d = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
+    mapping = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
     result = ['']
     for digit in digits:
-        chars = d[digit]
         new_result = []
-        for char in chars:
-            for str in result:
-                new_result.append(str + char)
+        for c in mapping[digit]:
+            for path in result:
+                new_result.append(path + c)
         result = new_result
     return result
 
@@ -56,7 +54,7 @@ def letter_combinations_v2(digits):
 class Test(unittest.TestCase):
     data = [('23', ['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf'])]
 
-    def test_min_meeting_rooms(self):
+    def test_letter_combinations(self):
         for test_digits, result in self.data:
             self.assertEqual(result, letter_combinations_v1(test_digits))
             self.assertEqual(result, sorted(letter_combinations_v2(test_digits)))
