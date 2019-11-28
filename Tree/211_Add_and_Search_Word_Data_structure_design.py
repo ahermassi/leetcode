@@ -10,7 +10,7 @@ import unittest2 as unittest
 class TrieNode:
     def __init__(self):
         self.children = {}
-        self.end_of_word = False
+        self.is_word = False
 
 
 class WordDictionary(object):
@@ -21,9 +21,9 @@ class WordDictionary(object):
         the maximum number of characters in a word). With wildcards, it will iterate through the whole tree in the
         worst case (i.e. linear to the total number of characters)
     Space complexity:
-        addWord: O(K), in the worst case newly inserted word doesn't share a prefix with the the words already
-        inserted in the trie. We have to add K new nodes
-        search: O(1) if we exclude wildcards, O(N) (i.e. linear to the total number of characters) in the worst case
+        addWord: O(k), in the worst case newly inserted word doesn't share a prefix with the the words already
+        inserted in the trie. We have to add k new nodes
+        search: O(k) if we exclude wildcards, O(N) (i.e. linear to the total number of characters) in the worst case
         when there are wildcards.
     """
 
@@ -41,34 +41,38 @@ class WordDictionary(object):
         """
         root = self.root
         for c in word:
-            if c in root.children:
-                root = root.children[c]
-            else:
+            if c not in root.children:
                 root.children[c] = TrieNode()
-                root = root.children[c]
-        root.end_of_word = True
+            root = root.children[c]
+        root.is_word = True
 
     def search(self, word):
         """
-        Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter.
+        Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one
+        letter.
+        The function tries to find a suffix of the string that starts at 'index'. If the value of one of the children
+        of the current trie node is equal to the character at current 'index', we recursively try to find the rest of
+        the string starting at ('index' + 1), and the exploration starts from that child.
+        If the first character of the suffix is the wildcard '.', then all the children of the current trie node are
+        good candidates to hold the rest of the string. If any of the children returns a positive result, we win.
         :type word: str
         :rtype: bool
         """
 
-        def helper(index, node):
-            if index == len(word):
-                return node.end_of_word
+        def dfs(root, index):
+            if index == n:
+                return root.is_word
             c = word[index]
-            if c in node.children:
-                return helper(index + 1, node.children[c])
-            elif c == '.':
-                for n in node.children.values():
-                    if helper(index + 1, n):
+            if c in root.children:
+                return dfs(root.children[c], index + 1)  # Start of the prefix was found, so keep following that path
+            if c == '.':
+                for child in root.children.values():  # Can we find the REST of the string in any of the children ?
+                    if dfs(child, index + 1):
                         return True
-                return False
+            return False
 
-        root = self.root
-        return helper(0, root)
+        n, root = len(word), self.root
+        return dfs(root, 0)
 
 
 class Test(unittest.TestCase):
