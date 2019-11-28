@@ -8,7 +8,11 @@ import unittest2 as unittest
 
 
 def find_anagrams(s, p):
-    """ Maintain a window of len(p) in s, and slide to right until finish. """
+    """ Maintain a window of len(p) in s, and slide to right until finish.
+    Time complexity: O(N), the comparison of the two hash maps is still O(1) because every hash map can hold at most
+    26 characters.
+    Space complexity: O(26) = O(1)
+    """
     n, m = len(s), len(p)
     p_counter = Counter(p)
     window_counter = Counter(s[:m - 1])  # Initially, the window is of size len(p) - 1
