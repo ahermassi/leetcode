@@ -7,14 +7,15 @@ import unittest2 as unittest
 
 
 def remove_stones(stones):
-    """ We call a connected graph as an island. One island must have at least one stone left.
-        The maximum stones can be removed = stones number - islands number
+    """ Connected stones can be reduced to 1 stone, and hence the maximum number of stones that can be removed is:
+        stones number - islands number.
+        So just count the number of 'islands'.
         The whole problem is transformed to: What is the number of islands? You can show all your skills on a DFS
         implementation, and solve this problem as a normal one.
         The key point here is, we define an island as number of points that are connected by row or column. Every point
         does not have to be next to each other as in previous island problems.
-    Time complexity: O(N ** N) where N is the number of stones
-    Space complexity:
+    Time complexity: O(N^2), where N is the number of stones
+    Space complexity: O(N)
     """
 
     def dfs(i, j):
@@ -24,18 +25,19 @@ def remove_stones(stones):
         # a column and thus forming an island, to finally sink the island.
         if (i, j) in points:
             points.discard((i, j))
-            for x in rows[i]:
+            for x in cols_that_share_this_row[i]:
                 if (i, x) in points:
                     dfs(i, x)
-            for y in cols[j]:
+            for y in rows_that_share_this_col[j]:
                 if (y, j) in points:
                     dfs(y, j)
 
     points = {(i, j) for i, j in stones}  # points set is used instead of the good old visited set
-    rows, cols, island = defaultdict(list), defaultdict(list), 0
+    cols_that_share_this_row, rows_that_share_this_col = defaultdict(list), defaultdict(list)
+    island = 0
     for i, j in stones:
-        rows[i].append(j)  # rows[i] are the column coordinates of points that share the same row with i
-        cols[j].append(i)  # cols[j] are the row coordinates of points that share the same column with j
+        cols_that_share_this_row[i].append(j)  # column coordinates of points that share the same row with i
+        rows_that_share_this_col[j].append(i)  # row coordinates of points that share the same column with j
     for i, j in stones:
         if (i, j) in points:
             dfs(i, j)
