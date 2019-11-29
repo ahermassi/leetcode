@@ -60,6 +60,9 @@ def shortest_distance_v1(maze, start, destination):
 
 def shortest_distance_v2(maze, start, destination):
     """ DFS. TLE
+        From every current position, we try to go as deep as possible into the levels of a tree taking a particular
+        branch traversal direction as possible. When one of the deepest levels is exhausted, we continue the process
+        by reaching the next deepest levels of the tree.
         In the average case, BFS would be a much better result because more paths will be pruned since the first few
         moves.
     """
