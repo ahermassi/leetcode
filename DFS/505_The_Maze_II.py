@@ -8,8 +8,6 @@ from collections import deque
 from heapq import heappop, heappush
 import unittest2 as unittest
 
-# TODO: Dijkstra's Algorithm. https://leetcode.com/articles/the-maze-ii/
-
 
 def shortest_distance_v1(maze, start, destination):
     """" BFS. DFS version is below but it TLEs.
@@ -89,15 +87,26 @@ def shortest_distance_v2(maze, start, destination):
 def shortest_distance_v3(maze, start, destination):
     """ Dijkstra's algorithm using priority queue.
         This is similar to what we did previously. Except that:
-            1- It uses a Priority Queue instead of a normal Queue to find the Node with the least distance from the
-               starting point
+            1- It uses a Priority Queue instead of a normal Queue to find the node with the least distance from the
+               starting point.
             2- Once that node is popped out from the queue, we know that the distance is definitely the LEAST from the
                starting point and that value cannot be altered anymore.
-            3- Thus, we can terminate once we the destination node is polled from the queue. If that doesn't happen,
-               it means it didn't reach the destination.
+            3- Thus, we can terminate once the destination node is polled from the queue. If that doesn't happen,
+               it means we didn't reach the destination.
+        The criteria used for heapifying is that the node which is unvisited and at the smallest distance from the
+        start node is always present on the top of the heap. Thus, the node to be chosen as the current node is always
+        present at the front of the heap.
+        For every current node, we again try to traverse in all the possible directions. We determine the minimum
+        number of steps(till now) required to reach all the end points possible from the current node. If any such end
+        point can be reached in a fewer number of steps through the current path than the paths previously considered,
+        we need to update its 'distance' entry.
+        Further, we add an entry corresponding to this node in the heap, since its 'distance' entry has been updated
+        and we need to consider this node as the competitors for the next current node choice. Thus, the process
+        remains the same as the last approach, except the way in which the pick out the current node
         Dijkstra's Algorithm seems to be an optimization of the first solution, since we always select the node with
         the least cost and terminate early when we find the destination.
-    Time complexity: O(N * M * log(N * M))
+    Time complexity: O(N * M * log(N * M)), complete traversal of maze will be done in the worst case giving a factor
+    of N * M, and pushing 1 element to the heap takes O(log(N * M))
     Space complexity: O(N * M), distance array of size N * M is used and heap size can grow up to N * M in worst case.
     """
     n, m = len(maze), len(maze[0])
@@ -109,14 +118,14 @@ def shortest_distance_v3(maze, start, destination):
         if [i, j] == destination:
             return dis
         for x, y in (-1, 0), (1, 0), (0, -1), (0, 1):
-            new_i, new_j, d = i + x, j + y, 0
-            while 0 <= new_i < n and 0 <= new_j < m and maze[new_i][new_j] == 0:
+            new_i, new_j, d = i, j, 0
+            while 0 <= new_i + x < n and 0 <= new_j + y < m and maze[new_i + x][new_j + y] == 0:
                 d += 1
                 new_i += x
                 new_j += y
-            if distance[i][j] + d < distance[new_i - x][new_j - y]:
-                distance[new_i - x][new_j - y] = distance[i][j] + d
-                heappush(heap, (distance[i][j] + d, new_i - x, new_j - y))
+            if distance[i][j] + d < distance[new_i][new_j]:
+                distance[new_i][new_j] = distance[i][j] + d
+                heappush(heap, (distance[i][j] + d, new_i, new_j))  # This is the main difference from BFS
     return -1
 
 
