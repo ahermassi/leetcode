@@ -13,17 +13,17 @@ def depthSum_v1(nestedList):
     in the input. For example, D = 2 for the input [[1,1],2,[1,1]], and D = 3 for the input [1,[4,[6]]].
     """
 
-    def process(nestedList, depth):
+    def dfs(nestedList, depth):
         sum = 0
         for lst in nestedList:
             if lst.isInteger():
                 sum += lst.getInteger() * depth
             else:
                 l = lst.getList()
-                sum += process(l, depth + 1)
+                sum += dfs(l, depth + 1)
         return sum
 
-    return process(nestedList, 1)
+    return dfs(nestedList, 1)
 
 
 def depthSum_v2(nestedList):
