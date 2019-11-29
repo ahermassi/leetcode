@@ -26,7 +26,7 @@ def shortest_distance_v1(maze, start, destination):
          less number of steps. Thus, we need to update the value of distance[k][l as distance[i][j] + d. Further, now
          we need to try to reach the destination from the end position (k,l), since this could lead to a shorter path
          to destination.
-         After this, we add the new position obtained, (k, l) to the back of the queue, so that the various paths
+         After this, we add the new position obtained (k, l) to the back of the queue, so that the various paths
          possible from this new position will be explored later on when all the directions possible from the current
          position (i, j) have been explored.
          At the end, the entry in distance array corresponding to the destination's coordinates gives the required
@@ -44,15 +44,16 @@ def shortest_distance_v1(maze, start, destination):
     while queue:
         i, j = queue.popleft()
         for x, y in (-1, 0), (1, 0), (0, -1), (0, 1):  # The 4 possible directions: up, down, left, right respectively
-            new_i, new_j, d = i + x, j + y, 0  # Start from current position and move
-            while 0 <= new_i < n and 0 <= new_j < m and maze[new_i][new_j] == 0:  # Moving CONTINUOUSLY until wall hit
+            new_i, new_j, d = i, j, 0  # Start from current position and move
+            while 0 <= new_i + x < n and 0 <= new_j + y < m and maze[new_i + x][new_j + y] == 0:  # Moving
+                # CONTINUOUSLY until wall hit
                 d += 1
                 new_i += x
                 new_j += y
-            if distance[i][j] + d < distance[new_i - x][new_j - y]:  # If we've just reached this position in fewer
+            if distance[i][j] + d < distance[new_i][new_j]:  # If we've just reached this position in fewer
                 # steps
-                distance[new_i - x][new_j - y] = distance[i][j] + d  # Update the shortest distance to this position
-                queue.append((new_i - x, new_j - y))  # Explore the remaining paths from there
+                distance[new_i][new_j] = distance[i][j] + d  # Update the shortest distance to this position
+                queue.append((new_i, new_j))  # Explore the remaining paths from there
     res = distance[destination[0]][destination[1]]
     return res if res != float('inf') else -1
 
@@ -64,14 +65,14 @@ def shortest_distance_v2(maze, start, destination):
     """
     def dfs(i, j):
         for x, y in (-1, 0), (1, 0), (0, -1), (0, 1):
-            new_i, new_j, d = i + x, j + y, 0
-            while 0 <= new_i < n and 0 <= new_j < m and maze[new_i][new_j] == 0:
+            new_i, new_j, d = i, j, 0
+            while 0 <= new_i + x < n and 0 <= new_j + y < m and maze[new_i + x][new_j + y] == 0:
                 d += 1
                 new_i += x
                 new_j += y
-            if distance[i][j] + d < distance[new_i - x][new_j - y]:
-                distance[new_i - x][new_j - y] = distance[i][j] + d
-                dfs(new_i - x, new_j - y)
+            if distance[i][j] + d < distance[new_i][new_j]:
+                distance[new_i][new_j] = distance[i][j] + d
+                dfs(new_i, new_j)
 
     n, m = len(maze), len(maze[0])
     distance = [[float('inf') for _ in range(m)] for _ in range(n)]
