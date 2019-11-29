@@ -42,8 +42,8 @@ def has_path_v1(maze, start, destination):
 
 def has_path_v2(maze, start, destination):
     """ BFS solution.
-        The same search space tree can also be explored in a Depth First Search manner. In this case, we try to explore
-        the search space on a level by level basis. i.e. We try to move in all the directions at every step. When all
+        The same search space tree can also be explored in Breadth First Search manner. In this case, we try to explore
+        the search space on a level by level basis. i.e. we try to move in all the directions at every step. When all
         the directions have been explored and we still don't reach the destination, then only we proceed to the new set
         of traversals from the new positions obtained.
     Time complexity: O(N * M), complete traversal of maze will be done in the worst case
@@ -57,12 +57,10 @@ def has_path_v2(maze, start, destination):
         if [i, j] == destination:
             return True
         for x, y in (-1, 0), (1, 0), (0, -1), (0, 1):
-            new_i, new_j = i + x, j + y
-            while 0 <= new_i < n and 0 <= new_j < m and maze[new_i][new_j] == 0:
+            new_i, new_j = i, j
+            while 0 <= new_i + x < n and 0 <= new_j + y < m and maze[new_i + x][new_j + y] == 0:
                 new_i += x
                 new_j += y
-            new_i -= x
-            new_j -= y
             if (new_i, new_j) not in visited:
                 visited.add((new_i, new_j))
                 queue.append((new_i, new_j))
