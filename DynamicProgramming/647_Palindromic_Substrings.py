@@ -47,8 +47,8 @@ def count_substrings_v2(s):
             2- Is string[i+1:j-1] a palindrome?
         For condition (1), a simple check will do. For condition (2), we use the table. If both conditions are met,
         mark dp[i][j] as True and increase the count.
-    Time complexity: O(N ** 2)
-    Space complexity: O(N ** 2) to store dp array
+    Time complexity: O(N^2)
+    Space complexity: O(N^2) to store dp array
     """
     n, res = len(s), 0
     dp = [[False] * n for _ in range(n)]
