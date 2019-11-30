@@ -6,29 +6,37 @@ import unittest2 as unittest
 
 
 def decode_string(s):
-    """ The solution is a simple stack based one which evaluates the innermost brackets first.
-        Concatenate digits and alphabets. When '[' appears, push the current alphas and digits into the stack, and
-        start a new concatenation for alphas and digits. When a ']' appears, pop the stack and extend the popped
-        alphas n times to the current alphas.
+    """ The solution is a simple stack based one which evaluates the innermost brackets first. We iterate over the 
+        string and push everything to a stack until we find a right bracket. We use that and pop from the stack to 
+        evaluate the innermost expression in the string. For example, if we have 2[a3[b]], our stack would be 
+        [2, '[', 'a', 3, '[', 'b'] when it reaches the first right bracket. We attempt to evaluate everything in the 
+        innermost bracket by popping from the stack to form the entire string we need to multiply, and find the number 
+        we need to multiply by. After this, the stack will look like: [2, '[', 'a', 'bbb' ]. The innermost expression 
+        of 3, '[', 'b' was turned into 'bbb' and put back into the stack. At the next right bracket, we will similarly 
+        evaluate the innermost bracket , so that the stack turns into ['abbbabbb']. If there are multiple sets of 
+        enclosed brackets in the expression, our stack will end up with multiple strings in the end. Simply join them 
+        for the result.
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    current_string, num = '', 0
-    stack = []
+    stack, num, res = [], 0, ''
     for c in s:
         if c.isdigit():
             num = num * 10 + int(c)
         elif c.isalpha():
-            current_string += c
+            stack.append(c)
         elif c == '[':
-            stack.append(current_string)
             stack.append(num)
-            current_string, num = '', 0
+            stack.append(c)
+            num = 0
         elif c == ']':
+            cur_str = ''
+            while stack and stack[-1] != '[':
+                cur_str = stack.pop() + cur_str
+            stack.pop()
             repeat = stack.pop()
-            substr = stack.pop()
-            current_string = substr + repeat * current_string
-    return current_string
+            stack.append(repeat * cur_str)
+    return ''.join(stack)
 
 
 class Test(unittest.TestCase):
