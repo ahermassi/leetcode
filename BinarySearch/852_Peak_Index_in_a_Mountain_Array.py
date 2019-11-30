@@ -12,38 +12,21 @@ def peak_index_in_mountain_array_v1(A):
 
 
 def peak_index_in_mountain_array_v2(A):
-    """ Recursive binary search. The idea is that 2 conditions invalidate a mountain array:
-        A[peak_index - 1] > A[peak_index]
-        A[peak_index + 1] > A[peak_index]
-    Time complexity: O(log N)
-    Space complexity: O(log N)
-    """
-
-    def find_peak_index(A, left, right):
-        if left == right:
-            return left
-        mid = (left + right) // 2
-        if A[mid - 1] > A[mid]:
-            return find_peak_index(A, left, mid - 1)
-        elif A[mid + 1] > A[mid]:
-            return find_peak_index(A, mid + 1, right)
-        return mid
-
-    return find_peak_index(A, 0, len(A) - 1)
-
-
-def peak_index_in_mountain_array_v3(A):
-    """ Iterative binary search.
-    Time complexity: O(log N)
+    """ Binary Search.
+        Define left and right pointers and compute mid for each iteration. When A[mid + 1]< A[mid] , indicating the
+        numbers are still increasing, so the peak shall occur on the right side of mid , hence we update left pointer.
+        Otherwise, it indicates peak shall occur on the left side of mid , we update the right pointer. Eventually,
+        two pointers meet and the peak index is located.
+    Time complexity: O(logN)
     Space complexity: O(1)
     """
     left, right = 0, len(A) - 1
-    while left < right:
+    while left <= right:
         mid = (left + right) // 2
         if A[mid + 1] > A[mid]:
             left = mid + 1
         else:
-            right = mid
+            right = mid - 1
     return left
 
 
@@ -54,6 +37,7 @@ class Test(unittest.TestCase):
 
     def test_peak_index_in_mountain_array_(self):
         for test_array, result in self.data:
+            self.assertEqual(result, peak_index_in_mountain_array_v1(test_array))
             self.assertEqual(result, peak_index_in_mountain_array_v2(test_array))
 
 
