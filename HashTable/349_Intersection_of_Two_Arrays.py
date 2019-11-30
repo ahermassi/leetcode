@@ -1,6 +1,5 @@
 """ Given two arrays, write a function to compute their intersection. """
 
-from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -33,7 +32,7 @@ def intersection_v2(nums1, nums2):
 
 def intersection_v3(nums1, nums2):
     """ The idea is to convert both arrays into sets, and then iterate over the smallest set checking the presence of
-    each element in the larger set.
+        each element in the larger set.
     Time complexity: O(N + M)
     Space complexity: O(N + M)
     """
@@ -46,6 +45,34 @@ def intersection_v3(nums1, nums2):
     if len(set1) < len(set2):
         return set_intersection(set1, set2)
     return set_intersection(set2, set1)
+
+
+def intersection_v4(nums1, nums2):
+    """ Sort the two arrays, and then exploit this fact.
+        Simultaneously advance through the two input arrays in increasing order. At each iteration, if the array
+        elements differ, the smaller one can be eliminated. If they are equal, we add that value to the intersection
+        and advance both. We handle duplicates by comparing the current element with the next one.
+    Time complexity: O(N logN), where N is the length of the longest array
+    Space complexity: O(N + M) for Timsort. If the sorting algorithm was in-place, the space complexity would be O(1).
+    """
+    n, m = len(nums1), len(nums2)
+    nums1.sort()
+    nums2.sort()
+    i, j, res = 0, 0, []
+    while i < n and j < m:
+        if nums1[i] == nums2[j]:
+            res.append(nums1[i])
+            while i < n - 1 and nums1[i] == nums1[i + 1]:
+                i += 1
+            while j < m - 1 and nums2[j] == nums2[j + 1]:
+                j += 1
+            i += 1
+            j += 1
+        elif nums1[i] < nums2[j]:
+            i += 1
+        else:
+            j += 1
+    return res
 
 
 class Test(unittest.TestCase):
