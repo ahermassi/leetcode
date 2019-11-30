@@ -54,8 +54,7 @@ def intersect_v2(nums1, nums2):
 
 def intersect_v3(nums1, nums2):
     """ Follow up question:  What if nums1's size is small compared to nums2's size? Which algorithm is better?
-        Suppose lengths of two arrays are N and M, the time complexity of the solution is O(N+M) and the space
-        complexity is O(N) considering the hash. So it's better to use the smaller array to construct the counter hash.
+        Solution 1 is a good choice here as we use a hash map for the smaller array.
     """
     pass
 
@@ -63,8 +62,14 @@ def intersect_v3(nums1, nums2):
 def intersect_v4(nums1, nums2):
     """ Follow up question: What if elements of nums2 are stored on disk, and the memory is limited such that you
         cannot load all elements into the memory at once?
-        If the two arrays have relatively the same length, we can use external sort to sort out the two arrays in the
-        disk. Then load chunks of each array into the memory and compare, by using the method 1.
+        If nums1 fits into the memory, we can use solution 1 to collect counts for nums1 into a hash map. Then, we can
+        sequentially load and process nums2.
+        If neither of the arrays fit into the memory, sort them using external sort, read (let's say) 2G of each into
+        memory, and then use the 2 pointer technique, then read 2G more from the array that has been exhausted. Repeat
+        this until there is no more data to read from disk.
+        External sorting is a class of sorting algorithms that can handle massive amounts of data. External sorting is
+        required when the data being sorted does not fit into the main memory of a computing device and instead it must
+        reside in the slower external memory, usually a hard disk drive.
     """
 
 
