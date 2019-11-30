@@ -1,23 +1,31 @@
 """ Given two arrays, write a function to compute their intersection.
 Each element in the result should appear as many times as it shows in both arrays."""
-from collections import defaultdict
 
+from collections import Counter
 import unittest2 as unittest
 
 
 def intersect_v1(nums1, nums2):
-    """ Use a hash table to record all nums that appeared in the first list, and then check if there are nums in the
-    second list have appeared in the hash table.
-    Time complexity: O(N + M) where N is the length of nums1 and M is the length of nums2
-    Space complexity: O(N + M)
+    """ We collect numbers and their counts from one of the arrays into a hash map. Then, we iterate along the second
+        array, and check if the number exists in the hash map and its count is positive. If so, add the number to the
+        result and decrease its count in the hash map.
+        It's a good idea to check array sizes and use a hash map for the smaller array. It will reduce memory usage
+        when one of the arrays is very large.
+        Note: why decrease the count ?
+        Example: nums1 = [1, 2, 2, 1], nums2 = [2, 2, 2], counter = {1: 2, 2: 2}
+        While looping over nums2, we decrease the count by 1 whenever an intersection happens and stop considering it
+        for intersection if the count reaches 0. If that is not done, then in the above case result would be [2, 2, 2]
+        instead of [2, 2].
+    Time complexity: O(N + M), where N is the length of nums1 and M is the length of nums2
+    Space complexity: O(min(N, M))), we use hash map to store numbers (and their counts) from the smaller array
     """
-    counts, res = defaultdict(int), []
-    for i in nums1:
-        counts[i] += 1
-    for i in nums2:
-        if i in counts and counts[i] > 0:
-            res.append(i)
-            counts[i] -= 1
+    if len(nums2) < len(nums1):  # If nums1 is larger than nums2, swap the arrays
+        return intersect_v1(nums2, nums1)
+    counter, res = Counter(nums1), []
+    for num in nums2:
+        if num in counter and counter[num] > 0:
+            res.append(num)
+            counter[num] -= 1
     return res
 
 
