@@ -31,7 +31,10 @@ def intersect_v1(nums1, nums2):
 
 def intersect_v2(nums1, nums2):
     """ Follow up questions: What if the given array is already sorted? How would you optimize your algorithm?
-        If both arrays are sorted, use two pointers to iterate.
+        If both arrays are sorted, we use two pointers to find common numbers in a single scan.
+        Initialize i and j with zero. Move indices i along nums1, and j through nums2.
+        Increment i if nums1[i] is smaller. Increment j if nums2[j] is smaller. If numbers are the same, copy the
+        number into res and increment i and j.
     Time complexity: O(N) where N is the length of the shortest array
     Space complexity: O(1)
     """
