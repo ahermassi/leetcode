@@ -19,7 +19,7 @@ def compress(chars):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    left, right = 0, 1
+    left = right = 0
     while right < len(chars):
         while right < len(chars) and chars[left] == chars[right]:
             right += 1
@@ -28,11 +28,10 @@ def compress(chars):
             digits = list(str(count))
             chars[left + 1:left + count] = digits
             left += len(digits) + 1
-            right = left + 1
         else:
-            left = right
-            right += 1
-    return left + 1  # 'left' would always point to the last character in the string, so the array length is left+1
+            left += 1
+        right = left
+    return left
 
 
 class Test(unittest.TestCase):
