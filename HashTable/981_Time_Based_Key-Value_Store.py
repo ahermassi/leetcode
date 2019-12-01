@@ -8,26 +8,16 @@ import unittest2 as unittest
 class TimeMapV1(object):
 
     def __init__(self):
-        """
-        Initialize your data structure here.
-        """
+        """ Initialize your data structure here. """
         self.data = defaultdict(list)
 
     def set(self, key, value, timestamp):
-        """
-        :type key: str
-        :type value: str
-        :type timestamp: int
-        :rtype: None
-        """
         self.data[key].append((value, timestamp))
 
     def get(self, key, timestamp):
-        """
-        Use the fact that the timestamps for all TimeMap.set operations are strictly increasing
-        :type key: str
-        :type timestamp: int
-        :rtype: str
+        """ Use the fact that the timestamps for all TimeMap.set operations are strictly increasing.
+        Time complexity: O(N)
+        Space complexity: O(1)
         """
         ans = ''
         if timestamp > self.data[key][-1][1]:  # If the timestamp we're looking for is greater than the last time
