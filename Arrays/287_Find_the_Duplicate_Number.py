@@ -47,14 +47,14 @@ def find_duplicate_v3(nums):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    tortoise = hare = nums[0]
+    tortoise = hare = nums[0]  # tortoise = hare = 0 is also correct
     while True:
         tortoise = nums[tortoise]
         hare = nums[nums[hare]]
         if tortoise == hare:
             break
     # Find the entrance to the cycle.
-    hare = nums[0]
+    hare = nums[0]  # hare = 0 is also correct
     while tortoise != hare:
         tortoise = nums[tortoise]
         hare = nums[hare]
