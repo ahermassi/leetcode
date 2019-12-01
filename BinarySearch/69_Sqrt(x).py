@@ -6,18 +6,20 @@ import unittest2 as unittest
 
 
 def my_sqrt(x):
-    """ Use binary search to find an approximation of the two integers that the sqrt falls between.
+    """ The value a we're supposed to compute could be defined as: a^2 <= x < (a + 1)^2
+        For x ≥ 2, the square root is always smaller than or equal to x/2 and larger than 0 : 0 < a < x/2
+        Use binary search to find an approximation of the two integers that the sqrt falls between.
     Time complexity: O(log x)
     Space complexity: O(1)
     """
     if x <= 1:
         return x
-    left, right = 0, x // 2
+    left, right = 2, x // 2
     while left <= right:
         mid = (left + right) // 2
         if mid ** 2 <= x < (mid + 1) ** 2:
             return mid
-        elif mid ** 2 > x:
+        if mid ** 2 > x:
             right = mid - 1
         else:
             left = mid + 1
