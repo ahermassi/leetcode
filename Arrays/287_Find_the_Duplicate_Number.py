@@ -62,7 +62,7 @@ def find_duplicate_v3(nums):
 
 
 def find_duplicate_v4(nums):
-    """ This solution is based on binary search, based on pigeonhole principle.
+    """ This solution uses binary search, based on pigeonhole principle.
         Originally, there are n + 1 objects and n holes, this condition complies to pigeonhole principle, so at least
         one hole has two objects, that is one number appears twice.
         Each time we select a number mid (which is the one in the middle) and count all the numbers equal to or less
@@ -72,14 +72,23 @@ def find_duplicate_v4(nums):
         We know that the whole range is "too crowded" and thus that the first half or the second half of the range is
         too crowded (if both weren't, then neither would be the whole range). So you check to know whether the first
         half is too crowded, and if it isn't, you know that the second half is.
-    Time complexity: O(log N)
+        Note that alhough the values are not ordered, the indices are still ordered. That's why binary search can
+        still be used.
+        Example: nums = [2, 6, 4, 1, 3, 1, 5]
+        left = 1, right = 6 --> mid = 3, count = 4: There are 4 strictly positive integers less than or equal to 3
+        --> The duplicate has to be between left and 3
+        left = 1, right = 3 --> mid = 2, count = 3: There are 3 strictly positive integers less than or equal to 2
+        --> The duplicate has to be between left and 2
+        left = 1, right = 2 --> mid = 1, count = 2: There are 2 strictly positive integers less than or equal to 1
+        --> The duplicate has to be between left and 1
+        left = 1, right = 1: exit and return 1.
+    Time complexity: O(N logN)
     Space complexity: O(1)
     """
-    left = 1
-    right = len(nums) - 1
+    left, right = 1, len(nums) - 1  # We use binary search on the range of POSSIBLE numbers, so left starts from 1 not 0
     while left < right:
         mid = (left + right) // 2
-        count = sum(i <= mid for i in nums)
+        count = sum(num <= mid for num in nums)
         if count <= mid:
             left = mid + 1
         else:
