@@ -20,6 +20,9 @@ class TimeMapV1(object):
         Space complexity: O(1)
         """
         ans = ''
+        if timestamp < self.data[key][0][1]:  # If the timestamp we're looking for is smaller than the first timestamp
+            # inserted, then it's not possible to find a valid value.
+            return ''
         if timestamp > self.data[key][-1][1]:  # If the timestamp we're looking for is greater than the last time
             # inserted, then return the value associated with that timestamp since the timestamps are saved in
             # increased order.
@@ -43,29 +46,27 @@ class TimeMapV2(object):
         self.data = defaultdict(list)
 
     def set(self, key, value, timestamp):
-        """
-        :type key: str
-        :type value: str
-        :type timestamp: int
-        :rtype: None
-        """
         self.data[key].append((timestamp, value))  # Note how timestamp comes before value as it is the basis of search
 
     def get(self, key, timestamp):
-        """
-        :type key: str
-        :type timestamp: int
-        :rtype: str
-        """
         if key not in self.data:
             return ''
-        if timestamp > self.data[key][-1][0]:  # This optimization results in 30 - 60ms less in execution time
-            return self.data[key][-1][1]
         values = self.data[key]
+        if timestamp < values[0][0]:
+            return ''
+        if timestamp > values[-1][0]:  # This optimization results in 30 - 60ms less in execution time
+            return self.data[key][-1][1]
         idx = bisect.bisect(values, (timestamp, chr(127)))  # chr(127) is the char #127 in ASCII table. It is larger
-        # than all the commonly used characters. It is helpful because, in tuple comparison, python will compare
+        # than all the commonly used characters. It is helpful because, in tuple comparison, Python will compare
         # element by element, and in case of equal timestamps it returns the index after the last found tuple.
-        return values[idx - 1][1] if idx else ''  # If idx is 0, then all timestamps are greater than 'timestamp'
+        # Example: values = self.data[key] = [(1, 'a'),(1, 'b'),(2, 'c')] and we do get(key, 1).
+        # bisect(values, (timestamp, chr(127))) will try to find the insertion index of timestamp = 1 in values as
+        # to keep the list sorted. Since all elements of the list are tuples, we need to provide a tuple comparison
+        # basis. (timestamp, chr(127)) means if timestamps are equal, compare based on the string 'value'. chr(127) is
+        # larger than all the common ASCII characters, so this guarantees that, in case of timestamp equality, bisect
+        # returns the index just after the last tuple, which is a requirement of the problem.
+        # In this example, bisect will return index 2, so we need to return values[index-1][1].
+        return values[idx - 1][1]
 
 
 class Test(unittest.TestCase):
