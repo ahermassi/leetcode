@@ -7,8 +7,8 @@ The maximum depth is the number of nodes along the longest path from the root no
    15   7
 return its depth = 3.
 """
-from collections import deque
 
+from collections import deque
 import unittest2 as unittest
 
 # Definition for a binary tree node.
@@ -25,15 +25,15 @@ def max_depth_v1(root):
     """ Do it recursively.
     Time complexity: O(N), where N is the number of nodes
     Space complexity: in the worst case, the tree is completely unbalanced, e.g. each node has only left child node,
-    the recursion call would occur N times (the height of the tree), therefore the storage to keep the call stack
+    the recursive call would occur N times (the height of the tree), therefore the storage to keep the call stack
     would be O(N). But in the best case (the tree is completely balanced), the height of the tree would be log(N).
-    Therefore, the space complexity in this case would be O(log(N)).
+    Therefore, the space complexity in this case would be O(logN).
     """
     if not root:
         return 0
     left_depth = max_depth_v1(root.left)
     right_depth = max_depth_v1(root.right)
-    return max(left_depth, right_depth) + 1  # Add 1 to account for the root level
+    return 1 + max(left_depth, right_depth)  # Add 1 to account for the root level
 
 
 def max_depth_v2(root):
