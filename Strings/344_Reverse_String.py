@@ -10,19 +10,19 @@ def reverse_string(s):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    s = list(s)
-    i, j = 0, len(s) - 1
-    while i <= j:
-        s[i], s[j] = s[j], s[i]
-        i += 1
-        j -= 1
-    return ''.join(s)
+    left, right = 0, len(s) - 1
+    while left < right:
+        s[left], s[right] = s[right], s[left]
+        left += 1
+        right -= 1
+    return s
 
 
 class Test(unittest.TestCase):
-    data = [('Hello', 'olleH'), ('leetcode', 'edocteel')]
+    data = [(['h', 'e', 'l', 'l', 'o'], ['o', 'l', 'l', 'e', 'h']),
+            (['H', 'a', 'n', 'n', 'a', 'h'], ['h', 'a', 'n', 'n', 'a', 'H'])]
 
-    def test_roman_to_int(self):
+    def test_reverse_string(self):
         for test_string, result in self.data:
             self.assertEqual(result, reverse_string(test_string))
 
