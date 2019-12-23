@@ -11,21 +11,21 @@ def single_number_v1(nums):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    count = {}
+    counter = {}
     for i in nums:
-        # try-except, EAPF fashion
+        # try-except, EAFP fashion
         try:
-            count.pop(i)
+            counter.pop(i)
         except KeyError:
-            count[i] = 1
-    return count.popitem()[0]
+            counter[i] = 1
+    return counter.popitem()[0]
 
 
 def single_number_v2(nums):
     """ Knowing that A XOR A = 0 and A XOR 0 = A and the XOR operator is commutative, the solution will be very
         straightforward.
-        If the array is {2,1,4,5,2,4,1}: ((2^2)^(1^1)^(4^4)^(5)) => (0^0^0^5) => 5
-        It's worth noting that this XOR solution is not a generic "find the non duplicate" function. It works only as
+        If the array is {2, 1, 4, 5, 2, 4, 1}: ((2^2)^(1^1)^(4^4)^(5)) => (0^0^0^5) => 5
+        It's worth noting that this XOR solution is not a generic 'find the non duplicate' function. It works only as
         long as we know each other number appears exactly twice (which is indeed what the question states, so it's
         totally valid here). But if the array was allowed to contain an arbitrary number of duplicates (ie. the same
         number appears 3 or 5 times), then this solution breaks down. This solution works if the duplicates always
@@ -40,7 +40,7 @@ def single_number_v2(nums):
 
 
 def single_number_v3(nums):
-    """ Math: 2 ∗ (a+b+c) − (a+a+b+b+c) = c
+    """ Math: 2 * (a+b+c) − (a+a+b+b+c) = c
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -53,6 +53,8 @@ class Test(unittest.TestCase):
     def test_single_number_v1(self):
         for test_array, result in self.data:
             self.assertEqual(result, single_number_v1(test_array))
+            self.assertEqual(result, single_number_v2(test_array))
+            self.assertEqual(result, single_number_v3(test_array))
 
 
 if __name__ == '__main__':
