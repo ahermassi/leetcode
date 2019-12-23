@@ -37,7 +37,8 @@ def max_depth_v1(root):
 
 
 def max_depth_v2(root):
-    """ We start from a stack which contains the root node and the corresponding depth which is 1. Then we proceed to
+    """ Iterative DFS using a stack.
+        We start from a stack which contains the root node and the corresponding depth which is 1. Then we proceed to
         the iterations: pop the current node out of the stack and push the child nodes. The depth is updated at each
         step.
     Time complexity: O(N)
@@ -56,14 +57,14 @@ def max_depth_v2(root):
 
 
 def max_depth_v3(root):
-    """ Same solution nut using a queue and traversing the tree in BFS.
+    """ BFS.
     Time complexity: O(N)
     Space complexity: O(logN) best case, O(N) worst case
     """
     if not root:
         return 0
     res, queue = 0, deque([root])
-    while queue:  # At every iteration,queue holds the nodes of one level of the tree: there is no need to track depth
+    while queue:  # At every iteration, queue holds the nodes of one level of the tree: there is no need to track depth
         res += 1
         n = len(queue)
         for _ in range(n):
