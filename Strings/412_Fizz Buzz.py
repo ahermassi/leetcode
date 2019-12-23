@@ -6,14 +6,14 @@ import unittest2 as unittest
 
 
 def fizz_buzz_v1(n):
-    ''' Naive approach.
+    """ Naive approach.
         For every number, if it is divisible by both 3 and 5, add FizzBuzz to the answer list.
         Else, check if the number is divisible by 3, add Fizz.
         Else, check if the number is divisible by 5, add Buzz.
         Else, add the number.
     Time complexity: O(n)
     Space complexity: O(1)
-    '''
+    """
     res = []
     for i in range(1, n + 1):
         if i % 3 == 0 and i % 5 == 0:
@@ -50,6 +50,32 @@ def fizz_buzz_v2(n):
     return res
 
 
+def fizz_buzz_v3(n):
+    """ When the number of mappings are limited, previous approach looks good. But what if you face a tricky
+        interviewer and he decides to add too many mappings?
+        Having a condition for every mapping is not feasible or may be we can say the code might get ugly and tough to
+        maintain.
+        Put all the mappings in a hash table. The hash table would look something like { 3: 'Fizz', 5: 'Buzz' }
+        For every number, iterate over the hash table keys and check for divisibility.
+        If the number is divisible by the key, concatenate the corresponding hash value to the answer string for
+        current number.
+        This way we can add/delete mappings to/from to the hash table and not worry about changing the code.
+        Note that keys() could return the keys in different order than we expected. So we could either use OrderedDict
+        or regular dict which preserves order since python 3.6.
+    Time complexity: O(n)
+    Space complexity: O(1)
+    """
+    mapping = {3: 'Fizz', 5: 'Buzz'}
+    res = []
+    for i in range(1, n + 1):
+        s = ''
+        for key in mapping:
+            if i % key == 0:
+                s += mapping[key]
+        res.append(s if s else str(i))
+    return res
+
+
 class Test(unittest.TestCase):
     data = [(15, ['1', '2', 'Fizz', '4', 'Buzz', 'Fizz', '7', '8', 'Fizz', 'Buzz', '11', 'Fizz', '13', '14', 'FizzBuzz']
              )]
@@ -58,6 +84,7 @@ class Test(unittest.TestCase):
         for test_n, result in self.data:
             self.assertEqual(result, fizz_buzz_v1(test_n))
             self.assertEqual(result, fizz_buzz_v2(test_n))
+            self.assertEqual(result, fizz_buzz_v3(test_n))
 
 
 if __name__ == '__main__':
