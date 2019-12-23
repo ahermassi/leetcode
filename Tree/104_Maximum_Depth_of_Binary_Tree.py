@@ -22,7 +22,7 @@ class TreeNode(object):
 
 
 def max_depth_v1(root):
-    """ Do it recursively.
+    """ Recursive DFS.
     Time complexity: O(N), where N is the number of nodes
     Space complexity: in the worst case, the tree is completely unbalanced, e.g. each node has only left child node,
     the recursive call would occur N times (the height of the tree), therefore the storage to keep the call stack
@@ -38,21 +38,21 @@ def max_depth_v1(root):
 
 def max_depth_v2(root):
     """ We start from a stack which contains the root node and the corresponding depth which is 1. Then we proceed to
-    the iterations: pop the current node out of the stack and push the child nodes. The depth is updated at each
-    step.
+        the iterations: pop the current node out of the stack and push the child nodes. The depth is updated at each
+        step.
     Time complexity: O(N)
-    Space complexity: O(log N)
+    Space complexity: O(logN) best case, O(N) worst case
     """
     if not root:
         return 0
-    res, stack = 0, [(root, 0)]
+    res, stack = 0, [(root, 1)]
     while stack:
         node, depth = stack.pop()
         if not node.left and not node.right:
             res = max(res, depth)
         else:
             stack.extend([(kid, depth + 1) for kid in (node.left, node.right) if kid])
-    return res + 1
+    return res
 
 
 def max_depth_v3(root):
