@@ -5,6 +5,8 @@ You must do this in-place without making a copy of the array. """
 import unittest2 as unittest
 
 
+# Pattern applied: use 2 pointers and maintain an invariant between the pointers
+
 def move_zeroes_v1(nums):
     """ This is a 2 pointer approach. The fast pointer which is denoted by variable i does the job of processing new
         elements. If the newly found element is not a zero, we record it just after the last found non-zero element.
@@ -50,7 +52,7 @@ def move_zeroes_v3(nums):
     Time complexity: O(N logN)
     Space complexity: O(N)
     """
-    nums.sort(key=lambda x: 1 if x == 0 else 1)
+    nums.sort(key=lambda x: 1 if x == 0 else 0)
 
 
 class Test(unittest.TestCase):
