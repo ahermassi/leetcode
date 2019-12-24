@@ -4,18 +4,18 @@ import unittest2 as unittest
 
 
 def roman_to_int(s):
-    """ If one letter is less than its latter one, this letter is subtracted.
+    """ If one letter is less than its next neighbor, this letter is subtracted.
     Time complexity: O(N)
     Space complexity: O(1)
     """
     roman_to_integer = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
     res = 0
     for i in range(len(s) - 1):
-        c, nxt = s[i], s[i + 1]
-        if roman_to_integer[c] < roman_to_integer[nxt]:
-            res -= roman_to_integer[c]
+        cur, nxt = s[i], s[i+1]
+        if roman_to_integer[cur] < roman_to_integer[nxt]:
+            res -= roman_to_integer[cur]
         else:
-            res += roman_to_integer[c]
+            res += roman_to_integer[cur]
     res += roman_to_integer[s[-1]]  # Don't forget to add the last letter anyway as the loop stops at index len(s)-1
     return res
 
