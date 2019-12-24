@@ -26,7 +26,7 @@ def first_uniq_char_v1(s):
 
 def first_uniq_char_v2(s):
     """ Single pass over the string. Construct a character to index mapping, and when a character is encountered for
-        a second time set its map value to 1. We end up with a hash map where all unique characters have values
+        a second time set its map value to -1. We end up with a hash map where all unique characters have values
         different from -1.
     Time complexity: O(N)
     Space complexity: O(1)
@@ -50,7 +50,7 @@ def first_uniq_char_v3(s):
         characters get its index in s if it appears only once in s and append it to 'indices' list. Finally, return
         the minimum value in 'indices' which corresponds to the smallest index of a non-repeating character in s.
     Time complexity: O(N), s.count() takes O(N) and is called |Σ| times, where |Σ| is the size of the alphabet. This
-    takes O( |Σ| * n). Since the alphabet in question is just lowercase letters, |Σ| = 26 so this is O(26 * N).
+    takes O( |Σ| * N). Since the alphabet in question is just lowercase letters, |Σ| = 26 so this is O(26 * N).
     s.index() also takes O(N) and is called |Σ| times. This takes O( |Σ| * N), or O(N) since |Σ| is constant.
     min() takes O(|Σ|) -> O(1) time.
     Space complexity: O(1), since 'indices' list can hold at most |Σ| values.
