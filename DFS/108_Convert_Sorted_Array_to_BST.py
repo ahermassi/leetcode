@@ -18,7 +18,7 @@ class TreeNode:
 def sorted_array_to_bst_v1(nums):
     """ For a sorted array, the left half will be in the left subtree, middle value as the root, right half in the
     right subtree. This holds true for every node.
-    Time complexity: since Python slicing takes O(N), this algorithm is actually O(N log N)
+    Time complexity: since Python slicing takes O(N), this algorithm is actually O(N logN)
     Space complexity: O(log N) (draw recursion tree)
     """
     if not nums:
@@ -38,7 +38,7 @@ def sorted_array_to_bst_v2(nums):
     fooled by the binary search nature of the solution and think the time complexity is O(logN).
     Example: nums = [2,3,5,7,11,13,77,79,23]. Split nums into 2 halves in first call, then RECURSIVELY split left and
     right halves in the subsequent calls, resulting in N calls to the recursive function, not logN calls.
-    Space complexity: O(log N), there is no case of skewed binary tree because we're creating a balanced BST from the
+    Space complexity: O(logN), there is no case of skewed binary tree because we're creating a balanced BST from the
     start, by picking the middle element every time. It's not possible to have a skewed input or output
     """
 
