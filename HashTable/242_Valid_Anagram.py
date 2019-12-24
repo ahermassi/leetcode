@@ -1,6 +1,6 @@
 """ Given two strings s and t , write a function to determine if t is an anagram of s. """
-from collections import defaultdict
 
+from collections import defaultdict
 import unittest2 as unittest
 
 
