@@ -13,7 +13,8 @@ def move_zeroes_v1(nums):
         The position of last found non-zero element is denoted by the 'non_zero_index' variable.
         The code will maintain the following invariants:
             1- All elements before 'non_zero_index' are non-zeroes.
-            2- All elements between i and 'non_zero_index' are zeroes.
+            2- All elements between 'non_zero_index' and i are zeroes.
+            3- All elements after i are undecided (yet)
         Therefore, when we encounter a non-zero element, we need to swap elements pointed by i and 'non_zero_index',
         then advance both pointers. If it's a zero element, we just advance i pointer.
     Time complexity: O(N), the total number of operations is optimal. The total operations (array writes) that code
