@@ -7,6 +7,8 @@ again). """
 import unittest2 as unittest
 
 
+# For more details: https://leetcode.com/articles/best-time-to-buy-and-sell-stock-ii/
+
 def max_profit_v1(prices):
     """ The profit is the sum of sub-profits. Each sub-profit is the difference between selling at day j, and buying at
         day i (with j > i). The range [i, j] should be chosen so that the sub-profit is maximum:
@@ -40,12 +42,28 @@ def max_profit_v1(prices):
     return max_profit
 
 
+def max_profit_v2(prices):
+    """ In this case, instead of looking for every maxima following a minima, we can simply go on crawling over the
+        slope and keep on adding the profit obtained from every consecutive transaction. We can directly keep on adding
+        the difference between the consecutive numbers of the array if the second number is larger than the first one,
+        and the total sum we obtain will be the maximum profit.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    max_profit = 0
+    for i in range(1, len(prices)):
+        if prices[i] > prices[i - 1]:
+            max_profit += prices[i] - prices[i - 1]
+    return max_profit
+
+
 class Test(unittest.TestCase):
     data = [([7, 1, 5, 3, 6, 4], 7), ([1, 2, 3, 4, 5], 4), ([7, 6, 4, 3, 1], 0)]
 
     def test_max_profit(self):
         for test_prices, result in self.data:
             self.assertEqual(result, max_profit_v1(test_prices))
+            self.assertEqual(result, max_profit_v2(test_prices))
 
 
 if __name__ == '__main__':
