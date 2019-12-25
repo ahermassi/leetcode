@@ -17,7 +17,7 @@ class ListNode:
 
 def merge_two_lists_v1(l1, l2):
     """ We can recursively define the result of a merge operation on two lists as the following:
-        list1[0] + merge(list1[1:], list2)  if  list1[0]<list2[0]
+        list1[0] + merge(list1[1:], list2)  if  list1[0] <= list2[0]
         list2[0] + merge(list1, list2[1:])  otherwise
         Namely, the smaller of the two lists' heads plus the result of a merge on the rest of the elements.
     Time complexity: O(N + M), there will be exactly one call to merge_two_lists per element in each list. Therefore,
@@ -27,12 +27,11 @@ def merge_two_lists_v1(l1, l2):
     """
     if not l1 or not l2:
         return l1 or l2
-    if l1.val < l2.val:
+    if l1.val <= l2.val:
         l1.next = merge_two_lists_v1(l1.next, l2)  # This is the case list1[0] + merge(list1[1:], list2)
         return l1
-    else:
-        l2.next = merge_two_lists_v1(l1, l2.next)  # This is the case list2[0] + merge(list1, list2[1:])
-        return l2
+    l2.next = merge_two_lists_v1(l1, l2.next)  # This is the case list2[0] + merge(list1, list2[1:])
+    return l2
 
 
 def merge_two_lists_v2(l1, l2):
