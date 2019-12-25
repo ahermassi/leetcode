@@ -39,8 +39,9 @@ def intersect_v2(nums1, nums2):
     Space complexity: O(1)
     """
     nums1, nums2 = sorted(nums1), sorted(nums2)
+    n, m = len(nums1), len(nums2)
     p1, p2, res = 0, 0, []
-    while p1 < len(nums1) and p2 < len(nums2):
+    while p1 < n and p2 < m:
         if nums1[p1] == nums2[p2]:
             res.append(nums1[p1])
             p1 += 1
@@ -64,7 +65,7 @@ def intersect_v4(nums1, nums2):
         cannot load all elements into the memory at once?
         If nums1 fits into the memory, we can use solution 1 to collect counts for nums1 into a hash map. Then, we can
         sequentially load and process nums2.
-        If neither of the arrays fit into the memory, sort them using external sort, read (let's say) 2G of each into
+        If neither of the arrays fits into the memory, sort them using external sort, read (let's say) 2G of each into
         memory, and then use the 2 pointer technique, then read 2G more from the array that has been exhausted. Repeat
         this until there is no more data to read from disk.
         External sorting is a class of sorting algorithms that can handle massive amounts of data. External sorting is
