@@ -7,8 +7,44 @@ import unittest2 as unittest
 
 
 def max_stock_profit_v1(prices):
-    """ We can maintain two variables - min_price and max_profit. When iterating the array we consider to sell on day
-    i what would be the best profit against its current minimum buying price while updating minimum buying price.
+    """ We can maintain two variables - min_price and max_profit. While iterating over the array, we consider to sell
+        on day i what would be the best profit against its current minimum buying price while updating minimum buying
+        price.
+        Example:
+        prices = [5, 6, 2, 4, 8, 9, 5, 1, 5]
+        Now we will traverse the array from left to right. So in the given array 5 is the stock we bought.
+            Buy:5     Sell:-               Profit:-             max profit=-
+
+        So next element is 6. If we sell the stock at that price we will earn profit of $1.
+            Buy:5     Sell:6               Profit:$1             max profit=$1
+
+        Now the next element is 2 which have lower price than the stock we bought previously which was 5. So if we buy 
+        this stock at price $2 and sells it in future then we will surely earn more profit than the stock we bought at 
+        price 5. So we buy stock at $2.
+            Buy:2     Sell:-              Profit:-                  max profit=$1
+
+        Next element is 4 which has higher price than the stock we bought. So we sell the stock at this price.
+            Buy:2     Sell:4              Profit:$2               max profit=$2
+
+        Moving further, now the next stock price is $8. We still have $2 stock we bought previously. If instead of
+        selling it at price $4, if we sell it for $8 then the profit would be $6.
+            Buy:2     Sell:8              Profit:$6                max profit=$6
+
+        Now next stock is of $9 which is also higher than the price we bought at ($2).
+            Buy:2     Sell:9              Profit:$7                max profit=$7
+
+        Now the next stock is $5. If we sell at this price then we will earn profit of $3, but we already have a max
+        profit of $7 because of our previous transaction.
+            Buy:2     Sell:5              Profit:$3                max profit=$7
+
+        Now next stock price is $1 which is less than the stock we bought of $2. If we buy this stock and sell it in
+        the future then obviously we will gain more profit.
+            Buy:1     Sell:-              Profit:-                   max profit=$7
+
+        Now next stock is of $5. So this price is higher than the stock we bought.
+            Buy:1     Sell:5              Profit:$4                max profit=$7
+
+        Our maximum profit is $7.
     Time complexity: O(N)
     Space complexity: O(1)
     """
