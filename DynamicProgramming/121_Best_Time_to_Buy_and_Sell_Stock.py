@@ -59,18 +59,24 @@ def max_stock_profit_v1(prices):
 # Below are two variations of the solution.
 
 def max_stock_profit_v2(prices):
-    """
-    Here, the logic is to calculate the difference (max_cur += prices[i] - prices[i-1]) of the original array, and find
-    a contiguous sub-array giving maximum profit. If the difference falls below 0, reset it to zero. By resetting
-    max_cur to 0, essentially it means that we have found a point i where the price[i] is lower than the time we bought,
-    and that we should then try to buy at point i to see if we can achieve a bigger gain.
+    """ Here the logic is to calculate the difference (max_cur += prices[i] - prices[i-1]) of the original array, and
+        find a contiguous sub-array giving maximum profit. If the difference falls below 0, reset it to zero. By
+        resetting max_cur to 0, it essentially means that we have found a point i where prices[i] is lower than the
+        time we bought at and that we should then try to buy at point i to see if we can achieve a bigger gain.
+        We are basically applying Kadane's algorithm to the difference array of prices to find the maximum subarry sum.
+        Example:
+        prices = [7, 1, 5, 3, 6, 4] --> prices_difference = [0, -6, 4, -2, 3, -2]
+        At each step i, we update cur_max: cur_max = max(0, cur_max + prices_difference[i]), such as:
+        prices_difference[i] = prices[i] - prices[i-1]
     Time complexity: O(N)
     Space complexity: O(1)
     """
     cur_max = max_profit = 0
     for i in range(1, len(prices)):
-        cur_max = max(0, cur_max + prices[i] - prices[i - 1])
-        max_profit = max(cur_max, max_profit)
+        cur_max = max(0, cur_max + prices[i] - prices[i-1])  # At any point, either I buy stock and have a current
+        # maximum profit of 0 (buying and selling at the same day is not possible, so I'm basically starting over), or
+        # sell stock and update my new current max profit
+        max_profit = max(cur_max, max_profit)  # Keep track of the maximum profit found so far
     return max_profit
 
 
