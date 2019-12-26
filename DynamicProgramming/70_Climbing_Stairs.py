@@ -51,19 +51,20 @@ def climb_stairs_v3(n):
         We can reach ith step in one of the two ways:
             1- Taking a single step from (i−1)th step.
             2- Taking a step of 2 from (i-2)th step.
-        Let dp[i] denote the number of ways to reach ith steo if we can take 1 or 2 steps.
+        Let dp[i] denote the number of ways to reach ith step if we can take 1 or 2 steps.
             dp[i] = dp[i-1] + dp[i-2]
     Time complexity: O(n)
     Space complexity: O(n)
     """
-    dp = [0] * (n + 1)
+    dp = [0] * (n + 1)  # We create an array of size (n + 1). It is so we can just return dp[n] at the end instead of
+    # fumbling with dp[n-1]
     dp[0] = dp[1] = 1
     for i in range(2, n + 1):
         dp[i] = dp[i-1] + dp[i-2]
-    return dp[-1]
+    return dp[n]
 
 
-def climb_stairs_v5(n):
+def climb_stairs_v4(n):
     """ No need to store every middle result. We notice that this is just the Fibonacci series. We can just use local
         variables to keep track of the items 1 and 2 behind where we stand.
     Time complexity: O(n)
