@@ -81,10 +81,13 @@ def max_stock_profit_v2(prices):
 
 
 def max_stock_profit_v3(prices):
-    """
-    dp[i] == 0 means that it's not possible to make any (positive) profit selling the stock at hand. Resetting it to 0
-    is like saying start over and buy stock at time i. Positive dp[i] indicates how much profit can be made selling
-    stock at time i.
+    """ Let dp[i] denote the max profit on ith day. dp[i] = 0 means that it's not possible to make any (positive)
+        profit selling the stock at hand. Resetting it to 0 is like saying start over and buy stock at time i. Positive
+        dp[i] indicates how much profit can be made selling stock at time i.
+        On any given day, I can either be in a trade, or not. If I'm in a trade, my profit at the end of that day is
+        dp[i] = prices[i] - prices[i-1] + dp[i-1]: the price movement today, plus the profit from yesterday. If I'm not
+        in a trade, my profit is 0. Since I'm looking for profitable trades, I can take the max of that:
+            dp[i] = max(0, prices[i] - prices[i-1] + dp[i-1])
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -92,7 +95,7 @@ def max_stock_profit_v3(prices):
         return 0
     dp = [0] * len(prices)
     for i in range(1, len(prices)):
-        dp[i] = max(0, dp[i - 1] + prices[i] - prices[i - 1])
+        dp[i] = max(0, dp[i-1] + prices[i] - prices[i-1])
     return max(dp)
 
 
