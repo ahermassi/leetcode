@@ -40,21 +40,26 @@ def climb_stairs_v2(n):
         memo[n] = res
         return res
 
-    memo = {0: 0, 1: 1, 2: 2}  # Base cases
+    memo = {1: 1, 2: 2}  # Base cases
     return climb(n)
 
 
-def climb_stairs_v4(n):
-    """ DP is all about caching the answers to previous work and using it in current work.
-        dp[n] denotes the number of ways to climb n steps if we can take 1 or 2 steps.
-        dp[n] = dp[n - 1] + dp[n - 2]
+def climb_stairs_v3(n):
+    """ As we can see, this problem can be broken into sub-problems, and it contains the optimal substructure property
+        i.e. its optimal solution can be constructed efficiently from optimal solutions of its sub-problems. We can use
+        dynamic programming to solve the problem.
+        We can reach ith step in one of the two ways:
+            1- Taking a single step from (i−1)th step.
+            2- Taking a step of 2 from (i-2)th step.
+        Let dp[i] denote the number of ways to reach ith steo if we can take 1 or 2 steps.
+            dp[i] = dp[i-1] + dp[i-2]
     Time complexity: O(n)
     Space complexity: O(n)
     """
-    dp = [None] * (n + 1)
+    dp = [0] * (n + 1)
     dp[0] = dp[1] = 1
     for i in range(2, n + 1):
-        dp[i] = dp[i - 1] + dp[i - 2]
+        dp[i] = dp[i-1] + dp[i-2]
     return dp[-1]
 
 
