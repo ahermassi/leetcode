@@ -4,18 +4,17 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 
 def climb_stairs_v1(n):
     """ This is the classic/intuitive recursive solution. However, it returns TLE.
-    Time complexity: O(2 ** n), size of recursion tree will be 2 ** n
+        To reach nth step, what could have been our previous steps? Either (n-1) or (n-2)
+    Time complexity: O(2^n), we have n levels and at each level we can make 2 choices, O(b^d)
     Space complexity: O(n)
     """
-    if n == 1:
-        return 1
-    if n == 2:
-        return 2
-    return climb_stairs_v1(n - 1) + climb_stairs_v1(n - 2)
+    if n <= 2:
+        return n
+    return climb_stairs_v1(n-1) + climb_stairs_v1(n-2)
 
 
 def climb_stairs_v2(n):
-    """ Top down + memoization (list)
+    """ Top down + memoization
         Here are the steps to get the solution incrementally:
         Base cases:
             if n == 1, then there is only one NEW way to climb the stair.
@@ -32,33 +31,13 @@ def climb_stairs_v2(n):
     """
 
     def climb(n):
-        if n == 1 or n == 2:  # Base cases
-            return n
-        if memo[n]:
-            return memo[n]
-        else:
-            res = climb(n - 1) + climb(n - 2)
-            memo[n] = res
-        return res
-
-    memo = [None] * (n + 1)
-    return climb(n)
-
-
-def climb_stairs_v3(n):
-    """ Top down + memoization (dictionary)
-    Time complexity: O(n)
-    Space complexity: O(n)
-    """
-    def climb(n):
         if n in memo:
             return memo[n]
-        else:
-            res = climb(n - 1) + climb(n - 2)
-            memo[n] = res
+        res = climb(n - 1) + climb(n - 2)
+        memo[n] = res
         return res
 
-    memo = {1: 1, 2: 2}  # Base cases
+    memo = {0: 0, 1: 1, 2: 2}  # Base cases
     return climb(n)
 
 
