@@ -11,10 +11,11 @@ def maximum_subarray_v1(nums):
     Time complexity: O(N)
     Space complexity: O(1)
     """
+    n = len(nums)
     max_so_far = max_ending_here = nums[0]
-    for i in range(1, len(nums)):
+    for i in range(1, n):
         max_ending_here = max(nums[i], max_ending_here + nums[i])  # What's the maximum sub array ending here ? Either
-        # [current element] or [previous sub array, current]
+        # [current element] or [previous sub array, current element]
         max_so_far = max(max_so_far, max_ending_here)  # Update global max
     return max_so_far
 
@@ -25,7 +26,7 @@ def maximum_subarray_v2(nums):
         The format of the sub problem is something like: maxSubArray(int A[], int i), which means the maxSubArray for
         A[0:i] which must has A[i] as the end element. Now the connection between the sub problem and the original one
         becomes clear. Let dp[i] be the maximum sum of a contiguous sub array ending at index i:
-            dp[i] = max(nums[i], dp[i - 1] + nums[i])
+            dp[i] = max(nums[i], dp[i-1] + nums[i])
         If the maximum sum of a contiguous sub array up to index (i-1) is positive, it is possible to make the maximum
         sum value bigger, so we add the current element to the sum.
         If the maximum sum is negative, adding it to the current element will only make a smaller sum. So we start over
@@ -33,10 +34,11 @@ def maximum_subarray_v2(nums):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    dp = [0] * len(nums)
+    n = len(nums)
+    dp = [0] * n
     dp[0] = nums[0]
-    for i in range(1, len(nums)):
-        dp[i] = max(nums[i], dp[i - 1] + nums[i])
+    for i in range(1, n):
+        dp[i] = max(nums[i], dp[i-1] + nums[i])
     return max(dp)
 
 
@@ -46,7 +48,7 @@ class Test(unittest.TestCase):
         ([0, -1, 5], 5)
     ]
 
-    def test_two_sum(self):
+    def test_maximum_subarray(self):
         for test_array, result in self.data:
             self.assertEqual(result, maximum_subarray_v1(test_array))
             self.assertEqual(result, maximum_subarray_v2(test_array))
