@@ -7,15 +7,30 @@ loops endlessly in a cycle which does not include 1. Those numbers for which thi
 import unittest2 as unittest
 
 
-def is_happy(n):
-    """ Keep a 'seen' set to record the numbers already visited in the process. Calculate the sum of squares of digits
-        of the number until 1 is reached or result of calculation seen before.
-    Time complexity: O(N) where N is the number of n digits
-    Space complexity: O(N) ?
+def is_happy_v1(n):
+    """ There are 2 parts to the algorithm we'll need to design and code.
+            1- Given a number n, what is its next number?
+            2- Follow a chain of numbers and detect if we've entered a cycle.
+        Part 1 can be done using the division and modulus operators to repeatedly take digits off the number until none
+        remains, and then squaring each removed digit and adding them together.
+        Part 2 can be done using a hash set. Each time we generate the next number in the chain, we check if it's
+        already in our hash set. If it is not in the hash set, we should add it. If it is in the hash set, that means
+        we're in a cycle and so should return false.
+    Time complexity: we are processing each digit in the number, and the number of digits in a number is given by logn.
+    Space complexity: O(logn) ?
     """
-    seen = set()
+
+    def sum_digits(n):
+        total_sum = 0
+        while n:
+            digit = n % 10
+            n = n // 10
+            total_sum += digit ** 2
+        return total_sum
+
+    seen = {n}
     while n != 1:
-        n = sum([int(d) ** 2 for d in str(n)])
+        n = sum_digits(n)
         if n in seen:
             return False
         seen.add(n)
@@ -25,7 +40,7 @@ def is_happy(n):
 class Test(unittest.TestCase):
 
     def test_is_happy(self):
-        self.assertTrue(is_happy(19))
+        self.assertTrue(is_happy_v1(19))
 
 
 if __name__ == '__main__':
