@@ -35,17 +35,17 @@ def two_sum_v2(nums, target):
 
 
 def two_sum_v3(nums, target):
-    """ We can do it in one-pass. While we iterate and inserting elements into the table, we also look back to check
-    if current element's complement already exists in the table. If it exists, we have found a solution and return
-    immediately.
-    Time complexity: O(N) for array pass
+    """ We can do it in one pass. While we iterate and insert elements into the hash map, we also look back to check
+        if current element's complement already exists in the hash map. If it exists, we have found a solution and
+        return immediately.
+    Time complexity: O(N) for one array pass
     Space complexity: O(N)
     """
-    d = {}
+    vals = {}
     for i, v in enumerate(nums):
-        if target - v in d:
-            return [d[target - v], i]
-        d[v] = i
+        if target - v in vals:
+            return [vals[target - v], i]
+        vals[v] = i
 
 
 class Test(unittest.TestCase):
