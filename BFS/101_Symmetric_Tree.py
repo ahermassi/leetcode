@@ -18,8 +18,8 @@ def is_symmetric_v1(root):
         key differences. Each time, two nodes are extracted and their values compared. Then, the right and left
         children of the two nodes are inserted in the queue in opposite order.
     Time complexity: O(N)
-    Space complexity: O(N), a full binary tree of n nodes has roughly half of those nodes at the lowest level, hence
-    O(n) space
+    Space complexity: O(N), a full binary tree of N nodes has roughly half of those nodes at the lowest level, hence
+    O(N) space
     """
     if not root:
         return True
@@ -45,7 +45,7 @@ def is_symmetric_v2(root):
         right arm corresponds to the actual person's left arm, and vice versa.
      Time complexity: O(N)
      Space complexity: O(N), the number of recursive calls is bound by the height of the tree. In the worst case,
-     the tree is linear and the height is O(N)
+     the tree is skewed and the height is N
      """
     def is_mirror(left, right):
         if not left and not right:
