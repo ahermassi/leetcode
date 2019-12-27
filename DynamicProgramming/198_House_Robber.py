@@ -36,17 +36,21 @@ def rob_v1(nums):
 
 def rob_v2(nums):
     """ Recursion + memoization
-
+    Time complexity: O(N)
+    Space complexity: O(N)
     """
-    # if not nums:
-    #     return 0
-    # if len(nums) == 1:
-    #     return nums[0]
-    # dp = [None] * len(nums)
-    # dp[0], dp[1] = nums[0], max(nums[0], nums[1])
-    # for i in range(2, len(nums)):
-    #     dp[i] = max(nums[i] + dp[i - 2], dp[i - 1])
-    # return dp[-1]
+
+    def helper(i):
+        if i < 0:
+            return 0
+        if i in memo:
+            return memo[i]
+        res = max(nums[i] + helper(i - 2), helper(i - 1))
+        memo[i] = res
+        return res
+
+    memo = {}
+    return helper(len(nums) - 1)
 
 
 # Bottom-up + 2 variables (constant space)
