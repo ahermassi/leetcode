@@ -19,18 +19,19 @@ def two_sum_v1(nums, target):
 
 
 def two_sum_v2(nums, target):
-    """ Using a hash table and one array pass. Trading space for time complexity.
+    """ Using a hash table and 2 array passes. Trading space for time complexity.
         In the first iteration, we add each element's value and its index to the table. Then, in the second iteration,
         we check if each element's complement (target - nums[i]) exists in the table. Beware that the complement must
         not be nums[i] itself.
-    Time complexity: O(N) for array pass
+    Time complexity: O(N) for 2 array passes
     Space complexity: O(N)
     """
     d = {v: i for i, v in enumerate(nums)}  # Add each element's value and its index to the table
-    for i in range(len(nums)):
+    n = len(nums)
+    for i in range(n):
         s = nums[i]
-        if d[target - s] and d[target - s] != i:  # The complement (target - s) found in O(1) lookup
-            return [i, d[target - s]]
+        if target - s in d and d[target-s] != i:  # The complement (target - s) found in O(1) lookup
+            return [i, d[target-s]]
 
 
 def two_sum_v3(nums, target):
