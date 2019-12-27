@@ -34,12 +34,30 @@ def count_and_say_v1(n):
     return res
 
 
+def count_and_say_v2(n):
+    """ We compute the nth number by iteratively applying the rule (n - 1) times.
+    Time complexity: O(n * 2^n)
+    Space complexity: (n)
+    """
+    s = '1'  # Base case
+    for _ in range(n-1):
+        m, i, j, temp = len(s), 0, 0, ''
+        while i < m:
+            while j < m and s[i] == s[j]:  # We keep a sliding window of identical digits with left=i and right=j
+                j += 1
+            temp += str(j - i) + s[i]
+            i = j
+        s = temp  # We assign the result of transformation to s to be used in the next iteration
+    return s
+
+
 class Test(unittest.TestCase):
     data = [(3, '21'), (4, '1211')]
 
     def test_count_and_say(self):
         for test_n, result in self.data:
             self.assertEqual(result, count_and_say_v1(test_n))
+            self.assertEqual(result, count_and_say_v2(test_n))
 
 
 if __name__ == '__main__':
