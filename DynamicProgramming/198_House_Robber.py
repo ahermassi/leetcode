@@ -11,40 +11,48 @@ import unittest2 as unittest
 
 
 def rob_v1(nums):
-    """ A robber has 2 options: a) rob current house i; b) don't rob current house.
-    If an option "a" is selected it means she can't rob previous i-1 house but can safely proceed to the one before
-    previous i-2 and gets all cumulative loot that follows.
-    If an option "b" is selected the robber gets all the possible loot from robbery of i-1 and all the following
-    buildings.
-    So it boils down to calculating what is more profitable:
-        * robbery of current house + loot from houses before the previous
-        * loot from the previous house robbery and any loot captured before that
-    rob(i) = Math.max( rob(i - 2) + currentHouseValue, rob(i - 1) )
-    Time complexity: O(N)
+    """ A robber has 2 options:
+            1- rob current house i
+            2- don't rob current house.
+        If 1st option is selected, it means the robber can't rob previous (i-1) house but can safely proceed to the
+        one before previous (i-2) and gets all cumulative loot that follows.
+        If 2nd option is selected, the robber gets all the possible loot from robbery of (i-1) house and all the
+        following buildings.
+        So it boils down to calculating what is more profitable:
+            1- Robbery of current house + loot from houses before the previous
+            2- Loot from the previous house robbery and any loot captured after that
+            rob(i) = max(rob(i-2) + currentHouseValue, rob(i-1))
+    Time complexity: O(2^N)
     Space complexity: O(N)
     """
-    # Bottom-up + memoization
-    """At first glance, it appears that the robber could just rob every other house – in which case, we ask whether 
-        he should start with the first house or the second house; this could maximize the number of houses he robs. 
-        However, it is possible that neither of these possibilities maximize the amount of money he’d steal 
-        The recurrence relation for stealing the maximum amount of money is the following:
-            dp[i] = max(dp[i-1], dp[i-2] + num[i])
+    # This solution TLEs.
+    def helper(i):
+        if i < 0:
+            return 0
+        return max(nums[i] + helper(i - 2), helper(i - 1))
+
+    return helper(len(nums) - 1)
+
+
+def rob_v2(nums):
+    """ Recursion + memoization
+
     """
-    if not nums:
-        return 0
-    if len(nums) == 1:
-        return nums[0]
-    dp = [None] * len(nums)
-    dp[0], dp[1] = nums[0], max(nums[0], nums[1])
-    for i in range(2, len(nums)):
-        dp[i] = max(nums[i] + dp[i - 2], dp[i - 1])
-    return dp[-1]
+    # if not nums:
+    #     return 0
+    # if len(nums) == 1:
+    #     return nums[0]
+    # dp = [None] * len(nums)
+    # dp[0], dp[1] = nums[0], max(nums[0], nums[1])
+    # for i in range(2, len(nums)):
+    #     dp[i] = max(nums[i] + dp[i - 2], dp[i - 1])
+    # return dp[-1]
 
 
 # Bottom-up + 2 variables (constant space)
 
 
-def rob_v2(nums):
+def rob_v3(nums):
     """
     Time complexity: O(N)
     Space complexity: O(1)
