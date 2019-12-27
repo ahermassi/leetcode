@@ -53,20 +53,34 @@ def rob_v2(nums):
     return helper(len(nums) - 1)
 
 
-# Bottom-up + 2 variables (constant space)
-
-
 def rob_v3(nums):
+    """ Bottom-up dynamic programming.
+    Time complexity: O(N)
+    Space complexity: O(1)
     """
+    if not nums:
+        return 0
+    n = len(nums)
+    if n == 1:
+        return nums[0]
+    dp = [0] * n
+    dp[0], dp[1] = nums[0], max(nums[0], nums[1])
+    for i in range(2, n):
+        dp[i] = max(nums[i] + dp[i - 2], dp[i - 1])
+    return dp[-1]
+
+
+def rob_v4(nums):
+    """ We notice that in the previous solution we use only dp[i] and dp[i-1], so going just 2 steps back. We can save
+        them in 2 variables instead.
     Time complexity: O(N)
     Space complexity: O(1)
     """
     a = b = 0
-    for i in range(len(nums)):
+    n = len(nums)
+    for i in range(n):
         a, b = b, max(nums[i] + a, b)
     return b
-
-# To do: implement it recursively
 
 
 class Test(unittest.TestCase):
@@ -77,6 +91,8 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, rob_v1(test_array))
             self.assertEqual(result, rob_v2(test_array))
+            self.assertEqual(result, rob_v3(test_array))
+            self.assertEqual(result, rob_v4(test_array))
 
 
 if __name__ == '__main__':
