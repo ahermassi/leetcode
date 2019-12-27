@@ -1,0 +1,46 @@
+""" The count-and-say sequence is the sequence of integers with the first five terms as following:
+1.     1
+2.     11
+3.     21
+4.     1211
+5.     111221
+1 is read off as "one 1" or 11.
+11 is read off as "two 1s" or 21.
+21 is read off as "one 2, then one 1" or 1211.
+Given an integer n where 1 ≤ n ≤ 30, generate the nth term of the count-and-say sequence.  """
+
+import unittest2 as unittest
+
+
+def count_and_say_v1(n):
+    """ To generate the nth term, just count and say the (n-1)th term. We can do it recursively.
+    Time complexity: the precise time complexity is a function of the lengths of the terms, which is extremely hard to
+    analyze. Each successive number can have at most twice as many digits as the previous number. This happens when all
+    digits are different. This means the maximum length number has length no more than 2^n. Since there are n recursive
+    calls and the work in each call is proportional to the length of the number computed, a simple bound on the time
+    complexity is O(n * 2^n).
+    Space complexity: O(n)
+    """
+    if n == 1:
+        return '1'
+    pre = count_and_say_v1(n-1)  # We're going to count and say the (n-1)th term
+    i, j, n = 0, 0, len(pre)
+    res = ''
+    while i < n:
+        while j < n and pre[i] == pre[j]:  # We keep a sliding window of identical digits with left=i and right=j
+            j += 1
+        res += str(j-i) + pre[i]
+        i = j  # Slide the window
+    return res
+
+
+class Test(unittest.TestCase):
+    data = [(3, '21'), (4, '1211')]
+
+    def test_count_and_say(self):
+        for test_n, result in self.data:
+            self.assertEqual(result, count_and_say_v1(test_n))
+
+
+if __name__ == '__main__':
+    unittest.main()
