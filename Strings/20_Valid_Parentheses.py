@@ -25,12 +25,13 @@ def is_valid_v1(s):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    d, stack = {'(': ')', '{': '}', '[': ']'}, []
-    for ch in s:
-        if stack and stack[-1] in d and ch == d[stack[-1]]:
+    brackets = {')': '(', '}': '{', ']': '['}
+    stack = []
+    for c in s:
+        if c in brackets and stack and stack[-1] == brackets[c]:
             stack.pop()
         else:
-            stack.append(ch)
+            stack.append(c)
     return not stack
 
 
