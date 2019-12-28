@@ -14,25 +14,24 @@ def merge_v1(nums1, m, nums2, n):
     Space complexity: O(m) for nums1_copy
     """
     nums1_copy = nums1[:m]
-    nums1[:] = []
-    i = j = 0
+    i = j = write_index = 0
     while i < m and j < n:
-        if nums1_copy[i] < nums2[j]:
-            nums1.append(nums1_copy[i])
+        if nums1_copy[i] <= nums2[j]:
+            nums1[write_index] = nums1_copy[i]
             i += 1
         else:
-            nums1.append(nums2[j])
+            nums1[write_index] = nums2[j]
             j += 1
-    # If there are still elements to add
+        write_index += 1
     if i < m:
-        nums1[i + j:] = nums1_copy[i:]
-    if j < n:
-        nums1[i + j:] = nums2[j:]
+        nums1[write_index:] = nums1_copy[i:]
+    elif j < n:
+        nums1[write_index:] = nums2[j:]
 
 
 def merge_v2(nums1, m, nums2, n):
     """ If we start to overwrite nums1 from the end, where there is no information yet, then no additional space
-    is needed.
+        is needed.
     Time complexity: O(n + m)
     Space complexity: O(1)
     """
