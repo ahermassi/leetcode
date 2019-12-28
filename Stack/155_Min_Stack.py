@@ -49,14 +49,13 @@ class MinStackV1(object):
 
 
 class MinStackV2:
-    """ Only push the old minimum value when the current minimum value changes after pushing the new value x.
-        If pop operation could result in changing the current minimum value, pop twice and change the current minimum
-        value to the last minimum value.
+    """ If the value x we want to push is less than or equal to the current min value, we push min to the stack and
+        update min to be equal to x. This way when the pop operation could result in popping the current min value,
+        we pop twice and change the current min value to the previous min value.
         Core Idea:
-            1- Minimum value is always followed by the second minimum value (duplicate value of the second minimum
-               value, to ensure that when pop function removes the 2nd min, it does not disrupt the stack order).
-            2- While popping we pop min and 2nd min so that we get the correct min value for the remaining stack and
-               the remaining stack top also points to the correct value.
+            1- Minimum value is always followed by the second minimum value
+            2- While popping, if we pop min we also pop 2nd min so that we get the correct min value for the remaining
+               stack and the remaining stack top also points to the correct value.
     """
 
     def __init__(self):
