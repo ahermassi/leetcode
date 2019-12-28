@@ -44,14 +44,11 @@ def is_valid_v2(s):
     Time complexity: O(N)
     Space complexity: O(N)
     """
+    brackets = {'(': ')', '{': '}', '[': ']'}
     stack = []
     for c in s:
-        if c == '(':
-            stack.append(')')
-        elif c == '{':
-            stack.append('}')
-        elif c == '[':
-            stack.append(']')
+        if c in brackets:
+            stack.append(brackets[c])
         elif not stack or stack.pop() != c:
             return False
     return not stack
