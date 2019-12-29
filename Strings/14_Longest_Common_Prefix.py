@@ -12,14 +12,14 @@ def longest_common_prefix_v1(strings):
         string (assuming ascending order).
         Then, we have to understand that the longest common prefix must apply for ALL array elements. If there's an
         array element that does not have the longest common prefix we've found so far, then there is no prefix, it's
-        empty string. So, for example, if the first (in the alphabetical order) string is "aaa" and last string comes
-        out to be "baa", then there is no common prefix.
+        empty string. So, for example, if the first (in the alphabetical order) string is 'aaa' and last string comes
+        out to be 'baa', then there is no common prefix.
         The first string stands as a BASE LINE for the longest possible common prefix, while the last string acts as a
         verifier that all strings BEFORE the last have this common prefix. Otherwise, it wouldn't have been the last
         string in sorted order.
         For example, 'flood', 'flower', 'flowers'. The max is 'flowers', and the min is 'flood', we can only compare
         them to get common prefix 'flo'.
-        Another example, 'flood', 'flower', 'flowers', 'food', the max is 'food', and the min is 'flood'. we can only
+        Another example, 'flood', 'flower', 'flowers', 'food'. The max is 'food', and the min is 'flood'. we can only
         compare them to get common prefix 'f'
         The reason is the max string has the longest or shortest common prefix with words that are not min or max.
         So, we can get accurate results through comparing max and min.
