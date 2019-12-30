@@ -13,6 +13,11 @@ def generate_parenthesis(n):
         Let’s add in constraints now. We need to interpret the meanings of constraints. First, the first character
         should be '('. Second, at each step, we can either print '(' or ')', but print ')' only when there are more
         '('s than ')'s. Stop printing out '(' when the number of '(' s hits n.
+        The main concept is that in a parenthesis balanced string, count of ')' must be less than equal to count of '('
+        for every prefix of the string. A parentheses balanced string (of size 2N) must have N number of '(' and N
+        number of ')'. We go on adding '(' before ')' for every recursive state string until count of '(' becomes equal
+        to N. Then we start adding ')' only on a condition that count of ')' is less than count of '('. These two
+        conditions will always produce a balanced string.
         Visualization: n = 2
         backtrack(0, 0, '')  # open < 2, '(' can be inserted
         backtrack(1, 0, '(')  # open < 2, '(' can be inserted
@@ -24,6 +29,28 @@ def generate_parenthesis(n):
                                 backtrack(2, 2, '()()') # open == close == 2. We got '(())' and we append it to result
                         backtrack(1, 2, '())') # will just return as close > open
         backtrack(0, 1, ')') # will just return as close > open
+        Another example with n = 3:
+        (
+            ((
+                (((
+                    ((()
+                        ((())
+                            ((()))
+                (()
+                    (()(
+                        (()()
+                            (()())
+                    (())
+                        (())(
+                            (())()
+            ()
+                ()(
+                    ()((
+                        ()(()
+                            ()(())
+                    ()()
+                        ()()(
+                            ()()()
     Time complexity: O(2^n)
     The way to think about the runtime of backtracking algorithms is O(b^d), where b is the branching factor and d is
     the maximum depth of recursion.
