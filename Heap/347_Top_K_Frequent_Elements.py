@@ -1,22 +1,27 @@
 """ Given a non-empty array of integers, return the k most frequent elements.
 Your algorithm's time complexity must be better than O(n log n), where n is the array's size.
 """
-from collections import defaultdict
-from heapq import nlargest
+from collections import defaultdict, Counter
+from heapq import heappush, heappop
 import unittest2 as unittest
 
 
 def top_k_frequent_v1(nums, k):
-    """ Build a frequency hash map. The next step is to build a heap.
+    """ Build a frequency hash map. The next step is to build a heap and maintain a size of k.
     Time complexity: The complexity of building the hash map is O(N). The time complexity of adding an element in a
-    heap is O(log(k)) (binary tree of k elements) and we do it N times, that means O(N log(k))). Hence the overall
-    complexity of the algorithm is O(N + N log(k)) = O(N log(k)).
+    heap is O(logK) (binary tree of k elements) and we do it N times, that means O(N logK). Hence the overall
+    complexity of the algorithm is O(N + N logK) = O(N logK).
     Space complexity: O(N) to store the hash map
     """
-    d, res = defaultdict(int), []
-    for num in nums:
-        d[num] += 1
-    return nlargest(k, d.keys(), d.get)
+    counter = Counter(nums)
+    heap, res = [], []
+    for key, value in counter.items():
+        heappush(heap, (value, key))
+        if len(heap) > k:
+            heappop(heap)
+    while heap:
+        res.append(heappop(heap)[1])
+    return res
 
 
 def top_k_frequent_v2(nums, k):
@@ -29,12 +34,12 @@ def top_k_frequent_v2(nums, k):
     Time complexity: O(N)
     Space complexity: O(N) for the hash maps
     """
-    counter, freq, res = defaultdict(int), defaultdict(list), []
+    n, counter, freq, res = len(nums), defaultdict(int), defaultdict(list), []
     for num in nums:
         counter[num] += 1
     for key, v in counter.items():
         freq[v].append(key)
-    for i in reversed(range(len(nums) + 1)):
+    for i in reversed(range(n+1)):
         if i in freq:
             res.extend(freq[i])
             if len(res) >= k:
@@ -47,13 +52,14 @@ def top_k_frequent_v3(nums, k):
     Time complexity: O(N)
     Space complexity: O(N) for 'counter' hash map
     """
-    bucket = [[] for _ in range(len(nums) + 1)]
+    n = len(nums)
+    bucket = [[] for _ in range(n+1)]
     counter, res = defaultdict(int), []
     for num in nums:
         counter[num] += 1
     for key, value in counter.items():
         bucket[value].append(key)
-    for i in reversed(range(len(bucket))):  # Traverse the bucket right-to-left to get the greatest counts first
+    for i in reversed(range(n+1)):  # Traverse the bucket right-to-left to get the greatest counts first
         if bucket[i]:
             res.extend(bucket[i])
             if len(res) >= k:
