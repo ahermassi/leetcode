@@ -11,17 +11,17 @@ def generate_parenthesis(n):
         The goal is to print a string of '(' ,')' in certain order. The length of string is 2n. The constraints are
         that '('s need to match ')'s. Without constraints, we just simply print out '(' or ')' until length hits n.
         Let’s add in constraints now. We need to interpret the meanings of constraints. First, the first character
-        should be '('. Second, at each step, you can either print '(' or ')', but print ')' only when there are more
-        '('s than ')'s. Stop printing out '(' when the number of '(' s hit n.
-        Visualization:
-        backtrack(0, 0, '')
-        backtrack(1, 0, [], '(') # open < 2, '(' can be inserted
-                backtrack(2, 0, '((') # open < 2, '(' can be inserted
-                        backtrack(2, 1, '(()') # close < open, ')' can be inserted
-                                backtrack(2, 2, [], '(())') # open == close == 2. We got '(())' and we append it to ans
+        should be '('. Second, at each step, we can either print '(' or ')', but print ')' only when there are more
+        '('s than ')'s. Stop printing out '(' when the number of '(' s hits n.
+        Visualization: n = 2
+        backtrack(0, 0, '')  # open < 2, '(' can be inserted
+        backtrack(1, 0, '(')  # open < 2, '(' can be inserted
+                backtrack(2, 0, '((')  # close < open, ')' can be inserted
+                        backtrack(2, 1, '(()')  # close < open, ')' can be inserted
+                                backtrack(2, 2, '(())') # open == close == 2. We got '(())' and we append it to result
                 backtrack(1, 1, '()')  # close < open, ')' can be inserted
                         backtrack(2, 1, '()(') # open < 2, '(' can be inserted
-                                backtrack(2, 2, '()()') # open == close == 2. We got '(())' and we append it to ans
+                                backtrack(2, 2, '()()') # open == close == 2. We got '(())' and we append it to result
                         backtrack(1, 2, '())') # will just return as close > open
         backtrack(0, 1, ')') # will just return as close > open
     Time complexity: O(2^n)
@@ -30,9 +30,9 @@ def generate_parenthesis(n):
     Backtracking is characterized by a number of decisions b that can be made at each level of recursion. If we
     visualize the recursion tree, this is the number of children each internal node has. We can also think of b as
     standing for 'base', which can help remember that b is the base of the exponential.
-    If we can make b decisions at each level of recursion, and we expand the recursion tree to d levels (i.e.: each path
-    has a length of d), then we get b^d nodes. Since backtracking is exhaustive and must visit each one of these nodes,
-    the runtime is O(b^d).
+    If we can make b decisions at each level of recursion, and we expand the recursion tree to d levels (i.e.: each
+    path has a length of d), then we get b^d nodes. Since backtracking is exhaustive and must visit each one of these
+    nodes, the runtime is O(b^d).
     Space complexity: O(2n) = O(n) for the call stack
     """
 
