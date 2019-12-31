@@ -24,6 +24,11 @@ def permute_v1(nums):
             res.append(nums[:])
             return
         for i in range(index, n):
+            # We're using here the same principle of recursion. Given a sub-array starting at index 'index',
+            # loop over the elements of the sub-array, and at each iteration:
+            # 1- Bring the current element to the head of the sub-array at starting index 'index'
+            # 2- TRUST that the recursive call will compute the permutations of the sub-array at (index + 1)
+            # 3- Undo the swap to bring the sub-array to its initial state and move on to the next element
             nums[index], nums[i] = nums[i], nums[index]
             compute_permutations_at_index(index + 1)
             nums[index], nums[i] = nums[i], nums[index]  # Second swap: backtracking. Think of it as moving back up
