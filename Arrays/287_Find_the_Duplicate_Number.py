@@ -10,7 +10,8 @@ def find_duplicate_v1(nums):
     Space complexity: O(N)
     """
     nums.sort()
-    for i in range(1, len(nums)):
+    n = len(nums)
+    for i in range(1, n):
         if nums[i] == nums[i - 1]:
             return nums[i]
 
