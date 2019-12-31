@@ -8,12 +8,12 @@ import unittest2 as unittest
 
 
 class TicTacToe(object):
-    """ Pretty simple logic. Since we know that each move will be legal, we dont need to keep track of the actual grid.
-        If we assign the value of 1 for player 1 and -1 for player 1, we just keep track of the changes to individual
-        rows and columns (and the two diagnals). If the value reaches either n or -n, we know that one of the players
+    """ Pretty simple logic. Since we know that each move will be legal, we don't need to keep track of the actual grid.
+        If we assign the value of 1 for player 1 and -1 for player 2, we just keep track of the changes to individual
+        rows and columns (and the two diagonals). If the value reaches either n or -n, we know that one of the players
         won. And since the player can only either draw or win during a move, player is returned if a win condition is
         reached.
-        The important abstraction in this approach is rows/cols arrays. rows[i] represents ith array in the actual game
+        The important abstraction in this approach is rows/cols arrays. rows[i] represents ith row in the actual game
         grid. Since we're only interested in the entire content of a row (sum of values in this case), this abstraction
         makes a lot of sense.
     Time complexity: O(1)
@@ -68,7 +68,7 @@ class Test(unittest.TestCase):
     move6 = toe.move(1, 0, 2)
     move7 = toe.move(2, 1, 1)
 
-    def test_search_matrix(self):
+    def test_tic_tac_toe(self):
         self.assertEqual(0, self.move1)
         self.assertEqual(0, self.move2)
         self.assertEqual(0, self.move3)
