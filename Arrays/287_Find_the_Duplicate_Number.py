@@ -55,7 +55,7 @@ def find_duplicate_v3(nums):
         if tortoise == hare:
             break
     # Find the entrance to the cycle.
-    hare = nums[0]  # hare = 0 is also correct
+    tortoise = nums[0]  # hare = 0 is also correct
     while tortoise != hare:
         tortoise = nums[tortoise]
         hare = nums[hare]
@@ -70,10 +70,10 @@ def find_duplicate_v4(nums):
         than mid. Then if the count is more than mid, the search space will be [1 .. mid] otherwise [mid+1 .. n]. We do
         this until search space is only one number.
         Or less formally:
-        We know that the whole range is "too crowded" and thus that the first half or the second half of the range is
-        too crowded (if both weren't, then neither would be the whole range). So you check to know whether the first
-        half is too crowded, and if it isn't, you know that the second half is.
-        Note that alhough the values are not ordered, the indices are still ordered. That's why binary search can
+        We know that the whole range is 'too crowded' and thus that the first half or the second half of the range is
+        too crowded (if both weren't, then neither would be the whole range). So we check to know whether the first
+        half is too crowded, and if it isn't, we know that the second half is.
+        Note that although the values are not ordered, the INDICES are still ordered. That's why binary search can
         still be used.
         Example: nums = [2, 6, 4, 1, 3, 1, 5]
         left = 1, right = 6 --> mid = 3, count = 4: There are 4 strictly positive integers less than or equal to 3
