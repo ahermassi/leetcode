@@ -14,9 +14,9 @@ import unittest2 as unittest
 
 def group_anagrams_v1(strs):
     """ Two strings are anagrams if and only if their sorted strings are equal.
-        Maintain a map d where each key K is a sorted string, and each value is the list of strings from the initial
-        input that when sorted, are equal to K.
-    Time Complexity: O(N * KlogK), where N is the length of strs, and K is the maximum length of a string in strs.
+        Maintain a hash map where each key K is a sorted string, and each value is the list of strings from the initial
+        input that when sorted are equal to K.
+    Time Complexity: O(N * KlogK), where N is the length of strs and K is the maximum length of a string in strs
     The outer loop has complexity O(N) as we iterate through each string. Then, we sort each string in O(KlogK) time.
     Space Complexity: O(N)
     """
@@ -32,7 +32,7 @@ def group_anagrams_v2(strs):
         character) are the same. We can transform each string s into a character count, char_count, consisting of 26
         non-negative integers representing the number of a's, b's, c's, etc. We use these counts as the basis for our
         hash map.
-    Time complexity: O(N * K)  where N is the length of strs, and K is the maximum length of a string in strs.
+    Time complexity: O(N * K)  where N is the length of strs and K is the maximum length of a string in strs
     Space complexity: O(N * K)
     """
     anagrams = defaultdict(list)
