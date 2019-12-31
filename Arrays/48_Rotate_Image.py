@@ -24,7 +24,7 @@ def rotate(matrix):
             4 5 6  => 2 5 8  => 2 5 8
             7 8 9     3 6 9     1 4 7
 
-    Time complexity : O(N ** 2)
+    Time complexity : O(N^2)
     Space complexity : O(1) since we do a rotation in place
     """
     n = len(matrix)
