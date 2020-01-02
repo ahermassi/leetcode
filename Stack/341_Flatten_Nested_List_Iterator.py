@@ -28,6 +28,13 @@ Each element is either an integer, or a list -- whose elements may also be integ
 #        """
 
 class NestedIterator(object):
+    """ In the constructor, we push all the nestedList into the stack from back to front, so when we pop the stack, it
+        returns the very first element. Second, in the hasNext() function, we peek the first element currently in the
+        stack, and if it is an Integer, we will return true and pop the element. If it is a list, we will further
+        flatten it.
+        While this solution can pass Leetcode test cases, it is 'wrong' in real world situations because hasNext()
+        changes the state.
+    """
 
     def __init__(self, nestedList):
         """
@@ -51,7 +58,8 @@ class NestedIterator(object):
             top = self.stack[-1]
             if top.isInteger():
                 return True
-            self.stack = self.stack[:-1] + top.getList()[::-1]  # Flatten
+            for val in self.stack.pop().getList()[::-1]:  # Flatten
+                self.stack.append(val)
         return False
 
 # Your NestedIterator object will be instantiated and called as such:
