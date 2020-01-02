@@ -63,3 +63,35 @@ class SolutionV1:
             aux[random_index] = aux[-1]
             aux.pop()
         return self.nums
+
+
+class SolutionV2:
+    """ Fisher-Yates algorithm, modern method.
+        On each iteration of the algorithm, we generate a random integer between the current index and the last index
+        of the array. Then, we swap the elements at the current index and the chosen index - this simulates drawing
+        (and removing) the element from the hat, as the next range from which we select a random index will not include
+        the most recently processed one.
+    """
+
+    def __init__(self, nums):
+        self.nums = nums
+        self.original = self.nums[:]
+
+    def reset(self):
+        """ Resets the array to its original configuration and return it.
+        Time complexity: O(N)
+        Space complexity: O(N), we must use linear additional space to store the original array
+        """
+        self.nums = self.original[:]
+        return self.nums
+
+    def shuffle(self):
+        """ Returns a random shuffling of the array.
+        Time complexity: O(N)
+        Space complexity: O(1)
+        """
+        n = len(self.nums)
+        for i in range(n):
+            random_index = randint(i, n - 1)
+            self.nums[i], self.nums[random_index] = self.nums[random_index], self.nums[i]
+        return self.nums
