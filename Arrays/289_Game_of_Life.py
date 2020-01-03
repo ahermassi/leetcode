@@ -32,11 +32,11 @@ def game_of_life_v2(board):
     """ O(N * M) space complexity could be too expensive when the board is very large. We only have two states live(1)
         or dead(0) for a cell. We can use some dummy cell value to signify previous state of the cell along with the
         new changed value.
-        For e.g. If the value of the cell was 1 originally but it has now become 0 after applying the rule, then we can
-        change the value to 2. Also, if the value of the cell was 0 originally but it has now become 1 after applying
-        the rule, then we can change the value to 3. Hence:
-        0, 3 are "dead", and "dead->live"
-        1, 2 are "live", and "live->dead"
+        For example if the value of the cell was 1 originally but it has now become 0 after applying the rule, then we
+        can change the value to 2. Also, if the value of the cell was 0 originally but it has now become 1 after
+        applying the rule, then we can change the value to 3. Hence:
+        0, 3 are 'dead' and 'dead->live'
+        1, 2 are 'live' and 'live->dead'
         We iterate the board again and change the value of a cell to a 0 if its value currently is 2 and change the
         value to a 1 if its current value is 3.
     Time complexity: O(N * M)
@@ -45,13 +45,13 @@ def game_of_life_v2(board):
     n, m = len(board), len(board[0])
     for i in range(n):
         for j in range(m):
-            live = 0
+            live_neighbors = 0
             for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1):
                 if 0 <= x < n and 0 <= y < m and board[x][y] in {1, 2}:  # 1 means now alive, 2 means was alive
-                    live += 1
-            if board[i][j] and (live < 2 or live > 3):
+                    live_neighbors += 1
+            if board[i][j] and (live_neighbors < 2 or live_neighbors > 3):
                 board[i][j] = 2
-            elif board[i][j] == 0 and live == 3:
+            elif board[i][j] == 0 and live_neighbors == 3:
                 board[i][j] = 3
     for i in range(n):
         for j in range(m):
