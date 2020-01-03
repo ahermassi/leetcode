@@ -53,9 +53,11 @@ def unique_paths_v2(m, n):
             dp[i][j] = dp[i][j - 1] + dp[i - 1][j]
     return dp[n-1][m-1]  # This is the bottom-right corner where we want to stop
 
+# For more details about the 1D optimization: https://leetcode.com/problems/unique-paths/discuss/22954/C%2B%2B-DP
+
 
 def unique_paths_v3(m, n):
-    """ Bottom up + memoization but using 1D list instead of 2D.
+    """ Bottom-up dynamic programming using 1D array.
     Time complexity: O(n * m)
     Space complexity: O(m)
     """
