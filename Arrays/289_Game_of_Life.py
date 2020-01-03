@@ -6,25 +6,25 @@ from collections import defaultdict
 
 
 def game_of_life_v1(board):
-    """ The first approach could be as easy as having a copy of the board using a hash map. The copy is never mutated.
+    """ The first approach could be as easy as having a copy of the board. The copy is never mutated.
         So, we never lose the original value for a cell. Whenever a rule is applied to any of the cells, we look at its
         neighbors in the hash map and change the original board accordingly. Here we keep the copy unmodified since the
         problem asks us to make the changes to the original array in-place.
     Time complexity: O(N * M) where N is the number of rows and M is the number of columns of the board
     Space complexity: O(N * M), this is the space occupied by the copy board we created initially
     """
-    live_neighbors, n, m = defaultdict(int), len(board), len(board[0])
-
+    n, m = len(board), len(board[0])
+    copy = [[board[row][col] for col in range(m)] for row in range(n)]
     for i in range(n):
         for j in range(m):
-            for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1):
-                if 0 <= x < n and 0 <= y < m and board[x][y] == 1:
-                    live_neighbors[(i, j)] += 1
-    for i in range(n):
-        for j in range(m):
-            if board[i][j] == 1 and (live_neighbors[(i, j)] < 2 or live_neighbors[(i, j)] > 3):
+            live_neighbors = 0
+            for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j - 1), (i - 1, j + 1), (i + 1, j - 1), \
+                        (i + 1, j + 1):
+                if 0 <= x < n and 0 <= y < m and copy[x][y]:
+                    live_neighbors += 1
+            if copy[i][j] and (live_neighbors < 2 or live_neighbors > 3):
                 board[i][j] = 0
-            if board[i][j] == 0 and live_neighbors[(i, j)] == 3:
+            elif live_neighbors == 3:
                 board[i][j] = 1
 
 
