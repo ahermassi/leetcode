@@ -14,8 +14,8 @@ Return the following binary tree:
   9  20
     /  \
    15   7 """
-from collections import deque
 
+from collections import deque
 import unittest2 as unittest
 
 
@@ -69,7 +69,7 @@ def build_tree_v2(preorder, inorder):
 
     preorder = deque(preorder)
     indices = {v: i for i, v in enumerate(inorder)}
-    return get_tree(0, len(inorder) - 1)  # These boundaries are used only to check if the subtree is empty or not.
+    return get_tree(0, len(inorder) - 1)  # These boundaries are only used to check if the subtree is empty
 
 
 def build_tree_v3(preorder, inorder):
