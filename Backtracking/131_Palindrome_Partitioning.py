@@ -43,12 +43,43 @@ def partition_v1(s):
     return res
 
 
+def partition_v2(s):
+    """ Same solution but with a clearer backtracking.
+    Time complexity: O(N * 2^N)
+    Space complexity: O(N)
+    """
+
+    def dfs(index, path):
+        if index == n:
+            res.append(path[:])  # Append a copy of path because the same path reference is used by all recursive calls
+            return
+        for i in range(index, n):
+            if is_palindrome(index, i):
+                path.append(s[index:i + 1])  # Choose
+                dfs(i + 1, path)  # Recurse
+                path.pop()  # Backtrack, un-choose. We are done searching, remove the snippet from our 'path'. Next
+                # loop iteration will try another snippet in this stack frame.
+
+    def is_palindrome(left, right):
+        while left < right:
+            if s[left] != s[right]:
+                return False
+            left += 1
+            right -= 1
+        return True
+
+    n, res = len(s), []
+    dfs(0, [])
+    return res
+
+
 class Test(unittest.TestCase):
     data = [('aab', [['a', 'a', 'b'], ['aa', 'b']])]
 
     def test_partition(self):
         for test_s, result in self.data:
             self.assertEqual(result, partition_v1(test_s))
+            self.assertEqual(result, partition_v2(test_s))
 
 
 if __name__ == '__main__':
