@@ -7,7 +7,7 @@ import unittest2 as unittest
 
 
 def num_islands_v1(grid):
-    """ Iterate through each of the cell and if it is an island, do dfs to mark all adjacent islands, then increase
+    """ Iterate through each of the cells, and if it is an island do dfs to mark all adjacent islands, then increase
         the counter by 1.
         This solution uses a 'visited' set in order to avoid an infinite recursion.
         This is DFS because the recursive call happens before finishing the current execution.
@@ -59,9 +59,12 @@ def num_islands_v2(grid):
 
 
 def num_islands_v3(grid):
-    """ BFS version. Pretty straightforward.
+    """ BFS version.
+        Linearly scan the 2d grid. If a node contains a '1', then it is a root node that triggers a Breadth First
+        Search. Put it into a queue and and mark it as visited node. Iteratively search the neighbors of enqueued nodes
+        until the queue becomes empty.
     Time complexity: O(N * M)
-    Space complexity: O(min(N, M))
+    Space complexity: not clear
     """
     if not grid:
         return 0
