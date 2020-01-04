@@ -13,10 +13,10 @@ def sort_colors_v1(nums):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    d = defaultdict(int)
+    counter = defaultdict(int)
     for num in nums:
-        d[num] += 1
-    nums[:] = [0] * d[0] + [1] * d[1] + [2] * d[2]
+        counter[num] += 1
+    nums[:] = [0] * counter[0] + [1] * counter[1] + [2] * counter[2]
 
 
 def sort_colors_v2(nums):
