@@ -1,12 +1,17 @@
 """ Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), find
 the minimum number of conference rooms required. """
 
-from heapq import heappush, heapreplace
+from heapq import heappush, heappop
 import unittest2 as unittest
 
 
+# More details: https://leetcode.com/articles/meeting-rooms-ii/
+
 def min_meeting_rooms_v1(intervals):
-    """ We can't really process the given meetings in any random order. The most basic way of processing the meetings
+    """ In the worst case we can assign a new room to all of the meetings but that is not really optimal right? Unless
+        of course they all collide with each other. We need to be able to find out efficiently if a room is available
+        or not for the current meeting and assign a new room only if none of the assigned rooms is currently free.
+        We can't really process the given meetings in any random order. The most basic way of processing the meetings
         is in increasing order of their start times and this is the order we will follow. After all if you're an IT guy,
         you should allocate a room to the meeting that is scheduled for 9 a.m. in the morning before you worry about the
         5 p.m. meeting, right?
@@ -16,11 +21,17 @@ def min_meeting_rooms_v1(intervals):
         that would be the room that would get free the earliest out of all the other rooms currently occupied. If the
         room we extracted from the top of the min heap isn't free, then no other room is. So, we can save time here and
         simply allocate a new room.
+        After processing all the meetings, the size of the heap will tell us the number of rooms allocated. This will
+        be the minimum number of rooms needed to accommodate all the meetings.
+        The reason for correctness is the invariant: heap size is always the minimum number of rooms we need so far.
+        If the new event collides with everyone, then a new room must be created; if the new event does not collide
+        with someone, then it must not collide with the earliest finish one, so greedily choose that one and re-use
+        that room. So the invariant is maintained.
     Time complexity: O(N logN), There are two major portions that take up time here. One is sorting of the array that
     takes O(N logN). Then we have the min-heap. In the worst case, all N meetings will collide with each other. In any
     case we have N add operations on the heap. In the worst case we will have N extract-min operations as well. Overall
     complexity being O(N logN) since extract-min operation on a heap takes O(logN)
-    Space complexity: O(N) because we construct the min-heap and that can contain NN elements in the worst case as
+    Space complexity: O(N) because we construct the min-heap and that can contain N elements in the worst case as
     described above in the time complexity
     """
     if not intervals:
@@ -31,7 +42,8 @@ def min_meeting_rooms_v1(intervals):
     for i in range(1, len(intervals)):
         interval = intervals[i]
         if interval[0] >= heap[0]:  # If the room due to free up the earliest is free, assign that room to this meeting
-            heapreplace(heap, interval[1])
+            heappop(heap)
+            heappush(heap, interval[1])
         else:
             heappush(heap, interval[1])  # If a new room is to be assigned, then also we add to the heap
     return len(heap)
