@@ -10,11 +10,11 @@ def letter_combinations_v1(digits):
     """ If there is no more digits to check, that means that the current combination 'path' is done.
         If there are still digits to check :
             Iterate over the letters mapping the next available digit (at index 'index' of digits)
-            Append the current letter to the current combination path = path + letter.
+            Append the current letter to the current combination: path = path + letter.
             Proceed to check next digits : dfs(index + 1, path + letter).
-    Time complexity: O(3^N + 4^M), where N is the number of digits in the input that maps to 3 letters (e.g. 2, 3, 4,
-    5, 6, 8) and M is the number of digits in the input that maps to 4 letters (e.g. 7, 9), and N+M is the total number
-    of digits in the input. So overall O(4^N) worst case where N is the length of digits.
+    Time complexity: O(3^N + 4^M), where N is the number of digits in the input that map to 3 letters (e.g. 2, 3, 4,
+    5, 6, 8) and M is the number of digits in the input that map to 4 letters (e.g. 7, 9), and N+M is the total number
+    of digits in the input. So overall, O(4^N) worst case where N is the length of digits.
     Space complexity: O(3^N + 4^M) since we have to keep O(3^N + 4^M) solutions, or O(4^N).
     """
 
@@ -35,6 +35,17 @@ def letter_combinations_v1(digits):
 
 def letter_combinations_v2(digits):
     """ Iterative approach, similar to BFS where 'result' list is the queue.
+        Example: digits = 23
+            1st iteration: result = [''], new_result = [a, b, c]
+            2nd iteration: result = [a, b, c], new_result = [ad, bd, cd, ae, be, ce, af, bf, cf]
+            Return: result = [ad, bd, cd, ae, be, ce, af, bf, cf]
+        Example: digits = 234
+            1st iteration: result = [''], new_result = [a, b, c]
+            2nd iteration: result = [a, b, c], new_result = [ad, bd, cd, ae, be, ce, af, bf, cf]
+            3rd iteration: result = [ad, bd, cd, ae, be, ce, af, bf, cf],
+            new_result = [adg, bdg, cdg, aeg, beg, ceg, afg, bfg, cfg, adh, bdh, cdh, aeh, beh, ceh, afh, bfh, cfh, adi,
+                          bdi, cdi, aei, bei, cei, afi, bfi, cfi]
+            Return: result
     Time complexity: O(3^N + 4^M)
     Space complexity: O(3^N + 4^M)
     """
