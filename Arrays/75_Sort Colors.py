@@ -20,7 +20,8 @@ def sort_colors_v1(nums):
 
 
 def sort_colors_v2(nums):
-    """ Let's use here three pointers to track the rightmost boundary of zeros, the leftmost boundary of twos, and the
+    """ The problem is known as Dutch National Flag Problem and first was proposed by Dijkstra.
+        Let's use here three pointers to track the rightmost boundary of zeros, the leftmost boundary of twos, and the
         current element under the consideration.
         The idea of solution is to move curr pointer along the array.
         If nums[curr] = 0, swap it with nums[left] and move both left and curr pointer forward.
