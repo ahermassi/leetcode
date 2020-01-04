@@ -50,7 +50,14 @@ def min_meeting_rooms_v1(intervals):
 
 
 def min_meeting_rooms_v2(intervals):
-    """ Separate out the start times and the end times in their separate arrays.
+    """ A meeting is defined by its start and end times. However, for this specific solution, we need to treat the
+        start and end times individually. This might not make sense right away because a meeting is defined by its
+        start and end times. If we separate the two and treat them individually, then the identity of a meeting goes
+        away. This is fine because:
+            When we encounter an ending event, that means that some meeting that started earlier has ended now. We are
+            not really concerned with which meeting has ended. All we need is that SOME meeting ended thus making a
+            room available.
+        Separate out the start times and the end times in their separate arrays.
         Sort the start times and the end times separately. Note that this will mess up the original correspondence of
         start times and end times. They will be treated individually now.
         We consider two pointers: s_ptr and e_ptr which refer to start pointer and end pointer. The start pointer
@@ -61,25 +68,22 @@ def min_meeting_rooms_v2(intervals):
         meeting at s_ptr had to start. So we can reuse one of the rooms. Otherwise, we have to allocate a new room.
         If a meeting has indeed ended i.e. if start[s_ptr] >= end[e_ptr], then we increment e_ptr.
         Repeat this process until s_ptr processes all of the meetings.
-    Time complexity: O(N log N) for Timsort
-    Space complexity: O(N) because we create two separate arrays of size NN, one for recording the start times and one
+    Time complexity: O(N logN) for Timsort
+    Space complexity: O(N) because we create two separate arrays of size N, one for recording the start times and one
     for the end times
     """
     if not intervals:
         return 0
-    used_rooms = 0
+    n, used_rooms = len(intervals), 0
     start_timings = sorted([i[0] for i in intervals])
     end_timings = sorted(i[1] for i in intervals)
     start_pointer = end_pointer = 0  # The two pointers in the algorithm: e_ptr and s_ptr
-    while start_pointer < len(intervals):  # Until all the meetings have been processed
-        if start_timings[start_pointer] >= end_timings[end_pointer]:  # If there is a meeting that has ended by the
-            # time the meeting at `start_pointer` starts
-            used_rooms -= 1  # Free up a room and increment the end_pointer
-            end_pointer += 1
-        # We do this irrespective of whether a room frees up or not.
-        # If a room got free, then this used_rooms += 1 wouldn't have any effect. used_rooms would
-        # remain the same in that case. If no room was free, then this would increase used_rooms
-        used_rooms += 1
+    while start_pointer < n:  # Until all the meetings have been processed
+        if start_timings[start_pointer] < end_timings[end_pointer]:  # If the earliest ending meeting hasn't ended by
+            # the time the meeting at 'start_pointer' starts
+            used_rooms += 1  # Allocate a new room for the current meeting
+        else:  # If there is a meeting that has ended by the time the meeting at 'start_pointer' starts
+            end_pointer += 1  # Use that same room and increment 'end_pointer'
         start_pointer += 1
     return used_rooms
 
