@@ -44,18 +44,18 @@ def can_finish_dfs(numCourses, prerequisites):
 
 
 def can_finish_bfs(numCourses, prerequisites):
-    """ Same as above but in BFS fashion. This is called Kahn's algorithm
+    """ Same as above but in BFS fashion. This is called Topological Sort.
         A better way to understand this algorithm is to draw the graph and remove edges each time the in-degree of a
         node is reduced, and remember to always start exploring from the nodes that have NO incoming edges (in-degree=0)
     Time complexity: O(|V| + |E|)
     Space complexity: O(|V| + |E|)
     """
-    graph = [[] for _ in range(numCourses)]
-    indegree = [0, ] * numCourses
-    for i, j in prerequisites:  # Create graph, better be seen as is_prerequisite_of graph: graph[j] = i means j is a
-        # prerequisite of i
-        graph[j].append(i)
-        indegree[i] += 1  # Recording the number of prerequisites each course i has
+    graph = defaultdict(list)
+    indegree = [0] * numCourses
+    for src, dest in prerequisites:  # Create graph, better be seen as is_prerequisite_of graph: graph[src] = dest
+        # means dest is a prerequisite of src
+        graph[dest].append(src)
+        indegree[src] += 1  # Recording the number of prerequisites each course i has
     queue = deque(v for v in range(numCourses) if indegree[v] == 0)  # Iterate the indegree map and find the node that
     # has 0 indegree, which maps to 0 prerequisites. If none is found, then there must be a cycle.
     n = len(queue)  # n is initialized to len(queue) because the queue contains the courses that have 0 prerequisites
