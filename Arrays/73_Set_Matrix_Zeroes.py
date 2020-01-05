@@ -77,6 +77,8 @@ def set_zeroes_v3(matrix):
         And finally, we check if the first column was marked, we make all entries in it as zeros.
         Note that we could've used an additional flag variable for the first row to see if it needs to be set to zero,
         but we're using matrix[0][0] as flag instead.
+        A more readable solution that uses a second flag can be found in the first comment to this thread:
+        https://leetcode.com/problems/set-matrix-zeroes/discuss/26014/Any-shorter-O(1)-space-solution
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
