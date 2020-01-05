@@ -20,7 +20,7 @@ def lowest_common_ancestor_v1(root, p, q):
         common node we get during this traversal would be the LCA node. We can save the parent pointers in a dictionary
         as we traverse the tree.
         Once we have found both p and q, we get all the ancestors for p using the parent dictionary and add to a set
-        called 'ancestor'. Similarly, we traverse through ancestors for node q. If the ancestor is present in the
+        called 'p_ancestor'. Similarly, we traverse through ancestors for node q. If the ancestor is present in the
         ancestors set for p, this means this is the first ancestor common between p and q (while traversing UPWARDS)
         and hence this is the LCA node.
     Time complexity: O(N), in the worst case we might be visiting all the nodes of the binary tree
