@@ -56,6 +56,53 @@ def set_zeroes_v2(matrix):
                 matrix[i][j] = 0
 
 
+def set_zeroes_v3(matrix):
+    """ The inefficiency in the previous approach is that we might be repeatedly setting a row or column even if it was
+        set to zero already. We can avoid this by postponing the step of setting a row or a column to zeroes.
+        We can rather use the first cell of every row and column as a flag. This flag would determine whether a row or
+        column has been set to zero. This means for every cell instead of going to (N + M) cells and setting it to
+        zero, we just set the flag in two cells. These flags are used later to update the matrix. If the first cell of
+        a row is set to zero this means the row should be marked zero. If the first cell of a column is set to zero
+        this means the column should be marked zero.
+        We iterate over the matrix and we mark the first cell of a row i and first cell of a column j, if the condition
+        in the pseudo code above is satisfied. i.e. if matrix[i][j] == 0.
+        The first cell of the first row and first column is the same i.e. matrix[0][0]. Hence, we use an additional
+        variable 'first_col_zero' to tell us if the first column had been marked or not and the cell[0][0] would be
+        used to tell the same for the first row.
+        After we're done marking, we iterate over the original matrix starting from second row and second column i.e.
+        matrix[1][1] onwards. For every cell, we check if the row r or column c had been marked earlier by checking the
+        respective first row cell or first column cell. If any of them was marked, we set the value in the cell to 0.
+        Note the first row and first column serve as the 'rows' and 'cols' sets that we used in the first approach.
+        We then check if matrix[0][0] == 0, if this is the case, we mark the first row as zero.
+        And finally, we check if the first column was marked, we make all entries in it as zeros.
+        Note that we could've used an additional flag variable for the first row to see if it needs to be set to zero,
+        but we're using matrix[0][0] as flag instead.
+    Time complexity: O(N * M)
+    Space complexity: O(1)
+    """
+    n, m = len(matrix), len(matrix[0])
+    first_col_zero = False
+    for i in range(n):
+        if matrix[i][0] == 0:  # This row's first cell is zero, so the first column needs to be set to zero as well
+            first_col_zero = True  # Since first cell for both first row and first column is the same i.e. matrix[0][0]
+            # we use an additional variable for the first column and use matrix[0][0] for the first row.
+        for j in range(1, m):
+            if matrix[i][j] == 0:
+                matrix[i][0] = matrix[0][j] = 0  # If an element is zero, we set the first element of the corresponding
+                # row and column to 0
+    for i in range(1, n):  # Iterate over the array once again and using the first row and first column update the
+        # elements
+        for j in range(1, m):
+            if matrix[i][0] == 0 or matrix[0][j] == 0:
+                matrix[i][j] = 0
+    if matrix[0][0] == 0:  # See if the first row needs to be set to zero as well
+        for j in range(m):
+            matrix[0][j] = 0
+    if first_col_zero:  # See if the first column needs to be set to zero as well
+        for i in range(n):
+            matrix[i][0] = 0
+
+
 class Test(unittest.TestCase):
     data = [([[1, 1, 1], [1, 0, 1], [1, 1, 1]], [[1, 0, 1], [0, 0, 0], [1, 0, 1]]),
             ([[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]], [[0, 0, 0, 0], [0, 4, 5, 0], [0, 3, 1, 0]])]
