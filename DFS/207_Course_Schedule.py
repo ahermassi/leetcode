@@ -9,32 +9,33 @@ import unittest2 as unittest
 
 def can_finish_dfs(numCourses, prerequisites):
     """ This is a direct application of topological sort. Note that this type of sort can only be applied on Directed
-        Graphs. A Directed Acyclic Graph fails to yield a topological sort because of the presence of a cycle. This
-        property is the intuition of this questions's algorithm.
+        Acyclic Graphs (DAG). A Directed cyclic graph fails to yield a topological sort because of the presence of a
+        cycle. This property is the intuition of this questions's algorithm.
         If node v has not been visited, then mark it as 0.
-        If node v is being visited, then mark it as -1. If we find a vertex marked as -1 in DFS, then their is a ring.
-        If node v has been visited, then mark it as 1. If a vertex was marked as 1, then no ring contains v or its
+        If node v is being visited, then mark it as -1. If we find a vertex marked as -1 during DFS, then this vertex
+        is part of a cycle.
+        If node v has been visited, then mark it as 1. If a vertex was marked as 1, then no cycle contains v or its
         successors.
         -1 means this node is part of the current trip. If you see it again, it's a cycle. 1 means a DFS has been done
-        starting from this node, and no cycle was found. if you hit this, going down this path won't find any cycles.
+        starting from this node, and no cycle was found. if we hit this, going down this path won't find any cycles.
     Time complexity: O(|V| + |E|), where V is the number of vertices and E is the number of edges
     Space complexity: O(|V| + |E|)
     """
     def dfs(i):
         if visited[i] == -1:  # If ith node is marked as being visited, then a cycle is found
             return False
-        if visited[i] == 1:   # If it is done visited, then do not visit again
+        if visited[i] == 1:   # If it is done visiting, then do not visit again
             return True
         visited[i] = -1  # Mark as being visited during current recursion
         for neighbor in graph[i]:  # Visit all the neighbours
             if not dfs(neighbor):
                 return False
-        visited[i] = 1  # After visiting all the neighbours, mark it as done visited
+        visited[i] = 1  # After visiting all the neighbours, mark it as done visiting
         return True
 
     graph = defaultdict(list)
-    for i, j in prerequisites:  # Create graph
-        graph[i].append(j)
+    for src, dest in prerequisites:  # Create graph
+        graph[src].append(dest)
     visited = [0] * numCourses
     for i in range(numCourses):  # Visit each node
         if not dfs(i):
