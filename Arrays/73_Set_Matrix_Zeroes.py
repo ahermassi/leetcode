@@ -26,6 +26,36 @@ def set_zeroes_v1(matrix):
                 matrix[i][j] = 0
 
 
+def set_zeroes_v2(matrix):
+    """ The additional use of space can be avoided by manipulating the original array instead.
+        We iterate over the original array, and if we find an entry, say cell[i][j], to be 0, then we iterate over
+        row i and column j separately and set all the NON ZERO elements to some dummy value (say 'a'). Note, choosing
+        the right dummy value for our solution is dependent on the constraints of the problem. Any value outside the
+        range of permissible values in the matrix will work as a dummy value.
+        Finally, we iterate over the original matrix, and if we find an entry to be equal to the dummy value then we
+        set the value in the cell to 0.
+        Note that the dummy value is only assigned to non zero elements because zero elements could entail further
+        updates to the matrix later on, and by assigning a dummy value of them we're keeping these updates from
+        occurring.
+    Time complexity: O((N * M) * (N + M)), where N and M are the number of rows and columns respectively. Even though
+    this solution avoids using space, it is very inefficient since in worst case for every cell we might have to zero
+    out its corresponding row and column. Thus for all (N * M) cells zeroing out (N + M) cells.
+    Space complexity: O(1)
+    """
+    n, m = len(matrix), len(matrix[0])
+    for i in range(n):
+        for j in range(m):
+            if matrix[i][j] == 0:
+                for k in range(n):
+                    matrix[k][j] = 'a' if matrix[k][j] != 0 else 0
+                for k in range(m):
+                    matrix[i][k] = 'a' if matrix[i][k] != 0 else 0
+    for i in range(n):
+        for j in range(m):
+            if matrix[i][j] == 'a':
+                matrix[i][j] = 0
+
+
 class Test(unittest.TestCase):
     data = [([[1, 1, 1], [1, 0, 1], [1, 1, 1]], [[1, 0, 1], [0, 0, 0], [1, 0, 1]]),
             ([[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]], [[0, 0, 0, 0], [0, 4, 5, 0], [0, 3, 1, 0]])]
