@@ -18,13 +18,20 @@ def connect_v1(root):
     """ Since we are manipulating tree nodes on the same level, it's easy to come up with a very standard BFS solution
         using queue. But because of next pointer, we actually don't need a queue to store the order of tree nodes at
         each level, we just use a next pointer like it's a linked list at each level.
-        Simply do it level by level, using the next pointers of the current level to go through the current level and
-        set the next pointers of the next level.
-    Time complexity: O(N)
+        The basic idea for this approach is based on the fact that:
+        We only move on to the level N+1 when we are done establishing the next pointers for the level N. Since we have
+        access to all the nodes on a particular level via the next pointers, we can use these next pointers to
+        establish the connections for the next level or the level containing their children.
+        We establish the next pointers for a level N while we are still on level N−1, and once we are done
+        establishing these new connections, we move on to N and do the same thing for N+1.
+        When we go over the nodes of a particular level, their next pointers are already established. This is what
+        helps get rid of the queue data structure and helps save space. To start on a particular level, we just need
+        the leftmost node. From there on out, its just a linked list traversal.
+    Time complexity: O(N), since we process each node exactly once
     Space complexity: O(1)
     """
     cur = root  # Assign root to cur and operate on cur to avoid losing the pointer to original root
-    while cur and cur.left:  # We don't operate on last level as its nodes have been already connected in previous level
+    while cur.left:  # We don't operate on last level as its nodes have been already connected in previous level
         left = cur.left  # We keep this pointer to the leftmost node of next level
         while cur:
             cur.left.next = cur.right
