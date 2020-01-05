@@ -14,7 +14,7 @@ class Trie(object):
     Time complexity:
         insert(word): O(k) where k is the length of word
         search(word): O(k)
-        startsWith(prefix):
+        startsWith(prefix): O(k)
     Space complexity:
         insert(word): O(k), in the worst case newly inserted key doesn't share a prefix with the the keys already
         inserted in the trie. We have to add k new nodes
@@ -38,8 +38,8 @@ class Trie(object):
         for c in word:
             if c not in root.children:
                 root.children[c] = TrieNode()
-            root = root.children[c]  # By doing this we traverse down the tree.. so the root is reassigned to its
-            # child.. and so on.. so we are progressively following the child till we reach the end of word
+            root = root.children[c]  # By doing this we traverse down the tree, so the root is reassigned to its
+            # child, and so on, so we are progressively following the child till we reach the end of word
         root.end_of_word = True
 
     def search(self, word):
