@@ -35,21 +35,30 @@ def connect_v1(root):
 
 
 def connect_v2(root):
-    """ Standard BFS using Python deque.
-    Time complexity: O(N)
-    Space complexity: O(N)
+    """ We need to link all the nodes together which lie on the same level and the level order or the breadth first
+        traversal gives us access to all such nodes. At each step, we record the size of the queue and that always
+        corresponds to all the nodes on a particular level. Once we have this size, we only process these many elements
+        and no more. By the time we are done processing size number of elements, the queue would contain all the nodes
+        on the next level.
+        When we pop a node, we add its children at the back of the queue. Also, the element at the head of the queue is
+        the next element in order, on the current level. So, we can easily establish the new pointers.
+    Time complexity: O(N), since we process each node exactly once
+    Space complexity: O(N), this is a perfect binary tree which means the last level contains N/2 nodes. The space
+    complexity for breadth first traversal is the space occupied by the queue which is dependent upon the maximum
+    number of nodes in particular level.
     """
     if not root:
         return None
     queue = deque([root])
     while queue:
-        next_queue = deque()  # If we don't create a new queue, the last node at each level will get its next pointing
-        # the leftmost node of the next level. This is because we use the same queue to append next level's nodes
-        while queue:
+        n = len(queue)
+        for i in range(n):
             node = queue.popleft()
-            node.next = queue[0] if queue else None
-            next_queue.extend([kid for kid in (node.left, node.right) if kid])
-        queue = next_queue
+            if i < n - 1:  # This check is important. We don't want to establish any wrong connections. The queue will
+                # contain nodes from 2 levels at most at any point in time. This check ensures we only don't establish
+                # next pointers beyond the end of a level
+                node.next = queue[0]
+            queue.extend([child for child in (node.left, node.right) if child])
     return root
 
 
