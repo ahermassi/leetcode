@@ -44,7 +44,8 @@ def find_order_v1(numCourses, prerequisites):
 
 
 def find_order_v2(numCourses, prerequisites):
-    """ BFS using node in-degree. Very similar to 207- Course Schedule. This is called Topological Sort.
+    """ BFS using node in-degree. Very similar to 207- Course Schedule. This is called Kahn's algorithm for topological
+        sorting.
         The first node in the topological ordering will be the node that doesn't have any incoming edges. Essentially,
         any node that has an in-degree of 0 can start the topologically sorted order. If there are multiple such nodes,
         their relative order doesn't matter and they can appear in any order.

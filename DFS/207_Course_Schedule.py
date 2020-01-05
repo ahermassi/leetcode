@@ -44,7 +44,7 @@ def can_finish_dfs(numCourses, prerequisites):
 
 
 def can_finish_bfs(numCourses, prerequisites):
-    """ Same as above but in BFS fashion. This is called Topological Sort.
+    """ Same as above but in BFS fashion. This is called Kahn's algorithm for topological sorting.
         A better way to understand this algorithm is to draw the graph and remove edges each time the in-degree of a
         node is reduced, and remember to always start exploring from the nodes that have NO incoming edges (in-degree=0)
     Time complexity: O(|V| + |E|)
