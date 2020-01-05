@@ -58,10 +58,10 @@ def connect_v3(root):
     Time complexity: O(N)
     Space complexity: O(logN) as recursion tree can go as deep as height of the tree
     """
-    if root and root.left and root.right:
-        root.left.next = root.right
-        if root.next:
-            root.right.next = root.next.left
-        root.left = connect_v3(root.left)
-        root.right = connect_v3(root.right)
+    if not root or not root.left:
+        return root
+    root.left.next = root.right
+    root.right.next = root.next.left if root.next else None
+    root.left = connect_v3(root.left)
+    root.right = connect_v3(root.right)
     return root
