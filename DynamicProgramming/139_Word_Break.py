@@ -93,6 +93,27 @@ def word_break_v3(s, word_dict):
     return dp[n]
 
 
+def word_break_v4(s, word_dict):
+    """ Dynamic programming.
+        In this solution, instead of trying to find a substring that belongs to the set of dictionary words, we instead
+        verify if a word of the dictionary is a substring of s starting at index (i - len(word)).
+        If dp[i - len(word)] == True，it would make sure that s[:i - len(word)] can be divided using dictionary.
+        Then combined with s[i - len(word) : i] == word , we can conclude that dp[:i] can also be divided.
+    Time complexity: O(M * N^2), where N is the length of s and M is the number of words in the dictionary
+    Space complexity: O(N), for dp array
+    """
+    n = len(s)
+    dp = [False] * (n + 1)
+    dp[0] = True
+    for i in range(1, n + 1):
+        for word in word_dict:
+            if dp[i - len(word)] and s[i - len(word):i] == word:  # dp[i-len(word)] guarantees that dp is True right
+                # before the word we're looking for, and s[i-len(word):i] == word just means that we've found the word
+                # in s.
+                dp[i] = True
+    return dp[n]
+
+
 class Test(unittest.TestCase):
     data = [('leetcode', ['leet', 'code'], True), ('applepenapple', ['apple', 'pen'], True),
             ('catsandog', ['cats', 'dog', 'sand', 'and', 'cat'], False)]
