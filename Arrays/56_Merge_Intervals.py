@@ -4,11 +4,32 @@ import unittest2 as unittest
 
 
 def merge(intervals):
-    """ First, we sort the list. Then, we insert the first interval into our 'res' list and continue considering each
+    """ Two intervals i1 and i2 overlap if the following requirements are satisfied:
+            Requirement 1: i2.start <= i1.end
+            Requirement 2: i1.start <= i2.end
+        i1: #......................#
+             s1                   e1
+        i2:       #.....................#
+                   s2                  e2
+        s2 <= e1 and s1 <= e2
+        If any of the 2 conditions is not verified, the intervals wouldn't overlap.
+        If s2 > e1:
+        i1: #......................#
+             s1                   e1
+        i2:                            #.....................#
+                                        s2                  e2
+        If s1 > e2:
+        i1:                                 #......................#
+                                             s1                   e1
+        i2:       #.....................#
+                   s2                  e2
+        We pre-process the list by sorting intervals by start. This way, requirement 2 i1.start <= i2.start < i2.end is
+        promised. We only have to compare i1.end with i2.start to see if requirement 1 is satisfied.
+        First, we sort the list. Then, we insert the first interval into our 'res' list and continue considering each
         interval in turn as follows: If the current interval begins after the previous interval ends, then they do NOT
         overlap and we can append the current interval to 'res'. Otherwise, they do overlap, and we merge them by
         updating the end of the previous interval if it is less than the end of the current interval.
-        When the intervals are sorted, and then all mergeable intervals form contiguous blocks.
+        When the intervals are sorted, all mergeable intervals form contiguous blocks.
     Time complexity: O(N logN), the complexity of sorting
     Space complexity: O(N), if we can sort intervals in place, we do not need more than constant additional space.
     Otherwise, we must allocate linear space to store a copy of intervals and sort that.
