@@ -13,6 +13,13 @@ from collections import defaultdict, deque
 
 def find_order_v1(numCourses, prerequisites):
     """ DFS approach. Same logic as 207-Course Schedule.
+        The way DFS would work is that we would consider all possible paths stemming from A before finishing up the
+        recursion for A and moving onto other nodes. All the nodes in the paths stemming from the node A would have A
+        as an ancestor. The way this fits in our problem is, all the courses in the paths stemming from the course A
+        would have A as a prerequisite.
+        Now we know how to get all the courses that have a particular course as a prerequisite. If a valid ordering of
+        courses is possible, the course A would come before all the other set of courses that have it as a prerequisite.
+        This idea for solving the problem can be explored using depth first search.
         visited[i] == -1: the node is encountered again while his children are being examined. This indicates a cycle.
         visited[i] == 1: this node's children have been examined in an earlier call and no cycle was detected. Move on.
     Time complexity: O(|V| + |E|), where V is the number of vertices and E is the number of edges
@@ -34,8 +41,8 @@ def find_order_v1(numCourses, prerequisites):
 
     graph = [[] for _ in range(numCourses)]  # Create the adjacency list representation of the graph
     visited = [0] * numCourses
-    for x, y in prerequisites:
-        graph[x].append(y)
+    for src, dest in prerequisites:
+        graph[src].append(dest)
     res = []
     for i in range(numCourses):
         if not dfs(i):
@@ -58,11 +65,13 @@ def find_order_v2(numCourses, prerequisites):
     with 0 in-degree
     """
     graph, indegree = defaultdict(list), [0] * numCourses
-    for i, j in prerequisites:
-        graph[j].append(i)
-        indegree[i] += 1  # Recording the number of prerequisites each course i has
+    for src, dest in prerequisites:
+        graph[dest].append(src)  # Create graph, better seen as is_prerequisite_of graph: graph[src] = dest means dest
+        # is a prerequisite of src
+        indegree[src] += 1  # Recording the number of prerequisites each course 'src' has
     queue = deque(course for course in range(numCourses) if indegree[course] == 0)  # Iterate the in-degree list and
-    # find the node that has 0 in-degree, which maps to 0 prerequisites. If none is found, then there must be a cycle.
+    # find the nodes that have 0 in-degree, which maps to 0 prerequisites. If none is found, then there must be a cycle
+    # And a topological ordering is not possible.
     res = []
     while queue:
         course = queue.popleft()
