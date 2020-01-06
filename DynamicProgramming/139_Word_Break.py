@@ -9,27 +9,31 @@ import unittest2 as unittest
 
 
 def word_break_v1(s, word_dict):
-    """ Brute force, TLE.
-        The naive approach to solve this problem is to use recursion. For finding the solution, we check every possible
-        prefix of that string in the dictionary of words, if it is found in the dictionary, then the recursive function
+    """ Brute force, top-down recursion. TLE.
+        The naive approach to solve this problem is to use recursion. To find the solution, we check every possible
+        prefix of that string in the dictionary of words. If it is found in the dictionary, then the recursive function
         is called for the remaining portion of that string. And, if in some function call it is found that the complete
         string is in dictionary, then it will return true.
-    Time complexity: O(N ** N), Consider the worst case where ss = "\text{aaaaaaa}aaaaaaa" and every prefix of ss is
-    present in the dictionary of words, then the recursion tree can grow up to N ** N
+    Time complexity: O(2^N), Consider the worst case where s = 'aaaaaaa' and every prefix of s is present in the
+    dictionary of words, then the recursion tree can grow up to 2^N
     Space complexity: O(N), the depth of the recursion tree can go up to N
     """
 
-    def break_word(i):
-        if i == n:
+    def dfs(index):
+        """ dfs(index) returns True if the substring starting at 'index' can be partitioned according to the
+            dictionary's words.
+        """
+        if index == n:
             return True
-        for j in range(i + 1, n + 1):  # We go up to n + 1 to guarantee that the entire string is processed
-            if s[i:j] in word_dict and break_word(j):
+        for j in range(index, n):  # Try all the possible chopping indices
+            if s[index:j+1] in word_dict and dfs(j+1):  # If the substring up to index j can be found in the
+                # dictionary and the rest of the string can be partitioned the same way, then we're done.
                 return True
         return False
 
     n = len(s)
     word_dict = set(word_dict)
-    return break_word(0)
+    return dfs(0)
 
 
 def word_break_v2(s, word_dict):
@@ -87,7 +91,7 @@ class Test(unittest.TestCase):
     data = [('leetcode', ['leet', 'code'], True), ('applepenapple', ['apple', 'pen'], True),
             ('catsandog', ['cats', 'dog', 'sand', 'and', 'cat'], False)]
 
-    def test_subsets(self):
+    def test_word_break(self):
         for test_string, test_dict, result in self.data:
             self.assertEqual(result, word_break_v1(test_string, test_dict))
             self.assertEqual(result, word_break_v2(test_string, test_dict))
