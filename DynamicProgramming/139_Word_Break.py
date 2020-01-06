@@ -64,26 +64,33 @@ def word_break_v2(s, word_dict):
 
 
 def word_break_v3(s, word_dict):
-    """ Dynamic programming approach.
-        d[i] is True if there is a word in the dictionary that ends at ith index of s AND d is also True at the
-        beginning of the word.
+    """ Dynamic programming.
+        dp[i] is True if s[:i] can be segmented into words from the dictionary.
+        In other words: dp[i] = True means the first i characters of s can be partitioned according the words in the
+        dictionary.
         The intuition behind this approach is that the given problem (s) can be divided into sub problems s1 and s2. If
-        these sub problems individually satisfy the required conditions, the complete problem, s also satisfies the
-        same. e.g. 'catsanddog' can be split into two substrings 'catsand', 'dog'. The sub problem 'catsand' can be
-        further divided into 'cats','and', which individually are a part of the dictionary making 'catsand' satisfy the
+        these sub problems individually satisfy the required conditions, the complete problem s also satisfies the
+        same.
+        For example, 'catsanddog' can be split into two substrings 'catsand', 'dog'. The sub problem 'catsand' can be
+        further divided into 'cats','and', which individually are part of the dictionary making 'catsand' satisfy the
         condition. Going further backwards, 'catsand', 'dog' also satisfy the required criteria individually leading to
         the complete string 'catsanddog' also to satisfy the criteria.
-    Time complexity: O(N ** 2)
-    Space complexity: O(N) for dp array
+    Time complexity: O(N^3), not O(N^2) because of the substring s[i:j] which takes O(N)
+    Space complexity: ? O(N) for dp array + set of dictionary's word
     """
-    dp = [False] * (len(s) + 1)
+    n = len(s)
+    dp = [False] * (n + 1)
+    word_dict = set(word_dict)
     dp[0] = True
-    for i in range(len(s)):
-        if dp[i]:
-            for j in range(i + 1, len(s) + 1):
-                if s[i:j] in word_dict:
-                    dp[j] = True
-    return dp[-1]
+    for i in range(n):  # This could be 'for i in range(n+1)', but when i = n (last iteration) 'if dp[i]' afterwards
+        # will mean 'if the first n characters verify the property' and the rest of the block would be meaningless and
+        # never executed
+        if dp[i]:  # If the first i characters of the string can be partitioned using the words in the dictionary
+            for j in range(i + 1, n + 1):
+                if s[i:j] in word_dict:  # See if the rest of the string contains one of the words of the dictionary
+                    dp[j] = True  # Since the first i characters and the characters from (i+1) to j (exclusive) verify
+                    # the property, then the first j characters verify the property as well
+    return dp[n]
 
 
 class Test(unittest.TestCase):
