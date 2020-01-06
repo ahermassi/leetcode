@@ -4,7 +4,6 @@ Note:
 The same word in the dictionary may be reused multiple times in the segmentation.
 You may assume the dictionary does not contain duplicate words. """
 
-from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -37,31 +36,31 @@ def word_break_v1(s, word_dict):
 
 
 def word_break_v2(s, word_dict):
-    """ In the previous approach we can see that many sub problems were redundant, i.e we were calling the recursive
-        function multiple times for a particular string. To avoid this we can use memoization method, where an array
-        memo is used to store the result of the sub problems. Now, when the function is called again for a particular
+    """ In the previous approach, we can see that many sub problems were redundant, i.e we were calling the recursive
+        function multiple times for a particular string. To avoid this, we can use memoization method, where an array
+        memo is used to store the results of the sub problems. Now, when the function is called again for a particular
         string, value will be fetched and returned using the memo array, if its value has been already evaluated.
         With memoization many redundant sub problems are avoided and recursion tree is pruned and thus it reduces the
         time complexity by a large factor.
-    Time complexity: O(N ** 2)
+    Time complexity: O(N^2)
     Space complexity: O(N)
     """
 
-    def break_word(i):
-        if i == n:
+    def dfs(index):
+        if index == n:
             return True
-        if i in memo:
-            return memo[i]
-        for j in range(i + 1, n + 1):
-            if s[i:j] in word_dict and break_word(j):
-                memo[i] = True
+        if index in memo:
+            return memo[index]
+        for j in range(index, n):
+            if s[index:j+1] in word_dict and dfs(j+1):
+                memo[index] = True
                 return True
-        memo[i] = False
+        memo[index] = False
         return False
 
     n = len(s)
-    word_dict, memo = set(word_dict), defaultdict(bool)
-    return break_word(0)
+    word_dict, memo = set(word_dict), {}
+    return dfs(0)
 
 
 def word_break_v3(s, word_dict):
