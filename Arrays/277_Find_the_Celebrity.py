@@ -13,12 +13,12 @@ def find_celebrity_v1(n):
         How do we check whether the candidate is up to standard?
         According to the definition of a celebrity, if !knows(i, candidate) || knows(candidate, i) exists, the
         candidate is not qualified.
-        The moment you realize a call to knows(i,j) eliminates either i or j the problem is solved. knows(i,j) == true
-        then i can't be a celebrity. since a celebrity knows nobody and knows(i,j) == false then j can't be a celebrity
-        since everyone must know the celebrity.
+        The moment we realize a call to knows(i,j) eliminates either i or j, the problem is solved. knows(i,j) == true
+        means i can't be a celebrity. Since a celebrity knows nobody and knows(i,j) == false, then j can't be a
+        celebrity since everyone must know the celebrity.
         Notice this interesting property: for any two persons A and B, the possible candidate is always mutually
         exclusive. i.e. only one person of A and B can be candidate. Because if A knows B, A cannot be celebrity; if A
-        doesn't know B, B cannot be be celebrity.
+        doesn't know B, B cannot be celebrity.
         With the above property, traversing and checking every person with a current candidate will filter out all
         'bad guys'.
     Time complexity: O(n)
@@ -56,7 +56,7 @@ def find_celebrity_v1(n):
 
 def find_celebrity_v2(n):
     """ Stack based solution. The idea is to push all people to the stack, and then start popping every 2 people.
-        If a knows b, so a is not the celebrity, but b may be. If a doesn't know b, so b is not the celebrity, but a
+        If a knows b, then a is not the celebrity, but b may be. If a doesn't know b, so b is not the celebrity, but a
         may be. The only remaining stack element is a potential celebrity. Double check if they are.
     Time complexity: O(n)
     Space complexity: O(n)
