@@ -13,8 +13,8 @@ def word_break_v1(s, word_dict):
         prefix of that string in the dictionary of words. If it is found in the dictionary, then the recursive function
         is called for the remaining portion of that string. And, if in some function call it is found that the complete
         string is in dictionary, then it will return true.
-    Time complexity: O(2^N), Consider the worst case where s = 'aaaaaaa' and every prefix of s is present in the
-    dictionary of words, then the recursion tree can grow up to 2^N
+    Time complexity: O(N^N), Consider the worst case where s = 'aaaaaaa' and every prefix of s is present in the
+    dictionary of words, then the recursion tree can grow up to N^N
     Space complexity: O(N), the depth of the recursion tree can go up to N
     """
 
