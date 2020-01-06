@@ -48,17 +48,16 @@ def sort_list_v1(head):
 
 def sort_list_v2(head):
     """ This solution is bottom-up merge sort. It first merges pairs of adjacent arrays of 1 elements. Then merges pairs
-    of adjacent arrays of 2 elements. Next merges pairs of adjacent arrays of 4 elements... Until the whole array is
-    merged.
+        of adjacent arrays of 2 elements. Next merges pairs of adjacent arrays of 4 elements... Until the whole array
+        is sorted.
     http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/7-Sort/merge-sort5.html
     Time complexity: O(N logN)
     Space complexity: O(1)
     """
 
-    # Merge 2 sorted lists, append the result to head, and return the tail of the merged two lists.
-    def merge2(p1, p2, head):
-        dummy = ListNode(0)
-        tail = dummy
+    # Merge two sorted lists, append the result to the node 'node', and return the tail of the two merged lists.
+    def merge(p1, p2, node):
+        dummy = tail = ListNode(0)
         while p1 and p2:
             if p1.val <= p2.val:
                 tail.next = p1
@@ -68,12 +67,12 @@ def sort_list_v2(head):
                 p2 = p2.next
             tail = tail.next
         tail.next = p1 or p2
-        head.next = dummy.next
+        node.next = dummy.next
         while tail.next:
             tail = tail.next
         return tail
 
-    # Split the linked list into two lists. The first list contains n nodes. Disconnect the two lists and return the
+    # Split the linked list to two lists. The first list contains n nodes. Disconnect the two lists and return the
     # head of second list.
     def split(head, n):
         for _ in range(n - 1):
@@ -91,14 +90,14 @@ def sort_list_v2(head):
         return head
     dummy = ListNode(0)
     dummy.next = head
-    tmp, length = head, 0
-    while tmp:
-        tmp = tmp.next
+    temp, length = head, 0
+    while temp:
         length += 1
-    step = 1  # At each step, merge every 2 consecutive lists of size 2^(step-1)
+        temp = temp.next
+    step = 1  # At each step, merge every two consecutive lists of size 2^(step-1)
     while step < length:
         cur, tail = dummy.next, dummy  # With every iteration, 'cur' points to the head of the list. During the
-        # execution, 'tail' is the pointer whose next points to the merged 2 consecutive lists
+        # execution, 'tail' is the pointer whose next points to the 2 merged consecutive lists
         while cur:
             left = cur
             right = split(left, step)  # Remember that the return value of split() is the head of the second list
@@ -106,12 +105,12 @@ def sort_list_v2(head):
             cur = split(right, step)  # Now the second list whose head is 'right' has the same size as left list after
             # splitting at index 'step' again. 'cur' points to the head of the rest of the list on which we'll apply
             # the same procedure in the next iteration
-            tail = merge2(left, right, tail)  # We connect 'tail' to the head of the merged 2 lists. tail.next =
-            # head_of_merged_lists has the same effect as dummy.next = tail_of_merged_lists the first time this
-            # statement is executed in every iteration. After that, 'tail' can move freely as dummy.next is taking
-            # the stripe of the first merged 2 lists. merge2() returns the tail of the merged 2 lists, to which 'tail'
-            # will now point. This ensures that 'tail' connects the merged 2 lists at iteration (k-1) to those at
-            # iteration k.
+            tail = merge(left, right, tail)  # We connect 'tail' to the head of the two merged lists.
+            # tail.next = head_of_merged_lists has the same effect as dummy.next = tail_of_merged_lists the first time
+            # this statement is executed in every iteration. After that, 'tail' can move freely as dummy.next is taking
+            # the stripe of the first two merged lists. merge() returns the tail of the two merged lists, to which
+            # 'tail' will now point. This ensures that 'tail' connects the two merged lists at iteration (k-1) to those
+            # at iteration k.
         step *= 2  # Now go and merge consecutive lists of next order of size.
     return dummy.next
 
