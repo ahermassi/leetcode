@@ -44,6 +44,11 @@ def merge(intervals):
             res.append(interval)
     return res
 
+# There seems to be a follow-up at Facebook to implement the algorithm with no sorting, using a BST.
+# https://leetcode.com/problems/merge-intervals/discuss/21451/Share-my-BST-interval-tree-solution-C%2B%2B-No-sorting!
+# https://leetcode.com/problems/merge-intervals/discuss/355318/Fully-Explained-and-Clean-Interval-Tree-for-Facebook-Follow-Up-No-Sorting
+# https://leetcode.com/articles/merge-intervals/
+
 
 class Test(unittest.TestCase):
     data = [([[1, 3], [2, 6], [8, 10], [15, 18]], [[1, 6], [8, 10], [15, 18]]),
