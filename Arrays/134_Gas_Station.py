@@ -43,6 +43,28 @@ def can_complete_circuit_v1(gas, cost):
     return start if total_gas >= 0 else -1
 
 
+def can_complete_circuit_v2(gas, cost):
+    """ Same solution as above but with two differences:
+            1- We check the condition sum(gas) < sum(cost) beforehand and return -1 if it's verified.
+            2- Because of that, this solution performs 2 passes over the arrays instead of 1 pass.
+        Note that in the previous solution (sum(gas) - sum(cost)) is being accumulated during the execution of the
+        algorithm using 'total_gas' variable: sum(gas) - sum(cost) = sum(i=0..n-1) {gas[i] - cost[i]}. total_gas < 0
+        is checked at the end.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    if sum(gas) < sum(cost):
+        return -1
+    n = len(gas)
+    current_gas = start = 0
+    for i in range(n):
+        current_gas += gas[i] - cost[i]
+        if current_gas < 0:
+            start = i + 1
+            current_gas = 0
+    return start
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3, 4, 5], [3, 4, 5, 1, 2], 3), ([2, 3, 4], [3, 4, 3], -1)
             ]
