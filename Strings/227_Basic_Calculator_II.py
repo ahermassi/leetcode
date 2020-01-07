@@ -27,17 +27,17 @@ def calculate_v1(s):
     Time complexity: O(N) where N is the length of s
     Space complexity: O(N)
     """
-    num, stack, last_operation = 0, [], '+'
+    num, stack, last_operator = 0, [], '+'
     for i, c in enumerate(s):
         if c.isdigit():
             num = num * 10 + int(c)
         if c in '+-*/' or i == len(s) - 1:
-            if last_operation == '+':  # I have a new operation sign in hand and the accumulated integer 'num' is
-                # part of an PREVIOUS addition operation
+            if last_operator == '+':  # I have a new operation sign in hand and the accumulated integer 'num' is
+                # part of a PREVIOUS addition operation
                 stack.append(num)
-            elif last_operation == '-':
+            elif last_operator == '-':
                 stack.append(-num)
-            elif last_operation == '*':  # I have a new operation sign in hand and the accumulated integer 'num' is
+            elif last_operator == '*':  # I have a new operation sign in hand and the accumulated integer 'num' is
                 # part of a PREVIOUS multiplication operation
                 stack.append(stack.pop() * num)  # Multiply 'num' with the previously accumulated integer that's been
                 # waiting in the stack since multiplication is a higher level operation
@@ -47,7 +47,7 @@ def calculate_v1(s):
                 # that's been waiting in the stack by the accumulated integer 'num' since division is a higher level
                 # operation
             num = 0
-            last_operation = c
+            last_operator = c
     return sum(stack)
 
 
@@ -58,30 +58,31 @@ def calculate_v2(s):
     """ Same logic but constant space.
     To have O(1) space solution, we have to drop the stack. To see why we can drop it, we need to reexamine the main
     purpose of the stack: it is used to hold temporary results for partial expressions with lower precedence levels.
-    We only have two precedence levels, lower level with '+' and '-' operations and higher level with '*' and '/'
+    We only have two precedence levels: lower level with '+' and '-' operations and higher level with '*' and '/'
     operations. So the stack can be replaced by two variables, one for the lower level and the other for the higher
     level.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    pre, cur, ans, last_operation = 0, 0, 0, "+"
+    num, last_operator = 0, "+"
+    low = high = 0  # 'high' variable acts as an accumulator of the partial results that used to sit in the stack
     for i, c in enumerate(s):
         if c.isdigit():
-            cur = cur * 10 + int(c)
+            num = num * 10 + int(c)
         if c in "+-*/" or i == len(s) - 1:
-            if last_operation == "+":
-                ans += pre
-                pre = cur
-            elif last_operation == "-":
-                ans += pre
-                pre = -cur
-            elif last_operation == "*":
-                pre *= cur
+            if last_operator == "+":
+                high += low
+                low = num
+            elif last_operator == "-":
+                high += low
+                low = -num
+            elif last_operator == "*":
+                low *= num
             else:
-                pre = int(pre / cur)
-            cur = 0
-            last_operation = c
-    return ans + pre
+                low = int(low / num)
+            num = 0
+            last_operator = c
+    return high + low
 
 
 class Test(unittest.TestCase):
