@@ -6,15 +6,35 @@ If the target is not found in the array, return [-1, -1]. """
 import unittest2 as unittest
 
 
-def search_range_v1(nums, target):
-    """ Modified binary search done twice to find both left and right positions. The tricky part is handling left and
-        right pointers when a match is found.
+def search_range(nums, target):
+    """ Modified binary search executed twice to find both left and right positions. The tricky part is handling left
+        and right pointers when a match is found.
+        Example:
+                0  1  2  3  4  5  6  7  8  9  10 11 12
+        nums = [1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7, 9, 9], target = 5
+
+        left = 0, right = 12, mid = 6: notice here that nums[mid] == target. However, right = mid - 1. By doing that
+        and narrowing down the search range, we're essentially locating the first element LESS than target, similar to
+        bisect_left. When 'left' steps over 'right', nums[left] is the first occurrence of target.
+        left = 0, right = 5, mid = 2
+        left = 3, right = 5, mid = 4
+        left = 5, right = 5, mid = 5
+        left = 6, right = 5 -> return left = 6
+
+        left = 0, right = 12, mid = 6: notice here that nums[mid] == target. However, left = mid + 1. By doing that
+        and narrowing down the search range, we're essentially locating the first element GREATER than target, similar
+        to bisect_right. When 'right' steps over 'left', nums[right] is the first occurrence of target.
+        left = 7, right = 12, mid = 9
+        left = 7, right = 8, mid = 7
+        left = 8, right = 8, mid = 8
+        left = 9, right = 8 -> return right = 8
+
     Time complexity: O(logN)
     Space complexity: O(1)
     """
     def binary_search_left(nums, target):
         left, right = 0, len(nums) - 1
-        while left <= right:
+        while left < right:
             mid = (left + right) // 2
             if target > nums[mid]:
                 left = mid + 1
@@ -26,38 +46,14 @@ def search_range_v1(nums, target):
         left, right = 0, len(nums) - 1
         while left <= right:
             mid = (left + right) // 2
-            if target >= nums[mid]:
-                left = mid + 1
-            else:
+            if target < nums[mid]:
                 right = mid - 1
+            else:
+                left = mid + 1
         return right
 
     left, right = binary_search_left(nums, target), binary_search_right(nums, target)
     return [left, right] if left <= right else [-1, -1]
-
-
-def search_range_v2(nums, target):
-    """ Another version of two binary searches.
-        Here, helper function 'search' is a simple binary search, telling us the first index where we could insert a
-        number n into nums to keep it sorted (i.e first position). Thus, if nums contains target, we can find the first
-        occurrence with search(target). We do that, and if target isn't actually there, then we return [-1, -1].
-        Otherwise, we ask search(target + 1), which tells the first index where we could insert (target + 1), which of
-        course is one index after the last index containing target, so all we have left to do is subtract 1.
-    Time complexity: O(logN)
-    Space complexity: O(1)
-    """
-    def search(target):
-        left, right = 0, len(nums)
-        while left < right:
-            mid = (left + right) // 2
-            if nums[mid] >= target:
-                right = mid
-            else:
-                left = mid + 1
-        return left
-
-    left = search(target)
-    return [left, search(target + 1) - 1] if target in nums[left:left + 1] else [-1, -1]
 
 
 class Test(unittest.TestCase):
@@ -65,8 +61,7 @@ class Test(unittest.TestCase):
 
     def test_search_range(self):
         for test_array, test_target, result in self.data:
-            self.assertEqual(result, search_range_v1(test_array, test_target))
-            self.assertEqual(result, search_range_v2(test_array, test_target))
+            self.assertEqual(result, search_range(test_array, test_target))
 
 
 if __name__ == '__main__':
