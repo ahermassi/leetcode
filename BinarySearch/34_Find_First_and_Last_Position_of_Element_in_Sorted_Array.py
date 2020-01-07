@@ -32,7 +32,7 @@ def search_range(nums, target):
     Time complexity: O(logN)
     Space complexity: O(1)
     """
-    def binary_search_left(nums, target):
+    def binary_search_left():
         left, right = 0, len(nums) - 1
         while left < right:
             mid = (left + right) // 2
@@ -42,7 +42,7 @@ def search_range(nums, target):
                 right = mid - 1
         return left
 
-    def binary_search_right(nums, target):
+    def binary_search_right():
         left, right = 0, len(nums) - 1
         while left <= right:
             mid = (left + right) // 2
@@ -52,7 +52,7 @@ def search_range(nums, target):
                 left = mid + 1
         return right
 
-    left, right = binary_search_left(nums, target), binary_search_right(nums, target)
+    left, right = binary_search_left(), binary_search_right()
     return [left, right] if left <= right else [-1, -1]
 
 
