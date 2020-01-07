@@ -9,18 +9,18 @@ import unittest2 as unittest
 
 def search(nums, target):
     """ The idea is that when rotating the array, there must be one half of the array that is still in sorted order.
-        Perform standard binary search. Take an index in the middle mid as a pivot.
+        Perform standard binary search. Take an index in the middle as a pivot.
         If nums[mid] == target, the job is done, return mid.
         Now there could be two situations:
             1- Pivot element is larger than the first element in the array, i.e. the part of array from the first
                element to the pivot one is non-rotated.
-               If the target is in that non-rotated part as well: go left: end = mid - 1.
-               Otherwise: go right: start = mid + 1.
+               If the target is in that non-rotated part as well: go left: right = mid - 1.
+               Otherwise: go right: left = mid + 1.
             2- Pivot element is smaller than the first element of the array, i.e. the rotation index is somewhere
                between 0 and mid. That means that the part of array from the pivot element to the last one is
                non-rotated.
-               If target is in that non-rotated part as well: go right: start = mid + 1.
-               Otherwise: go left: end = mid - 1.
+               If target is in that non-rotated part as well: go right: left = mid + 1.
+               Otherwise: go left: right = mid - 1.
     Time complexity: O(logN)
     Space complexity: O(1)
     """
@@ -30,7 +30,7 @@ def search(nums, target):
         if nums[mid] == target:
             return mid
         if nums[left] <= nums[mid]:  # It's <= instead of < because when there's only two elements, the mid and low
-            # point to exactly the same element. Then we have to include = to make sure it covers this situation.
+            # point to exactly the same element. Then we have to include = to make sure it covers this case.
             if nums[left] <= target < nums[mid]:
                 right = mid - 1
             else:
