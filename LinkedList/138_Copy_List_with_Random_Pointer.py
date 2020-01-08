@@ -88,7 +88,7 @@ def copy_random_list_v3(head):
     # Creating a new weaved list of original and copied nodes.
     cur = head
     while cur:
-        node = Node(cur.val, cur.next, None)   # Cloned node. Note that node's next points to current node's next
+        node = Node(cur.val, cur.next)   # Cloned node. Note that node's next points to current node's next
         # Inserting the cloned node just next to the original node.
         # If A->B->C is the original linked list,
         # Linked list after weaving cloned nodes would be A->A'->B->B'->C->C'
@@ -106,10 +106,10 @@ def copy_random_list_v3(head):
     p1 = head
     p2 = head.next
     new_head = head.next
-    while p1:
-        p1.next = p1.next.next
-        p2.next = p2.next.next if p2.next else None
+    while p1.next and p2.next:
+        p1.next = p2.next
         p1 = p1.next
+        p2.next = p1.next
         p2 = p2.next
     return new_head
 
