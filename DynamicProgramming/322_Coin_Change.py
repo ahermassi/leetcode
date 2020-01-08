@@ -27,6 +27,39 @@ def coin_change_v1(coins, amount):
 
 
 def coin_change_v2(coins, amount):
+    """ Top-down recursion + memoization.
+        Let's define:
+            F(S) - minimum number of coins needed to make change for amount S
+        We compute F(S - c_i) for each possible denomination c_0, c_1, c_2, c_n-1 and choose the minimum among them:
+            F(S)= min(i=0..n-1) {F(S - c_i)} + 1, subject to  S−c_i	≥ 0
+​        For example, if S = 11 and coins = [1, 2, 5], then:
+        F(11) = min(F(11-1), F(11-2), F(11-5)) + 1. Let's suppose min(F(11-1), F(11-2), F(11-5)) = F(11-5) = F(6).
+        F(6) is the number of coins needed to make change for amount 6. When we add the coin 5 to the result, this
+        represents the number of coins needed to make change for amount 11, hence the 1 added to the result.
+    Time complexity: O(S * N), where S is the amount and N is the number of coins
+    Space complexity: O(S) for memo set
+    """
+
+    def dfs(remaining):
+        if not remaining:
+            return 0
+        if remaining < 0:
+            return -1
+        if remaining in memo:  # If we already know the minimum number of coins needed to make the remaining amount
+            return memo[remaining]
+        min_coins = float('inf')
+        for coin in coins:  # Try removing each coin from the remaining amount and see how many more coins are required
+            res = dfs(remaining - coin)
+            if 0 <= res < min_coins:
+                min_coins = res + 1  # +1 == Add back the coin removed recursively
+        memo[remaining] = min_coins if min_coins != float('inf') else -1
+        return memo[remaining]
+
+    memo = {}  # We cache the minimum number of coins needed to make various smaller amounts of change
+    return dfs(amount)
+
+
+def coin_change_v3(coins, amount):
     """ The problem could be solved with polynomial time using Dynamic programming technique. First, let's define:
         F(S) - minimum number of coins needed to make change for amount S using coin denominations [c0.. cn−1].
         How to split the problem into sub problems? Let's assume that we know F(S) where some change val_1, val_2,...
