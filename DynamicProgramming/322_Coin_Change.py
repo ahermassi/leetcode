@@ -31,19 +31,26 @@ def coin_change_v2(coins, amount):
         Let's define:
             F(S) - minimum number of coins needed to make change for amount S
         We compute F(S - c_i) for each possible denomination c_0, c_1, c_2, c_n-1 and choose the minimum among them:
-            F(S)= min(i=0..n-1) {F(S - c_i)} + 1, subject to  S−c_i	≥ 0
+            F(S) = min(F(S - c_i) for i 0..n-1) + 1, subject to  S−c_i	≥ 0
 ​        For example, if S = 11 and coins = [1, 2, 5], then:
         F(11) = min(F(11-1), F(11-2), F(11-5)) + 1. Let's suppose min(F(11-1), F(11-2), F(11-5)) = F(11-5) = F(6).
         F(6) is the number of coins needed to make change for amount 6. When we add the coin 5 to the result, this
         represents the number of coins needed to make change for amount 11, hence the 1 added to the result.
-    Time complexity: O(S * N), where S is the amount and N is the number of coins
-    Space complexity: O(S) for memo set
+        The answer to the sub-problem for amount 11 is the same thing as the MINIMUM of the answers to the sub problems
+        with each currency deduced from the original sub problem (11) PLUS ONE since we are acting as if each coin we
+        subtract from 11 is the last coin used to make change.
+    Time complexity: O(S * N), where S is the amount and N is the number of coins. For each amount we will
+    approximately be doing N work in trying to deduct each denomination from the current sub problem. Our recursive
+    tree will at maximum have a depth of S (worst case if each call deducts 1 at each call).
+    Space complexity: O(S), we answer and store a total of S sub-problems in our dynamic programming table to get to
+    our globally optimum answer.
     """
 
     def dfs(remaining):
         if not remaining:
             return 0
-        if remaining < 0:
+        if remaining < 0:  # Minimum coins to make change for a negative amount is -1. This is just a base case we
+            # arbitrarily define.
             return -1
         if remaining in memo:  # If we already know the minimum number of coins needed to make the remaining amount
             return memo[remaining]
@@ -52,7 +59,9 @@ def coin_change_v2(coins, amount):
             res = dfs(remaining - coin)
             if 0 <= res < min_coins:
                 min_coins = res + 1  # +1 == Add back the coin removed recursively
-        memo[remaining] = min_coins if min_coins != float('inf') else -1
+        memo[remaining] = min_coins if min_coins != float('inf') else -1  # f no answer is found
+        # (min_coins == float('inf')) then the sub problem answer is just arbitrarily made to be -1, otherwise the sub
+        # problem's answer is min_coins
         return memo[remaining]
 
     memo = {}  # We cache the minimum number of coins needed to make various smaller amounts of change
@@ -60,25 +69,27 @@ def coin_change_v2(coins, amount):
 
 
 def coin_change_v3(coins, amount):
-    """ The problem could be solved with polynomial time using Dynamic programming technique. First, let's define:
-        F(S) - minimum number of coins needed to make change for amount S using coin denominations [c0.. cn−1].
+    """ The problem could be solved in polynomial time using Dynamic programming. First, let's define:
+            F(S) - minimum number of coins needed to make change for amount S using coin denominations [c0.. cn−1]
         How to split the problem into sub problems? Let's assume that we know F(S) where some change val_1, val_2,...
         for S which is optimal and the last coin's denomination is C. Then the following equation should be true
         because of optimal substructure of the problem:
-        F(S) = F(S−C) + 1
+            F(S) = F(S−C) + 1
         But we don't know which is the denomination of the last coin C. We compute F(S - c_i) for each possible
         denomination c0, c1,...,c_n-1 and choose the minimum among them. The following recurrence relation holds:
-        F(S) = min(F(S - c_i) for i 0..n-1) + 1 subject to  S − c_i ≥ 0
+            F(S) = min(F(S - c_i) for i 0..n-1) + 1 subject to  S − c_i ≥ 0
     Time complexity: O(S * N), on each step the algorithm finds the next F(i) in N iterations, where 1 ≤i ≤S. Therefore
     in total the iterations are S * N
     Space complexity: O(S)
     """
-    dp = [0] + [float('inf')] * amount
-    for i in range(1, len(dp)):
+    dp = [float('inf')] * (amount+1)
+    dp[0] = 0  # The answer to making change with minimum coins for 0 will always be 0 coins no matter what the coins
+    # we are given are
+    for i in range(1, amount+1):
         for coin in coins:
             if coin <= i:
                 dp[i] = min(dp[i], dp[i - coin] + 1)
-    return dp[-1] if dp[-1] != float('inf') else -1
+    return dp[amount] if dp[amount] != float('inf') else -1
 
 
 class Test(unittest.TestCase):
