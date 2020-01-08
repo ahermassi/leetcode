@@ -38,6 +38,12 @@ def exist_v1(board, word):
 def exist_v2(board, word):
     """ DFS without altering the input board. Use a 'visited' set to store the visited cells. When we exhaust all
         search possibilities, we backtrack and remove the cell from 'visited' set.
+        This (and the technique used in the following solution) resemble what we usually do in the backtracking
+        problems where we have to try/enumerate all the possible paths. At every recursive call, we'd either:
+            - Call f(path + new_val), or
+            - path.append(new_val); f(path); path.pop()
+    Time complexity: O(N * M * (4^S))
+    Space complexity: O(N * M)
     """
 
     def search(i, j, index):
@@ -55,6 +61,31 @@ def exist_v2(board, word):
     for i in range(n):
         for j in range(m):
             if search(i, j, 0):
+                return True
+    return False
+
+
+def exist_v3(board, word):
+    """ Good ol' backtracking where we pass an augmented path to each recursive call.
+    Time complexity: O(N * M * (4^S))
+    Space complexity: O(N * M)
+    """
+
+    def search(index, i, j, visited):
+        if index == len(word):
+            return True
+        if not 0 <= i < n or not 0 <= j < m or (i, j) in visited or board[i][j] != word[index]:
+            return False
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            if search(index + 1, x, y, visited | {(i, j)}):  # visited | {(i, j)} is equivalent to (path + new_val)
+                return True
+        return False
+
+    n, m = len(board), len(board[0])
+    visited = set()
+    for i in range(n):
+        for j in range(m):
+            if search(0, i, j, visited):
                 return True
     return False
 
