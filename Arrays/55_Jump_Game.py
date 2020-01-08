@@ -6,10 +6,10 @@ import unittest2 as unittest
 
 
 def can_jump_v1(nums):
-    """ The idea is to work backwards from the last index and keep track of the smallest index 'last_pos' that can jump
-        to the last index. Check whether the current index i can jump to this smallest index.
+    """ The idea is to work backwards from the last index and keep track of the smallest index 'last_good_index' that
+        can jump to the last index. Check whether the current index i can jump to this smallest index.
         Iterating right-to-left, for each position we check if there is a potential jump that reaches a 'good' index
-        (currPosition + nums[currPosition] >= leftmostGoodIndex). If we can reach a 'good' index, then our position is
+        (currPosition + nums[currPosition] >= last_good_index). If we can reach a 'good' index, then our position is
         itself 'good'. Also, this new 'good' position will be the new leftmost 'good' index. Iteration continues until
         the beginning of the array. If index 0 is a 'good' index, then we can reach the last index from the first
         index.
@@ -17,11 +17,11 @@ def can_jump_v1(nums):
     Space complexity: O(1)
     """
     n = len(nums)
-    last_pos = n - 1  # (last_pos = i) means 'from index i, we can jump and reach the end of array'
-    for i in reversed(range(n-1)):
-        if i + nums[i] >= last_pos:  # If I can jump to last_pos, I'm going to be the new last_pos
-            last_pos = i
-    return last_pos == 0  # This means from index 0 we can jump and reach the end of array
+    last_good_index = n - 1  # (last_good_index = i) means 'from index i, we can jump and reach the end of array'
+    for i in reversed(range(n)):
+        if i + nums[i] >= last_good_index:  # If I can jump to last_good_index, I'm going to be the new last_good_index
+            last_good_index = i
+    return last_good_index == 0  # This means from index 0 we can jump and reach the end of array
 
 
 def can_jump_v2(nums):
@@ -31,7 +31,7 @@ def can_jump_v2(nums):
         As soon as 'farthest_reach' is greater than or equal to the last index, we know we can reach the last position.
         If at any moment we arrive at an index that is strictly greater than 'farthest_reach', we return False.
         Otherwise, we update 'farthest_reach' to the maximum between 'farthest_reach' and (i + nums[i]) which indicates
-        the farthest index that the can be reached from the current position.
+        the farthest index that can be reached from the current position.
     Time complexity: O(N)
     Space complexity: O(1)
     """
