@@ -2,32 +2,27 @@
 fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any
 combination of the coins, return -1. """
 
+from collections import deque
 import unittest2 as unittest
 
 
 def coin_change_v1(coins, amount):
     """ This solution is inspired by the BFS solution for problem 279- Perfect Squares. Since it is to find the least
-        coin solution (like a shortest path from 0 to amount), using BFS gives results much faster than DP. We use a
-        'visited' set to avoid exploring amounts that were previously investigated (memoization)
+        number of coins (like a shortest path from amount to 0), using BFS gives results much faster than DP. We use a
+        'visited' set to avoid exploring amounts that were previously investigated.
     Time complexity: O(S * N), where S is the amount and N is the number of coins
-    Space complexity: O(S + N) for 'remaining' and 'visited' sets
+    Space complexity: O(S + N) for the queue and 'visited' set
     """
-    if amount == 0:
-        return 0
     visited = set()
-    remaining, count = {amount}, -1
-    while remaining:
-        count += 1
-        temp = set()
-        for x in remaining:
-            if x not in visited:
-                for y in coins:
-                    if x == y:
-                        return count + 1
-                    if x > y:
-                        temp.add(x - y)
-                visited.add(x)
-        remaining = temp
+    queue = deque([(amount, 0)])
+    while queue:
+        remaining, total_coins = queue.popleft()
+        if not remaining:
+            return total_coins  # Because we use BFS, we're sure this is the 'shortest path' from amount to 0
+        for coin in coins:
+            if remaining >= coin and remaining - coin not in visited:
+                queue.append((remaining - coin, total_coins + 1))
+                visited.add(remaining - coin)
     return -1
 
 
