@@ -10,23 +10,23 @@ import unittest2 as unittest
 
 
 class Node:
-    def __init__(self, k, v):
-        self.key = k
-        self.val = v
-        self.prev = None
+    def __init__(self, key, val):
+        self.key = key
+        self.val = val
         self.next = None
+        self.pre = None
 
 
 class LRUCacheV1(object):
-    """ The problem can be solved with a hashmap that keeps track of the keys and its values in the double linked list.
+    """ The problem can be solved with a hash map that keeps track of the keys and its values in the doubly linked list.
         That results in O(1) time for put and get operations and allows to remove the first added node in O(1) time as
         well.
-        One advantage of double linked list is that the node can remove itself without other reference. In addition, it
+        One advantage of doubly linked list is that the node can remove itself without other reference. In addition, it
         takes constant time to add and remove nodes from the head or tail.
-        One particularity about the double linked list implemented here is that there are dummy head and dummy tail to
+        One particularity about the doubly linked list implemented here is that there are dummy head and dummy tail to
         mark the boundary, so that we don't need to check the null node during the update.
         Rules:
-            1- Always add new node BEFORE the tail
+            1- Always add new node BEFORE the tail: this is the most recently used
             2- As a result of previous rule, the LRU node is always the one right AFTER the head
     """
 
@@ -34,25 +34,25 @@ class LRUCacheV1(object):
         """
         :type capacity: int
         """
+        self.nodes = {}  # (key: node) pairs
         self.capacity = capacity
-        self.nodes = dict()  # (key: node) pairs
+        self.size = 0
         self.head = Node(0, 0)
         self.tail = Node(0, 0)
         self.head.next = self.tail
-        self.tail.prev = self.head
+        self.tail.pre = self.head
 
     def get(self, key):
         """
         :type key: int
         :rtype: int
         """
-        if key in self.nodes:
-            node = self.nodes[key]
-            val = node.val
-            self.remove(node)  # The node is now most recently accessed, so remove it ..
-            self.add(node)  # and place it right before the tail
-            return val
-        return -1
+        if key not in self.nodes:
+            return -1
+        node = self.nodes[key]
+        self.remove(node)  # The node is now most recently accessed, so remove it ..
+        self.add(node)  # and place it right before the tail
+        return node.val
 
     def put(self, key, value):
         """
@@ -64,24 +64,25 @@ class LRUCacheV1(object):
             self.remove(self.nodes[key])  # The node is now most recently accessed, so remove it
         node = Node(key, value)
         self.add(node)
-        self.nodes[key] = node
-        if len(self.nodes) > self.capacity:  # If max capacity reached, delete the LRU node: the one after the head
-            node = self.head.next
-            self.remove(node)
-            del self.nodes[node.key]
+        if self.size > self.capacity:  # If max capacity reached, delete the LRU node: the one after the head
+            lru = self.head.next
+            self.remove(lru)
 
     def remove(self, node):
-        p = node.prev
-        n = node.next
-        p.next = n
-        n.prev = p
+        node.pre.next = node.next
+        node.next.pre = node.pre
+        del self.nodes[node.key]
+        self.size -= 1
 
     def add(self, node):
-        p = self.tail.prev
+        tail = self.tail
+        p = tail.pre
         p.next = node
-        node.prev = p
-        node.next = self.tail
-        self.tail.prev = node
+        node.pre = p
+        tail.pre = node
+        node.next = tail
+        self.nodes[node.key] = node
+        self.size += 1
 
 
 class LRUCacheV2(object):
