@@ -40,17 +40,23 @@ def my_pow_v1(x, n):
 
 def my_pow_v2(x, n):
     """ Iterative Fast Power.
+        Example: x = 2, n = 10
+                          res         = 1,    x = 2,   n = 10
+        n % 2 == 1 ? No;  res         = 1,    x = 4,   n = 5
+        n % 2 == 1 ? Yes; res = 1 * 4 = 4,    x = 16,  n = 2
+        n % 2 == 0 ? No;  res         = 4,    x = 256, n = 1
+        n % 2 == 1 ? Yes; res = 1 * 5 = 1024, x = - ,  n = 0
     Time complexity: O(logn)
     Space complexity: O(1)
     """
-    x = 1 / x if n < 0 else x
-    n = -n if n < 0 else n
+    if n < 0:
+        x, n = 1 / x, -n
     res = 1
     while n:
         if n % 2 == 1:
             res *= x
         x *= x
-        n /= 2
+        n //= 2
     return res
 
 
