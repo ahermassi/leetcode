@@ -60,7 +60,7 @@ class LRUCacheV1(object):
         :type value: int
         :rtype: None
         """
-        if key in self.nodes:
+        if key in self.nodes:  # If key already exists, then this is essentially an update
             self.remove(self.nodes[key])  # The node is now most recently accessed, so remove it
         node = Node(key, value)
         self.add(node)
@@ -91,7 +91,7 @@ class LRUCacheV2(object):
             Put the key
             Delete the first added key
         The first two operations in O(1) time are provided by the standard hash map, and the last one - by linked list.
-        There is a structure called ordered dictionary, it combines behind both hash map and linked list. In Python
+        There is a structure called ordered dictionary which combines behind both hash map and linked list. In Python,
         this structure is called OrderedDict
 
     """
@@ -100,20 +100,21 @@ class LRUCacheV2(object):
         """
         :type capacity: int
         """
-        self.dict = OrderedDict()
+        self.nodes = OrderedDict()
         self.capacity = capacity
+        self.size = 0
 
     def get(self, key):
-        """
+        """ When an element is accessed, that makes it a recently used element, so we need to pop and place it again.
         :type key: int
         :rtype: int
         """
-        if key in self.dict:
-            val = self.dict[key]
-            self.dict.pop(key)  # Remove the element ..
-            self.dict[key] = val  # and put it back to produce a new order in the dict
-            return val
-        return -1
+        if key not in self.nodes:
+            return -1
+        val = self.nodes[key]
+        self.nodes.pop(key)  # Remove the element ..
+        self.nodes[key] = val  # and put it back to produce a new order in the dict
+        return val
 
     def put(self, key, value):
         """
@@ -121,12 +122,14 @@ class LRUCacheV2(object):
         :type value: int
         :rtype: None
         """
-        if key in self.dict:
-            self.dict.pop(key)
-        elif len(self.dict) == self.capacity:  # Full dictionary
-            self.dict.popitem(last=False)  # The popitem() method for ordered dictionaries returns and removes a (
-            # key, value) pair. The pairs are returned in LIFO order if last is true or FIFO order if false.
-        self.dict[key] = value
+        if key in self.nodes:  # If key already exists, then this is essentially an update
+            self.nodes.pop(key)
+        elif self.size == self.capacity:  # Max capacity reached
+            self.nodes.popitem(last=False)  # The popitem() method for ordered dictionaries returns and removes a
+            # (key, value) pair. The pairs are returned in LIFO order if last=true and FIFO order if last=false.
+            # Here, last=False which means the first element in (least recently used) will be popped.
+        self.nodes[key] = value
+        self.size += 1
 
 
 class Test(unittest.TestCase):
