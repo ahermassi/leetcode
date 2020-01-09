@@ -9,6 +9,8 @@ from collections import OrderedDict
 import unittest2 as unittest
 
 
+# Watch: https://www.youtube.com/watch?v=S6IfqDXWa10
+
 class Node:
     def __init__(self, key, val):
         self.key = key
@@ -37,6 +39,7 @@ class LRUCacheV1(object):
         self.nodes = {}  # (key: node) pairs
         self.capacity = capacity
         self.size = 0
+        # Dummy head and tail nodes to avoid empty states
         self.head = Node(0, 0)
         self.tail = Node(0, 0)
         self.head.next = self.tail
