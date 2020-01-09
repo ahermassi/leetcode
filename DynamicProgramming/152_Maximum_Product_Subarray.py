@@ -17,9 +17,10 @@ def max_product_v1(nums):
     Time complexity: O(N)
     Space complexity: O(1)
     """
+    n = len(nums)
     max_so_far = min_so_far = global_max = nums[0]  # max_so_far / min_so_far store the max/min product of sub-array
     # that ends with the current element nums[i]
-    for i in range(1, len(nums)):
+    for i in range(1, n):
         candidates = (nums[i], max_so_far * nums[i], min_so_far * nums[i])  # These values are the candidates of
         # maximum product and minimum product up to ith index: start a new product with nums[i], multiply the previous
         # num product with nums[i], or multiply the previous max product with nums[i]
@@ -36,6 +37,8 @@ def max_product_v2(nums):
         Due to negative numbers, we need max and min ending at i-1. In case of a negative number at i, we then swap
         min an max. Therefore, we maintain two local optimal variables, update them in each iteration and the global
         maximum as well.
+        Takeaway: If we see a negative number, the 'candidate' for max should instead become the previous min product,
+        because a bigger number multiplied by negative becomes smaller, hence the swap (same for min).
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -55,7 +58,7 @@ def max_product_v2(nums):
 
 def max_product_v3(A):
     """ Calculate prefix product in A. Calculate suffix product in A. Return the max.
-        It turns out that the only reason you'd ever need to use a sub-array is if there was an odd number of negative
+        It turns out that the only reason we'd ever need to use a sub-array is if there was an odd number of negative
         numbers in the array or a 0.
         If the number of negative values is even, the result is the total product, can be reached from start and end
         of array.
@@ -63,6 +66,16 @@ def max_product_v3(A):
         that negative value.
         This approach handles the first case by multiplying from both ends of array. It handles the second with the
         'or 1' clause that resets the product to 1 any time A[i - 1] or B[i - 1] are 0.
+        In other words:
+        Given an array of integers, the max product ignoring sign (i.e., absolute value) is simply the product of all
+        the elements, as long there is no 0. Put another way, the more elements, the bigger product.
+        But we have to consider the sign, so if product is negative then we have an odd number of negatives. Therefore,
+        the max product is the biggest of:
+            1- Product of all excluding elements on the left, up to the first negative element.
+            2- Product of all excluding elements on the right, up to the last negative element.
+        So the solution is to calculate the running product, first from left to right, then from right to left. During
+        the process, we are guaranteed to encounter the max product, and whenever 0 is encountered we reset product
+        to 1 and continue.
     Time complexity: O(N)
     Space complexity: O(N)
     """
