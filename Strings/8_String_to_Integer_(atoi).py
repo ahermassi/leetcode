@@ -9,25 +9,24 @@ import unittest2 as unittest
 
 def my_atoi(str):
     """ Pretty straightforward. Be careful handling the overflow towards the end.
-    Time complexity: O(N) where N is the length of the string
+    Time complexity: O(N), where N is the length of the string
     Space complexity: O(1)
     """
-    neg, i, res, n = False, 0, 0, len(str)
+    sign, i, res, n = 1, 0, 0, len(str)
     while i < n and str[i].isspace():  # Discard left whitespaces
         i += 1
     if i == n or (not str[i].isdigit() and str[i] not in '+-'):
         return 0
     # Handling pos/neg sign
     if str[i] == '-':
-        neg = True
+        sign = -1
         i += 1
     elif str[i] == '+':
         i += 1
     while i < n and str[i].isdigit():  # Actual conversion to int
         res = res * 10 + (ord(str[i]) - ord('0'))  # ord() is faster than int()
         i += 1
-    if neg:
-        res = -res
+    res *= sign
     return min(max(res, -2147483648), 2147483647)  # Handling overflow. max(res, -2147483648) prevents from going
     # below Integer.MIN_VALUE; outer min() prevents from going beyond Integer.MAX_VALUE
 
