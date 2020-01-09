@@ -4,13 +4,23 @@ import unittest2 as unittest
 
 
 def my_pow_v1(x, n):
-    """ Assuming we have got the result of x ^ n, how can we get x ^ 2n. Obviously we do not need to multiply x
-        for another n times. Using the formula (x ^ n) ^ 2 = x ^ 2*n, we can get x ^ 2n at the cost of only one
-        computation. Using this optimization, we can reduce the time complexity of our algorithm.
-        If n is even, x ^ 2n = (x ^ n) * (x ^ n)
-        If n is odd, x ^ 2n = x * (x ^ n) * (x ^ n)
-        This approach can be easily implemented using recursion. We call this method "Fast Power", because we only need
-        at most O(logn) computations to get x ^ n
+    """ Assuming we have got the result of (x^n), how can we get (x^2n). Obviously we do not need to multiply x
+        for another n times. Using the formula (x^n)^2 = x^2n, we can get (x^2n) at the cost of only one computation.
+        Using this optimization, we can reduce the time complexity of our algorithm.
+        If n is even, x^2n = x^n * x^n
+        If n is odd, x^2n = x * x^n * x^n
+        This approach can be easily implemented using recursion. We call this method 'Fast Power', because we only need
+        at most O(logn) computations to get (x^n).
+        Example: x = 5, n = 100
+        x^100 = x^50 * x^50 = x^(50*2)
+        x^50 = x^25 * x^25 = x^(25*2)
+        x^25 = x * x^12 * x^12 = x * x^(12*2)
+        x^12 = x^6 * x^6 = x^(6*2)
+        x^6 = x^3 * x^3 = x^(3*2)
+        x^3 = x * x^1 * x^1 = x * x^(1*2)
+        x^1 = x * x^0 * x^0 = x * x^(0*2)
+        x^0 = 1: base case
+        So we went from calculating x^100 to: 100 -> 50 -> 25 -> 12 -> 6 -> 3 -> 1 -> 0, giving logn time complexity.
     Time complexity: O(logn)
     Space complexity: O(logn)
     """
@@ -23,8 +33,8 @@ def my_pow_v1(x, n):
             return half * half
         return x * half * half
 
-    x = 1 / x if n < 0 else x
-    n = -n if n < 0 else n
+    if n < 0:
+        x, n = 1/x, -n
     return get_power(x, n)
 
 
@@ -47,7 +57,7 @@ def my_pow_v2(x, n):
 class Test(unittest.TestCase):
     data = [(2.00000, 10, 1024.00000), (2.10000, 3, 9.261000000000001), (2.00000, -2, 0.25000)]
 
-    def test_max_product(self):
+    def test_my_pow(self):
         for test_x, test_n, result in self.data:
             self.assertEqual(result, my_pow_v1(test_x, test_n))
 
