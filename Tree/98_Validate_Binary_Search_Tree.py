@@ -12,22 +12,21 @@ class TreeNode(object):
 
 def is_valid_bst_v1(root):
     """ Iterative in-order traversal.
-        Do we need to keep the whole in-order traversal list? Actually, no. The last added in-order element is enough to
-        ensure at each step that the tree is BST (or not). In fact, 'inorder' variable is what should've been inserted
-        into an in-order list at this point of iteration if 'inorder' was a list.
-    Time complexity: O(N) in the worst case when the tree is BST or the "bad" element is a rightmost leaf.
-    Space complexity: O(N) to keep stack
+        Do we need to keep the whole in-order traversal list? Actually, no. The last added in-order element is enough
+        to ensure at each step that the tree is BST (or not). In fact, 'pre' variable is what should've been inserted
+        into an in-order list at this point of iteration if 'pre' was a list.
+    Time complexity: O(N), in the worst case when the tree is BST or the 'bad' element is a rightmost leaf.
+    Space complexity: O(N), to keep stack
     """
-    stack = []
-    inorder = float('-inf')
+    stack, pre = [], float('-inf')
     while stack or root:
         while root:
             stack.append(root)
             root = root.left
         node = stack.pop()
-        if node.val <= inorder:  # We encountered a value which is less than previous one in in-order traversal
+        if node.val <= pre:  # We encountered a value which is less than previous one in in-order traversal
             return False
-        inorder = node.val
+        pre = node.val
         root = node.right
     return True
 
@@ -37,17 +36,18 @@ def is_valid_bst_v2(root):
         be greater than this value) and upper (all must be less than it). Compare root of the current subtree
         with these two values. Then, recursively check the left and right subtree of the current one. Take care of the
         values passed down.
-    Time complexity: O(N) since we visit each node exactly once
-    Space complexity: O(N) since we keep up to the entire tree
+    Time complexity: O(N), since we visit each node exactly once
+    Space complexity: O(N), since we keep up to the entire tree
     """
-    def check(root, lower, upper):
+
+    def helper(root, lower, upper):
         if not root:
             return True
         if not lower < root.val < upper:
             return False
-        return check(root.left, lower, root.val) and check(root.right, root.val, upper)
+        return helper(root.left, lower, root.val) and helper(root.right, root.val, upper)
 
-    return check(root, float('-inf'), float('inf'))
+    return helper(root, float('-inf'), float('inf'))
 
 
 class Test(unittest.TestCase):
