@@ -8,9 +8,9 @@ import unittest2 as unittest
 
 def three_sum(nums):
     """ The way to think about it is since it's 3 sum, there's only going to be 3 numbers. So to find the combinations
-        of 3 numbers,we iterate through the list with the first pointer, and then try to find two extra numbers to sum
+        of 3 numbers, we iterate over the list with the first pointer, and then try to find two extra numbers to sum
         to 0. Since the list is ordered, the right pointer will always be higher than the left pointer.
-        We do not need to consider i after nums[i]>0, since sum of 3 positives will be always greater than zero. [1]
+        We do not need to consider i after nums[i] > 0, since sum of 3 positives will be always greater than zero. [1]
         If the number is the same as the number before, then it is equivalent to repeating the previous calculation. [2]
         Now we calculate the total:
             If the total is less than zero, we need it to be larger, so we move the left pointer
