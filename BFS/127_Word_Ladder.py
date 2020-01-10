@@ -65,42 +65,48 @@ def ladder_length_v2(beginWord, endWord, wordList):
         sides and at any point in time if we find a common node in both the searches, we stop the search. This is known
         as bidirectional BFS and it considerably cuts down on the search space and hence reduces the time and space
         complexity.
-        Termination condition for bidirectional search is finding a word which is already been seen by the parallel
+        The algorithm is very similar to the standard BFS based approach we saw earlier. The only difference is we now
+        do BFS starting two nodes instead of one. This also changes the termination condition of our search.
+        We now have two 'visited' dictionaries to keep track of nodes visited from the search starting at the
+        respective ends. If we ever find a node/word which is in the 'visited' set of the parallel search, we terminate
+        our search, since we have found the meet point of this bidirectional search.
+        Termination condition for bidirectional search is finding a word which has already been seen by the parallel
         search. It's more like meeting in the middle instead of going all the way through.
         The shortest transformation sequence is the sum of levels of the meet point node from both the ends. Thus, for
-        every visited node we save its level as value in the visited dictionary.
-    Time complexity: O(N * M**2) where N is the number of words and M is the length of each word (same length)
+        every visited node we save its level as value in the 'visited' dictionary.
+    Time complexity: O(N * M), where N is the number of words and M is the length of each word (same length)
     Space complexity: O(N * M)
     """
 
-    def ladder_length_word(queue, visited, others_visited):
+    def visit_word(queue, visited, others_visited):
         word, depth = queue.popleft()
         for i in range(len(word)):
-            if word[:i] + '*' + word[i + 1:] in patterns:
-                for w in patterns[word[:i] + '*' + word[i + 1:]]:
-                    if w in others_visited:  # If the intermediate state/word has already been visited from the other
-                        # parallel traversal this means we have found the answer.
-                        return depth + others_visited[w]
-                    if w not in visited:
-                        queue.append((w, depth + 1))
-                        visited[w] = depth + 1
+            t = word[:i] + '*' + word[i + 1:]
+            for w in transformations[t]:
+                if w in others_visited:  # If the intermediate state/word has already been visited from the other
+                    # parallel traversal this means we have found the answer.
+                    return depth + others_visited[w]
+                if w not in visited:
+                    visited[w] = depth + 1
+                    queue.append((w, depth + 1))
+        return None
 
     if endWord not in wordList:
         return 0
     queue_begin = deque([(beginWord, 1)])
     queue_end = deque([(endWord, 1)])
-    patterns = defaultdict(list)
+    transformations = defaultdict(list)
     for word in wordList:
         for i in range(len(word)):
-            patterns[word[:i] + '*' + word[i + 1:]].append(word)
+            transformations[word[:i] + '*' + word[i + 1:]].append(word)
     visited_begin = {beginWord: 1}
     visited_end = {endWord: 1}
     while queue_begin and queue_end:  # We do a bidirectional search starting one pointer from begin word and one
         # pointer from end word. Hopping one by one.
-        res = ladder_length_word(queue_begin, visited_begin, visited_end)  # One hop from begin word
+        res = visit_word(queue_begin, visited_begin, visited_end)  # One hop from begin word
         if res:
             return res
-        res = ladder_length_word(queue_end, visited_end, visited_begin)  # One hop from end word
+        res = visit_word(queue_end, visited_end, visited_begin)  # One hop from end word
         if res:
             return res
     return 0
