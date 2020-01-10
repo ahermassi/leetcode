@@ -13,7 +13,7 @@ import unittest2 as unittest
 
 
 def num_decodings_v1(s):
-    """ Top-down, recursive. TLE.
+    """ Top-down, recursive. TLE. The logic is similar to 70- Climbing Stairs.
         Recursively decompose the string using a decoding pointer 'index'. At every point of the recursion, we can make
         2 decisions:
             1- Decode one character out: valid if current character at 'index' is between 1 and 9
@@ -69,21 +69,20 @@ def num_decodings_v3(s):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    if not s:
-        return 0
     n = len(s)
     dp = [0] * (n + 1)
     dp[0] = 1
     for i in range(1, n + 1):
         if s[i - 1] != '0':
-            dp[i] += dp[i - 1]  # One step jump. We only need to ensure that s[i-1] is not equal to zero, since only
-            # zero does not have a mapping to an alphabet and rest of the digits from 1 through 9 do in fact have a
-            # mapping.
+            dp[i] += dp[i - 1]  # One step jump. We only need to ensure that s[i-1] (current character) is not equal to
+            # zero, since only zero does not have a mapping to an alphabet and rest of the digits from 1 through 9 do
+            # in fact have a mapping.
             # At this step, we're like saying "does it make sense to split the string into whatever came before me and
             # myself ?", which is only possible if current value is different from 0 so it can have a mapping.
             # Example: s = '271'; dp[0] = 1; dp[1] = 1 as there is only one way to decode '2'; dp[2] += dp[1] because
-            # current value is '7' which is different from '0', so it can join the gang: 1 way to decode: 2 7
-        if len(s[i - 2: i]) == 2 and '10' <= s[i - 2: i] <= '26':
+            # current value is '7' which is different from '0', so it can join the gang: dp[2] = 1 means there is 1 way
+            # to decode first 2 characters at this point: 2 7
+        if i - 2 >= 0 and '10' <= s[i - 2: i] <= '26':
             dp[i] += dp[i - 2]  # Two-step jump. At this step, we're like saying "does it make sense to split the
             # string into (myself + previous character) and whatever came before ?", which is only possible if value of
             # (myself + previous character) is >= 10 and <= 26 so it can have a mapping. Now continuing with same
@@ -100,6 +99,7 @@ class Test(unittest.TestCase):
         for test_string, result in self.data:
             self.assertEqual(result, num_decodings_v1(test_string))
             self.assertEqual(result, num_decodings_v2(test_string))
+            self.assertEqual(result, num_decodings_v3(test_string))
 
 
 if __name__ == '__main__':
