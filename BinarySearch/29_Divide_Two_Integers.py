@@ -7,43 +7,47 @@ import unittest2 as unittest
 
 
 def divide(dividend, divisor):
-    """ The idea behind this problem is simple, the dividend consists of multi times of divisor:
-        dividend = divisor * (2 ^ 0) * a0 + divisor * (2 ^ 1) * a1 + divisor * (2 ^ 2) * a2 + ...
+    """ The idea behind this problem is simple. The dividend consists of multi times of divisor:
+        dividend = (a0 * divisor * 2^0) + (a1 * divisor * 2^1) + (a2 * divisor * 2^2) + ...
         What we need to compute is a0 ... aN.
         A naive method is to repeatedly subtract divisor from dividend, until there is none enough left. Then the count
-        of subtractions will be the answer. Yet this takes linear time and is thus slow. A better method is to subtract
-        divisor in a more efficient way. We can subtract divisor, 2divisor, 4divisor, 8*divisor... Now the subtracting
-        process only takes log-time.
-        Since we only care about the how many abs(divisor) needed for abs(dividend), we should covert both integers
-        into to positive first. Use of abs should be very careful, since dividend or divisor could be Integer.MIN_VALUE.
-        Integer.MAX_VALUE =  2147483647
+        of subtractions will be the answer. Yet this takes linear time and is thus slow.
+        A better method is to subtract divisor in a more efficient way. We can subtract 1 * divisor, 2 * divisor,
+        4 * divisor, 8 * divisor... Now the subtracting process only takes log time.
+        Since we only care about how many abs(divisor) needed for abs(dividend), we should convert both integers
+        to positive first. Use of abs should be very careful, since dividend or divisor could be Integer.MIN_VALUE.
+        Integer.MAX_VALUE = 2147483647
         Integer.MIN_VALUE = -2147483648
         --> abs(Integer.MIN_VALUE) will overflow
-        Keep subtracting the new divisor 'substract' from the remaining left and then doubling 'substract'
-        (substract += substract). if left < substract, start from the original divisor. Do this until left < divisor.
-        For example, if we want to calculate (17/2)
-            ans = 0
-            17-2 ,ans += 1; left = 15, substract = divisor = 2, count = 1
-            15-4 ,ans += 2; left =11, substract = 4, count = 2
-            11-8 ,ans += 4; left = 3, substract = 8, count = 4
-            3-2 ,ans += 1; left = 1, dividend = 3 < substract = 16 --> Rewind: substract = divisor = 2, count = 1
-            ans = 8: dividend = left = 1 < divisor = 2, return
+        Keep subtracting the new divisor 'subtract' from what remained of 'dividend' and then double 'subtract'
+        (subtract += subtract). If dividend < subtract, start from the original divisor. Do this until
+        dividend < divisor.
+        For example, if we want to calculate (17/2): dividend = 17, divisor = 2
+            res = 0
+            17-2, res += 1; dividend(left) = 15, subtract = divisor = 2, count = 1
+            15-4, res += 2; dividend(left) = 11, subtract = 4, count = 2
+            11-8, res += 4; dividend(left) = 3, subtract = 8, count = 4
+            dividend(left) = 3 < subtract = 16 -> Rewind: subtract = divisor = 2, count = 1, dividend = 3
+            3-2, res += 1; dividend(left) = 1, subtract = 2, count = 1
+            dividend(left) = 1 < subtract = 4 -> dividend(left) = 1 < divisor = 2
+            -> res = 8,  return
     Time complexity: O(log divisor)
     Space complexity: O(1)
     """
-    positive = ((dividend > 0) is (divisor > 0))
+    sign = [1, -1][(dividend < 0) ^ (divisor < 0)]
     dividend, divisor = abs(dividend), abs(divisor)
-    ans = 0
+    res = 0
     while dividend >= divisor:
-        substract, count = divisor, 1
-        while dividend >= substract:
-            dividend -= substract
-            ans += count
-            substract += substract
+        subtract, count = divisor, 1  # 'count' meres how many 'subtract' is there in 1 'divisor'
+        while dividend >= subtract:
+            dividend -= subtract
+            res += count  # In 1 'subtract' we count 1 'divisor', in 2 'subtract's we count 2 'divisor's, etc
+            # Doubling down on 'subtract' leads to doubling down on 'count'. 'count' can be seen as a multiplication
+            # factor among a0, a1,...aN
+            subtract += subtract
             count += count
-    if not positive:
-        return max(-ans, -2147483648)  # Dealing with case ans > Integer.MAX_VALUE
-    return min(ans, 2147483647)
+    res *= sign
+    return min(max(res, -2147483648), 2147483647)
 
 
 class Test(unittest.TestCase):
