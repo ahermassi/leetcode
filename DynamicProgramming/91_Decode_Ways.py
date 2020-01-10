@@ -9,6 +9,8 @@ Given a non-empty string containing only digits, determine the total number of w
 
 import unittest2 as unittest
 
+# Watch: https://www.youtube.com/watch?v=YcJTyrG3bZs
+
 
 def num_decodings_v1(s):
     """ Top-down, recursive. TLE.
@@ -24,12 +26,12 @@ def num_decodings_v1(s):
     def dfs(index):
         if index >= n:  # Nothing left to decompose, so this is a valid decomposition
             return 1
-        total_decompositions = 0
+        one = two = 0
         if s[index] != '0':  # Current character is between 1 and 9
-            total_decompositions += dfs(index + 1)
+            one = dfs(index + 1)
         if 10 <= int(s[index:index + 2]) <= 26:  # Current character is between 10 and 26
-            total_decompositions += dfs(index + 2)
-        return total_decompositions
+            two = dfs(index + 2)
+        return one + two
 
     n = len(s)
     return dfs(0)
