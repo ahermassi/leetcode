@@ -36,6 +36,30 @@ def num_decodings_v1(s):
 
 
 def num_decodings_v2(s):
+    """ Recursion + memoization.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def dfs(index):
+        if index >= n:  # Nothing left to decompose, so this is a valid decomposition
+            return 1
+        if index in memo:
+            return memo[index]
+        total_decompositions = 0
+        if s[index] != '0':  # Current character is between 1 and 9
+            total_decompositions += dfs(index + 1)
+        if 10 <= int(s[index:index + 2]) <= 26:  # Current character is between 10 and 26
+            total_decompositions += dfs(index + 2)
+        memo[index] = total_decompositions
+        return total_decompositions
+
+    n = len(s)
+    memo = {}
+    return dfs(0)
+
+
+def num_decodings_v3(s):
     """ Let dp[i] be the number of ways to parse the first i characters of s, or the number of ways to decode a string
         of length i. The basic concept is to build up the number of ways to get to state i from all the previous states
         less than i. We set dp[0] to 1 because there is only 1 way to decode an empty string. We can then build up the
@@ -73,6 +97,7 @@ class Test(unittest.TestCase):
     def test_num_decodings(self):
         for test_string, result in self.data:
             self.assertEqual(result, num_decodings_v1(test_string))
+            self.assertEqual(result, num_decodings_v2(test_string))
 
 
 if __name__ == '__main__':
