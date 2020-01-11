@@ -5,29 +5,28 @@ import unittest as unittest
 
 
 def num_squares_v1(n):
-    """ Suppose that min_squares[i] records to least number of perfect square numbers that sum up to i. And there are
-        multiple ways for perfect square numbers to sum up to i. The candidate way is to add a perfect square number
-        j**2 to a sum of perfect square numbers that equals to i - j**2. And it can be generalized as:
-         i = (i- j**2) + j**2.
-         So the least number of perfect square numbers that sum up to (i - j**2) is dp[i - j**2]. So candidate answer
-         is dp[i - j**2] + 1 because j**2 itself is a perfect square
-        So for dp[i], we just pick the minimum of all candidates.
-        So for each i, we try to find the least number of perfect squares that make up (i - j**2), and then add +1 to
-        the count because j**2 itself is a perfect square (i = (i - j**2) + j**2)
-        At each iteration, i - j**2 has to be >= 0 because we're dealing only with positive integers.
-        i - j**2 >= 0
-        --> j**2 <= i
-        --> j <= sqrt(i) = i ** 0.5
+    """ Let dp[i] be the least number of perfect square numbers that sum up to i.
+        There are multiple ways for perfect square numbers to sum up to i. The candidate way is to add a perfect square
+        number j^2 to a sum of perfect square numbers that equals (i - j^2). It can be generalized as:
+            i = (i- j^2) + j^2
+        The least number of perfect square numbers that sum up to (i - j^2) is dp[i - j^2]. Therefore:
+            dp[i] = min(dp[i - j^2] for valid values of j) + 1
+        Add 1 because j^2 itself is a perfect square.
+        At each iteration, i - j^2 has to be >= 0 because we're working only with positive integers.
+        i - j^2 >= 0
+        --> j^2 <= i
+        --> j <= sqrt(i) = i^0.5
         For this reason, the second loop goes from 1 to sqrt(i)
-    Time complexity: O(n sqrt(n)) which is approximated by O(n log n)
+    Time complexity: O(n sqrt(n)), in main step we have a nested loop, where the outer runs for n iterations and in the
+    inner loop takes at maximum sqrt(n) iterations.
     Space complexity: O(n)
     """
-    min_squares = [float('inf')] * (n + 1)
-    min_squares[0] = 0
+    dp = [float('inf')] * (n + 1)
+    dp[0] = 0
     for i in range(1, n + 1):
         for j in range(1, int(i ** 0.5) + 1):
-            min_squares[i] = min(min_squares[i], min_squares[i - j ** 2] + 1)
-    return min_squares[n]
+            dp[i] = min(dp[i], dp[i - j ** 2] + 1)
+    return dp[n]
 
 
 def num_squares_v2(n):
