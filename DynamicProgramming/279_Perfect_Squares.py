@@ -31,14 +31,12 @@ def num_squares_v1(n):
 
 def num_squares_v2(n):
     """ The basic idea of this solution is a BSF search for shortest path.
-        The root node is n, and we are trying to keep reducing a perfect square number from it at each layer. So the
-        next layer nodes are {n - i**2 for i in range(1, int(n**0.5)+1)}. And target leaf node is 0, indicates n is
+        The root node is n, and we are trying to keep subtracting a perfect square number from it at each layer. So the
+        next layer nodes are {n - i^2 for i in range(1, int(n^0.5)+1)}. A target leaf node of value 0 indicates n is
         made up of a number of perfect square numbers and depth is the least number of perfect square numbers.
-    Time complexity: O(n), sqrt(n) elements in the queue checked sqrt(n) times (length of perfect_squares list)
+    Time complexity: O(n), sqrt(n) elements in the queue checked sqrt(n) times (number of perfect squares)
     Space complexity: O(sqrt(n))
     """
-    perfect_squares = [i * i for i in range(1, int(n ** 0.5) + 1)]  # These are the candidate perfect squares that n can
-    # be made of: all squares less than or equal to n
     queue, count = {n}, 0  # queue holds the intermediate integers that result from reducing n by (n - perfect square).
     # The same process is applied to those intermediate results until 0 is found. We use a set data structure to
     # eliminate the duplicate integers. Example: n = 12, perfect_squares = [1, 4, 9]. In second iteration, 11 - 4 = 7
@@ -46,13 +44,13 @@ def num_squares_v2(n):
     while queue:
         count += 1  # A new depth: count + 1
         new_queue = set()
-        for i in queue:
-            for j in perfect_squares:
-                if i == j:  # 0 is found: i - j == 0
+        for remaining in queue:
+            for i in range(1, int(remaining ** 0.5) + 1):  # These are the candidate perfect squares that 'remaining'
+                # can be made of: all squares less than or equal to 'remaining'
+                new_remaining = remaining - i ** 2
+                if new_remaining == 0:
                     return count
-                if j > i:  # (i - j) would result in a negative integer
-                    break
-                new_queue.add(i - j)
+                new_queue.add(new_remaining)
         queue = new_queue
     return count
 
