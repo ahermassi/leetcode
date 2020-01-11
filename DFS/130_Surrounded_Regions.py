@@ -1,5 +1,6 @@
 """ Given a 2D board containing 'X' and 'O' (the letter O), capture all regions surrounded by 'X'.
 A region is captured by flipping all 'O's into 'X's in that surrounded region. """
+from collections import deque
 
 import unittest2 as unittest
 
@@ -42,6 +43,38 @@ def solve_v1(board):
             dfs(0, i)
         if board[n - 1][i] == 'O':  # Bottom border
             dfs(n - 1, i)
+    for i in range(n):
+        for j in range(m):
+            if board[i][j] == 'O':
+                board[i][j] = 'X'
+            elif board[i][j] == '1':
+                board[i][j] = 'O'
+
+
+def solve_v2(board):
+    """ BFS version of previous solution.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    if not board:
+        return None
+    n, m = len(board), len(board[0])
+    queue = deque()
+    for i in range(n):
+        if board[i][0] == 'O':
+            queue.append((i, 0))
+        if board[i][m - 1] == 'O':
+            queue.append((i, m - 1))
+    for i in range(m):
+        if board[0][i] == 'O':
+            queue.append((0, i))
+        if board[n - 1][i] == 'O':
+            queue.append((n - 1, i))
+    while queue:
+        i, j = queue.popleft()
+        if 0 <= i < n and 0 <= j < m and board[i][j] == 'O':
+            board[i][j] = '1'
+            queue.extend([(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)])
     for i in range(n):
         for j in range(m):
             if board[i][j] == 'O':
