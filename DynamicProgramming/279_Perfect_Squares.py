@@ -2,6 +2,7 @@
 sum to n. """
 
 import unittest as unittest
+from collections import deque
 
 
 def num_squares_v1(n):
@@ -44,15 +45,32 @@ def num_squares_v2(n):
     while queue:
         count += 1  # A new depth: count + 1
         new_queue = set()
-        for remaining in queue:
-            for i in range(1, int(remaining ** 0.5) + 1):  # These are the candidate perfect squares that 'remaining'
+        for remainder in queue:
+            for i in range(1, int(remainder ** 0.5) + 1):  # These are the candidate perfect squares that 'remaining'
                 # can be made of: all squares less than or equal to 'remaining'
-                new_remaining = remaining - i ** 2
-                if new_remaining == 0:
+                new_remainder = remainder - i ** 2
+                if new_remainder == 0:
                     return count
-                new_queue.add(new_remaining)
+                new_queue.add(new_remainder)
         queue = new_queue
     return count
+
+
+def num_squares_v3(n):
+    """ BFS using an actual queue and a 'visited' set to avoid visiting the same nodes which would lead to redundant
+        calculations.
+    """
+    queue = deque([(n, 0)])
+    visited = set()
+    while queue:
+        remainder, count = queue.popleft()
+        for i in range(1, int(remainder ** 0.5) + 1):
+            new_remainder = remainder - i ** 2
+            if new_remainder == 0:
+                return count + 1
+            if new_remainder not in visited:
+                visited.add(new_remainder)
+                queue.append((new_remainder, count + 1))
 
 
 class Test(unittest.TestCase):
@@ -62,6 +80,7 @@ class Test(unittest.TestCase):
         for test_number, result in self.data:
             self.assertEqual(result, num_squares_v1(test_number))
             self.assertEqual(result, num_squares_v2(test_number))
+            self.assertEqual(result, num_squares_v3(test_number))
 
 
 if __name__ == '__main__':
