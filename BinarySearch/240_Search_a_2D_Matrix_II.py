@@ -69,7 +69,7 @@ def search_matrix_v2(matrix, target):
     cannot run for more than N + M iterations.
     Space complexity: O(1)
     """
-    if not matrix or not matrix[0]:
+    if not matrix:
         return False
     n, m = len(matrix), len(matrix[0])
     row, col = n - 1, 0
@@ -80,6 +80,25 @@ def search_matrix_v2(matrix, target):
             col += 1
         else:
             row -= 1
+    return False
+
+
+def search_matrix_v3(matrix, target):
+    """ This time, we initiate a search from the top-right corner.
+    Time complexity: O(N + M)
+    Space complexity: O(1)
+    """
+    if not matrix:
+        return False
+    n, m = len(matrix), len(matrix[0])
+    row, col = 0, m - 1
+    while row < n and col >= 0:
+        if matrix[row][col] == target:
+            return True
+        if matrix[row][col] < target:
+            row += 1
+        else:
+            col -= 1
     return False
 
 
@@ -104,6 +123,7 @@ class Test(unittest.TestCase):
         for test_matrix, test_target, result in self.data:
             self.assertEqual(result, search_matrix_v1(test_matrix, test_target))
             self.assertEqual(result, search_matrix_v2(test_matrix, test_target))
+            self.assertEqual(result, search_matrix_v3(test_matrix, test_target))
 
 
 if __name__ == '__main__':
