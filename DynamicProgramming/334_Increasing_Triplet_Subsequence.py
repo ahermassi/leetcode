@@ -25,6 +25,13 @@ def increasing_triplet_v1(nums):
         then O(N log2) ~= O(N).
         However, 'increasing_sub_sequence' here contains at most 2 elements, so one instant simplification is to
         replace the binary search or bisect.bisect_left() call with a simple if-else comparison.
+        Example: nums = [9, 7, 10, 1, 8, 9], let sub = [first_min, second_min] = [float('inf), float('inf')]
+        i = 0:    sub = [9, max]
+        i = 1:    sub = [7, max]
+        i = 2:    sub = [7, 10]
+        i = 3:    sub = [1, 10]
+        i = 4:    sub = [1, 8];
+        i = 5:    sub[1] < 9, done.
     Time complexity: O(N)
     Space complexity: O(1)
     """
