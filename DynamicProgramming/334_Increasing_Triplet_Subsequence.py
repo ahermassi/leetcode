@@ -1,5 +1,6 @@
 """ Given an unsorted array return whether an increasing subsequence of length 3 exists or not in the array. """
 
+import bisect
 import unittest2 as unittest
 
 
@@ -18,11 +19,14 @@ def increasing_triplet_v1(nums):
             b) If num is between first_min and second_min and less than second_min: update second_min to num.
                Now the range for third_value can be any number greater than second_min (larger range)
             c) if num is greater than second_min: we've found 3 an increasing triplet sub-sequence and return true
-        It's worth pointing out that the algorithm is similar to keeping an array of size=3 and updating first_min and
-        second_min just like 300- Longest Increasing Sub-sequence's binary search solution. Since we know the desired
-        length of the array is 3, we do not need to use binary search to find the insertion index, so we can do it in
-        constant time.
-
+        It's worth pointing out that the algorithm is similar to keeping an array 'increasing_sub_sequence' of size 3
+        and updating first_min and second_min just like 300- Longest Increasing Sub-sequence's binary search solution.
+        That algorithm's time complexity is O(N logK), where K is the length of the LIS. Here, K is no larger than 2,
+        then O(N log2) ~= O(N).
+        However, 'increasing_sub_sequence' here contains at most 2 elements, so one instant simplification is to
+        replace the binary search or bisect.bisect_left() call with a simple if-else comparison.
+    Time complexity: O(N)
+    Space complexity: O(1)
     """
     first_min = second_min = float('inf')
     for num in nums:
@@ -35,12 +39,27 @@ def increasing_triplet_v1(nums):
     return False
 
 
+def increasing_triplet_v2(nums):
+    """ Using binary search as in 300- Longest Increasing Sub-sequence.
+    Time complexity: O(N log2) ~= O(N)
+    Space complexity: O(1)
+    """
+    increasing_sub_sequence = [float('inf')] * 2
+    for num in nums:
+        index = bisect.bisect_left(increasing_sub_sequence, num)
+        if index >= 2:
+            return True
+        increasing_sub_sequence[index] = num
+    return False
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3, 4, 5], True), ([5, 4, 3, 2, 1], False)]
 
     def test_increasing_triplet(self):
         for test_nums, result in self.data:
             self.assertEqual(result, increasing_triplet_v1(test_nums))
+            self.assertEqual(result, increasing_triplet_v2(test_nums))
 
 
 if __name__ == '__main__':
