@@ -45,32 +45,56 @@ def length_of_lis_v1(nums):
     return max_len
 
 
-def length_of_LIS_v2(nums):
+def length_of_lis_v2(nums):
     """ This approach is known as Patience Sorting.
-        We try to build increasing_subsequence where elements are sorted increasingly. We iterate over nums array. If
-        the current element in greater than the largest (last) element in increasing_subsequence, we simply append it.
-        Otherwise, we determine the insertion index of the current element in increasing_subsequence if we were to keep
-        increasing_subsequence sorted, using binary search. We eventually end up with a list of elements sorted
-        increasingly whose length is the length of (one of) longest increasing subsequence in nums.
-        For an explanation:
+        We try to build 'increasing_sub_sequence' where elements are sorted increasingly.
+        We iterate over nums array. If the current element is greater than the largest (last) element in
+        'increasing_sub_sequence', we simply append it. Otherwise, we determine the insertion index of the current
+        element in 'increasing_sub_sequence' if we were to keep it sorted, using binary search. We eventually end up
+        with a list of elements sorted increasingly whose length is the length of (one of) LIS in nums.
+        Note: 'increasing_sub_sequence' array does not result in longest increasing sub-sequence, but length of
+        'increasing_sub_sequence' array will give the length of LIS.
+        Why is this correct ?
+        When we replace increasing_sub_sequence[i] with current num, we don't change the length of answer, but we
+        change the potential best candidate. Replacing increasing_sub_sequence[i] with the first element that is
+        greater than or equal to it increases our chance to extend the array because increasing_sub_sequence[i] is
+        smaller than that element.
+        So the main idea is: the main idea is:
+            Use binary search to extend increasing sequence with larger numbers, or minimize existing values with
+            smaller ones, so we can use larger numbers to extend it.
+        For more details:
         https://leetcode.com/problems/longest-increasing-subsequence/discuss/74824/JavaPython-Binary-search-O(nlogn)-time-with-explanation
+        Example: nums = [0, 8, 4, 12, 2]
+        i = 0, increasing_sub_sequence = [0]
+        i = 1, increasing_sub_sequence = [0, 8]
+        i = 2, increasing_sub_sequence = [0, 4]
+        i = 3, increasing_sub_sequence = [0, 4, 12]
+        i = 4, increasing_sub_sequence = [0 , 2, 12] which is not the longest increasing sub-sequence, but its length
+        is the length of LIS.
     Time complexity: O(N logN), binary search takes logN time and it is called N times
     Space complexity: O(N)
     """
-    increasing_subsequence = [0] * len(nums)
-    size = 0
-    for x in nums:
-        # Binary search
-        left, right = 0, size
-        while left != right:
+
+    def find_insertion_index(val):
+        left, right = 0, len(increasing_subsequence) - 1
+        while left <= right:
             mid = (left + right) // 2
-            if increasing_subsequence[mid] < x:
+            if increasing_subsequence[mid] == val:
+                return mid
+            if increasing_subsequence[mid] < val:
                 left = mid + 1
             else:
-                right = mid
-        increasing_subsequence[left] = x
-        size = max(left + 1, size)
-    return size
+                right = mid - 1
+        return left
+
+    increasing_subsequence = []
+    for num in nums:
+        index = find_insertion_index(num)
+        if index == len(increasing_subsequence):
+            increasing_subsequence.append(num)
+        else:
+            increasing_subsequence[index] = num
+    return len(increasing_subsequence)
 
 
 class Test(unittest.TestCase):
@@ -78,8 +102,8 @@ class Test(unittest.TestCase):
 
     def test_length_of_LIS(self):
         for test_array, result in self.data:
-            self.assertEqual(result, length_of_LIS_v1(test_array))
-            self.assertEqual(result, length_of_LIS_v2(test_array))
+            self.assertEqual(result, length_of_lis_v1(test_array))
+            self.assertEqual(result, length_of_lis_v2(test_array))
 
 
 if __name__ == '__main__':
