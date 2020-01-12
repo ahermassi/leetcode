@@ -47,7 +47,9 @@ def increasing_triplet_v1(nums):
 
 
 def increasing_triplet_v2(nums):
-    """ Using binary search as in 300- Longest Increasing Sub-sequence.
+    """ Using binary search as in 300- Longest Increasing Sub-sequence. This algorithm is still O(N), for the simple
+    fact that the binary search is done over an array that has a constant size of 2, so the binary search is O(lg 2)
+    which is constant, so O(1).
     Time complexity: O(N log2) ~= O(N)
     Space complexity: O(1)
     """
@@ -60,6 +62,20 @@ def increasing_triplet_v2(nums):
     return False
 
 
+def increasing_k_subsequence(nums, k):
+    """ Generalization for any k >= 0
+    Time complexity: O(N logK)
+    Space complexity: O(1)
+    """
+    increasing_sub_sequence = [float('inf')] * (k - 1)
+    for num in nums:
+        index = bisect.bisect_left(increasing_sub_sequence, num)
+        if index >= k - 1:
+            return True
+        increasing_sub_sequence[index] = num
+    return False
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3, 4, 5], True), ([5, 4, 3, 2, 1], False)]
 
@@ -67,6 +83,7 @@ class Test(unittest.TestCase):
         for test_nums, result in self.data:
             self.assertEqual(result, increasing_triplet_v1(test_nums))
             self.assertEqual(result, increasing_triplet_v2(test_nums))
+            self.assertEqual(result, increasing_k_subsequence(test_nums, 3))
 
 
 if __name__ == '__main__':
