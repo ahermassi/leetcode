@@ -6,18 +6,18 @@ def longest_palindrome_v1(s):
     """ Expand Around Center.
         We observe that a palindrome mirrors around its center. Therefore, a palindrome can be expanded from its center.
         There are two cases of palindromes: even and odd length.
-    Time complexity: O(N ** 2), since expanding a palindrome around its center could take O(N)
+    Time complexity: O(N^2), since expanding a palindrome around its center could take O(N)
     Space complexity: O(1)
     """
 
-    def palindrome_at(left, right):  # Starting at left, right expand outwards to find the longest palindrome
-        while left >= 0 and right < len(s) and s[left] == s[right]:
+    def palindrome_at(left, right):  # Starting at (left, right) expand outwards to find the longest palindrome
+        while left >= 0 and right < n and s[left] == s[right]:
             left -= 1
             right += 1
         return s[left + 1: right]
 
-    res = ''
-    for i in range(len(s)):
+    n, res = len(s), ''
+    for i in range(n):
         odd_palindrome = palindrome_at(i, i)  # Odd case, like "aba"
         even_palindrome = palindrome_at(i, i + 1)  # Even case, like "abba"
         res = max(res, odd_palindrome, even_palindrome, key=len)
@@ -35,6 +35,7 @@ def longest_palindrome_v2(s):
         dp[i][j] = (s[i] == s[j]) AND (dp[i+1][j-1])
         This yields a straight forward DP solution, which we first initialize the one letter palindromes, and work our
         way up finding all two letters palindromes, and so on...
+        Why are we counting down for i, but counting up for j? Each sub-problem dp[i][j] depends on dp[i+1][j-1].
     Time complexity: O(N ** 2)
     Space complexity: O(N ** 2) to store dp array
     """
