@@ -17,3 +17,19 @@ def is_same_tree_v1(p, q):
         return is_same_tree_v1(p.left, q.left) and is_same_tree_v1(p.right, q.right)
     return False
 
+
+def is_same_tree_v2(p, q):
+    """ Iterative solution using a stack.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    stack = [(p, q)]
+    while stack:
+        a, b = stack.pop()
+        if not a and not b:
+            continue
+        if not a or not b or a.val != b.val:
+            return False
+        stack.extend([(a.left, b.left), (a.right, b.right)])
+    return True
+
