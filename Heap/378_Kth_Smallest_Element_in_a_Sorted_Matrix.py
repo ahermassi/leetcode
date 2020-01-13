@@ -12,11 +12,13 @@ def kth_smallest(matrix, k):
         Build a min heap of elements from the first column (every row/column is a sorted array) (could be done with
         first row as well, same logic)
         Do the following operations k times :
-        Every time when we poll out the root (top element in Heap), we need to know the row number and column number
+        Every time when we poll out the root (top element in heap), we need to know the row number and column number
         of that element. Replace that root with the next element from the same row (which is a sorted array).
+        The invariant of the algorithm is:
+            At iteration i, the front of the heap is the (i+1)th smallest element in the matrix (i is 0-based)
         Think of the first element of each column (or row) we initially push to the heap as a representative of each
         column (or row). Each row (or column) keeps bringing the next greater element and the heap adjusts accordingly
-        to keep the smallest in the front. As we know that the smallest number of the matrix is at the top left corner,
+        to keep the smallest in the front. As we know, the smallest element in the matrix is at the top left corner,
         so no matter what our choice was (pushing first element of each row or column), the very first element in the
         heap will be always the absolute smallest.
     Time complexity: O(k logN), First, we inserted N elements from each of the ‘N’ rows, which will take O(N). Then we
@@ -26,11 +28,11 @@ def kth_smallest(matrix, k):
     Space complexity: O(N) for the heap
     """
     heap = []
-    for i, row in enumerate(matrix):  # Put the 1st element of each column in the min heap
+    for i, row in enumerate(matrix):  # Push the 1st element of each row (= 1st column) to the min heap
         heappush(heap, (row[0], i, 0))
     n, number = len(matrix[0]), 0
     for _ in range(k):
-        number, row, col = heappop(heap)  # Take the smallest (top) element form the min heap, if the running count is
+        number, row, col = heappop(heap)  # Take the smallest (top) element form the min heap. If the running count is
         # equal to k return the number. If the row of the top element has more elements, add the next element to the
         # heap
         if col + 1 < n:
