@@ -1,6 +1,8 @@
 """ Given two binary trees, write a function to check if they are the same or not.
 Two binary trees are considered the same if they are structurally identical and the nodes have the same value. """
 
+from collections import deque
+
 
 def is_same_tree_v1(p, q):
     """ The simplest strategy here is to use recursion. Check if p and q nodes are not None, and their values are equal.
@@ -31,5 +33,21 @@ def is_same_tree_v2(p, q):
         if not a or not b or a.val != b.val:
             return False
         stack.extend([(a.left, b.left), (a.right, b.right)])
+    return True
+
+
+def is_same_tree_v3(p, q):
+    """ Iterative solution using a queue.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    queue = deque([(p, q)])
+    while queue:
+        a, b = queue.popleft()
+        if not a and not b:
+            continue
+        if not a or not b or a.val != b.val:
+            return False
+        queue.extend([(a.left, b.left), (a.right, b.right)])
     return True
 
