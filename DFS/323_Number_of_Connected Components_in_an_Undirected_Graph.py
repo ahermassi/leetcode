@@ -1,7 +1,7 @@
 """ Given n nodes labeled from 0 to n - 1 and a list of undirected edges (each edge is a pair of nodes), write a
 function to find the number of connected components in an undirected graph. """
 
-from collections import defaultdict
+from collections import defaultdict, deque
 import unittest2 as unittest
 
 
@@ -35,12 +35,38 @@ def count_components_v1(n, edges):
     return res
 
 
+def count_components_v2(n, edges):
+    """ BFS is the same idea, except where do we start BFS from? If we start it from any node, we may only find that
+        one connected component, so instead we start it from all nodes and visit the max number of nodes using BFS and
+        only increment the count once we visit a new node from the adjacency list, meaning we only increment the count
+        once we're exploring a new connected component.
+
+    """
+    res, visited = 0, set()
+    graph = defaultdict(list)
+    for src, dest in edges:
+        graph[src].append(dest)
+        graph[dest].append(src)
+    for i in range(n):
+        if i not in visited:
+            res += 1
+            queue = deque([i])
+            while queue:
+                vertex = queue.popleft()
+                visited.add(vertex)
+                for neighbor in graph[vertex]:
+                    if neighbor not in visited:
+                        queue.append(neighbor)
+    return res
+
+
 class Test(unittest.TestCase):
     data = [(5, [[0, 1], [1, 2], [3, 4]], 2), (5, [[0, 1], [1, 2], [2, 3], [3, 4]], 1)]
 
     def test_count_components(self):
         for test_n, test_edges, result in self.data:
             self.assertEqual(result, count_components_v1(test_n, test_edges))
+            self.assertEqual(result, count_components_v2(test_n, test_edges))
 
 
 if __name__ == '__main__':
