@@ -49,7 +49,7 @@ def is_subtree_v2(s, t):
             4- Otherwise, go to step 1 and check for s.left || s.right
     Time complexity: O(N * M) where N is the number of s nodes and M is the number of t nodes. In worst case (skewed
     tree) the traversal takes O(N * M)
-    Space complexity: O(N), the depth of the recursion tree can go up to N, draw the recursion tree to visualize that
+    Space complexity: O(N), the depth of the recursion tree can go up to N
     """
 
     def is_identical(s, t):  # Dumb comprehensive comparison off all nodes of s and t
@@ -64,6 +64,20 @@ def is_subtree_v2(s, t):
     if is_identical(s, t):  # If s and t are equal right off the bat, we're done !
         return True
     return is_subtree_v2(s.left, t) or is_subtree_v2(s.right, t)  # Check if we can find t to the left or right of s
+
+
+def is_subtree_v3(s, t):
+    """ Convert the tree into string representation, then just check whether substring exists in target string.
+    Time complexity: O(N * M)
+    Space complexity: O(N), the depth of the recursion tree in convert() function
+    """
+
+    def convert(root):
+        if not root:
+            return '$'
+        return '^' + str(root.val) + '#' + convert(root.left) + convert(root.right)
+
+    return convert(t) in convert(s)
 
 
 class Test(unittest.TestCase):
@@ -85,6 +99,8 @@ class Test(unittest.TestCase):
         self.assertFalse(is_subtree_v1(self.root1, self.root3))
         self.assertTrue(is_subtree_v2(self.root1, self.root2))
         self.assertFalse(is_subtree_v2(self.root1, self.root3))
+        self.assertTrue(is_subtree_v3(self.root1, self.root2))
+        self.assertFalse(is_subtree_v3(self.root1, self.root3))
 
 
 if __name__ == '__main__':
