@@ -46,7 +46,7 @@ def longest_palindrome_v2(s):
         res = s[i]
     for i in reversed(range(n)):
         for j in range(i + 1, n):
-            if s[i] == s[j] and (j - i < 2 or dp[i + 1][j - 1]):  # dp[i+1][j-1] represents the middle of the current
+            if s[i] == s[j] and (j - i == 1 or dp[i + 1][j - 1]):  # dp[i+1][j-1] represents the middle of the current
                 # considered substring
                 dp[i][j] = True  # If the middle is a palindrome and the endpoints equal each other, it follows that
                 # s[i:j+1] is a palindrome
