@@ -16,8 +16,8 @@ class TrieNode:
 class WordDictionary(object):
     """ Use a trie to store the words, and backtracking to check each character of word to search.
     Time complexity:
-        addWord: O(k) where k is the length of word (worst case if the word is new)
-        search: if we exclude wildcards (.), worst-case search will iterate through the longest word (i.e. linear to
+        addWord: O(k), where k is the length of word (worst case if the word is new)
+        search: if we exclude wildcards (.), worst case search will iterate through the longest word (i.e. linear to
         the maximum number of characters in a word). With wildcards, it will iterate through the whole tree in the
         worst case (i.e. linear to the total number of characters)
     Space complexity:
@@ -63,12 +63,12 @@ class WordDictionary(object):
             if index == n:
                 return root.is_word
             c = word[index]
-            if c in root.children:
-                return dfs(root.children[c], index + 1)  # Start of the prefix was found, so keep following that path
-            if c == '.':
-                for child in root.children.values():  # Can we find the REST of the string in any of the children ?
-                    if dfs(child, index + 1):
-                        return True
+            if c != '.':
+                return c in root.children and dfs(root.children[c], index + 1)  # Start of the prefix was found, so
+                # keep following that path
+            for child in root.children.values():  # Can we find the REST of the string in any of the children ?
+                if dfs(child, index + 1):
+                    return True
             return False
 
         n, root = len(word), self.root
