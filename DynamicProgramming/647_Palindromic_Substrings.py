@@ -59,7 +59,8 @@ def count_substrings_v2(s):
         # we want to know if substring s[0-5] (i.e. dp[0][5]) is palindrome, we'd look up the table for dp[1][4].
         # However, if i goes from left to right, dp[1] has not been calculated yet because dp[1] comes after dp[0].
         for j in range(i + 1, n):
-            if s[i] == s[j] and (j - i < 2 or dp[i + 1][j - 1]):
+            if s[i] == s[j] and (j - i == 1 or dp[i + 1][j - 1]):  # When j = i + 1, j - i = 1, which is basically the
+                # previous check s[i] == s[j]. When j > i + 1, the check dp[i + 1][j - 1] is necessary
                 dp[i][j] = True
                 res += 1
     return res
