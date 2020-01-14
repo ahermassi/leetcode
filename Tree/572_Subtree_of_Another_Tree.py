@@ -17,10 +17,10 @@ class TreeNode(object):
 
 
 def is_subtree_v1(s, t):
-    """ We do a BFS traversal of the first tree s. At each node whose value is is_identical to the second tree t root
-        value, we perform a recursive check to verify if the subtree at the current node is is_identical to the tree t.
+    """ We do a BFS traversal of the first tree s. At each node whose value is is identical to the second tree t root
+        value, we perform a recursive check to verify if the subtree at the current node is is identical to the tree t.
         If it's not the case, we carry on the BFS until the stack is empty or a match is found.
-    Time complexity: O(N * M) where N is the number of s nodes and M is the number of t nodes. In worst case(skewed
+    Time complexity: O(N * M) where N is the number of s nodes and M is the number of t nodes. In worst case (skewed
     tree) the traversal takes O(N * M)
     Space complexity: O(N), the depth of the recursion tree can go up to N
     """
@@ -28,9 +28,7 @@ def is_subtree_v1(s, t):
     def is_identical(s, t):
         if not s and not t:
             return True
-        if not s or not t:
-            return False
-        if s.val != t.val:
+        if not s or not t or s.val != t.val:
             return False
         return is_identical(s.left, t.left) and is_identical(s.right, t.right)
 
@@ -45,6 +43,10 @@ def is_subtree_v1(s, t):
 
 def is_subtree_v2(s, t):
     """ Same as above but recursively.
+            1- Start with a node of tree s (lets call this s-node)
+            2- Compare the trees forming with root s-node and root t
+            3- If the trees match(Leetcode 100- Same Tree logic) then return true
+            4- Otherwise, go to step 1 and check for s.left || s.right
     Time complexity: O(N * M) where N is the number of s nodes and M is the number of t nodes. In worst case (skewed
     tree) the traversal takes O(N * M)
     Space complexity: O(N), the depth of the recursion tree can go up to N, draw the recursion tree to visualize that
@@ -53,9 +55,7 @@ def is_subtree_v2(s, t):
     def is_identical(s, t):  # Dumb comprehensive comparison off all nodes of s and t
         if not s and not t:
             return True
-        if not s or not t:
-            return False
-        if s.val != t.val:
+        if not s or not t or s.val != t.val:
             return False
         return is_identical(s.left, t.left) and is_identical(s.right, t.right)
 
