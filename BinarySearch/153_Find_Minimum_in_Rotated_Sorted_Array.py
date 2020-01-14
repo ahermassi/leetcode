@@ -21,6 +21,8 @@ def find_min_v1(nums):
         We stop our search when we find the inflection point, when either of the two conditions is satisfied:
             nums[mid] > nums[mid + 1] --> nums[mid + 1] is the smallest
             nums[mid - 1] > nums[mid] --> nums[mid] is the smallest
+        The key observation is: regardless of where it occurs in the array, by definition the minimum value's left
+        neighbor is the maximum value.
     Time complexity: O(logN)
     Space complexity: O(1)
     """
@@ -56,7 +58,8 @@ def find_min_v2(nums):
         if nums[mid] > nums[right]:
             left = mid + 1
             # If nums[mid] > nums[right], we know that the pivot/minimum value must have occurred somewhere to the
-            # right of mid.
+            # right of mid. mid can't be the minimum, so we can safely move left to mid + 1, which ensures the interval
+            # is always shrinking
             # Example: [3,4,5,6,7,8,9,1,2]. In the first iteration, we start with mid index = 4, right index = 9.
             # If nums[mid] > nums[right], we know that at some point to the right of mid, the pivot must have occurred,
             # which is why the values wrapped around so that nums[right] is less then nums[mid].
@@ -64,20 +67,13 @@ def find_min_v2(nums):
             # mid + 1 and never consider mid again.
         else:
             right = mid
-            # If nums[mid] <= nums[right], we know that the pivot was not encountered to the right of middle, because
-            # that means the values would wrap around and become smaller (which is caught in the above if statement).
-            # This leaves the possible pivot point to be at index <= mid.
-            # Example: [8,9,1,2,3,4,5,6,7]. In the first iteration, we start with mid index = 4, right index = 9.
-            # If nums[mid] <= nums[right], we know the numbers continued increasing to he right of mid, so they never
-            # reached the pivot and wrapped around. Therefore, we know the pivot must be at index <= mid.
-            # It is possible for the mid index to store a smaller value than at least one other index in the list (at
-            # right), so we do not discard it by doing right = mid - 1. It still might have the minimum value.
+            # Since we use round up for mid, and left < right, right would never be the same as mid.
+            # Therefore, we compare nums[mid] with nums[right], since they will never be the same.
+            # If nums[mid] <= nums[right], we will know the minimum should be in the left part, so we are moving left.
+            # We can always make right = mid while we don't have to worry the loop will not end, since we know right
+            # would never be the same as mid, making right = mid ensure the interval is always shrinking.
     # At this point, left and right converge to a single index (for minimum value). Our if/else block forces the bounds
-    # of left/right to shrink each iteration:
-    # When left bound increases, it does not disqualify a value that could be smaller than something else (we know
-    # nums[mid] > nums[right], so nums[right] wins and we ignore mid).
-    # When right bound decreases, it also does not disqualify a value that could be smaller than something else (we
-    # know nums[mid] <= nums[right], so nums[mid] wins and we keep it for now).
+    # of left/right to shrink each iteration.
     # We shrink the left/right bounds to one value, without ever disqualifying a possible minimum
     return nums[left]
 
