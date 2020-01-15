@@ -28,7 +28,8 @@ def rob_v1(nums):
             3- Leave both 0 and n-1 untouched. Obviously, this case can be covered by case 1 or case 2 in the simple
                House Robber problem.
         Hence, the above solution covers all the possible cases.
-
+    Time complexity: O(N)
+    Space complexity: O(N)
     """
 
     def helper(nums):
@@ -50,12 +51,33 @@ def rob_v1(nums):
     return max(helper(nums[:-1]), helper(nums[1:]))
 
 
+def rob_v2(nums):
+    """ Space optimised version of the previous solution.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+
+    def helper(left, right):
+        a = b = 0
+        for i in range(left, right + 1):
+            a, b = b, max(nums[i] + a, b)
+        return b
+
+    if not nums:
+        return 0
+    if len(nums) == 1:
+        return nums[0]
+    n = len(nums)
+    return max(helper(0, n - 2), helper(1, n - 1))  # Pass left and right boundaries as parameters
+
+
 class Test(unittest.TestCase):
     data = [([2, 3, 2], 3), ([1, 2, 3, 1], 4)]
 
     def test_rob(self):
         for test_array, result in self.data:
             self.assertEqual(result, rob_v1(test_array))
+            self.assertEqual(result, rob_v2(test_array))
 
 
 if __name__ == '__main__':
