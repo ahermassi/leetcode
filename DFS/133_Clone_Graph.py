@@ -8,22 +8,36 @@ from collections import deque
 
 
 class Node(object):
-    def __init__(self, val, neighbors):
+    def __init__(self, val, neighbors=None):
         self.val = val
         self.neighbors = neighbors
 
 
 def clone_graph_v1(node):
-    """ Use a hash map to look up nodes and add connections to them while performing DFS.
+    """ The basic intuition for this problem is to just copy as we go. To avoid getting stuck in a loop, we would need
+        some way to keep track of the nodes which have already been copied. By doing this we don't end up traversing
+        them again.
+        Start traversing the graph from the given node.
+        We would take a hash map to store the reference of the copy of all the nodes that have already been visited and
+        cloned. The key for the hash map would be the node of the original graph and corresponding value would be the
+        corresponding cloned node of the cloned graph. If the node already exists in the map, we return corresponding
+        stored reference of the cloned node.
+        If we don't find the node in the hash map, we create a copy of it and put it in the hash map. It's important to
+        create a copy of the node and add it to the hash map before entering recursion. In the absence of such an
+        ordering, we would be caught in the recursion because on encountering the node again in somewhere down the
+        recursion again, we will be traversing it again thus getting into cycles.
+        Now make the recursive call for the neighbors of the node. Each recursive call made would return the clone of a
+        neighbor. We will prepare the list of these clones returned and put into neighbors of clone node which we had
+        created earlier. This way we will have cloned the given node and its neighbors.
     Time complexity: O(V + E)
     Space complexity: O(V)
     """
 
-    def dfs(node):
-        if node.val in clones:
-            return clones[node.val]
-        new_node = Node(node.val, [])
-        clones[new_node.val] = new_node
+    def dfs(node):  # The job of dfs() is to clone a node an recursively clone its neighbors
+        if node in clones:
+            return clones[node]
+        new_node = Node(node.val)
+        clones[node] = new_node
         for neighbor in node.neighbors:
             new_node.neighbors.append(dfs(neighbor))
         return new_node
