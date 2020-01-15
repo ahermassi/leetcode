@@ -49,31 +49,33 @@ def clone_graph_v1(node):
 
 def clone_graph_v2(node):
     """ BFS version.
-        Add the start node the caller gave us to the queue and map the node to its clone through the hashtable.
-        We will continue the cloning until the queue is empty (there will be no more nodes to process).
-        We then pull a node from the queue, call it 'top'. We will iterate all of top's adjacent nodes, call each object
-        yielded 'neighbor'.
-        Do we create a cloned node for 'neighbor' ? If the 'neighbor' is NOT in the hashtable, create a mapping for
-        'neighbor' and add 'neighbor' to the queue since it needs its adjacent nodes mapped out in the cloned graph.
-        Add the cloned node of 'neighbor' as an adjacent node to the cloned node of 'top'.
-    Time complexity: O(V + E), we will touch V nodes (vertices) and traverse E edges.
+        We will use a hash map to store the reference of the copy of all the nodes that have already been visited and
+        copied.
+        Add the first node to the queue. Clone the first node and add it to the hash map.
+        Do the BFS traversal.
+            - Pop a node from the front of the queue
+            - Visit all the neighbors of this node
+            - If any of the neighbors was already visited, then it must be present in the hash map. Get the clone of
+              this neighbor from the hash map in that case.
+            - Otherwise, create a clone and store it in the hash map
+            - Add the clones of the neighbors to the corresponding list of the clone node
     Space complexity: O(V), we will store V vertices in the hashtable (and the queue can hold at worst some fractional
     multiple of the total number for vertices. Imagine 1 node connected to 9 nodes all at once in a graph of size
     10, and we start from that 1 node. Our queue would have 9 nodes in it at once on the first iteration)
     """
-    new_node = Node(node.val, [])
-    clones = {node.val: new_node}
+    new_node = Node(node.val)
+    clones = {node: new_node}
     queue = deque([node])  # The queue is used to to store ORIGINAL nodes that need to be cloned
     while queue:
         top = queue.popleft()
         for neighbor in top.neighbors:
-            if neighbor.val not in clones:  # Has this neighbor been given a clone?
+            if neighbor not in clones:  # Has this neighbor been given a clone?
                 # No? Give it a mapping and add the original neighbor to the search queue so we can express ITS edges
                 # later
+                clones[neighbor] = Node(neighbor.val)
                 queue.append(neighbor)
-                clones[neighbor.val] = Node(neighbor.val, [])
-            clones[top.val].neighbors.append(clones[neighbor.val])  # Draw the edge from 'top' clone to  'neighbor'
-            # clone. Do you see how our hashtable makes this quick access possible?
+            clones[top].neighbors.append(clones[neighbor])  # Draw the edge from 'top' clone to 'neighbor' clone.
+            # Do you see how our hash map makes this quick access possible?
     return new_node
 
 
