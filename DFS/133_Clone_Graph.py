@@ -33,7 +33,8 @@ def clone_graph_v1(node):
     Space complexity: O(V)
     """
 
-    def dfs(node):  # The job of dfs() is to clone a node an recursively clone its neighbors
+    def dfs(node):  # The job of dfs() is to clone a node an recursively clone its neighbors. One again, we TRUST that
+        # the recursive call will handle copying the neighbors
         if node in clones:
             return clones[node]
         new_node = Node(node.val)
@@ -47,24 +48,6 @@ def clone_graph_v1(node):
 
 
 def clone_graph_v2(node):
-    """ Iterative version of above DFS.
-    Time complexity: O(V + E)
-    Space complexity: O(V)
-    """
-    new_node = Node(node.val, [])
-    clones = {node.val: new_node}
-    stack = [node]
-    while stack:
-        top = stack.pop()
-        for neighbor in top.neighbors:
-            if neighbor.val not in clones:
-                stack.append(neighbor)
-                clones[neighbor.val] = Node(neighbor.val, [])
-            clones[top.val].neighbors.append(clones[neighbor.val])
-    return new_node
-
-
-def clone_graph_v3(node):
     """ BFS version.
         Add the start node the caller gave us to the queue and map the node to its clone through the hashtable.
         We will continue the cloning until the queue is empty (there will be no more nodes to process).
@@ -91,4 +74,22 @@ def clone_graph_v3(node):
                 clones[neighbor.val] = Node(neighbor.val, [])
             clones[top.val].neighbors.append(clones[neighbor.val])  # Draw the edge from 'top' clone to  'neighbor'
             # clone. Do you see how our hashtable makes this quick access possible?
+    return new_node
+
+
+def clone_graph_v3(node):
+    """ Iterative version of above DFS.
+    Time complexity: O(V + E)
+    Space complexity: O(V)
+    """
+    new_node = Node(node.val)
+    clones = {node: new_node}
+    stack = [node]
+    while stack:
+        top = stack.pop()
+        for neighbor in top.neighbors:
+            if neighbor not in clones:
+                stack.append(neighbor)
+                clones[neighbor] = Node(neighbor.val)
+            clones[top].neighbors.append(clones[neighbor])
     return new_node
