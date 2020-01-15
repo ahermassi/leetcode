@@ -1,7 +1,7 @@
 """ Given n nodes labeled from 0 to n-1 and a list of undirected edges (each edge is a pair of nodes), write a function
 to check whether these edges make up a valid tree. """
 
-from collections import defaultdict
+from collections import defaultdict, deque
 import unittest2 as unittest
 
 
@@ -45,12 +45,37 @@ def valid_tree_v1(n, edges):
     return True
 
 
+def valid_tree_v2(n, edges):
+    """ BFS version of the previous algorithm.
+    Time complexity: O(|V| + |E|)
+    Space complexity: O(|V| + |E|)
+    """
+    graph = defaultdict(list)
+    for a, b in edges:
+        graph[a].append(b)
+        graph[b].append(a)
+    visited = set()
+    queue = deque([(0, -1)])
+    while queue:
+        vertex, parent = queue.popleft()
+        visited.add(vertex)
+        for neighbor in graph[vertex]:
+            if neighbor in visited and neighbor != parent:
+                return False
+            if neighbor not in visited:
+                queue.append((neighbor, vertex))
+    if any(i for i in range(n) if i not in visited):
+        return False
+    return True
+
+
 class Test(unittest.TestCase):
     data = [(5, [[0, 1], [0, 2], [0, 3], [1, 4]], True), (5, [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]], False)]
 
     def test_valid_tree(self):
         for test_n, test_edges, result in self.data:
             self.assertEqual(result, valid_tree_v1(test_n, test_edges))
+            self.assertEqual(result, valid_tree_v2(test_n, test_edges))
 
 
 if __name__ == '__main__':
