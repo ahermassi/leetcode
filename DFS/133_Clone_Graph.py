@@ -12,6 +12,8 @@ class Node(object):
         self.val = val
         self.neighbors = neighbors
 
+# Watch: https://www.youtube.com/watch?v=vma9tCQUXk8
+
 
 def clone_graph_v1(node):
     """ The basic intuition for this problem is to just copy as we go. To avoid getting stuck in a loop, we would need
@@ -29,7 +31,7 @@ def clone_graph_v1(node):
         Now make the recursive call for the neighbors of the node. Each recursive call made would return the clone of a
         neighbor. We will prepare the list of these clones returned and put into neighbors of clone node which we had
         created earlier. This way we will have cloned the given node and its neighbors.
-    Time complexity: O(V + E)
+    Time complexity: O(V + E), we will touch V nodes and traverse E edges
     Space complexity: O(V)
     """
 
@@ -59,6 +61,7 @@ def clone_graph_v2(node):
               this neighbor from the hash map in that case.
             - Otherwise, create a clone and store it in the hash map
             - Add the clones of the neighbors to the corresponding list of the clone node
+    Time complexity: O(V + E), we will touch V nodes and traverse E edges
     Space complexity: O(V), we will store V vertices in the hashtable (and the queue can hold at worst some fractional
     multiple of the total number for vertices. Imagine 1 node connected to 9 nodes all at once in a graph of size
     10, and we start from that 1 node. Our queue would have 9 nodes in it at once on the first iteration)
