@@ -78,6 +78,43 @@ def pacific_atlantic_v2(matrix):
     return res
 
 
+def pacific_atlantic_v3(matrix):
+    """ BFS using a separate queue for each ocean.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+
+    def bfs(queue, ocean):
+        while queue:
+            i, j = queue.popleft()
+            ocean[i][j] = True
+            for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+                if not 0 <= x < n or not 0 <= y < m or matrix[x][y] < matrix[i][j] or ocean[x][y]:
+                    continue
+                queue.append((x, y))
+
+    if not matrix:
+        return None
+    n, m, res = len(matrix), len(matrix[0]), []
+    pacific = [[False] * m for _ in range(n)]
+    atlantic = [[False] * m for _ in range(n)]
+    pacific_queue = deque()
+    atlantic_queue = deque()
+    for i in range(n):
+        pacific_queue.append((i, 0))
+        atlantic_queue.append((i, m - 1))
+    for j in range(m):
+        pacific_queue.append((0, j))
+        atlantic_queue.append((n - 1, j))
+    bfs(pacific_queue, pacific)
+    bfs(atlantic_queue, atlantic)
+    for i in range(n):
+        for j in range(m):
+            if pacific[i][j] and atlantic[i][j]:
+                res.append([i, j])
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([[1, 2, 2, 3, 5], [3, 2, 3, 4, 4], [2, 4, 5, 3, 1], [6, 7, 1, 4, 5], [5, 1, 1, 2, 4]],
              [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]])]
@@ -86,6 +123,7 @@ class Test(unittest.TestCase):
         for test_matrix, result in self.data:
             self.assertEqual(result, pacific_atlantic_v1(test_matrix))
             self.assertEqual(result, pacific_atlantic_v2(test_matrix))
+            self.assertEqual(result, pacific_atlantic_v3(test_matrix))
 
 
 if __name__ == '__main__':
