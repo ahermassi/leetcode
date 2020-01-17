@@ -37,3 +37,26 @@ def inorder_successor_v1(root, p):
         root = node.right
 
 
+def inorder_successor_v2(root, p):
+    """ It's basically a binary search for the first element greater than p.val. With each iteration, the mid value
+        is root.val.
+        Start from root and traverse down the BST and consider the following two cases:
+            1- root.val <= p.val. In this case, root cannot be p's in-order successor, neither can root's left child.
+               So we only need to consider root's right child, thus we move root to its right and check again.
+            2- root.val > p.val. In this case, root can be a candidate answer, so we store the root node first and call
+               it 'candidate'. However, the in-order successor could be current root, or some smaller value in the left
+               subtree. So we move root to its left and check again.
+        We continuously move root until exhausted. Our search is over, just return the candidate.
+    Time complexity: O(logN) best case, O(N) worst case
+    Space complexity: O(1)
+    """
+    candidate = None
+    while root:
+        if root.val <= p.val:
+            root = root.right
+        else:
+            candidate = root
+            root = root.left
+    return candidate
+
+
