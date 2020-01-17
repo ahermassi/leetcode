@@ -24,24 +24,24 @@ def subsets_v1(nums):
     """
     res = [[]]
     for num in nums:
-        res += [lst + [num] for lst in res]
+        temp = []
+        for l in res:
+            temp.append(l + [num])
+        res.extend(temp)
     return res
 
 
 def subsets_v2(nums):
     """ DFS recursively. At each index i, add the current element to the current subset, recursively find the subsets
         that include nums[i], and finally retract nums[i] from the current subset to explore other possibilities.
-    Time complexity: O(2^N)
-    Space complexity: O(N) for call stack
+    Time complexity: O(N * 2^N), here are 2^N subsets to generate and each one takes O(N) time to copy into 'res'
+    Space complexity: O(N), for call stack
     """
 
     def compute_subsets_at_index(index, subset):
-        res.append(subset[:])
+        res.append(subset)
         for i in range(index, n):
-            subset.append(nums[i])  # Finding all subsets that include nums[i]
-            compute_subsets_at_index(i + 1, subset)
-            subset.pop()  # Remove nums[i] from the present subset and move further to explore subsets that don't
-            # contain nums[i]
+            compute_subsets_at_index(i + 1, subset + [nums[i]])  # Finding all subsets that include nums[i]
 
     n, res = len(nums), []
     compute_subsets_at_index(0, [])
@@ -51,8 +51,8 @@ def subsets_v2(nums):
 def subsets_v3(nums):
     """ This solution uses a clear backtracking template: add current candidate to the path, explore, and finally
         backtrack.
-    Time complexity: O(2^N)
-    Space complexity: O(N) for call stack
+    Time complexity: O(N * 2^N)
+    Space complexity: O(N), for call stack
     """
 
     def compute_subsets_at_index(index):
