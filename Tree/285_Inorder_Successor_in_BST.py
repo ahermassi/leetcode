@@ -60,3 +60,18 @@ def inorder_successor_v2(root, p):
     return candidate
 
 
+def inorder_successor_v3(root, p):
+    """ Recursive version of the previous algorithm.
+        Same idea:
+            - If root.val <= p.val, then the in-order successor must be in the right subtree.
+            - Else if root.val > p.val, the in-order successor could be current root, or some smaller value inside the
+              left subtree.
+    Time complexity: O(logN) best case, O(N) worst case
+    Space complexity: O(logN) best case, O(N) worst case
+    """
+    if not root:
+        return None
+    if root.val <= p.val:
+        return inorder_successor_v2(root.right, p)
+    left = inorder_successor_v2(root.left, p)
+    return left if left else root
