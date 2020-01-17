@@ -75,7 +75,7 @@ def subsets_v4(nums):
         For instance, the bitmask 0..00 (all zeros) corresponds to an empty subset, and the bitmask 1..11 (all ones)
         corresponds to the entire input array nums.
         Hence, to solve the initial problem, we just need to generate 2^n bitmasks from 0..00 to 1..11.
-    Time complexity: O(2^N)
+    Time complexity: O(N * 2^N)
     Space complexity: O(1)
     """
     n = len(nums)
@@ -88,6 +88,25 @@ def subsets_v4(nums):
     return res
 
 
+def subsets_v5(nums):
+    """ Simplified version of previous solution.
+    Time complexity: O(N * 2^N)
+    Space complexity: O(1)
+    """
+    n = len(nums)
+    p = 1 << n
+    res = []
+    for i in range(2 ** n):
+        # generate bitmask, from 0..00 to 1..11
+        bitmask = bin(i | p)[3:]  # If i = 3 = 011 -> i|p = 0011|1000 = 0011 -> bin(i|p) = 0b0011 -> bin(i|p)[3:] = 011
+        # So each bitmask ends up being the binary format of i
+        res.append([nums[j] for j in range(n) if bitmask[j] == '1'])
+    return res
+    # Similar to:
+    # for i in range(2**n, 2**(n + 1)):
+    #     bitmask = bin(i)[3:]
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3], [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]])]
 
@@ -97,6 +116,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, sorted(subsets_v2(test_array)))
             self.assertEqual(result, sorted(subsets_v3(test_array)))
             self.assertEqual(result, sorted(subsets_v4(test_array)))
+            self.assertEqual(result, sorted(subsets_v5(test_array)))
 
 
 if __name__ == '__main__':
