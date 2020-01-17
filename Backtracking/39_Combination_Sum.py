@@ -14,7 +14,7 @@ def combination_sum_v1(candidates, target):
         that point onwards are considered. As a result, extending the path always involves adding a larger or equal
         number to what was previously present. That is why it stays unique.
     Time complexity: O(#candidates ^ target)
-    Space complexity: Space complexity: O(target) for call stack
+    Space complexity: O(target) for call stack
     """
 
     def dfs(index, path, remaining):
@@ -34,13 +34,13 @@ def combination_sum_v2(candidates, target):
     """ Same as above, but after sorting the input array. The only help with sorting is that we can stop searching 
         earlier by breaking the for loop when candidate is larger than 'remaining' target.
         Sorting is not for correctness but for speed. What we do by sorting is we limit the range of numbers on which
-        we call DFS recursively, as we know the numbers outside the range cannot be in our solution. For small inputs
-        this speed up may not be substantial but for larger inputs, sorting will definitely give a faster solution.
+        we call DFS recursively, as we know the numbers outside the range cannot be in our solution. For small inputs,
+        this speed up may not be substantial. For larger inputs, sorting will definitely give a faster solution.
     Time complexity: O(#candidates ^ (target/min(candidates))), the largest number of elements in a combination sum
     would be [min(candidates), min(candidates), min(candidates) ...] (think when candidates = [1, 2, 3] and
     target = 1000), and to get the upper bound, we can say that for each element in the max length combination array,
     we can pick from any of the elements we are given.
-    Space complexity: Space complexity: O(target) for call stack
+    Space complexity: O(target) for call stack
     """
 
     def dfs(index, path, remaining):
