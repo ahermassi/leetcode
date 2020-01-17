@@ -68,6 +68,26 @@ def subsets_v3(nums):
     return res
 
 
+def subsets_v4(nums):
+    """ The idea of this solution originated from Donald E. Knuth.
+        We map each subset to a bitmask of length n, where 1 on the ith position in bitmask means the presence of
+        nums[i] in the subset, and 0 means its absence.
+        For instance, the bitmask 0..00 (all zeros) corresponds to an empty subset, and the bitmask 1..11 (all ones)
+        corresponds to the entire input array nums.
+        Hence, to solve the initial problem, we just need to generate 2^n bitmasks from 0..00 to 1..11.
+    Time complexity: O(2^N)
+    Space complexity: O(1)
+    """
+    n = len(nums)
+    p = 1 << n  # p = 2^n
+    res = [[] for _ in range(p)]
+    for i in range(p):
+        for j in range(n):
+            if (i >> j) & 1:
+                res[i].append(nums[j])
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3], [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]])]
 
@@ -76,6 +96,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, sorted(subsets_v1(test_array)))
             self.assertEqual(result, sorted(subsets_v2(test_array)))
             self.assertEqual(result, sorted(subsets_v3(test_array)))
+            self.assertEqual(result, sorted(subsets_v4(test_array)))
 
 
 if __name__ == '__main__':
