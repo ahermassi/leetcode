@@ -55,7 +55,7 @@ def find_kth_largest_v3(nums, k):
         # at the end we can 'sandwich' the pivot between the section less than it and the section greater than it.
         # j will scan for us
         while j < right:
-            if nums[j] <= pivot:  # # If this item is less than the pivot, it needs to be moved to the section of items
+            if nums[j] <= pivot:  # If this item is less than the pivot, it needs to be moved to the section of items
                 # less than the pivot
                 i += 1  # Move i forward so that we can swap the value at j into the tail of the items less than the
                 # pivot

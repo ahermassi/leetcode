@@ -3,6 +3,7 @@
 You may return the answer in any order.  The answer is guaranteed to be unique (except for the order that it is in.) """
 
 from heapq import heappush, heappop
+from random import randint
 
 
 def k_closest_v1(points, K):
@@ -22,7 +23,7 @@ def k_closest_v1(points, K):
         heappush(heap, (-distance, x, y))
         if len(heap) > K:
             heappop(heap)
-    return [(x, y) for d, x, y in heap]
+    return [[x, y] for d, x, y in heap]
 
 
 def k_closest_v2(points, K):
@@ -32,10 +33,10 @@ def k_closest_v2(points, K):
         in a way that all elements less than pivot are on left side of pivot and others on right. It then returns
         index of the pivot element.
         Now here we are finding kth smallest element. After partition cases are:
-            1- k == pivot. Then you have already found kth smallest. This is because the way partition is working.
-                There are exactly k - 1 elements that are smaller than the kth element.
-            2- k < pivot. Then kth smallest is on the left side of pivot.
-            3- k > pivot. Then kth smallest is on the right side of pivot. And to find it you actually have to find
+            1- K == pivot, then we have already found kth smallest. This is because the way partition is working.
+                There are exactly (k - 1) elements that are smaller than the kth element.
+            2- K < pivot, then kth smallest is on the left side of pivot.
+            3- K > pivot, then kth smallest is on the right side of pivot. To find it, we actually have to find
                 k-pivot smallest number on right.
     Time complexity: the average time complexity is O(N) , but just like quick sort, in the worst case, this solution
     would be degenerated to O(N^2)
@@ -43,26 +44,34 @@ def k_closest_v2(points, K):
     """
 
     def partition(left, right):
-        pivot = left
-        temp = points[pivot]
-        while left < right and dist(pivot) <= dist(right):
-            right -= 1
-        points[left] = points[right]
-        while left < right and dist(left) <= dist(pivot):
-            left += 1
-        points[right] = points[left]
-        points[left] = temp
-        return left
+        random_index = randint(left, right)  # Select a random pivot index between left and right, so that even when
+        # the worst case input would be provided the algorithm wouldn't be affected
+        pivot = points[random_index]
+        points[random_index], points[right] = points[right], points[random_index]
+        pivot_distance = distance(pivot[0], pivot[1])
+        i, j = left - 1, left  # i will keep track of the 'tail' of the section of items less than the pivot so that
+        # at the end we can 'sandwich' the pivot between the section less than it and the section greater than it.
+        # j will scan for us
+        while j < right:
+            if distance(points[j][0], points[j][1]) <= pivot_distance:  # If this point's distance from origin is less
+                # than the pivot's distance, it needs to be moved to the section of items less than the pivot
+                i += 1  # Move i forward so that we can swap the value at j into the tail of the items less than the
+                # pivot
+                points[i], points[j] = points[j], points[i]  # Execute the swap
+            j += 1
+        points[i + 1], points[right] = points[right], points[i + 1]  # Swap the pivot value right after the section of
+        # items less than the pivot. i keeps the tail of this section
+        return i + 1  # Return the pivot's final resting position
 
-    dist = lambda i: points[i][0] ** 2 + points[i][1] ** 2
+    distance = lambda x, y: x * x + y * y
     left, right = 0, len(points) - 1
     while left <= right:
-        mid = partition(left, right)
-        if mid == K - 1:
-            return points[:K]
-        if mid < K - 1:
-            left = mid + 1
+        pivot = partition(left, right)
+        if pivot == K:
+            break
+        if pivot < K:
+            left = pivot + 1
         else:
-            right = mid - 1
-
+            right = pivot - 1
+    return points[:K]
 
