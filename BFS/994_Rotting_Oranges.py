@@ -40,6 +40,35 @@ def oranges_rotting_v1(grid):
     return -1 if any(1 in row for row in grid) else res - 1
 
 
+def oranges_rotting_v2(grid):
+    """ Same BFS using depth.
+        Every turn, the rotting spreads from each rotting orange to other adjacent oranges. Initially, the rotten
+        oranges have 'depth' 0 [as in the spanning tree of a graph], and every time they rot a neighbor, the neighbors
+        have 1 more depth. We want to know the largest possible depth.
+        Because we always explore nodes (oranges) with the smallest depth first, we're guaranteed that each orange that
+        becomes rotten does so with the lowest possible depth number.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, m, fresh, depth = len(grid), len(grid[0]), 0, 0
+    queue = deque()
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == 1:
+                fresh += 1
+            if grid[i][j] == 2:
+                queue.append((i, j, 0))
+    if not fresh:
+        return 0
+    while queue:
+        i, j, depth = queue.popleft()
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            if 0 <= x < n and 0 <= y < m and grid[x][y] == 1:
+                grid[x][y] = 2
+                queue.append((x, y, depth + 1))
+    return -1 if any(1 in row for row in grid) else depth
+
+
 class Test(unittest.TestCase):
     data = [([[2, 1, 1], [1, 1, 0], [0, 1, 1]], 4), ([[2, 1, 1], [0, 1, 1], [1, 0, 1]], -1), ([[0, 2]], 0)]
 
