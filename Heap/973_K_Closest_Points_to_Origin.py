@@ -2,7 +2,7 @@
 (Here, the distance between two points on a plane is the Euclidean distance.)
 You may return the answer in any order.  The answer is guaranteed to be unique (except for the order that it is in.) """
 
-from heapq import heappushpop, heappush
+from heapq import heappush, heappop
 
 
 def k_closest_v1(points, K):
@@ -18,14 +18,11 @@ def k_closest_v1(points, K):
     """
     heap = []
     for x, y in points:
-        d = x * x + y * y
-        if len(heap) == K:
-            heappushpop(heap, (-d, x, y))
-        else:
-            heappush(heap, (-d, x, y))
-    return [[x, y] for dist, x, y in heap]
-
-# Review the algorithm and fix a bug
+        distance = (x ** 2 + y ** 2) ** 0.5
+        heappush(heap, (-distance, x, y))
+        if len(heap) > K:
+            heappop(heap)
+    return [(x, y) for d, x, y in heap]
 
 
 def k_closest_v2(points, K):
