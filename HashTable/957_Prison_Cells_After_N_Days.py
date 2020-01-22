@@ -10,22 +10,28 @@ import unittest2 as unittest
 
 def prison_after_n_days(cells, N):
     """ Because there are at most 256 possible states for the prison, eventually the states repeat into a cycle
-    rather quickly. Somehow, the cycle is equal to 14.
-    Time complexity: O(1)
-    Space complexity: O(1)
+        rather quickly. We can keep track of when the states repeat to find the period t of this cycle, and skip days
+        in multiples of t.
+        Let's do a naive simulation, iterating one day at a time. For each day, we will decrement N, the number of days
+        remaining, and transform the state of the prison forward (cells -> next_day).
+        If we reach a state we have seen before, we know how many days ago it occurred:
+            t = states[curr_state] - curr_day = states[curr_state] - N
+        Then, because of this cycle, we can do N %= t.
+    Time complexity: O(1), for 8 cells we can have 2^6 = 64 different states since we only have 6 bits that are
+    changing (first and last bits change to 0 and stay 0)
+    Space complexity: O(1), we need to remember a single state of all cells for the loop detection.
     """
-    if N % 14 == 0:  # When N % 14 == 0, then we do not want the 0th state, but the 14th state, that is the last state.
-        N = 14
-    else:
-        N = N % 14
-    for _ in range(N):
-        temp = [0] * 8  # Easier than changing the cells array itself simultaneously
+    states = {tuple(cells): N}
+    while N > 0:
+        N -= 1
+        next_day = [0] * 8
         for i in range(1, 7):
-            if cells[i - 1] == cells[i + 1]:
-                temp[i] = 1
-            else:
-                temp[i] = 0
-        cells = temp
+            next_day[i] = 1 if cells[i - 1] == cells[i + 1] else 0
+        if tuple(next_day) in states:
+            N %= states[tuple(next_day)] - N  # states[tuple(next_day)] is the last time when this same state appeared;
+            # (states[tuple(next_day)] - N) is the cycle length. %= cuts down the loop times.
+        states[tuple(next_day)] = N
+        cells = next_day
     return cells
 
 
