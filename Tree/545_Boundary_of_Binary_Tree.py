@@ -13,11 +13,22 @@ class TreeNode(object):
         self.right = None
 
 
+# https://leetcode.com/articles/boundary-of-binary-tree/
+
 def boundary_of_binary_tree_v1(root):
     """ Use three different traversals. Pre-order for left boundary , in-order for bottom boundary, and reverse
         post-order (going right node first) for right boundary.
+            - Left Boundary: We keep on traversing the tree towards the left and keep on adding the nodes in the res
+              array, provided the current node isn't a leaf node. If at any point, we can't find the left child of a
+              node, but its right child exists, we put the right child in the res and continue the process.
+            - Leaf Nodes: We make use of a recursive function leaves(root), in which we change the root node for every
+              recursive call. If the current root node happens to be a leaf node, it is added to the res array.
+              Otherwise, we make the recursive call using the left child of the current node as the new root. After
+              this, we make the recursive call using the right child of the current node as the new root.
+            - Right Boundary: We perform the same process as the left boundary. But, this time, we traverse towards the
+              right. If the right child doesn't exist, we move towards the left child.
     Time complexity: O(N), where N is the number of nodes in the tree
-    Space complexity: O(log N) a balanced binary tree, O(N) worst case for skewed binary tree
+    Space complexity: O(logN), for a balanced binary tree, O(N) worst case for skewed binary tree
     """
 
     def left_boundary(node):  # Pre-order
