@@ -43,12 +43,55 @@ def num_distinct_islands_v1(grid):
     return len(res)
 
 
+def num_distinct_islands_v2(grid):
+    """ The shape of the island can be represented by taking the relative position of the connected cells from the
+        leftmost cell on the top row of the island (the first cell of each island we will visit). For each island we
+        visit, we are guaranteed to visit the top row's leftmost cell first if we iterate the matrix row by row, left
+        to right direction. We will get the same order of cells for islands of the same shape if we perform the search
+        in a consistent manner.
+        Example:
+        11000
+        10000
+        00110
+        00100
+        The first island:
+            11
+            1
+            [(0,0), (0,1), (1,0)] - (0,0) = [(0,0), (0,1), (1,0)]
+        islands = set( '[(0,0), (0,1), (1,0)] ' )
+        The second island:(the same one)
+            [(2,2), (2,3), (3,2)] - (2,2) = [(0,0), (0,1), (1,0)]
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+
+    def dfs(i, j, origin_i, origin_j, path):
+        if not 0 <= i < n or not 0 <= j < m or (i, j) in visited or not grid[i][j]:
+            return
+        visited.add((i, j))
+        path.append((i - origin_i, j - origin_j))
+        dfs(i - 1, j, origin_i, origin_j, path)
+        dfs(i + 1, j, origin_i, origin_j, path)
+        dfs(i, j - 1, origin_i, origin_j, path)
+        dfs(i, j + 1, origin_i, origin_j, path)
+
+    n, m, res, visited = len(grid), len(grid[0]), set(), set()
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] and (i, j) not in visited:
+                path = []
+                dfs(i, j, i, j, path)
+                res.add(tuple(path))
+    return len(res)
+
+
 class Test(unittest.TestCase):
     data = [([[1, 1, 0, 0, 0], [1, 1, 0, 0, 0], [0, 0, 0, 1, 1], [0, 0, 0, 1, 1]], 1)]
 
     def test_num_distinct_islands(self):
         for test_grid, result in self.data:
             self.assertEqual(result, num_distinct_islands_v1(test_grid))
+            self.assertEqual(result, num_distinct_islands_v2(test_grid))
 
 
 if __name__ == '__main__':
