@@ -12,7 +12,8 @@ def suggested_products_v1(products, search_word):
     """ For any two words w1 and w2 in 'products', if w1 is prefix of w2, w1 and w2 must be neighbours in the sorted
         'products'. The same, we can binary search the position of each prefix of search word in 'products' and check
         if the following 3 words are valid.
-    Time complexity: O(P * logP), where N is the length of products array
+    Time complexity: O(P * logP + N * logP) = O((N+P) * logP) , for sorting and searching respectively, where P is the
+    length of products array and N is the length of search word
     Space complexity: O(P)
     """
 
@@ -32,7 +33,7 @@ def suggested_products_v1(products, search_word):
         prefix += c
         index = insertion_index(prefix)  # Find where 'prefix' can be inserted in order in the products array. Same as
         # bisect_left()
-        suggestions = [products[i] for i in range(index, min(len(products), index + 3)) if prefix in products[i]]
+        suggestions = [product for product in products[index: index+3] if prefix in product]
         res.append(suggestions)
     return res
 
@@ -60,6 +61,35 @@ def suggested_products_v2(products, search_word):
     return res
 
 
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.suggestions = []
+
+
+def suggested_products_v3(products, search_word):
+    """ Use a trie to store a sorted list of 3 suggestions of every prefix of each product. Then, searching for the
+        suggestions of a word is as simple as collecting the lists of suggestions of every matching prefix.
+    """
+    root = TrieNode()
+    for product in products:
+        trie = root
+        for c in product:
+            if c not in trie.children:
+                trie.children[c] = TrieNode()
+            trie = trie.children[c]
+            trie.suggestions.append(product)
+            trie.suggestions.sort()
+            if len(trie.suggestions) > 3:
+                trie.suggestions.pop()
+    res = []
+    for c in search_word:
+        if root:
+            root = root.children[c] if c in root.children else None
+        res.append(root.suggestions if root else [])
+    return res
+
+
 class Test(unittest.TestCase):
     data = [(['mobile', 'mouse', 'moneypot', 'monitor', 'mousepad'], 'mouse',
              [['mobile', 'moneypot', 'monitor'], ['mobile', 'moneypot', 'monitor'], ['mouse', 'mousepad'],
@@ -68,6 +98,7 @@ class Test(unittest.TestCase):
     def test_suggested_products(self):
         for test_products, test_search_word, result in self.data:
             self.assertEqual(result, suggested_products_v1(test_products, test_search_word))
+            self.assertEqual(result, suggested_products_v2(test_products, test_search_word))
             self.assertEqual(result, suggested_products_v2(test_products, test_search_word))
 
 
