@@ -27,11 +27,12 @@ def boundary_of_binary_tree_v1(root):
               this, we make the recursive call using the right child of the current node as the new root.
             - Right Boundary: We perform the same process as the left boundary. But, this time, we traverse towards the
               right. If the right child doesn't exist, we move towards the left child.
-    Time complexity: O(N), where N is the number of nodes in the tree
+    Time complexity: O(N), where N is the number of nodes in the tree. One complete traversal for leaves and two
+    traversals up to depth of tree for left and right boundaries
     Space complexity: O(logN), for a balanced binary tree, O(N) worst case for skewed binary tree
     """
 
-    def left_boundary(node):  # Pre-order
+    def left_boundary(node):  # Pre-order: Root - Left - Right
         if not node or not node.left and not node.right:  # Exclude leaf nodes from the traversal
             return
         res.append(node.val)
@@ -40,7 +41,7 @@ def boundary_of_binary_tree_v1(root):
         else:
             left_boundary(node.right)
 
-    def leaves(node):  # In-order
+    def leaves(node):  # In-order: Left - Root - Right
         if not node:
             return
         leaves(node.left)
@@ -48,7 +49,7 @@ def boundary_of_binary_tree_v1(root):
             res.append(node.val)
         leaves(node.right)
 
-    def right_boundary(node):  # Reverse post-order
+    def right_boundary(node):  # Reverse post-order: Right - Left - Root
         if not node or not node.left and not node.right:  # Exclude leaf nodes from the traversal
             return
         if node.right:
@@ -77,33 +78,32 @@ def boundary_of_binary_tree_v2(root):
     Time complexity: O(N), where N is the number of nodes in the tree
     Space complexity: O(log N) a balanced binary tree, O(N) worst case for skewed binary tree
     """
-    if not root:
-        return None
-    res = [root.val]
-    left_boundary = []
-    node = root.left
-    while node:
-        left_boundary.append(node.val)
-        node = node.left or node.right
-    right_boundary = []
-    node = root.right
-    while node:
-        right_boundary.append(node.val)
-        node = node.right or node.left
-    leaves, stack = [], [root]
-    while stack:
-        node = stack.pop()
-        if node.val != root.val and not node.left and not node.right:
-            leaves.append(node.val)
-        else:
-            stack.extend([kid for kid in (node.right, node.left) if kid])
-    visited = set()
 
     def visit(val):
         if val not in visited:
-            visited.add(val)
             res.append(val)
+            visited.add(val)
 
+    if not root:
+        return None
+    res, visited = [root.val], set()
+    left_boundary = []
+    cur = root.left
+    while cur:
+        left_boundary.append(cur.val)
+        cur = cur.left or cur.right
+    right_boundary = []
+    cur = root.right
+    while cur:
+        right_boundary.append(cur.val)
+        cur = cur.right or cur.left
+    leaves, stack = [], [root]
+    while stack:
+        cur = stack.pop()
+        if cur.val != root.val and not cur.left and not cur.right:
+            leaves.append(cur.val)
+        else:
+            stack.extend([kid for kid in (cur.right, cur.left) if kid])
     for i in left_boundary:
         visit(i)
     for i in leaves:
@@ -122,6 +122,7 @@ class Test(unittest.TestCase):
 
     def test_boundary_of_binary_tree(self):
         self.assertEqual(self.result, boundary_of_binary_tree_v1(self.root))
+        self.assertEqual(self.result, boundary_of_binary_tree_v2(self.root))
 
 
 if __name__ == '__main__':
