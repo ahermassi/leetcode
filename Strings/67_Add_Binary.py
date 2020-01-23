@@ -11,14 +11,12 @@ def add_binary(a, b):
     """
     a, b = list(a), list(b)
     res, carry = [], 0
-    while a or b:
+    while a or b or carry:
         val1 = ord(a.pop()) - ord('0') if a else 0
         val2 = ord(b.pop()) - ord('0') if b else 0
         val = val1 + val2 + carry
         res.append(str(val % 2))
         carry = val // 2
-    if carry:
-        res.append(str(carry))
     return ''.join(res)[::-1]
 
 
