@@ -113,6 +113,10 @@ def boundary_of_binary_tree_v2(root):
     return res
 
 
+# Third solution:
+# https://leetcode.com/problems/boundary-of-binary-tree/discuss/101307/Python-solution-recursive-dfs-~20-lines.
+# https://leetcode.com/problems/boundary-of-binary-tree/discuss/101288/Java-Recursive-Solution-Beats-94
+
 class Test(unittest.TestCase):
     root = TreeNode(1)
     root.right = TreeNode(2)
