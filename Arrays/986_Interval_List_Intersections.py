@@ -1,5 +1,4 @@
 """ Given two lists of closed intervals, each list of intervals is pairwise disjoint and in sorted order.
-
 Return the intersection of these two interval lists. """
 
 import unittest2 as unittest
@@ -10,12 +9,12 @@ def interval_intersection(A, B):
         A[i].start <= B[j].end AND B[j].start <= A[i].end
         If overlap: overlap interval = bigger start index + smaller end index; increment the index of the lesser
         interval.
-    Time complexity: O(N + M) where N is the length of A and M is the length of B
+    Time complexity: O(N + M), where N is the length of A and M is the length of B
     Space complexity: O(1)
     """
-    i = j = 0
-    res = []
-    while i < len(A) and j < len(B):
+    n, m = len(A), len(B)
+    i, j, res = 0, 0, []
+    while i < n and j < m:
         a, b = A[i], B[j]
         if a[1] < b[0]:  # a ended before b even started
             i += 1
