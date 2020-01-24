@@ -16,31 +16,31 @@ class TreeNode(object):
 def diameter_of_binary_tree(root):
     """ The diameter is the maximum of either:
             1- Passing through the root, in which case the longest path would be using the maximum height of left and
-            right child
+               right child
             2- The diameter of the left child
             3- The diameter of the right child
         So, we can solve this problem with two different cases:
-        If the longest path will include the root node, then the longest path must be the height of left child +
-        height of right child
-        If the longest path does not include the root node, this problem is divided into 2 sub-problem: set left child
-        and right child as the new root separately, and repeat previous step.
+            1- If the longest path will include the root node, then the longest path must be: left height + right height
+            2- If the longest path does not include the root node, this problem is divided into 2 sub-problems:
+               set left child and right child as the new root separately, and repeat previous step.
         Conclusion:
-        Diameter of a tree w.r.t root can be defined as:
+        Diameter of a tree with regards to root root can be defined as:
             Maximum(Diameter of left subtree, Diameter of right subtree, Longest path between two nodes which passes
                 through the root)
-        Now the diameter of left and right subtree’s can be solved recursively. And Longest path between two nodes
-        which passes through the root can be calculated as (1 + height of left subtree + height of right subtree)
+        Now, the diameter of left and right subtrees can be solved recursively. Longest path between two nodes which
+        passes through the root can be calculated as: height of left subtree + height of right subtree. Therefore:
+            Diameter = max(Diameter of left subtree, Diameter of right subtree, left height + right height)
     Time complexity: O(N)
     Space complexity: O(N)
     """
     def dfs(root):
         if not root:
-            return 0, 0  # Returning diameter, height
-        left_diameter, left_height = dfs(root.left)
-        right_diameter, right_height = dfs(root.right)
-        cur_height = max(left_height, right_height) + 1
+            return 0, 0  # Return height, diameter
+        left_height, left_diameter = dfs(root.left)
+        right_height, right_diameter = dfs(root.right)
+        cur_height = 1 + max(left_height, right_height)
         cur_diameter = max(left_height + right_height, left_diameter, right_diameter)  # Cases 1, 2, 3 respectively
-        return cur_diameter, cur_height
+        return cur_height, cur_diameter
 
     return dfs(root)[0]
 
