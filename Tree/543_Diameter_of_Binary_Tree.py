@@ -13,7 +13,7 @@ class TreeNode(object):
         self.right = None
 
 
-def diameter_of_binary_tree(root):
+def diameter_of_binary_tree_v1(root):
     """ The diameter is the maximum of either:
             1- Passing through the root, in which case the longest path would be using the maximum height of left and
                right child
@@ -42,7 +42,25 @@ def diameter_of_binary_tree(root):
         cur_diameter = max(left_height + right_height, left_diameter, right_diameter)  # Cases 1, 2, 3 respectively
         return cur_height, cur_diameter
 
-    return dfs(root)[0]
+    return dfs(root)[1]
+
+
+class SolutionV2:
+    """ Using a class variable. """
+
+    def diameter_of_binary_tree(self, root: TreeNode) -> int:
+
+        self.diameter = 0
+
+        def dfs(root):
+            if not root:
+                return 0
+            left_height, right_height = dfs(root.left), dfs(root.right)
+            self.diameter = max(self.diameter, left_height + right_height)
+            return 1 + max(left_height, right_height)
+
+        dfs(root)
+        return self.diameter
 
 
 class Test(unittest.TestCase):
@@ -53,7 +71,7 @@ class Test(unittest.TestCase):
     root.left.right = TreeNode(5)
 
     def test_diameter_of_binary_tree(self):
-        self.assertEqual(3, diameter_of_binary_tree(self.root))
+        self.assertEqual(3, diameter_of_binary_tree_v1(self.root))
 
 
 if __name__ == '__main__':
