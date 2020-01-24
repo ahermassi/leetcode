@@ -6,7 +6,7 @@ import unittest2 as unittest
 
 def is_alien_sorted(words, order):
     """ The words are sorted lexicographically if and only if adjacent words are. This is because order is
-    transitive: a <= b and b <= c implies a <= c.
+        transitive: a <= b and b <= c implies a <= c.
     Time complexity: O(N), The outer loop runs for N times which is the length of the array. The inner loop is constant.
     Space complexity: O(1), no matter the size of the input string of words, the dictionary will always be a mapping
     of 26 characters to 26 numbers.
