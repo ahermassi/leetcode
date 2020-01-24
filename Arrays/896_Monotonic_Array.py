@@ -6,7 +6,7 @@ Return true if and only if the given array A is monotonic. """
 import unittest2 as unittest
 
 
-def is_monotonic(A):
+def is_monotonic_v1(A):
     """ To perform this check in one pass, we want to remember if the array is monotone increasing or monotone
         decreasing. If it is either monotone increasing or monotone decreasing, then A is monotonic.
         We initially assume that the array is neither increasing nor decreasing.
@@ -29,6 +29,21 @@ def is_monotonic(A):
     return True
 
 
+def is_monotonic_v2(A):
+    """ Simple variant of the previous solution.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    increasing = decreasing = True
+    n = len(A)
+    for i in range(n - 1):
+        if A[i] < A[i + 1]:
+            decreasing = False
+        elif A[i] > A[i + 1]:
+            increasing = False
+    return increasing or decreasing
+
+
 class Test(unittest.TestCase):
     data = [([6, 5, 4, 4], True),
             ([1, 2, 2, 3], True),
@@ -37,7 +52,8 @@ class Test(unittest.TestCase):
 
     def test_is_monotonic(self):
         for test_array, result in self.data:
-            self.assertEqual(result, is_monotonic(test_array))
+            self.assertEqual(result, is_monotonic_v1(test_array))
+            self.assertEqual(result, is_monotonic_v2(test_array))
 
 
 if __name__ == '__main__':
