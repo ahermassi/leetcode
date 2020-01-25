@@ -14,27 +14,27 @@ def tree_to_doubly_list_v1(root):
     """ Step 1: in-order traversal by recursion to connect the original BST
         Step 2: connect the head and tail to make it circular
         Use a dummy node to handle corner cases
-    Time complexity: O(N) since each node is processed exactly once
+    Time complexity: O(N), since each node is processed exactly once
     Space complexity: O(N), we have to keep a recursion stack of the size of the tree height, which is O(logN) for the
-    best case of completely balanced tree and O(N) for the worst case of skewed tree.
+    best case of completely balanced tree and O(N) for the worst case of skewed tree
     """
 
-    def helper(node):
+    def inorder(root):
         global tail
-        if not node:
+        if not root:
             return
-        helper(node.left)
-        tail.right = node
-        node.left = tail
-        tail = node
-        helper(node.right)
+        inorder(root.left)
+        tail.right = root
+        root.left = tail
+        tail = root
+        inorder(root.right)
 
     if not root:
         return None
-    dummy = Node(0, None, None)
+    dummy = Node(0)
     global tail
     tail = dummy
-    helper(root)
+    inorder(root)
     tail.right = dummy.right
     dummy.right.left = tail
     return dummy.right
