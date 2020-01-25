@@ -35,6 +35,30 @@ def exclusive_time_v1(n, logs):
     return res
 
 
+def exclusive_time_v2(n, logs):
+    """ In a more conventional approach, let's look between adjacent events, with duration (timestamp - prev_time).
+        If we start a function, and we have a function in the background, then this latter was running during this
+        time. Otherwise, we end the function that is most recent in our stack.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    res, stack = [0] * n, []
+    prev_time = 0  # prev_time means the start of the most recent interval
+    for log in logs:
+        id, type, timestamp = log.split(':')
+        id, timestamp = int(id), int(timestamp)
+        elapsed = timestamp - prev_time
+        if type == 'start':
+            if stack:
+                res[stack[-1]] += elapsed
+            stack.append(id)
+            prev_time = timestamp
+        else:
+            res[stack.pop()] += elapsed + 1
+            prev_time = timestamp + 1  # Start of the next interval
+    return res
+
+
 class Test(unittest.TestCase):
     data = [(2, ['0:start:0', '1:start:2', '1:end:5', '0:end:6'], [3, 4]),
             (1, ['0:start:0', '0:start:1', '0:start:2', '0:end:3', '0:end:4', '0:end:5'], [6])]
@@ -42,6 +66,7 @@ class Test(unittest.TestCase):
     def test_exclusive_time(self):
         for test_n, test_logs, result in self.data:
             self.assertEqual(result, exclusive_time_v1(test_n, test_logs))
+            self.assertEqual(result, exclusive_time_v2(test_n, test_logs))
 
 
 if __name__ == '__main__':
