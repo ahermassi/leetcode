@@ -57,7 +57,7 @@ class Test(unittest.TestCase):
     root.right.right = TreeNode(4)
     result = [1, 3, 4]
 
-    def test_level_order(self):
+    def test_right_side_view(self):
         self.assertEqual(self.result, right_side_view_v1(self.root))
         self.assertEqual(self.result, right_side_view_v2(self.root))
 
