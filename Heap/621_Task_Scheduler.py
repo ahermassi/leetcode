@@ -18,8 +18,8 @@ def least_interval(tasks, n):
         in order of frequency, or if no tasks are available, then be idle.
         The trick is that Python does not have a max heap queue, so we must make every number's negative value when we
         add it into the heap.
-        We start by picking up the largest task from the heap for current execution and increment the 'worktime as well.
-        We also decrement its pending number of instances and if any more instances of the current task are pending,
+        We start by picking the largest task from the heap for current execution and increment the 'work_time' as well.
+        We also decrement its pending number of instances, and if any more instances of the current task are pending,
         we store them in a temporary 'temp' list to be added later on back into the heap. We keep on doing so, till a
         cycle of cooling time has been finished. After every such cycle, we add the generated 'temp' list back to the
         heap for considering the most critical task again.
@@ -28,24 +28,24 @@ def least_interval(tasks, n):
         a full cycle of tasks and idle states has been completed. If the heap is empty, we only account for the actual
         work time of tasks because CPU can't be idle after finishing the execution of the complete set of tasks.
         You can see the idle state as a filler when the number of distinct tasks is less than the cycle length.
-    Time complexity: O(N * n) where N is the number of tasks and n is the cool-off period
-    Space complexity: O(1), will not be more than O(26) (tasks are capital letters A to Z)
+    Time complexity: O(n * logN) ~= O(n * log(26)) ~= O(n), where N is the number of tasks and n is the cool-off period
+    Space complexity: O(1), there will not be more than O(26) (tasks are capital letters A to Z)
     """
     counter, heap, cycle = Counter(tasks), [], n + 1
     for k, v in counter.items():
         heappush(heap, -v)  # Negative values create a max heap
     current_time = 0
     while heap:
-        worktime, temp = 0, []
+        work_time, temp = 0, []
         for _ in range(cycle):
             if heap:
                 instances = heappop(heap)
-                worktime += 1
+                work_time += 1
                 if instances != -1:
                     temp.append(instances + 1)
         for instance in temp:
             heappush(heap, instance)
-        current_time += cycle if heap else worktime
+        current_time += cycle if heap else work_time
     return current_time
 
 
