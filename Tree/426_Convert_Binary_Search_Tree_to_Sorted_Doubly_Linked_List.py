@@ -4,15 +4,15 @@
 
 
 class Node(object):
-    def __init__(self, val, left, right):
+    def __init__(self, val, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
         
 
 def tree_to_doubly_list_v1(root):
-    """ Step1: in-order traversal by recursion to connect the original BST
-        Step2: connect the head and tail to make it circular
+    """ Step 1: in-order traversal by recursion to connect the original BST
+        Step 2: connect the head and tail to make it circular
         Use a dummy node to handle corner cases
     Time complexity: O(N) since each node is processed exactly once
     Space complexity: O(N), we have to keep a recursion stack of the size of the tree height, which is O(logN) for the
@@ -47,8 +47,7 @@ def tree_to_doubly_list_v2(root):
     """
     if not root:
         return None
-    dummy = Node(0, None, None)
-    tail = dummy
+    dummy = tail = Node(0)
     stack, cur = [], root
     while stack or cur:
         while cur:
