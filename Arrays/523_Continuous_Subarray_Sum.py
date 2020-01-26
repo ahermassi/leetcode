@@ -10,7 +10,7 @@ def check_subarray_sum_v1(nums, k):
         The brute force approach is trivial. We consider every possible sub array of size greater than or equal to 2,
         find out its sum by iterating over the elements of the sub array, and then we check if the sum obtained is an
         integer multiple of the given k.
-    Time complexity: O(N ** 2)
+    Time complexity: O(N^2)
     Space complexity: O(1)
     """
     n = len(nums)
@@ -30,16 +30,21 @@ def check_subarray_sum_v1(nums, k):
 def check_subarray_sum_v2(nums, k):
     """ Similar to 560- Subarray Sum Equals K. The idea behind this approach is as follows: If the cumulative sum
         up to two indices is the same, the sum of the elements lying in between those indices is zero.
-        Extending the same thought further, if the cumulative sum up to two indices, say i and j is at a difference of
+        Extending the same thought further, if the cumulative sum up to two indices, say i and j, is at a difference of
         k, i.e. if sum[i] - sum[j] = k, the sum of elements lying between indices i and j is k.
         We iterate through the input array exactly once, keeping track of the running sum mod k of the elements in the
         process. If we find that a running sum value at index j has been previously seen before in some earlier index i
         in the array, then we know that the sub-array (i,j] contains a desired sum.
         This is one of those magics of remainder theorem:
             ((a + (n*x)) % x) is same as (a % x)
-        For e.g. in case of the array [23,2,6,4,7] the running sum is [23,25,31,35,42] and the remainders are
-        [5,1,1,5,0]. We got remainder 5 at index 0 and at index 3. That means, in between these two indexes we must
-        have added a number which is multiple of the k.
+            1- Running sum from first element to index i : sum_i. If we mod k, it will be: sum_i = k * x + modk_1
+            2- Running sum from first element to index j : sum_j. If we mod k, it will be: sum_j = k * y + modk_2
+        If they have the same mod, which is modk_1 == modk_2, subtracting these two running sums gives the difference:
+            sum_i - sum_j = (x - y) * k = constant * k
+        The difference is the sum of elements between indices i and j, and the value is a multiple of k.
+        For e.g. in case of the array [23, 2, 6, 4, 7] and k = 6, the running sum is [23, 25, 31, 35, 42] and the
+        remainders (mod 6) are [5, 1, 1, 5, 0]. We got remainder 5 at index 0 and at index 3. That means in between
+        these two indices we must have added a number which is multiple of k.
     Time complexity: O(N)
     Space complexity: O(min(N,k)), hash map can contain up to min(N,k) different pairings
     """
@@ -51,7 +56,7 @@ def check_subarray_sum_v2(nums, k):
         cur_sum = cur_sum % k if k else cur_sum
         if cur_sum not in indices:
             indices[cur_sum] = i
-        elif i - indices[cur_sum] > 1:  # Difference of sub array's start/end indices to ensure it is of size at least 2
+        elif i - indices[cur_sum] > 1:  # Difference of sub array's start/end indices to ensure its size is at least 2
             return True
     return False
 
