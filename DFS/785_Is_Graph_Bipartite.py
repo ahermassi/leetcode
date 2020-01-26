@@ -37,23 +37,22 @@ def is_bipartite_v1(graph):
 
 
 def is_bipartite_v2(graph):
-    """ Iterative version of previous DFS.
+    """ Iterative version of previous DFS using a stack.
     Time complexity: O(V + E)
     Space complexity: O(E)
     """
-    n, color = len(graph), {}
-    for vertex in range(n):
-        if vertex not in color:
-            stack = [vertex]
-            color[vertex] = 0
+    n, colors = len(graph), {}
+    for i in range(n):
+        if i not in colors:
+            stack = [(i, 0)]
             while stack:
-                node = stack.pop()
-                for neighbor in graph[node]:
-                    if neighbor not in color:
-                        color[neighbor] = 1 - color[node]
-                        stack.append(neighbor)
-                    elif color[neighbor] == color[node]:
+                vertex, color = stack.pop()
+                colors[vertex] = color
+                for neighbor in graph[vertex]:
+                    if neighbor in colors and colors[neighbor] == color:
                         return False
+                    if neighbor not in colors:
+                        stack.append((neighbor, 1 - color))
     return True
 
 
