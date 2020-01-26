@@ -8,33 +8,31 @@ import unittest2 as unittest
 
 def is_bipartite_v1(graph):
     """ Our goal is trying to use two colors to color the graph and see if there are any adjacent nodes having the
-        same color. We start coloring an uncolored root node with Blue/0, and start the DFS, where if a node is colored
-        Blue, all its neighbors are colored Yellow/1 and vice versa. If at any point, we find that the node we are
-        about to color with Yellow is already colored with Blue (or vice versa), this essentially means that then our
-        coloring is impossible. We should be able to greedily color the graph if and only if it is bipartite.
+        same color. We start coloring an uncolored node with Blue/0, and start the DFS, where if a node is colored
+        Blue, all its neighbors are colored Yellow/1 and vice versa. If at any point we find a neighbor colored the
+        same color as the current node, then our coloring was impossible.
+        We should be able to greedily color the graph if and only if it is bipartite.
         We'll keep a hash map to lookup the color of each node.
+        IMPORTANT: We should be careful to consider disconnected components of the graph, by searching each node.
     Time complexity: O(V + E), where V is the number of vertices in the graph, and E is the number of edges. We explore
     each node once when we transform it from uncolored to colored, traversing all its edges in the process.
     Space complexity: O(V + E), the space used to store the colors and the call stack
     """
 
-    def dfs(vertex):
+    def dfs(vertex, color):
+        colors[vertex] = color
         for neighbor in graph[vertex]:
-            if neighbor in color:
-                if color[neighbor] == color[vertex]:  # Immediate neighbor has the same color
-                    return False
-            else:
-                color[neighbor] = 1 - color[vertex]  # Color the neighbor with the opposite color
-                if not dfs(neighbor):  # Carry on coloring neighbors if neighbor using alternate colors
-                    return False
+            if neighbor in colors and colors[neighbor] == color:  # Immediate neighbor has the same color
+                return False
+            if neighbor not in colors and not dfs(neighbor, 1 - color):  # Color the neighbor with the opposite color
+                # and carry on coloring neighbors of neighbor using alternate colors
+                return False
         return True
 
-    n, color = len(graph), {}
+    n, colors = len(graph), {}
     for vertex in range(n):
-        if vertex not in color:
-            color[vertex] = 0
-            if not dfs(vertex):
-                return False
+        if vertex not in colors and not dfs(vertex, 0):
+            return False
     return True
 
 
