@@ -58,23 +58,22 @@ def is_bipartite_v2(graph):
 
 def is_bipartite_v3(graph):
     """ BFS version using a queue. The complexities of DFS and BFS are the same since the only difference is the order
-        of traversal. Both of them need to traverse every nodes and edges when the graph is bipartite.
+        of traversal. Both of them need to traverse every node and edge when the graph is bipartite.
     Time complexity: O(V + E)
     Space complexity: O(E)
     """
-    n, color = len(graph), {}
-    for vertex in range(n):
-        if vertex not in color:
-            queue = deque([vertex])
-            color[vertex] = 0
+    n, colors = len(graph), {}
+    for i in range(n):
+        if i not in colors:
+            queue = deque([(i, 0)])
             while queue:
-                node = queue.pop()
-                for neighbor in graph[node]:
-                    if neighbor not in color:
-                        color[neighbor] = 1 - color[node]
-                        queue.appendleft(neighbor)
-                    elif color[neighbor] == color[node]:
+                vertex, color = queue.popleft()
+                colors[vertex] = color
+                for neighbor in graph[vertex]:
+                    if neighbor in colors and colors[neighbor] == color:
                         return False
+                    if neighbor not in colors:
+                        queue.append((neighbor, 1 - color))
     return True
 
 
