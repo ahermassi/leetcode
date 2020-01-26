@@ -8,7 +8,7 @@ import unittest2 as unittest
 
 
 def reorganize_string_v1(S):
-    """ This is similar to 621- Task Scheduler problem, with the cooling interval is equal to 2.
+    """ This is similar to 621- Task Scheduler problem, with the cooling interval is equal to 1.
         This is a greedy approach that tries to write the most common letter followed by the second most common letter
         and so on.
         We create a heap of (count, letter). The implementation stores negative counts because Python's heap is min
@@ -18,14 +18,14 @@ def reorganize_string_v1(S):
         At the end, we might have one element still on the heap, which must have a count of one. If we do, we'll add
         that to the answer too.
     Time complexity: O(N logA), where N is the length of the string and A the length of alphabet. Calculating the
-    letter frequency which takes O(N) time, and building the max heap takes O(A logA) which is actually constant and
-    not considered dominant if alphabet size is fixed. Rebuilding the string takes N steps and in each step the max
-    heap takes at most O(logA) time to reorganize itself. So overall time complexity is O(N logA)
+    letter frequency takes O(N) time, and building the max heap takes O(A logA) which is actually constant and not
+    considered dominant if alphabet size is fixed. Rebuilding the string takes N steps and in each step the max heap
+    takes at most O(logA) time to reorganize itself. So overall time complexity is O(N logA)
     Space complexity: O(A), if A is fixed this complexity is O(1)
     """
     counter, heap, res = Counter(S), [], ''
     if any(count > (len(S) + 1) / 2 for c, count in counter.items()):
-        return ''  # The task is only impossible if the frequency of a letter exceeds (N+1) / 2
+        return ''  # The task is only impossible if the frequency of any letter exceeds (N+1) / 2
     for k, v in counter.items():  # Using negative values to create a max heap
         heappush(heap, [-v, k])
     while len(heap) >= 2:
@@ -58,7 +58,7 @@ def reorganize_string_v2(S):
             most_frequent = i
     if max_count > (len(S) + 1) / 2:
         return ''
-    res = [None] * len(S)
+    res = [''] * len(S)
     idx = 0
     while chars[most_frequent]:
         res[idx] = chr(most_frequent + ord('a'))
