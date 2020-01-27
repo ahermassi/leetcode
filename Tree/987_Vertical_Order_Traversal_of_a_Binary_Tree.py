@@ -6,8 +6,10 @@ the values of the nodes in order from top to bottom (decreasing Y coordinates).
 If two nodes have the same position, then the value of the node that is reported first is the value that is smaller.
 Return an list of non-empty reports in order of X coordinate.  Every report will have a list of values of nodes. """
 
+from collections import defaultdict, deque
 
-def vertical_traversal(root):
+
+def vertical_traversal_v1(root):
     """ To find the location of every node, we can use a depth-first search. During the search, we will maintain the
         location (x, y) of the node. As we move from parent to child, the location changes to (x-1, y-1) or (x+1, y-1)
         depending on if it is a left child or right child.
@@ -35,4 +37,28 @@ def vertical_traversal(root):
             res.append([])
             min_x = x
         res[-1].append(val)
+    return res
+
+
+def vertical_traversal_v2(root):
+    """ Same as previous solution but keeping node's position and value in a hash map indexed by x coordinate.
+    Time complexity: O(N * logN)
+    Space complexity: O(N)
+    """
+    positions, res = defaultdict(list), []
+    queue = deque([(root, 0, 0)])
+    min_x = max_x = 0
+    while queue:
+        node, x, y = queue.popleft()
+        positions[x].append((y, node.val))
+        if x < min_x:
+            min_x = x
+        elif x > max_x:
+            max_x = x
+        if node.left:
+            queue.append((node.left, x - 1, y - 1))
+        if node.right:
+            queue.append((node.right, x + 1, y - 1))
+    for i in range(min_x, max_x + 1):
+        res.append(val for y, val in sorted(positions[i], key=lambda element: (-element[0], element[1])))
     return res
