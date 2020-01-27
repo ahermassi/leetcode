@@ -23,18 +23,17 @@ def distance_k_v1(root, target, K):
             annotate(node.right, node)
 
     annotate(root)
-    queue = deque()
-    queue.append((target, 0))  # When our BFS starts, we are standing at layer 0
-    seen = {target}
+    queue = deque([(target, 0)])  # When our BFS starts, we are standing at layer 0
+    visited = {target}
     while queue:
-        if queue[0][1] == K:  # Is this the layer we want? If so, extract and return it
+        if queue[0][1] == K:  # Is this the layer we want ? If so, extract and return it
             return [node.val for node, depth in queue]
         node, depth = queue.popleft()  # Pull a node from the search queue. We are going to basically use our current
         # layer to populate the next layer of nodes that we need to search in the next while loop iteration
         for n in (node.left, node.right, node.par):  # Let's process all nodes in the layer. This is BFS.
-            if n and n not in seen:  # Has node been touched before?
+            if n and n not in visited:  # Has node been touched before?
                 queue.append((n, depth + 1))
-                seen.add(n)
+                visited.add(n)
     return []
 
 
@@ -47,7 +46,7 @@ def distance_k_v2(root, target, K):
     Space complexity: O(N)
     """
 
-    def build_graph(node, par):  # This function serves the purpose of annotation of the previous solution. Since
+    def build_graph(node, par):  # This function serves the purpose of annotation of the previous solution. If
         # modifying the tree is not possible, we map each node to its children and each child node to its parent.
         # This results in an undirected graph, which is a more flexible representation of the given tree.
         if node and par:
