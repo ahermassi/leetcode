@@ -13,18 +13,18 @@ def find_anagrams_v1(s, p):
     26 characters.
     Space complexity: O(26) = O(1)
     """
-    n, m = len(s), len(p)
+    n, m, res = len(s), len(p), []
     p_counter = Counter(p)
-    window_counter = Counter(s[:m - 1])  # Initially, the window is of size len(p) - 1
-    ans = []
+    window = Counter(s[:m - 1])  # Initially, the window is of size len(p) - 1
     for i in range(m - 1, n):
-        window_counter[s[i]] += 1  # Add character to have a window of size len(p)
-        if window_counter == p_counter:
-            ans.append(i - m + 1)  # Append the starting index
-        window_counter[s[i - m + 1]] -= 1  # Decrease count of oldest char in window. This is how the window 'slides'
-        if window_counter[s[i - m + 1]] == 0:
-            del window_counter[s[i - m + 1]]  # Remove the character if its count is zero
-    return ans
+        window[s[i]] += 1  # Add character to have a window of size len(p)
+        if window == p_counter:
+            res.append(i - m + 1)  # Append the starting index, or left boundary, of the window
+        window[s[i - m + 1]] -= 1  # Decrease the count of the oldest char in the window. This is how the window
+        # 'slides' and shrinks (from left)
+        if window[s[i - m + 1]] == 0:
+            del window[s[i - m + 1]]  # Remove the character if its count is zero
+    return res
 
 
 def find_anagrams_v2(s, p):
