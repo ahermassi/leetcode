@@ -24,7 +24,7 @@ class NumMatrixV1(object):
 
 class NumMatrixV2(object):
     """ Caching rows.
-        Try to see the 2D matrix as mm rows of 1D arrays. To find the region sum, we just accumulate the sum in the
+        Try to see the 2D matrix as N rows of 1D arrays. To find the region sum, we just accumulate the sum in the
         region row by row.
     Time complexity: O(N) per query, O(N * M) for pre-calculation, where N and M represent the number of rows and
     columns respectively
@@ -35,15 +35,17 @@ class NumMatrixV2(object):
         if not matrix:
             return
         n, m = len(matrix), len(matrix[0])
-        self.dp = [[0 for _ in range(m+1)] for _ in range(n)]
-        for i in range(1, n):
+        self.dp = [[0 for _ in range(m)] for _ in range(n)]
+        for i in range(n):
+            self.dp[i][0] = matrix[i][0]
+        for i in range(n):
             for j in range(1, m):
-                self.dp[i][j+1] = self.dp[i][j] + matrix[i][j]
+                self.dp[i][j] = self.dp[i][j - 1] + matrix[i][j]
 
     def sumRegion(self, row1, col1, row2, col2):
         dp, res = self.dp, 0
-        for i in range(row1, row2+1):
-            res += dp[i][col2+1] - dp[i][col1]
+        for i in range(row1, row2 + 1):
+            res += self.dp[i][col2] - self.dp[i][col1 - 1] if col1 >= 1 else self.dp[i][col2]
         return res
 
 
