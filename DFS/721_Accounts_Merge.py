@@ -4,8 +4,6 @@ from collections import defaultdict
 import unittest2 as unittest
 
 
-# All this entire problem is TODO.
-
 def accounts_merge_v1(accounts):
     """ We give each account an ID, based on the index of it within the list of accounts.
         Next, build an emails_accounts_map that maps an email to a list of accounts, which can be used to track which
@@ -48,39 +46,36 @@ def accounts_merge_v1(accounts):
     return res
 
 
+# Similar to https://leetcode.com/problems/accounts-merge/discuss/109161/Python-Simple-DFS-with-explanation!!!
+# 4th comment
+
 def accounts_merge_v2(accounts):
-    """ The key task here is to connect those emails, and this is a perfect use case for union find.
-        To group these emails, each group need to have a representative, or parent.
-        At the beginning, set each email as its own representative.
-        Emails in each account naturally belong to a same group, and should be joined by assigning to the same parent
-        (let's use the parent of first email in that list)
+    """ A different DFS approach. For every pair of emails in the same account, draw an edge between those emails.
+        The problem is about enumerating the connected components of this graph.
     Time complexity: O(sum(a_i log(a_i))
     Space complexity: O(sum(a_i))
     """
+    def dfs(vertex, emails):
+        if vertex not in visited:
+            emails.append(vertex)
+            visited.add(vertex)
+            for neighbor in graph[vertex]:
+                dfs(neighbor, emails)
 
-    def find(i):
-        if parent[i] != i:
-            parent[i] = find(parent[i])
-        return parent[i]
-
-    def union(i, j):
-        parent[find(i)] = find(j)
-
-    parent = {}
-    email_to_name = {}
+    res, visited, graph = [], set(), defaultdict(list)
     for account in accounts:
-        name = account[0]
-        for email in account[1:]:
-            if email not in parent:
-                parent[email] = email
-            email_to_name[email] = name
-            union(email, account[1])  # account[1]: the first email
-
-    res = defaultdict(list)
-    for email in parent.keys():
-        res[find(email)].append(email)
-
-    return [[email_to_name[root]] + sorted(emails) for (root, emails) in res.items()]
+        n = len(account)
+        for i in range(1, n - 1):
+            graph[account[i]].append(account[i + 1])
+            graph[account[i + 1]].append(account[i])
+    for account in accounts:
+        n = len(account)
+        for i in range(1, n):
+            if account[i] not in visited:  # This vertex hasn't been explored yet
+                user_name, emails = account[0], []
+                dfs(account[i], emails)  # Collect the vertices/emails that belong to the same connected component
+                res.append([user_name] + sorted(emails))
+    return res
 
 
 class Test(unittest.TestCase):
