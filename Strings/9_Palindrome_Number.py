@@ -45,14 +45,14 @@ def is_palindrome_v3(x):
     if x < 0 or (x % 10 == 0 and x):  # When x < 0, x is not a palindrome. Also if the last digit of the number is 0,
         # in order to be a palindrome, the first digit of the number also needs to be 0. Only 0 satisfies this property.
         return False
-    p, reverse = x, 0
-    while reverse < p:
-        reverse = reverse * 10 + p % 10
-        p = p // 10
+    reverse = 0
+    while reverse < x:
+        reverse = reverse * 10 + x % 10
+        x = x // 10
     # When the length is an odd number, we can get rid of the middle digit by reverse // 10. For example, when the
-    # input is 12321, at the end of the while loop we get p = 12, reverse = 123. Since the middle digit doesn't matter
-    # in palindrome (it will always equal to itself), we can simply get rid of it.
-    return reverse == p or p == reverse // 10
+    # input is 12321, at the end of the while loop we get x = 12, reverse = 123. Since the middle digit doesn't matter
+    # in palindrome (it will always be equal to itself), we can simply get rid of it.
+    return reverse == x or reverse // 10 == x
 
 
 class Test(unittest.TestCase):
