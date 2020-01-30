@@ -16,7 +16,7 @@ def remove_duplicates(nums):
     Time complexity: O(N) where N is the length of array nums
     Space complexity: O(1)
     """
-    write_index = 0  # This variable is the index where we'll write the next non-duplicate element
+    write_index = 0  # This variable is the tail of the sequence of unique elements
     n = len(nums)
     for i in range(n):
         if nums[i] != nums[write_index]:
