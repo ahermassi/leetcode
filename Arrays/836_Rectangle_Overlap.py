@@ -20,13 +20,36 @@ def is_rectangle_overlap_v1(rec1, rec2):
     return not (right1 <= left2 or left1 >= right2 or bottom1 >= top2 or top1 <= bottom2)
 
 
+def is_rectangle_overlap_v2(rec1, rec2):
+    """ If the rectangles overlap, they have positive area. This area must be a rectangle where both dimensions are
+        positive, since the boundaries of the intersection are axis aligned.
+        Thus, we can reduce the problem to the one-dimensional problem of determining whether two line segments overlap.
+        Interval A = [leftA, rightA]
+        Interval B = [leftB, rightB]
+        Overlapping region:  [max(leftA, leftB) , min(rightA, rightB)],
+        which means if(max(leftA, leftB) < min(rightA, rightB)), there is an overlap. Therefore, we just make sure the
+        overlapping area is valid.
+        First, separate the arrays to labeled l,b,r,t (for left, bottom, right, and top).
+        Then, compute how much width there is overlapping. Basically, this is merely the horizontal distance between
+        lesser of the right edges and greater of the left edges. Do the same for the top and bottom to calculate the
+        intersecting height. Then, if both calculations are positive, there is an intersection.
+    Time complexity: O(1)
+    Space complexity: O(1)
+    """
+    left1, bottom1, right1, top1 = rec1
+    left2, bottom2, right2, top2 = rec2
+    width = min(right1, right2) - max(left1, left2)
+    height = min(top1, top2) - max(bottom1, bottom2)
+    return width > 0 and height > 0
+
+
 class Test(unittest.TestCase):
     data = [([0, 0, 2, 2], [1, 1, 3, 3], True), ([0, 0, 1, 1], [1, 0, 2, 1], False)]
 
     def test_is_rectangle_overlap(self):
         for test_rec1, test_rec2, result in self.data:
             self.assertEqual(result, is_rectangle_overlap_v1(test_rec1, test_rec2))
-            # self.assertEqual(result, is_rectangle_overlap_v2(test_rec1, test_rec2))
+            self.assertEqual(result, is_rectangle_overlap_v2(test_rec1, test_rec2))
 
 
 if __name__ == '__main__':
