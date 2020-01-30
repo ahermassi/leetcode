@@ -8,6 +8,11 @@
 # Therefore, to find the value of kth bit: x >> k & 1
 # x = 100101, k = 2; x >> 2 = 001001; x >> 2 & 1 = 1 which is the bit at index 2
 
+
+# x & 1 gets the the value of the least significant bit of x
+# x = 100101; x & 1 = 1
+# x = 100100; x & 1 = 0
+
 # x & (x -1 1) equals x with its lowest set bit erased
 #  x = 00101100; x - 1= 00101011; x & (x - 1) = 00101000
 
