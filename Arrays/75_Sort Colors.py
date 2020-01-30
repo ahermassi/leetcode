@@ -1,6 +1,6 @@
-""" Given an array with n objects colored red, white or blue, sort them in-place so that objects of the same color
-are adjacent, with the colors in the order red, white and blue.
-Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively. """
+""" Given an array with n objects colored red, unclassified or blue, sort them in-place so that objects of the same color
+are adjacent, with the colors in the order red, unclassified and blue.
+Here, we will use the integers 0, 1, and 2 to represent the color red, unclassified, and blue respectively. """
 
 from collections import defaultdict
 import unittest2 as unittest
@@ -58,6 +58,27 @@ def sort_colors_v2(nums):
         else:
             nums[right], nums[curr] = nums[curr], nums[right]
             right -= 1
+
+
+def sort_colors_v3(nums):
+    """ Same as previous solution but with more meaningful variable names.
+        We iterate through elements in 'unclassified' zone, and move elements into one of 'red' or 'blue' groups
+        according to the relative order between the incoming unclassified element and 0/1/2.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    red, unclassified, blue = 0, 0, len(nums) - 1
+    while unclassified <= blue:  # Keep iterating as long as there is an unclassified element
+        num = nums[unclassified]
+        if num == 0:
+            nums[red], nums[unclassified] = nums[unclassified], nums[red]
+            red += 1
+            unclassified += 1
+        elif num == 1:
+            unclassified += 1
+        else:
+            nums[unclassified], nums[blue] = nums[blue], nums[unclassified]
+            blue -= 1
 
 
 class Test(unittest.TestCase):
