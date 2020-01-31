@@ -27,3 +27,16 @@ def random_sampling_v1(A, k):
         r = randint(i, len(A) - 1)
         A[i], A[r] = A[r], A[i]
     return A[:k]
+
+
+def random_sampling_v2(A, k):
+    """ When k is bigger than n/2, we can optimize by computing a subset of (n - k) elements to REMOVE from the set.
+        For example, when k = n-1, this replaces (n - 1) calls to the random number generator with a single call.
+    Time complexity: O(n - k)
+    Space complexity: O(1)
+    """
+    n = len(A)
+    for _ in range(n - k):
+        random_index = randint(0, len(A) - 1)
+        A[random_index] = A[-1]
+        A.pop()
