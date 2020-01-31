@@ -9,6 +9,8 @@ def count_primes(n):
     """ The solution is based on a technique called the Sieve of Eratosthenes.
             Make a list of all the integers less than n. Strike out the multiples of all primes less than or equal to
             the square root of n, then the numbers that are left are the primes.
+            In other words, compute the primes and when a number is identified as a prime, 'sieve' it, i.e., remove all
+            its multiples from future consideration.
         Create primes list for the integers up to n, initializing all indices to prime (1).
         Now set MULTIPLES of remaining prime numbers (marked 1) to not prime (0). Use upper limit of (n ** 0.5) + 1,
         because the smallest factor of a non-prime number will not be > sqrt(n).
@@ -20,7 +22,9 @@ def count_primes(n):
         If both a and b were greater than the square root of n, then a * b would be greater than n, so at least one of
         those factors must be less than or equal to the square root of n. If we can't find any factors less than or
         equal to the square root of n, then n must be prime.
-    Time complexity: O(n log n)
+    Time complexity: O(n log(log(n))), the time to sift out the multiples of p is proportional to n/p, so the overall
+    time complexity is O(n/2 + n/3 + n/5 + n/7 + n/11 +... ). Although not obvious, this sum asymptotically tends to
+    n log(log(n)), yielding an O(n log(log(n))) time bound
     Space complexity: O(n)
     """
     if n <= 2:  # We are interested in numbers LESS than the input number. Exit early if input LESS than 2 (2 is prime)
