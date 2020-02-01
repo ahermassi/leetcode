@@ -45,8 +45,7 @@ def reverse_words_v2(s):
             s[left], s[r] = s[r], s[left]
             left += 1
             r -= 1
-        while right < n and s[right] == ' ':  # Advance till the first non-space character
-            right += 1
+        right += 1  # Advance to the beginning of next word
     return ''.join(s)
 
 
