@@ -5,7 +5,7 @@ k times. Note that k is guaranteed to be a positive integer. """
 import unittest2 as unittest
 
 
-def decode_string(s):
+def decode_string_v1(s):
     """ The solution is a simple stack based one which evaluates the innermost brackets first. We iterate over the 
         string and push everything to a stack until we find a right bracket. We use that and pop from the stack to 
         evaluate the innermost expression in the string. For example, if we have 2[a3[b]], our stack would be 
@@ -35,8 +35,31 @@ def decode_string(s):
                 cur_str = stack.pop() + cur_str
             stack.pop()
             repeat = stack.pop()
-            stack.append(repeat * cur_str)
+            stack.append(cur_str * repeat)
     return ''.join(stack)
+
+
+def decode_string_v2(s):
+    """ Slightly different version where we accumulate partial result in 'cur_str'.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    stack, cur_str, cur_num = [], '', 0
+    for c in s:
+        if c.isdigit():
+            cur_num = cur_num * 10 + int(c)
+        elif c == '[':
+            stack.append(cur_str)
+            stack.append(cur_num)
+            cur_str = ''
+            cur_num = 0
+        elif c == ']':
+            repeat = stack.pop()
+            pre = stack.pop()
+            cur_str = pre + cur_str * repeat
+        else:
+            cur_str += c
+    return cur_str
 
 
 class Test(unittest.TestCase):
@@ -44,7 +67,8 @@ class Test(unittest.TestCase):
 
     def test_decode_string(self):
         for test_string, result in self.data:
-            self.assertEqual(result, decode_string(test_string))
+            self.assertEqual(result, decode_string_v1(test_string))
+            self.assertEqual(result, decode_string_v2(test_string))
 
 
 if __name__ == '__main__':
