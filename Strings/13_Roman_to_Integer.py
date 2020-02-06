@@ -9,8 +9,8 @@ def roman_to_int(s):
     Space complexity: O(1)
     """
     roman_to_integer = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
-    res = 0
-    for i in range(len(s) - 1):
+    n, res = len(s), 0
+    for i in range(n - 1):
         cur, nxt = s[i], s[i+1]
         if roman_to_integer[cur] < roman_to_integer[nxt]:
             res -= roman_to_integer[cur]
