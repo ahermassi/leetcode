@@ -19,42 +19,42 @@ def add_two_numbers_v1(l1, l2):
         backwards. Pay attention to cases that produce an addition carry. With each call, return that carry and the
         last created node that contains the last sum.
     Time complexity: O(N + M)
-    Space complexity: O(max(N, M)) for the call stack
+    Space complexity: O(max(N, M)), for the call stack
     """
     len1, len2 = get_length(l1), get_length(l2)
     l1 = add_leading_zeroes(len2 - len1, l1)
     l2 = add_leading_zeroes(len1 - len2, l2)
-    carry, last_node = combine_lists(l1, l2)
+    carry, head = combine_lists(l1, l2)
     if carry:
-        l3 = ListNode(carry)
-        l3.next = last_node
-        last_node = l3
-    return last_node
+        temp = ListNode(carry)
+        temp.next = head
+        head = temp
+    return head
 
 
-def get_length(node):
-    i = 0
-    while node:
-        i += 1
-        node = node.next
-    return i
+def get_length(head):
+    length = 0
+    while head:
+        length += 1
+        head = head.next
+    return length
 
 
-def add_leading_zeroes(n, node):
+def add_leading_zeroes(n, head):
     for _ in range(n):
         new_node = ListNode(0)
-        new_node.next = node
-        node = new_node
-    return node
+        new_node.next = head
+        head = new_node
+    return head
 
 
 def combine_lists(l1, l2):
     if not l1 and not l2:
         return 0, None
-    carry, last_node = combine_lists(l1.next, l2.next)
+    carry, next_node = combine_lists(l1.next, l2.next)
     s = l1.val + l2.val + carry
     new_node = ListNode(s % 10)
-    new_node.next = last_node
+    new_node.next = next_node
     carry = s // 10
     return carry, new_node
 
@@ -64,7 +64,7 @@ def add_two_numbers_v2(l1, l2):
         numbers recursively, traverse the two lists and store the values of their nodes in 2 separate stacks. Then pop
         elements off the stacks to construct a new list.
     Time complexity: O(N + M)
-    Space complexity: O(max(N, M))
+    Space complexity: O(N + M)
     """
     stack1, stack2 = [], []
     p1, p2 = l1, l2
@@ -75,17 +75,13 @@ def add_two_numbers_v2(l1, l2):
         stack2.append(p2.val)
         p2 = p2.next
     nxt, carry = None, 0
-    while stack1 or stack2:
+    while stack1 or stack2 or carry:
         val1 = stack1.pop() if stack1 else 0
         val2 = stack2.pop() if stack2 else 0
         s = val1 + val2 + carry
         node = ListNode(s % 10)
         node.next = nxt
         nxt, carry = node, s // 10
-    if carry:
-        new_node = ListNode(carry)
-        new_node.next = node
-        node = new_node
     return node
 
 
