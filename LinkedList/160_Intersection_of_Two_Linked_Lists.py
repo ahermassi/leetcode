@@ -46,18 +46,17 @@ def get_intersection_node_v2(headA, headB):
     """
 
     def length(head):
-        count = 0
-        temp = head
+        count, temp = 0, head
         while temp:
             count += 1
             temp = temp.next
         return count
 
-    len1, len2 = length(headA), length(headB)
+    lena, lenb = length(headA), length(headB)
     pa, pb = headA, headB
-    for _ in range(len1 - len2):
+    for _ in range(lena - lenb):
         pa = pa.next
-    for _ in range(len2 - len1):
+    for _ in range(lenb - lena):
         pb = pb.next
     while pa != pb:
         pa, pb = pa.next, pb.next
