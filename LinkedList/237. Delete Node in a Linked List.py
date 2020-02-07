@@ -5,7 +5,7 @@ class ListNode:
         self.next = None
 
 
-def delete_node(self, node):
+def delete_node(node):
     """ The usual way of deleting a node node from a linked list is to modify the next pointer of the node before it,
         to point to the node after it. Since we do not have access to the node before the one we want to delete, we
         cannot modify the next pointer of that node in any way. Instead, we have to replace the value of the node we
