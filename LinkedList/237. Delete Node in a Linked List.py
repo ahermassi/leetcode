@@ -1,15 +1,19 @@
 # Definition for singly-linked list.
-# class ListNode:
-#     def __init__(self, x):
-#         self.val = x
-#         self.next = None
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
 
 
-class Solution:
-    def delete_node(self, node):
-        """
-        :type node: ListNode
-        :rtype: void Do not return anything, modify node in-place instead.
-        """
-        node.val = node.next.val
-        node.next = node.next.next
+def delete_node(self, node):
+    """ The usual way of deleting a node node from a linked list is to modify the next pointer of the node before it,
+        to point to the node after it. Since we do not have access to the node before the one we want to delete, we
+        cannot modify the next pointer of that node in any way. Instead, we have to replace the value of the node we
+        want to delete with the value in the node after it, and then delete the node after it.
+        Because we know that the node we want to delete is not the tail of the list, we can guarantee that this
+        approach is possible.
+    Time complexity: O(1)
+    Space complexity: O(1)
+    """
+    node.val = node.next.val
+    node.next = node.next.next
