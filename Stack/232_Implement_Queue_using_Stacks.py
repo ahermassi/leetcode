@@ -14,27 +14,35 @@ class MyQueue1:
     Time complexity: O(N) push, O(1) pop
     """
     def __init__(self):
-        self.s1 = []  # This stack is used to hold actual queue elements
-        self.s2 = []  # This stack is used to copy data from and back to the queue
+        self.stack1 = []  # This stack is used to hold actual queue elements
+        self.stack2 = []  # This stack is used to copy data from and back to the queue
 
     def push(self, x):
-        """ Stack is LIFO. To serve as a FIFO, the newest element must be pushed to the bottom of the
-        stack. Transfer all s1 elements to auxiliary stack s2. Then the newly arrived element is
-        pushed on top of s2 and all its elements are popped and pushed to s1. """
-        while self.s1:
-            self.s2.append(self.s1.pop())
-        self.s1.append(x)
-        while self.s2:
-            self.s1.append(self.s2.pop())
+        """ Stack is LIFO. To serve as a FIFO, the newest element must be pushed to the bottom of the stack.
+            Transfer all stack1's elements to auxiliary stack2. Then the newly arrived element is pushed on top of
+            stack1 and all stack2's elements are popped and pushed to stack1.
+        Time complexity: O(N), each element, with the exception of the newly arrived, is pushed and popped twice
+        Space complexity: O(N)
+        """
+        while self.stack1:
+            self.stack2.append(self.stack1.pop())
+        self.stack1.append(x)
+        while self.stack2:
+            self.stack1.append(self.stack2.pop())
 
     def pop(self):
-        return self.s1.pop()
+        """ Pop an element from stack1 because stack1 stores always on its top the first inserted element in the
+            queue.
+        Time complexity: O(1)
+        Space complexity: O(1)
+        """
+        return self.stack1.pop()
 
     def peek(self):
-        return self.s1[-1]
+        return self.stack1[-1]
 
     def empty(self):
-        return not self.s1
+        return not self.stack1
 
 
 class MyQueue2:
