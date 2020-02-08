@@ -17,48 +17,29 @@ class MaxStack(object):
     """
 
     def __init__(self):
-        """
-        initialize your data structure here.
-        """
         self.stack = []
 
     def push(self, x):
-        """
-        :type x: int
-        :rtype: None
-        """
         if not self.stack:
             self.stack.append((x, x))
         else:
             self.stack.append((x, max(x, self.stack[-1][1])))
 
     def pop(self):
-        """
-        :rtype: int
-        """
         return self.stack.pop()[0]
 
     def top(self):
-        """
-        :rtype: int
-        """
         return self.stack[-1][0]
 
     def peekMax(self):
-        """
-        :rtype: int
-        """
         return self.stack[-1][1]
 
     def popMax(self):
-        """
-        :rtype: int
-        """
         max_val = self.stack[-1][1]
         temp = []
         while self.stack[-1][0] != max_val:
             temp.append(self.stack.pop()[0])
-        max_val = self.stack.pop()[0]
+        self.stack.pop()
         map(self.push, reversed(temp))
         return max_val
 
@@ -75,7 +56,7 @@ class Test(unittest.TestCase):
     pop = maxStack.pop()
     top3 = maxStack.top()
 
-    def test_is_valid(self):
+    def test_max_stack(self):
         self.assertEqual(5, self.top1)
         self.assertEqual(5, self.max1)
         self.assertEqual(1, self.top2)
