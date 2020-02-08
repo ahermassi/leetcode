@@ -11,7 +11,6 @@ import unittest2 as unittest
 
 class MyQueue1:
     """ 1st implementation
-    Time complexity: O(N) push, O(1) pop
     """
     def __init__(self):
         self.stack1 = []  # This stack is used to hold actual queue elements
@@ -46,38 +45,47 @@ class MyQueue1:
 
 
 class MyQueue2:
-    """ 1st implementation
-    Time complexity: O(1) push, amortized O(1) pop
+    """ 2nd implementation
+        The intuition for improving the time complexity of de-queue is that after we move elements from the first
+        stack to the second stack, any further de-queues are trivial, until the second stack is empty. This is true
+        even if we need to enqueue, as long as we enqueue onto the first stack. When the second stack becomes empty,
+        and we need to perform a de-queue, we simply repeat the process of transferring from the first stack to the
+        second stack.
+        In essence, we are using the first stack for enqueue and the second for de-queue.
     """
     def __init__(self):
-        self.s1 = []  # This stack is used to hold actual queue elements
-        self.s2 = []  # This stack is used to copy data from and back to the queue
+        self.enqueue = []
+        self.dequeue = []
 
     def push(self, x):
-        """ The newly arrived element is always added on top of stack s1 and the first element. O(1) operation """
-        self.s1.append(x)
+        """ The newly arrived element is always added on top of 'enqueue' stack.
+        Time complexity: O(1)
+        Space complexity: O(1)
+        """
+        self.enqueue.append(x)
 
     def pop(self):
-        """ We have to remove element in front of the queue. This is the first inserted element in the stack s1 and
-        it is positioned at the bottom of the stack. To remove the bottom element from s1, we have to pop all
-        elements from s1 and to push them on to an additional stack s2, which helps us to store the elements of s1 in
-        reversed order. This way the bottom element of s1 will be positioned on top of s2 and we can simply pop it
-        from stack s2. Once s2 is empty, the algorithm transfers data from s1 to s2 again. """
-        if not self.s2:  # Transfer data from s1 to s2 only if s2 is empty
-            while self.s1:  # Copying data ...
-                self.s2.append(self.s1.pop())
-        return self.s2.pop()
+        """ We have to remove element in front of the queue. This is the first inserted element in the 'enqueue' stack
+            and is positioned at the bottom of the stack. To remove the bottom element from 'enqueue', we have to pop
+            all elements from 'enqueue' and to push them on to additional 'dequeue' stack, which helps us to store the
+            elements of 'enqueue' in reversed order. This way the bottom element of 'enqueue' will be positioned on top
+            of 'dequeue' and we can simply pop it from 'dequeue'. Once 'dequeue' is empty, the algorithm transfers
+            data from  'enqueue' to 'dequeue' again. """
+        if self.dequeue:
+            return self.dequeue.pop()
+        while self.enqueue:
+            self.dequeue.append(self.enqueue.pop())
+        return self.dequeue.pop()
 
     def peek(self):
-        if not self.s2:
-            while self.s1:
-                self.s2.append(self.s1.pop())
-        return self.s2[-1]
+        if self.dequeue:
+            return self.dequeue[-1]
+        return self.enqueue[0]
 
     def empty(self):
         """ Both stacks s1 and s2 contain all stack elements, so the algorithm checks s1 and s2 size to return if the
         queue is empty. """
-        return not self.s1 and not self.s2
+        return not self.enqueue and not self.dequeue
 
 
 class Test(unittest.TestCase):
