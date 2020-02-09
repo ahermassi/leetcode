@@ -18,7 +18,7 @@ class TreeNode(object):
 def is_balanced_v1(root):
     """ Top-down approach.
         Check whether the tree is balanced strictly according to the definition of balanced binary tree: the difference
-        between the heights of the two sub trees are not bigger than 1, and both the left sub tree and right sub tree
+        between the heights of the two sub trees is not greater than 1, and both the left sub tree and right sub tree
         are also balanced.
     Time complexity: O(N^2), for the current node root, calling height() for its left and right children actually has
     to access all of its children, thus the complexity is O(N). We do this for each node in the tree, so the overall
@@ -69,13 +69,13 @@ def is_balanced_v3(root):
         if not root:
             return True, 0  # First value of the return value indicates if tree is balanced, and if balanced the
             # second value of the return value is the height of tree
-        left_balanced, left_height = helper(root.left)
-        right_balanced, right_height = helper(root.right)
-        if not left_balanced or not right_balanced or abs(left_height - right_height) > 1:
-            return False, 0
-        return True, 1 + max(left_height, right_height)
+        left_height, left_balanced = helper(root.left)
+        right_height, right_balanced = helper(root.right)
+        height = 1 + max(left_height, right_height)
+        balanced = abs(left_height - right_height) <= 1 and left_balanced and right_balanced
+        return height, balanced
 
-    return helper(root)[0]
+    return helper(root)[1]
 
 
 class Test(unittest.TestCase):
@@ -94,7 +94,8 @@ class Test(unittest.TestCase):
 
     def test_is_balanced(self):
         self.assertTrue(is_balanced_v1(self.root1))
-        self.assertFalse(is_balanced_v1(self.root2))
+        self.assertFalse(is_balanced_v2(self.root2))
+        self.assertFalse(is_balanced_v3(self.root2))
 
 
 if __name__ == '__main__':
