@@ -12,7 +12,7 @@ class TreeNode(object):
 
 
 def has_path_sum_v1(root, sum):
-    """ Do it recursively. If the base case is not valid, substract current node's value from sum and try to find its
+    """ Do it recursively. If the base case is not valid, subtract current node's value from sum and try to find its
         complement in either left or right subtree.
     Time complexity: O(N), in the worst case we visit each node exactly once
     Space complexity: in the worst case, the tree is completely unbalanced and the recursion call would occur N times
@@ -58,7 +58,7 @@ class Test(unittest.TestCase):
     root.right.right.right = TreeNode(1)
     root.left.right = TreeNode(4)
 
-    def test_find_target(self):
+    def test_has_path_sum(self):
         self.assertEqual(True, has_path_sum_v1(self.root, 22))
         self.assertEqual(True, has_path_sum_v2(self.root, 22))
 
