@@ -59,7 +59,7 @@ def path_sum_v3(root, sum):
         Here, we are using the same vector path to save the result. If we don't use path.pop(), after we call helper()
         on the left branch, the path will contain all the elements that it were pushed on the left branch. This way,
         when we call helper() on the right branch, the result on the right branch will be screwed.
-    Time complexity: O(N)
+    Time complexity: O(N^2), for tree traversal and copying the list of nodes
     Space complexity: O(N)
     """
     def helper(root, sum, path):
