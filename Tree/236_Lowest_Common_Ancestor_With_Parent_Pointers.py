@@ -2,7 +2,7 @@
 node has a parent pointer. """
 
 
-def lowest_common_ancestor(root, p, q):
+def lowest_common_ancestor(p, q):
     """ We know the two nodes have a common ancestor, namely the root. If the nodes are at the same depth, we can move
         up the tree in tandem from both nodes, stopping at the first common node, which is the LCA. However, if they
         are not the same depth, we need to keep the set of traversed nodes to know when we find the first common node.
