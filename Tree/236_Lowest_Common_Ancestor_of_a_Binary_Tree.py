@@ -27,21 +27,23 @@ def lowest_common_ancestor_v1(root, p, q):
     Space complexity: O(N), in the worst case space utilized by the stack, the parent pointer dictionary and the
     ancestor set, would be N each, since the height of a skewed binary tree could be N
     """
-    parent = {root: None}
+    parent = {}
     stack = [(root, None)]
     while p not in parent or q not in parent:
         node, par = stack.pop()
         if node:
-            parent[node] = par if par else None
+            parent[node] = par
             stack.append((node.left, node))
             stack.append((node.right, node))
     p_ancestor = set()
     while p:
         p_ancestor.add(p)
         p = parent[p]
-    while q not in p_ancestor:
+    while q:
+        if q in p_ancestor:
+            return q
         q = parent[q]
-    return q
+    return root
 
 
 # Check this out: https://www.youtube.com/watch?v=py3R23aAPCA
@@ -63,6 +65,8 @@ def lowest_common_ancestor_v2(root, p, q):
     Time complexity: O(N), in the worst case we might be visiting all the nodes of the binary tree
     Space complexity: O(N) worst case, O(logN) average case
     """
+    if not root:
+        return None
     if root == p or root == q:  # If we find either value, return ourselves to the caller
         return root
     # 'root' doesn't satisfy any of our base cases. Search left and then search right
@@ -92,6 +96,7 @@ class Test(unittest.TestCase):
 
     def test_lowest_common_ancestor(self):
         self.assertEqual(self.result, lowest_common_ancestor_v1(self.root, self.p, self.q))
+        self.assertEqual(self.result, lowest_common_ancestor_v2(self.root, self.p, self.q))
 
 
 if __name__ == '__main__':
