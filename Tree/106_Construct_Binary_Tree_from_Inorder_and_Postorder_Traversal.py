@@ -12,8 +12,8 @@ class TreeNode(object):
 
 
 def build_tree(inorder, postorder):
-    """ Looking at postorder traversal, the last value must be the root. Then, we find the index of root within
-            in-order traversal, and split into two sub problems.
+    """ Looking at post-order traversal, the last value must be the root. Then, we find the index of root within
+        in-order traversal, and split into two sub problems.
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -26,6 +26,7 @@ def build_tree(inorder, postorder):
         # traversal goes 'Left-Right-Parent', and postorder.pop() keeps picking the right-most element of the list,
         # that means it should go 'Parent-(one of parents of) Right (subtree) - Left'. So, switching the order
         # doesn't work.
+        # In other words, because that's the order they appear in the post-order list starting from the back to front.
         root.left = helper(inorder_left, index - 1)
         return root
 
