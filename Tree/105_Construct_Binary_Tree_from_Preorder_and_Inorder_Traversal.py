@@ -39,13 +39,13 @@ def build_tree_v1(preorder, inorder):
     """
 
     def get_tree(inorder):
-        if inorder:
-            val = preorder.popleft()
-            index = inorder.index(val)
-            root = TreeNode(inorder[index])
-            root.left = get_tree(inorder[:index])
-            root.right = get_tree(inorder[index + 1:])
-            return root
+        if not inorder:
+            return None
+        root = TreeNode(preorder.popleft())
+        index = inorder.index(root.val)
+        root.left = get_tree(inorder[:index])
+        root.right = get_tree(inorder[index + 1:])
+        return root
 
     preorder = deque(preorder)  # Speed up a bit by making pre-order a queue (cheap left pops as opposed to list.pop(0))
     return get_tree(inorder)
