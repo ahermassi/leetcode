@@ -6,7 +6,7 @@ If the target is not found in the array, return [-1, -1]. """
 import unittest2 as unittest
 
 
-def search_range(nums, target):
+def search_range_v1(nums, target):
     """ Modified binary search executed twice to find both left and right positions. The tricky part is handling left
         and right pointers when a match is found.
         Example:
@@ -34,7 +34,7 @@ def search_range(nums, target):
     """
     def binary_search_left():
         left, right = 0, len(nums) - 1
-        while left < right:
+        while left <= right:
             mid = (left + right) // 2
             if target > nums[mid]:
                 left = mid + 1
@@ -61,7 +61,7 @@ class Test(unittest.TestCase):
 
     def test_search_range(self):
         for test_array, test_target, result in self.data:
-            self.assertEqual(result, search_range(test_array, test_target))
+            self.assertEqual(result, search_range_v1(test_array, test_target))
 
 
 if __name__ == '__main__':
