@@ -12,15 +12,17 @@ def search(nums, target):
         Perform standard binary search. Take an index in the middle as a pivot.
         If nums[mid] == target, the job is done, return mid.
         Now there could be two situations:
-            1- Pivot element is larger than the first element in the array, i.e. the part of array from the first
-               element to the pivot one is non-rotated.
-               If the target is in that non-rotated part as well: go left: right = mid - 1.
-               Otherwise: go right: left = mid + 1.
-            2- Pivot element is smaller than the first element of the array, i.e. the rotation index is somewhere
-               between 0 and mid. That means that the part of array from the pivot element to the last one is
+            1- Middle element is larger than the first element in the array, i.e. the part of array from the first
+               element to the middle one is non-rotated.
+               If the target is in that non-rotated part as well, go left: right = mid - 1.
+               Otherwise, go right: left = mid + 1.
+            2- Middle element is smaller than the first element of the array, i.e. the rotation index is somewhere
+               between 0 and mid. That means that the part of array from the middle element to the last one is
                non-rotated.
-               If target is in that non-rotated part as well: go right: left = mid + 1.
-               Otherwise: go left: right = mid - 1.
+               If target is in that non-rotated part as well, go right: left = mid + 1.
+               Otherwise, go left: right = mid - 1.
+        So we only need to be in the ordered half to determine whether the target value is in this area and which half
+        is preserved.
     Time complexity: O(logN)
     Space complexity: O(1)
     """
