@@ -63,8 +63,7 @@ def find_min_v2(nums):
             # mid can't be the minimum, so we can safely move left to mid + 1, which ensures the interval is always
             # shrinking
             # Example: [3, 4, 5, 6, 7, 8, 9, 1, 2]. In the first iteration, we start with mid = 4, right = 9.
-            # If nums[mid] > nums[right], we know that at some point to the right of mid, the pivot must have occurred,
-            # which is why the values wrapped around so that nums[right] is less then nums[mid].
+            # nums[mid] > nums[right], so we know that at some point to the right of mid, the pivot must have occurred.
             # We also know that the number at mid is greater than AT LEAST one number to the right, so we can use
             # mid + 1 and never consider mid again.
         else:
