@@ -5,6 +5,8 @@ The first integer of each row is greater than the last integer of the previous r
 import unittest2 as unittest
 
 
+# Watch: https://www.youtube.com/watch?v=FOa55B9Ikfg
+
 def search_matrix(matrix, target):
     """ We could notice that the input matrix n x m could be considered as a sorted array of length n x m.
         Sorted array is a perfect candidate for the binary search because the element index in this virtual array (for
