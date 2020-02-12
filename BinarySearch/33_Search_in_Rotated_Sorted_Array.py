@@ -23,6 +23,14 @@ def search(nums, target):
                Otherwise, go left: right = mid - 1.
         So we only need to be in the ordered half to determine whether the target value is in this area and which half
         is preserved.
+        Formula: If a sorted array is shifted, if we take the middle, always one side will be sorted.
+            1- Take the middle and compare with target, if matches return.
+            2- If middle is bigger than left side, it means left is sorted.
+                2a- If nums[left] <= target < nums[middle], search on left side: right = middle - 1
+                2b- Left side is sorted, but target not in here, search on right side: left = middle + 1
+            3- If middle is less than right side, it means right is sorted.
+                3a- If nums[middle] < target <= nums[right], search on right side: left = middle + 1
+                3b- Right side is sorted, but target not in here, search on left side: right = middle - 1
     Time complexity: O(logN)
     Space complexity: O(1)
     """
