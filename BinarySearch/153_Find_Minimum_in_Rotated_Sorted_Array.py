@@ -11,16 +11,18 @@ import unittest2 as unittest
 def find_min_v1(nums):
     """ There is a point in the array at which we would notice a change. This is the point which would help us in this
         question. We call this the Inflection Point.
-        In this modified version of binary search algorithm, we are looking for this point. We notice that:
-            All the elements to the left of inflection point >= first element of the rotated array
-            All the elements to the right of inflection point < first element of the rotated array
+        In this modified version of binary search algorithm, we are looking for this point.
         Find the mid element of the array.
-        If mid element > first element of array, this means that we need to look for the inflection point on the right
-        of mid.
-        If mid element < first element of array, this that we need to look for the inflection point on the left of mid.
+        If mid element > leftmost element of array, this means that left half is sorted and we need to look for the
+        inflection point on the right of mid.
+        If mid element < leftmost element of array, this that the left half is rotated (not completely sorted) and we
+        need to look for the inflection point on the left of mid.
         We stop our search when we find the inflection point, when either of the two conditions is satisfied:
-            nums[mid] > nums[mid + 1] --> nums[mid + 1] is the smallest
-            nums[mid - 1] > nums[mid] --> nums[mid] is the smallest
+            nums[mid] > nums[mid + 1] --> nums[mid + 1] is the smallest. This is because, in a sorted array, an element
+            is always less than or equal to its successor
+            nums[mid] < nums[mid - 1] --> nums[mid] is the smallest. This is because, in a sorted array, an element is
+            always greater than or equal to its predecessor.
+        So, in all cases, we're looking for the point where the discrepancy occurs.
         The key observation is: regardless of where it occurs in the array, by definition the minimum value's left
         neighbor is the maximum value.
     Time complexity: O(logN)
@@ -39,10 +41,10 @@ def find_min_v1(nums):
         if nums[mid] < nums[mid - 1]:  # If the mid element is less than its previous element, then nums[mid] is
             # the smallest
             return nums[mid]
-        if nums[0] < nums[mid]:  # If the mid element's value is greater than the 0th element, this means the smallest
+        if nums[left] < nums[mid]:  # If the mid element is greater than the left element, this means the smallest
             # value is still somewhere to the right as we are still dealing with a non-rotated half
             left = mid + 1
-        else:  # If nums[0] is greater than the mid value, then this means the smallest value is somewhere to the left
+        else:  # If nums[left] is greater than mid value, then this means the smallest value is somewhere to the left
             right = mid - 1
 
 
@@ -57,10 +59,10 @@ def find_min_v2(nums):
         mid = (left + right) // 2
         if nums[mid] > nums[right]:
             left = mid + 1
-            # If nums[mid] > nums[right], we know that the pivot/minimum value must have occurred somewhere to the
-            # right of mid. mid can't be the minimum, so we can safely move left to mid + 1, which ensures the interval
-            # is always shrinking
-            # Example: [3,4,5,6,7,8,9,1,2]. In the first iteration, we start with mid index = 4, right index = 9.
+            # If nums[mid] > nums[right], we know that the discrepancy must have occurred somewhere to the right of mid.
+            # mid can't be the minimum, so we can safely move left to mid + 1, which ensures the interval is always
+            # shrinking
+            # Example: [3, 4, 5, 6, 7, 8, 9, 1, 2]. In the first iteration, we start with mid = 4, right = 9.
             # If nums[mid] > nums[right], we know that at some point to the right of mid, the pivot must have occurred,
             # which is why the values wrapped around so that nums[right] is less then nums[mid].
             # We also know that the number at mid is greater than AT LEAST one number to the right, so we can use
@@ -69,7 +71,7 @@ def find_min_v2(nums):
             right = mid
             # Since we use round up for mid, and left < right, right would never be the same as mid.
             # Therefore, we compare nums[mid] with nums[right], since they will never be the same.
-            # If nums[mid] <= nums[right], we will know the minimum should be in the left part, so we are moving left.
+            # If nums[mid] <= nums[right], we know the minimum should be in the left part, so we are moving left.
             # We can always make right = mid while we don't have to worry the loop will not end, since we know right
             # would never be the same as mid, making right = mid ensure the interval is always shrinking.
     # At this point, left and right converge to a single index (for minimum value). Our if/else block forces the bounds
