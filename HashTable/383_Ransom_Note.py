@@ -23,12 +23,35 @@ def can_construct_v1(ransomNote, magazine):
     return True
 
 
+def can_construct_v2(ransomNote, magazine):
+    """ Make a single pass over the ransom note, storing the character counts in a single hash map. Next, we make a
+        pass over the magazine. When processing a character c, if c appears in the hash table, we reduce its count
+        by 1; we remove it from the hash when its count goes to zero. If the hash becomes empty, we return true. If we
+        reach the end of the ransom note and the hash is nonempty, we return false: Each of the characters remaining in
+        the hash occurs more times in the ransom note than the magazine.
+    Time complexity: O(N + M)
+    Space complexity: O(1)
+    """
+    if not ransomNote and not magazine:
+        return True
+    counter = Counter(ransomNote)
+    for c in magazine:
+        if c in counter:
+            counter[c] -= 1
+            if counter[c] == 0:
+                del counter[c]
+        if len(counter) == 0:
+            return True
+    return False
+
+
 class Test(unittest.TestCase):
     data = [('a', 'b', False), ('aa', 'ab', False), ('aa', 'aab', True)]
 
     def test_can_construct(self):
         for test_ransom_note, test_magazine, result in self.data:
             self.assertEqual(result, can_construct_v1(test_ransom_note, test_magazine))
+            self.assertEqual(result, can_construct_v2(test_ransom_note, test_magazine))
 
 
 if __name__ == '__main__':
