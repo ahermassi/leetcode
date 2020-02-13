@@ -89,14 +89,19 @@ class LRUCacheV1(object):
 
 
 class LRUCacheV2(object):
-    """ We're asked to implement the structure which provides the following operations in O(1) time :
+    """ We're asked to implement the structure which provides the following operations in O(1) time:
             Get the key / Check if the key exists
             Put the key
             Delete the first added key
-        The first two operations in O(1) time are provided by the standard hash map, and the last one - by linked list.
-        There is a structure called ordered dictionary which combines behind both hash map and linked list. In Python,
-        this structure is called OrderedDict
-
+        The first two operations in O(1) time are provided by the standard hash map, and the last one by linked list.
+        We can maintain a separate queue of keys. In the hash table we store for each key a reference to its location
+        in the queue. Each time an item is looked up and is found in the hash table, it is moved to the front of the
+        queue. (This requires us to use a linked list implementation of the queue, so that items in the middle of the
+        queue can be moved to the head). When the length of the queue exceeds the capacity,when a new element is added
+        to the cache, the item at the tail of the queue is deleted from the cache, i.e., from the queue and the hash
+        table.
+        There is a structure called ordered dictionary which combines behind the scenes both hash map and linked list.
+        In Python, this structure is called OrderedDict
     """
 
     def __init__(self, capacity):
@@ -114,8 +119,7 @@ class LRUCacheV2(object):
         """
         if key not in self.nodes:
             return -1
-        val = self.nodes[key]
-        self.nodes.pop(key)  # Remove the element ..
+        val = self.nodes.pop(key)  # Remove the element ..
         self.nodes[key] = val  # and put it back to produce a new order in the dict
         return val
 
@@ -130,7 +134,7 @@ class LRUCacheV2(object):
         elif self.size == self.capacity:  # Max capacity reached
             self.nodes.popitem(last=False)  # The popitem() method for ordered dictionaries returns and removes a
             # (key, value) pair. The pairs are returned in LIFO order if last=true and FIFO order if last=false.
-            # Here, last=False which means the first element in (least recently used) will be popped.
+            # Here, last=False means the first element in (least recently used) will be popped.
         self.nodes[key] = value
         self.size += 1
 
