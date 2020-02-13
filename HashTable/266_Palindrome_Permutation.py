@@ -48,6 +48,25 @@ def can_permute_palindrome_v2(s):
     return odd <= 1
 
 
+def can_permute_palindrome_v3(s):
+    """ The idea is to iterate over s, adding current character to a set if the set doesn't contain that character, or
+        removing current character from the set if the set contains it. At the end, the size of set indicates the
+        number of characters with odd number of occurrences in s. If it is less than 2, a palindromic permutation of
+        the string s is possible, otherwise not.
+        len(set) == 0 corresponds to the situation where there is even occurrence of any character in the string
+        len(set) == 1 corresponds to the situation where there is even occurrence of all characters except one
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    chars_with_odd_count = set()
+    for c in s:
+        if c in chars_with_odd_count:
+            chars_with_odd_count.remove(c)
+        else:
+            chars_with_odd_count.add(c)
+    return len(chars_with_odd_count) <= 1
+
+
 class Test(unittest.TestCase):
     data = [('code', False), ('aab', True), ('carerac', True)]
 
@@ -55,6 +74,7 @@ class Test(unittest.TestCase):
         for test_s, result in self.data:
             self.assertEqual(result, can_permute_palindrome_v1(test_s))
             self.assertEqual(result, can_permute_palindrome_v2(test_s))
+            self.assertEqual(result, can_permute_palindrome_v3(test_s))
 
 
 if __name__ == '__main__':
