@@ -31,23 +31,6 @@ def intersection_v2(nums1, nums2):
 
 
 def intersection_v3(nums1, nums2):
-    """ The idea is to convert both arrays into sets, and then iterate over the smallest set checking the presence of
-        each element in the larger set.
-    Time complexity: O(N + M)
-    Space complexity: O(N + M)
-    """
-
-    def set_intersection(set1, set2):
-        return [x for x in set1 if x in set2]
-
-    set1 = set(nums1)
-    set2 = set(nums2)
-    if len(set1) < len(set2):
-        return set_intersection(set1, set2)
-    return set_intersection(set2, set1)
-
-
-def intersection_v4(nums1, nums2):
     """ Sort the two arrays, and then exploit this fact.
         Simultaneously advance through the two input arrays in increasing order. At each iteration, if the array
         elements differ, the smaller one can be eliminated. If they are equal, we add that value to the intersection
@@ -75,6 +58,35 @@ def intersection_v4(nums1, nums2):
     return res
 
 
+def intersection_v4(nums1, nums2):
+    """ Slightly modified version of the previous algorithm. The difference is how duplicates are handled.
+         For example, if the arrays are A = [2, 3, 3, 5, 7, 11] and B = [3, 3, 7, 15, 31], then we know by inspecting
+         the first element of each that 2 cannot belong to the intersection, so we advance to the second element of A.
+         Now we have a common element, 3, which we add to the result, and then we advance in both arrays. Now we are at
+         3 in both arrays, but we know 3 has already been added to the result since the previous element in A is also 3.
+         We advance in both again without adding to the intersection. Comparing 5 to7, we can eliminate 5 and advance
+        to the fourth element in A, which is 7, and equal to the element that B's iterator holds, so it is added to the
+        result. We then eliminate 11, and since no elements remain in A, we return [3, 7].
+    Time complexity: O(N logN), where N is the length of the longest array
+    Space complexity: O(N + M) for Timsort
+    """
+    nums1.sort()
+    nums2.sort()
+    n, m, res = len(nums1), len(nums2), []
+    i = j = 0
+    while i < n and j < m:
+        if nums1[i] == nums2[j]:
+            if i == 0 or nums1[i] != nums1[i - 1]:
+                res.append(nums1[i])
+            i += 1
+            j += 1
+        elif nums1[i] < nums2[j]:
+            i += 1
+        else:
+            j += 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 2, 1], [2, 2], [2]),
             ([4, 9, 5], [9, 4, 9, 8, 4], [9, 4])
@@ -84,7 +96,6 @@ class Test(unittest.TestCase):
         for nums1, nums2, result in self.data:
             self.assertEqual(result, intersection_v1(nums1, nums2))
             self.assertEqual(result, intersection_v2(nums1, nums2))
-            self.assertEqual(result, intersection_v3(nums1, nums2))
 
 
 if __name__ == '__main__':
