@@ -32,6 +32,7 @@ def lowest_common_ancestor(p, q):
 # The previous algorithm entails traversing all the way to the root even if the nodes whose LCA is being computed are
 # very close to their LCA. The following algorithm's time complexity should depend only on the distance from the nodes
 # to the LCA.
+# 236- Lowest Common Ancestor of a Binary Tree can benefit from this optimization as well.
 
 
 def lowest_common_ancestor_optimized(p, q):
