@@ -23,6 +23,8 @@ def lowest_common_ancestor_v1(root, p, q):
         called 'p_ancestor'. Similarly, we traverse through ancestors for node q. If the ancestor is present in the
         ancestors set for p, this means this is the first ancestor common between p and q (while traversing UPWARDS)
         and hence this is the LCA node.
+        Note that this algorithm can benefit from the optimization implemented in 236- Lowest Common Ancestor with
+        Parent Pointers.
     Time complexity: O(N), in the worst case we might be visiting all the nodes of the binary tree
     Space complexity: O(N), in the worst case space utilized by the stack, the parent pointer dictionary and the
     ancestor set, would be N each, since the height of a skewed binary tree could be N
