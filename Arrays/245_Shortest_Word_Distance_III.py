@@ -27,6 +27,25 @@ def shortest_word_distance_v1(words, word1, word2):
     return res
 
 
+def shortest_word_distance_v2(words, word1, word2):
+    """ Self-explanatory.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    index1 = index2 = -1
+    res, same = float('inf'), word1 == word2
+    for i, word in enumerate(words):
+        if word == word1:
+            if same:
+                index2 = index1
+            index1 = i
+        elif word == word2:
+            index2 = i
+        if index1 != -1 and index2 != -1:
+            res = min(res, abs(index1 - index2))
+    return res
+
+
 class Test(unittest.TestCase):
     data = [(['practice', 'makes', 'perfect', 'coding', 'makes'], 'makes', 'coding', 1),
             (['practice', 'makes', 'perfect', 'coding', 'makes'], 'makes', 'makes', 3)
@@ -35,6 +54,7 @@ class Test(unittest.TestCase):
     def test_shortest_word_distance(self):
         for test_words, test_word1, test_word2, result in self.data:
             self.assertEqual(result, shortest_word_distance_v1(test_words, test_word1, test_word2))
+            self.assertEqual(result, shortest_word_distance_v2(test_words, test_word1, test_word2))
 
 
 if __name__ == '__main__':
