@@ -18,7 +18,7 @@ class WordDistance(object):
         So, if we have (word1[i] < word2[j]), we move the pointer 'i' one step forward i.e. (i + 1) in the hopes that
         abs(word1[i + 1] - word2[j]) would give us a lower distance than abs(word1[i] - word2[j]).
         Same logic if word1[i] > word2[j].
-    Time complexity: the time complexity of the constructor of our class is O(N)O(N) considering there were NN words in
+    Time complexity: the time complexity of the constructor of our class is O(N) considering there are N words in
     the original list. We iterate over them and prepare a mapping from key to list of indices as described before.
     Then, for the function that finds the minimum distance between the two words, the complexity would be O(max(K, L))
     where K and L represent the number of occurrences of the two words. However, K = O(N) and also L = O(N). Therefore,
