@@ -47,6 +47,8 @@ def inorder_successor_v2(root, p):
                it 'candidate'. However, the in-order successor could be current root, or some smaller value in the left
                subtree. So we move root to its left and check again.
         We continuously move root until exhausted. Our search is over, just return the candidate.
+        Correctness follows from the fact that whenever we first set the candidate, the desired result must be within
+        the tree rooted at that node.
     Time complexity: O(logN) best case, O(N) worst case
     Space complexity: O(1)
     """
