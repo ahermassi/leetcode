@@ -1,5 +1,6 @@
 """ Given a binary tree, determine if it is a valid binary search tree (BST). """
 
+from collections import deque
 import unittest2 as unittest
 
 
@@ -50,6 +51,33 @@ def is_valid_bst_v2(root):
     return helper(root, float('-inf'), float('inf'))
 
 
+def is_valid_bst_v3(root):
+    """ All the previous approaches explore the left subtree first. Therefore, even if the BST property does not hold
+        at a node which is close to the root (e.g., the key stored at the right child is less than the key stored at
+        the root), their time complexity is still O(N).
+        We can search for violations of the BST property in a BFS manner, thereby reducing the time complexity when the
+        property is violated at a node whose depth is small.
+        Specifically, we use a queue, where each queue entry contains a node, as well as an upper and a lower bound on
+        the keys stored at the subtree rooted at that node. The queue is initialized to the root, with lower bound -∞
+        and upper bound +∞, We iteratively check the constraint on each node. If it violates the constraint we stop:
+        The BST property has been violated. Otherwise, we add its children along with the corresponding constraint.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    queue = deque([(root, float('-inf'), float('inf'))])
+    while queue:
+        n = len(queue)
+        for _ in range(n):
+            node, lower, upper = queue.popleft()
+            if not node:
+                continue
+            if not lower < node.val < upper:
+                return False
+            queue.append((node.left, lower, node.val))
+            queue.append((node.right, node.val, upper))
+    return True
+
+
 class Test(unittest.TestCase):
     root1 = TreeNode(2)
     root1.left = TreeNode(1)
@@ -65,6 +93,8 @@ class Test(unittest.TestCase):
         self.assertFalse(is_valid_bst_v1(self.root2))
         self.assertTrue(is_valid_bst_v2(self.root1))
         self.assertFalse(is_valid_bst_v2(self.root2))
+        self.assertTrue(is_valid_bst_v3(self.root1))
+        self.assertFalse(is_valid_bst_v3(self.root2))
 
 
 if __name__ == '__main__':
