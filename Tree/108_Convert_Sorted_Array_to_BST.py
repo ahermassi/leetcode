@@ -15,29 +15,17 @@ class TreeNode:
         self.right = None
 
 
-def sorted_array_to_bst_v1(nums):
-    """ For a sorted array, the left half will be in the left subtree, middle value as the root, right half in the
-    right subtree. This holds true for every node.
-    Time complexity: since Python slicing takes O(N), this algorithm is actually O(N logN)
-    Space complexity: O(log N) (draw recursion tree)
-    """
-    if not nums:
-        return
-    if len(nums) == 1:
-        return TreeNode(nums[0])
-    mid = len(nums) // 2
-    root = TreeNode(nums[mid])
-    root.left = sorted_array_to_bst_v1(nums[:mid])
-    root.right = sorted_array_to_bst_v1(nums[mid + 1:])
-    return root
-
-
-def sorted_array_to_bst_v2(nums):
-    """ Slicing the array is expensive. It is better to pass the left and right bounds into recursive calls instead.
+def sorted_array_to_bst(nums):
+    """ Intuitively, to make a minimum height BST, we want the subtrees to be as balanced as possible; there's no point
+        in one subtree being shorter than the other, since the height is determined by the taller one. More formally,
+        balance can be achieved by keeping the number of nodes in both subtrees as close as possible.
+        Let N be the length of the array. To achieve optimum balance, we can make the element in the middle of the
+        array, i.e., the (n/2)th entry, the root, and recursively compute minimum height BSTs for the sub-arrays on
+        either side of this entry.
     Time complexity: O(N), we make exactly N calls to the recursive function and spend O(1) within each call. Don't be
     fooled by the binary search nature of the solution and think the time complexity is O(logN).
-    Example: nums = [2,3,5,7,11,13,77,79,23]. Split nums into 2 halves in first call, then RECURSIVELY split left and
-    right halves in the subsequent calls, resulting in N calls to the recursive function, not logN calls.
+    Example: nums = [2, 3, 5, 7, 11, 13, 77, 79, 23]. Split nums into 2 halves in first call, then RECURSIVELY split
+    left and right halves in the subsequent calls, resulting in N calls to the recursive function, not logN calls.
     Space complexity: O(logN), there is no case of skewed binary tree because we're creating a balanced BST from the
     start, by picking the middle element every time. It's not possible to have a skewed input or output
     """
@@ -58,7 +46,7 @@ class Test(unittest.TestCase):
     data = [-10, -3, 0, 5, 9]
 
     def test_sorted_array_to_bst(self):
-        root = sorted_array_to_bst_v1(self.data)
+        root = sorted_array_to_bst(self.data)
         self.assertEqual(0, root.val)
         self.assertEqual(-3, root.left.val)
         self.assertEqual(9, root.right.val)
