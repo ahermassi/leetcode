@@ -20,6 +20,8 @@ def range_lookup_in_bst_v1(root, interval):
               subtree cannot contain any node whose key lies in the interval
             - Otherwise, the root of the tree holds a key that lies within the interval, and it is possible for both
               the left and right subtrees to contain nodes whose keys lie in the interval.
+    Time complexity: O(N), where N is the number of nodes in the interval
+    Space complexity: ?
     """
 
     def helper(root):
