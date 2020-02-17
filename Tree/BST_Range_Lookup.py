@@ -37,6 +37,26 @@ def range_lookup_in_bst_v1(root, interval):
     return res
 
 
+def range_lookup_in_bst_v2(root, interval):
+    """ Slightly different version. """
+
+    def helper(root):
+        if not root:
+            return
+        if interval[0] <= root.val <= interval[1]:
+            helper(root.left)
+            res.append(root.val)
+            helper(root.right)
+        elif root.val < interval[0]:
+            helper(root.right)
+        else:
+            helper(root.left)
+
+    res = []
+    helper(root)
+    return res
+
+
 class Test(unittest.TestCase):
     root = TreeNode(6)
     root.left = TreeNode(2)
@@ -50,6 +70,7 @@ class Test(unittest.TestCase):
 
     def test_range_lookup_in_bst(self):
         self.assertEqual(self.result, range_lookup_in_bst_v1(self.root, self.interval))
+        self.assertEqual(self.result, range_lookup_in_bst_v2(self.root, self.interval))
 
 
 if __name__ == '__main__':
