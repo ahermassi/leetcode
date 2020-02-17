@@ -22,7 +22,7 @@ def bst_from_preorder_v1(preorder):
         This could be verified with the help of lower and upper limits for each element as for the 98- Validate BST
         Tree problem.
     Time complexity: O(N), since it performs a constant amount of work per node
-    Space complexity: O(h)
+    Space complexity: O(N), space used by preorder queue
     """
 
     def helper(lower, upper):
@@ -34,4 +34,24 @@ def bst_from_preorder_v1(preorder):
         return root
 
     preorder = deque(preorder)
+    return helper(float('-inf'), float('inf'))
+
+
+def bst_from_preorder_v2(preorder):
+    """ We avoid using extra space for the pre-order queue by allocating an array that contains a single element: the
+        index of next value in the pre-order traversal.
+    Time complexity: O(N), since it performs a constant amount of work per node
+    Space complexity: O(h)
+    """
+
+    def helper(lower, upper):
+        if preorder_index[0] == n or not lower <= preorder[preorder_index[0]] <= upper:
+            return None
+        root = TreeNode(preorder[preorder_index[0]])
+        preorder_index[0] += 1
+        root.left = helper(lower, root.val)
+        root.right = helper(root.val, upper)
+        return root
+
+    n, preorder_index = len(preorder), [0]
     return helper(float('-inf'), float('inf'))
