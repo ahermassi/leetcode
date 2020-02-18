@@ -16,16 +16,24 @@ def permute_v1(nums):
             - Proceed to create all permutations which start from (index+1)th integer:
               compute_permutations_at_index(index + 1).
             - Now backtrack, i.e. swap(nums[index], nums[i]) back.
+        For example, for the array [7, 3, 5], we would first generate all permutations starting with 7. This entails
+        generating all permutations of [3, 5], which we do by finding all permutations of [3, 5] beginning with 3.
+        Since [5] is an array of length 1, it has a single permutation. This implies [3, 5] has a single permutation
+        beginning with 3. Next we look for permutations of [3, 5] beginning with 5. To do this, we swap 3 and 5, and
+        find, as before, there is a single permutation of [3, 5] beginning with 5, namely,[5, 3]. Hence,there are two
+        permutations of A beginning with 7, namely [7, 3, 5] and [7, 5, 3].
+        We swap 7 with 3 to find all permutations beginning with 3, namely [3, 7, 5] and [3, 5, 7].
+        The last two permutations we add are [5, 3, 7] and [5, 7, 3].
+        In all there are six permutations.
     Time complexity: O(N * N!), because we generate N! permutations and each permutation requires O(N) to copy into res
     Space complexity: O(N) for the recursive call stack (max depth of call tree)
     """
     def compute_permutations_at_index(index):
         if index == n:
             res.append(nums[:])
-            return
         for i in range(index, n):
-            # We're using here the same principle of recursion. Given a sub-array starting at index 'index',
-            # loop over the elements of the sub-array, and at each iteration:
+            # We're using here the same principle of recursion. Given a sub-array starting at index 'index', loop over
+            # the elements of the sub-array, and at each iteration:
             # 1- Bring the current element to the head of the sub-array at starting index 'index'
             # 2- TRUST that the recursive call will compute the permutations of the sub-array at (index + 1)
             # 3- Undo the swap to bring the sub-array to its initial state and move on to the next element
