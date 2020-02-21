@@ -10,7 +10,7 @@ class TreeNode:
         self.right = None
 
 
-def generate_trees_v1(n):
+def generate_trees(n):
     """ Note that 1..n is the in-order traversal for any BST with nodes 1 to n. So if we pick ith node as root, the
         left subtree will contain elements 1 to (i - 1), and the right subtree will contain elements (i + 1) to n.
         Let's pick up number i out of the sequence 1..n and use it as the root of the current tree. Then there are
@@ -45,3 +45,4 @@ def generate_trees_v1(n):
         return res
 
     return helper(1, n) if n else []
+
