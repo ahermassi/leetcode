@@ -9,6 +9,9 @@ import unittest2 as unittest
 
 def unique_paths_v1(m, n):
     """ Top down + memoization
+        A key observation is that because paths must advance down or right, the number of ways to get to the
+        bottom-right entry is the number of ways to get to the entry immediately above it, plus the number of ways to
+        get to the entry immediately to its left.
         The idea is to notice that:
             When we are at cells (n - 2, m - 1) or (n - 1, m - 2), there is exactly only one way to reach bottom right
             corner, which is to either move down or right, respectively
@@ -24,11 +27,10 @@ def unique_paths_v1(m, n):
             return 0
         if (i, j) in {(n - 1, m - 2), (n - 2, m - 1), (n - 1, m - 1)}:
             return 1
-        if (i, j) in memo:
-            return memo[(i, j)]
-        res = helper(i + 1, j) + helper(i, j + 1)
-        memo[(i, j)] = res
-        return res
+        if (i, j) not in memo:
+            res = helper(i + 1, j) + helper(i, j + 1)
+            memo[(i, j)] = res
+        return memo[(i, j)]
 
     memo = {}
     return helper(0, 0)
@@ -36,10 +38,10 @@ def unique_paths_v1(m, n):
 
 def unique_paths_v2(m, n):
     """ Bottom-up dynamic programming.
-        Let dp[i][j] be the number of unique ways ways we can reach the current cell (i, j) moving only right and/or
-        down and starting from top-left corner cell (0, 0). Therefore, dp[i][j] is the sum of unique ways we can reach
+        Let dp[i][j] be the number of unique ways we can reach the current cell (i, j) moving only right and/or down
+        and starting from top-left corner cell (0, 0). Therefore, dp[i][j] is the sum of unique ways we can reach
         the left cell (i, j-1) and top cell (i-1, j) (since starting from left and top, we can move right and down,
-        respectively. to arrive at (i,j)).
+        respectively, to arrive at (i,j)).
             dp[i][j] = dp[i][j-1] + dp[i-1][j]
         The first column and first row must be 1's since there is only one path to get there (i.e. to get anywhere in
         the first row we must have just done all right moves, and similarly for the first column we must have just done
