@@ -13,7 +13,7 @@ def num_trees_v1(n):
         where i is a small number. Naturally, to speed it up, you just use memoization.
     Time complexity: O(2^n)
     """
-    if n == 0 or n == 1:
+    if n <= 1:
         return 1
     result = 0
     for i in range(1, n + 1):
@@ -22,10 +22,31 @@ def num_trees_v1(n):
         result += left_trees * right_trees
     return result
 
+
+def num_trees_v2(n):
+    """ Top-down dynamic programming: recursion + memoization.
+    Time complexity: O(2^n)
+    """
+
+    def helper(n):
+        if n in memo:
+            return memo[n]
+        res = 0
+        for i in range(1, n + 1):
+            left = helper(i - 1)
+            right = helper(n - i)
+            res += left * right
+        memo[n] = res
+        return res
+
+    memo = {0: 1, 1: 1}
+    return helper(n)
+
+
 # Check out this article: https://leetcode.com/articles/unique-binary-search-trees/
 
 
-def num_trees_v2(n):
+def num_trees_v3(n):
     """ Bottom-up dynamic programming.
         Given a sequence 1..n, to construct a Binary Search Tree (BST) out of the sequence, we could enumerate each
         number i in the sequence, and use the number as the root. Naturally, the sub sequence 1..(i-1) on its left side
