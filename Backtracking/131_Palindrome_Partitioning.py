@@ -53,7 +53,6 @@ def partition_v2(s):
     def dfs(index, path):
         if index == n:
             res.append(path[:])  # Append a copy of path because the same path reference is used by all recursive calls
-            return
         for i in range(index, n):
             if is_palindrome(index, i):
                 path.append(s[index:i + 1])  # Choose
