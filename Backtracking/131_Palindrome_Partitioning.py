@@ -4,6 +4,8 @@ Return all possible palindrome partitioning of s. """
 import unittest2 as unittest
 
 
+# Watch: https://www.youtube.com/watch?v=4ykBXGbonlA
+
 def partition_v1(s):
     """ We will take 'snapshots' of snippets as we advance through the string and see if they can add to the
         decomposition that we want to build.
@@ -22,13 +24,12 @@ def partition_v1(s):
     def dfs(index, path):
         if index == n:
             res.append(path)
-            return
         for i in range(index, n):  # Take every snippet from 'index' to the end of the string. This is our 'possibility
             # space' that we can recurse into.
-            if is_palindrome(index, i):  # Only recurse if the snippet from 'index' (inclusive) to s.length()
+            if is_palindrome(index, i):  # Only recurse if the snippet from 'index' (inclusive) to current index i
                 # (inclusive) is a palindrome
                 dfs(i + 1, path + [s[index:i + 1]])  # Take the snippet and add it to our decomposition 'path', then
-                # advance progress 1 past right bound of the palindromic snippet which is 'index + 1'
+                # advance/progress 1 past right bound of the palindromic snippet which is (i + 1)
 
     def is_palindrome(left, right):
         while left < right:
