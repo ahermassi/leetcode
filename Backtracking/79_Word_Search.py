@@ -18,7 +18,7 @@ def exist_v1(board, word):
     def search(i, j, index):
         if index == length:  # Nothing left to complete
             return True
-        if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index] or (i, j) in visited:
+        if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index]:
             return False
         temp = board[i][j]
         board[i][j] = '#'  # Mark the cell as visited
@@ -27,7 +27,6 @@ def exist_v1(board, word):
         return found
 
     n, m, length = len(board), len(board[0]), len(word)
-    visited = set()
     for i in range(n):
         for j in range(m):
             if search(i, j, 0):
