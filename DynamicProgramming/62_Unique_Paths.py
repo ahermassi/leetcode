@@ -60,9 +60,20 @@ def unique_paths_v2(m, n):
 
 def unique_paths_v3(m, n):
     """ Bottom-up dynamic programming using 1D array.
+        Notice that each time when we update dp[i][j], we only need dp[i-1][j] (at the previous row) and dp[i][j-1]
+        (at the current row but previous column). We only need to store the previous row/column to perform the
+        calculation for the current one. So a 1D array would suffice.
     Time complexity: O(n * m)
     Space complexity: O(m)
     """
+    # pre, cur = [1] * m, [1] * m
+    # for i in range(n):
+    #     for j in range(m):
+    #         cur[j] = pre[j] + cur[j-1]  pre[j] is above cell (in the previous row), cur[j-1] is previous/left column
+    #     swap(pre, cur)
+    # return pre[-1]
+    # Further inspecting the above code, pre[j] is just the cur[j] before the update. So we can further reduce the
+    # memory usage to one row.
     dp = [1] * m
     for i in range(1, n):
         for j in range(1, m):
