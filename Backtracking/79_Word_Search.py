@@ -12,7 +12,7 @@ def exist_v1(board, word):
     First we have to find the first letter to start, which gives time O(N * M), then for each search step it has 2~4
     neighbours to go, and it has S steps, where S is the length of the word to be searched.
     https://cs.stackexchange.com/questions/96626/whats-the-big-o-runtime-of-a-dfs-word-search-through-a-matrix
-    Space complexity: O(N * M) for the recursion call stack
+    Space complexity: O(S), for the recursion call stack
     """
 
     def search(i, j, index):
@@ -42,7 +42,7 @@ def exist_v2(board, word):
             - Call f(path + new_val), or
             - path.append(new_val); f(path); path.pop()
     Time complexity: O(N * M * (4^S))
-    Space complexity: O(N * M)
+    Space complexity: O(S)
     """
 
     def search(i, j, index):
@@ -50,7 +50,9 @@ def exist_v2(board, word):
             return True
         if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index] or (i, j) in visited:
             return False
-        visited.add((i, j))  # Mark the cell as visited
+        visited.add((i, j))  # Mark the cell as visited. At each step, we mark our choice before jumping into the next
+        # step. At the end of each step, we would also revert our marking, so that we could have a clean slate to try
+        # another direction.
         found = search(i-1, j, index+1) or search(i+1, j, index+1) or search(i, j-1, index+1) or search(i, j+1, index+1)
         visited.remove((i, j))  # Backtrack and remove the mark
         return found
@@ -67,7 +69,7 @@ def exist_v2(board, word):
 def exist_v3(board, word):
     """ Good ol' backtracking where we pass an augmented path to each recursive call.
     Time complexity: O(N * M * (4^S))
-    Space complexity: O(N * M)
+    Space complexity: O(S)
     """
 
     def search(index, i, j, visited):
@@ -101,6 +103,7 @@ class Test(unittest.TestCase):
         for test_word, result in self.data:
             self.assertEqual(result, exist_v1(self.board, test_word))
             self.assertEqual(result, exist_v2(self.board, test_word))
+            self.assertEqual(result, exist_v3(self.board, test_word))
 
 
 if __name__ == '__main__':
