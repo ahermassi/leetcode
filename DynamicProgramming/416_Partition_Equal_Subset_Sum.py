@@ -31,14 +31,15 @@ def can_partition_v1(nums):
 def can_partition_v2(nums):
     """ This problem is essentially finding whether there are some numbers in a set which sum to a specific value. In
         this problem, the value is sum/2.
-        Actually, this is a 0/1 knapsack problem. For each number, we can pick it or not. Let us assume that
-        dp[i][j] == whether the specific sum j can be gotten from some of the first i numbers. If we can find such a
-        series of numbers from 0-i whose sum is j, dp[i][j] is true, otherwise it is false.
-        Base case: dp[0][0] is true (zero numbers consist of sum 0 is true)
+        Actually, this is a 0/1 knapsack problem. For each number, we can pick it or not. Let us assume that:
+            dp[i][j] = whether the specific sum j can be gotten from some of the first i numbers
+        If we can find such a series of numbers from 0..i whose sum is j, dp[i][j] is true, otherwise it is false.
+        Base case:
+            dp[0][0] = true (zero numbers consist of sum 0 is true)
         Transition function: For each number, if we don't pick it, dp[i][j] = dp[i-1][j], which means if some of the
-        first i-1 elements has made it to j, dp[i][j] would also make it to j (we can just ignore nums[i]). If we pick
-        nums[i], dp[i][j] = dp[i-1][j-nums[i]], which means that j is composed of the current value nums[i] and the
-        remaining composed of other previous numbers. Thus, the transition function is:
+        first (i - 1) elements has made it to j, dp[i][j] would also make it to j (we can just ignore nums[i]).
+        If we pick nums[i], dp[i][j] = dp[i-1][j-nums[i]], which means that j is composed of the current value nums[i]
+        and the remaining composed of other previous numbers. Thus, the transition function is:
             dp[i][j] = dp[i-1][j] OR dp[i-1][j-nums[i]]
     Time complexity: O(N * sum/2)
     Space complexity: O(N * sum/2)
