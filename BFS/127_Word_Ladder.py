@@ -48,9 +48,9 @@ def ladder_length_v1(beginWord, endWord, wordList):
     while queue:
         word, depth = queue.popleft()
         for i in range(len(word)):
-            t = word[:i] + '*' + word[i + 1:]
-            for w in transformations[t]:  # The words which share the same intermediate state/pattern
-                if w == endWord:
+            pattern = word[:i] + '*' + word[i + 1:]
+            for w in transformations[pattern]:  # The words which share the same intermediate state/pattern
+                if w == endWord:  # End word is 1 transformation away
                     return depth + 1
                 if w not in visited:
                     visited.add(w)
