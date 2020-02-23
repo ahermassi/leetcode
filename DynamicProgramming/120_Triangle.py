@@ -27,6 +27,8 @@ def minimum_total_v2(triangle):
         path ending at it, the part of the path that ends at the previous row must also be a minimum weight path. This
         gives us a DP solution. We iteratively compute the minimum weight of a path ending at each entry in row i using
         the results at row (i - 1).
+    Time complexity: O(N^2), the time spent per element is O(1) and there are 1 + 2 +...+ n = n(n+1) elements
+    Space complexity: O(N^2)
     """
     n, dp = len(triangle), [[0] * len(row) for row in triangle]
     dp[0][0] = triangle[0][0]
@@ -40,3 +42,24 @@ def minimum_total_v2(triangle):
                 # the current cell's value
                 dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j]) + triangle[i][j]
     return min(dp[-1])  # Each cell of the last row contains the minimum sum of the path ending at that cell
+
+
+def minimum_total_v3(triangle):
+    """ Same as previous solution, but since after we complete processing row i we do not need the results for row
+        (i - 1) to process row (i + 1), we can reuse storage.
+    Time complexity: O(N^2)
+    Space complexity: O(N)
+    """
+    n, pre = len(triangle), triangle[0]
+    for i in range(1, n):
+        cur = [0] * (i + 1)
+        for j in range(i + 1):
+            if j == 0:
+                cur[j] = pre[j] + triangle[i][j]
+            elif j == i:
+                cur[j] = pre[j - 1] + triangle[i][j]
+            else:
+                cur[j] = min(pre[j - 1], pre[j]) + triangle[i][j]
+        pre = cur
+    return min(pre)
+
