@@ -86,3 +86,18 @@ def minimum_total_v4(triangle):
             dp[i][j] = min(dp[i + 1][j], dp[i + 1][j + 1]) + triangle[i][j]
     return dp[0][0]
 
+
+def minimum_total_v5(triangle):
+    """ Same as previous solution, but since after we complete processing row i we do not need the results for row
+        (i + 1) to process row (i - 1), we can reuse storage.
+    Time complexity: O(N^2)
+    Space complexity: O(N)
+    """
+    n, pre = len(triangle), triangle[-1]
+    for i in reversed(range(n - 1)):
+        cur = [0] * (n + 1)
+        for j in range(i + 1):
+            cur[j] = min(pre[j], pre[j + 1]) + triangle[i][j]
+        pre = cur
+    return pre[0]
+
