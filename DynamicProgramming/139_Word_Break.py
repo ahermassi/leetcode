@@ -49,14 +49,13 @@ def word_break_v2(s, word_dict):
     def dfs(index):
         if index == n:
             return True
-        if index in memo:
-            return memo[index]
-        for j in range(index, n):
-            if s[index:j+1] in word_dict and dfs(j+1):
-                memo[index] = True
-                return True
+        if index not in memo:
+            for i in range(index, n):
+                if s[index:i + 1] in word_dict and dfs(i + 1):
+                    memo[index] = True
+                    return memo[index]
         memo[index] = False
-        return False
+        return memo[index]
 
     n = len(s)
     word_dict, memo = set(word_dict), {}
@@ -66,21 +65,20 @@ def word_break_v2(s, word_dict):
 def word_break_v3(s, word_dict):
     """ Dynamic programming.
         dp[i] is True if s[:i] can be segmented into words from the dictionary.
-        In other words: dp[i] = True means the first i characters of s can be partitioned according the words in the
-        dictionary.
+        In other words:
+            dp[i] = True if the first i characters of s can be partitioned according to the words in the dictionary
         The intuition behind this approach is that the given problem (s) can be divided into sub problems s1 and s2. If
         these sub problems individually satisfy the required conditions, the complete problem s also satisfies the
         same.
         For example, 'catsanddog' can be split into two substrings 'catsand', 'dog'. The sub problem 'catsand' can be
-        further divided into 'cats','and', which individually are part of the dictionary making 'catsand' satisfy the
+        further divided into 'cats', 'and', which individually are part of the dictionary making 'catsand' satisfy the
         condition. Going further backwards, 'catsand', 'dog' also satisfy the required criteria individually leading to
         the complete string 'catsanddog' also to satisfy the criteria.
     Time complexity: O(N^3), not O(N^2) because of the substring s[i:j] which takes O(N)
     Space complexity: ? O(N) for dp array + set of dictionary's word
     """
-    n = len(s)
+    n, word_dict = len(s), set(word_dict)
     dp = [False] * (n + 1)
-    word_dict = set(word_dict)
     dp[0] = True
     for i in range(n):  # This could be 'for i in range(n+1)', but when i = n (last iteration) 'if dp[i]' afterwards
         # will mean 'if the first n characters verify the property' and the rest of the block would be meaningless and
@@ -123,6 +121,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, word_break_v1(test_string, test_dict))
             self.assertEqual(result, word_break_v2(test_string, test_dict))
             self.assertEqual(result, word_break_v3(test_string, test_dict))
+            self.assertEqual(result, word_break_v4(test_string, test_dict))
 
 
 if __name__ == '__main__':
