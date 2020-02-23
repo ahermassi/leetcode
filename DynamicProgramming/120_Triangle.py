@@ -63,3 +63,26 @@ def minimum_total_v3(triangle):
         pre = cur
     return min(pre)
 
+
+def minimum_total_v4(triangle):
+    """ Yet another bottom-up dynamic programming solution.
+        If we look closely, we would notice that the adjacent nodes always share a 'branch'. In other word, there are
+        overlapping sub-problems. Also, suppose x and y are 'children' of k. Once minimum paths from x and y to the
+        bottom are known, the minimum path starting from k can be decided in O(1), that is optimal substructure.
+        Therefore, dynamic programming would be the best solution to this problem in terms of time complexity.
+        We start from the nodes on the bottom row; the min path sums for these nodes are the values of the nodes
+        themselves. From there, the min path sum at the jth node on the ith row would be the smallest of the path sums
+        of its two (below) children plus the value of itself:
+            dp[i][j] = min( dp[i+1][j], dp[i+1][j+1]) + triangle[i][j]
+    Time complexity: O(N^2)
+    Space complexity: O(N^2)
+    """
+    n = len(triangle)
+    dp = [[0] * n for _ in range(n)]
+    for j in range(n):
+        dp[n - 1][j] = triangle[n - 1][j]  # Base case: the last row
+    for i in reversed(range(n - 1)):
+        for j in range(i + 1):
+            dp[i][j] = min(dp[i + 1][j], dp[i + 1][j + 1]) + triangle[i][j]
+    return dp[0][0]
+
