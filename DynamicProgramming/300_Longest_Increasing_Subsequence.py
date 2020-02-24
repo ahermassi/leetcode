@@ -57,11 +57,14 @@ def length_of_lis_v2(nums):
         Why is this correct ?
         When we replace increasing_sub_sequence[i] with current num, we don't change the length of answer, but we
         change the potential best candidate. Replacing increasing_sub_sequence[i] with the first element that is
-        greater than or equal to it increases our chance to extend the array because increasing_sub_sequence[i] is
+        smaller than or equal to it increases our chance to extend the array because increasing_sub_sequence[i] is
         smaller than that element.
-        So the main idea is: the main idea is:
+        So the main idea is:
             Use binary search to extend increasing sequence with larger numbers, or minimize existing values with
             smaller ones, so we can use larger numbers to extend it.
+        Try to make each position's number as small as possible. The actual sequence only changes when we append a
+        number, otherwise it's just a 'virtual change', meaning we don't change the current sequence, but we try to
+        make each number small so we'll have a larger chance to append more numbers.
         For more details:
         https://leetcode.com/problems/longest-increasing-subsequence/discuss/74824/JavaPython-Binary-search-O(nlogn)-time-with-explanation
         Example: nums = [0, 8, 4, 12, 2]
