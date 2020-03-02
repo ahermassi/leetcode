@@ -8,7 +8,7 @@ import unittest2 as unittest
 def max_area_v1(height):
     """ Brute force. TLE.
         Simply consider the area for every possible pair of the lines and find out the maximum area out of those.
-    Time complexity: O(N ** 2)
+    Time complexity: O(N^2)
     Space complexity: O(1)
     """
     most_water = float('-inf')
