@@ -13,14 +13,14 @@ def can_complete_circuit_v1(gas, cost):
            We could compute total amount of gas in the tank total_tank = sum(gas) - sum(cost) during the round trip,
            and then return -1 if total_tank < 0.
         2- It's impossible to start at a station i if gas[i] - cost[i] < 0, because then there is not enough gas in the
-           tank to travel to i + 1 station.
+           tank to travel to station (i + 1).
            The second fact could be generalized.
         Let's introduce current_gas variable to track the current amount of gas in the tank. If at some station
         current_gas is less than 0, that means we couldn't reach next station. Next step is to mark next station as a
         new starting point, and reset current_gas to zero since we start with no gas in the tank.
-        Now the algorithm is straightforward :
+        Now the algorithm is straightforward:
         Initiate total_gas and current_gas as zero, and choose station 0 as a starting station.
-        Iterate over all stations :
+        Iterate over all stations:
             - Update total_gas and current_gas at each step, by adding gas[i] and subtracting cost[i].
             - If current_gas < 0 at station i, make station (i + 1) a new starting point and reset current_gas = 0 to
               start with an empty tank.
@@ -72,6 +72,7 @@ class Test(unittest.TestCase):
     def test_can_complete_circuit(self):
         for test_gas, test_cost, result in self.data:
             self.assertEqual(result, can_complete_circuit_v1(test_gas, test_cost))
+            self.assertEqual(result, can_complete_circuit_v2(test_gas, test_cost))
 
 
 if __name__ == '__main__':
