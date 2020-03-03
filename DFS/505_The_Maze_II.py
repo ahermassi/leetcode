@@ -96,20 +96,20 @@ def shortest_distance_v3(maze, start, destination):
         start node is always present on the top of the heap. Thus, the node to be chosen as the current node is always
         present at the front of the heap.
         For every current node, we again try to traverse in all the possible directions. We determine the minimum
-        number of steps(till now) required to reach all the end points possible from the current node. If any such end
+        number of steps (till now) required to reach all the end points possible from the current node. If any such end
         point can be reached in a fewer number of steps through the current path than the paths previously considered,
         we need to update its 'distance' entry.
         Further, we add an entry corresponding to this node in the heap, since its 'distance' entry has been updated
         and we need to consider this node as the competitors for the next current node choice. Thus, the process
-        remains the same as the last approach, except the way in which the pick out the current node
-        Dijkstra's Algorithm seems to be an optimization of the first solution, since we always select the node with
+        remains the same as the last approach, except the way in which the pick out the current node.
+        Dijkstra's algorithm seems to be an optimization of the first solution, since we always select the node with
         the least cost and terminate early when we find the destination.
     Time complexity: O(N * M * log(N * M)), complete traversal of maze will be done in the worst case giving a factor
     of N * M, and pushing 1 element to the heap takes O(log(N * M))
     Space complexity: O(N * M), distance array of size N * M is used and heap size can grow up to N * M in worst case.
     """
     n, m = len(maze), len(maze[0])
-    distance = [[float('inf') for _ in range(m)] for _ in range(n)]
+    distance = [[float('inf')] * m for _ in range(n)]
     distance[start[0]][start[1]] = 0
     heap = [(0, start[0], start[1])]
     while heap:
@@ -124,7 +124,7 @@ def shortest_distance_v3(maze, start, destination):
                 new_j += y
             if distance[i][j] + d < distance[new_i][new_j]:
                 distance[new_i][new_j] = distance[i][j] + d
-                heappush(heap, (distance[i][j] + d, new_i, new_j))  # This is the main difference from BFS
+                heappush(heap, (distance[new_i][new_j], new_i, new_j))  # This is the main difference from BFS
     return -1
 
 
