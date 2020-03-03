@@ -75,7 +75,7 @@ def shortest_distance_v2(maze, start, destination):
                 dfs(new_i, new_j)
 
     n, m = len(maze), len(maze[0])
-    distance = [[float('inf') for _ in range(m)] for _ in range(n)]
+    distance = [[float('inf')] * m for _ in range(n)]
     distance[start[0]][start[1]] = 0
     dfs(start[0], start[1])
     res = distance[destination[0]][destination[1]]  # distance[i][j] again represents the minimum number of steps
