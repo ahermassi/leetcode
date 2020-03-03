@@ -8,11 +8,16 @@ import unittest2 as unittest
 
 def has_path_v1(maze, start, destination):
     """ Good ol' DFS.
+        We can view the given search space in the form of a tree. The root node of the tree represents the starting
+        position. Four different routes are possible from each position i.e. left, right, up or down. These four
+        options can be represented by 4 branches of each node in the given tree. Thus, the new node reached from the
+        root traversing over the branch represents the new position occupied by the ball after choosing the
+        corresponding direction of travel.
         We choose one path at a time and try to go as deep as possible into the levels of the tree before going for the
         next path. From every start position, we can move CONTINUOUSLY in either left, right, upward or downward
         direction till we reach the boundary or a wall. Thus, from the start position, we determine all the end points
         which can be reached by choosing the four directions. For each of the cases, the new endpoint will now act as
-        the new start point for the traversals. Thus, now we call the same function four times for the four directions,
+        the new start point for the traversal. Thus, now we call the same function four times for the four directions,
         each time with a new start point obtained previously. If any of the function call returns a True value, it
         means we can reach the destination.
     Time complexity: O(N * M), complete traversal of maze will be done in the worst case
@@ -34,10 +39,8 @@ def has_path_v1(maze, start, destination):
                 return True
         return False
 
-    n, m = len(maze), len(maze[0])
-    x, y = start
-    visited = set()
-    return dfs(x, y)
+    n, m, visited = len(maze), len(maze[0]), set()
+    return dfs(start[0], start[1])
 
 
 def has_path_v2(maze, start, destination):
