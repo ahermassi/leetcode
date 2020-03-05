@@ -61,15 +61,12 @@ def solve_v2(board):
     n, m = len(board), len(board[0])
     queue = deque()
     for i in range(n):
-        if board[i][0] == 'O':
-            queue.append((i, 0))
-        if board[i][m - 1] == 'O':
-            queue.append((i, m - 1))
-    for i in range(m):
-        if board[0][i] == 'O':
-            queue.append((0, i))
-        if board[n - 1][i] == 'O':
-            queue.append((n - 1, i))
+        queue.extend([(i, 0), (i, m-1)])
+    for j in range(m):
+        queue.extend([(0, j), (n-1, j)])
+    # More pythonically
+    # queue = deque([(i, j) for i in range(n) for (i, j) in {(i, 0), (i, m-1)}] + [(i, j) for j in range(m) for (i, j)
+    #                                                                              in {(0, j), (n-1, j)}])
     while queue:
         i, j = queue.popleft()
         if 0 <= i < n and 0 <= j < m and board[i][j] == 'O':
