@@ -6,7 +6,10 @@ import unittest2 as unittest
 
 
 def solve_v1(board):
-    """ Surrounded regions shouldn't be on the border, which means that any 'O' on the border of the board is not
+    """ It is easier to focus on the inverse problem, namely identifying 'O's that can reach the boundary. The reason
+        that the inverse is simpler is that if an 'O' is adjacent to an 'O that can reach the boundary, then the first
+        'O' can reach it too.
+        Surrounded regions shouldn't be on the border, which means that any 'O' on the border of the board is not
         flipped to 'X'.
         Any 'O' that is not on the border but is connected to an 'O' on the border will not be flipped to 'X'.
         Any 'O' that is not on the border and is not connected to an 'O' on the border will be flipped to 'X'.
@@ -15,10 +18,11 @@ def solve_v1(board):
         'O's and hence they are the 'O's that will remain as 'O' in the result (not surrounded).
         At the end of DFS, there are some 'O's that could not be reached. These are the 'O's that need to be turned to
         'X' (surrounded).
-            1- Check the four border of the matrix. If a cell is 'O', alter it and all its neighbor 'O's to '1'. Then
+            1- Check the four borders of the matrix. If a cell is 'O', alter it and all its neighbor 'O's to '1'. Then
                after DFS:
             2- Alter all the 'O's to 'X'
             3- Alter all the '1's to 'O'
+        Rather than using a 'visited' set to keep track of the visited cells, we simply mark visited cells in place.
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
@@ -34,15 +38,11 @@ def solve_v1(board):
         return None
     n, m = len(board), len(board[0])
     for i in range(n):
-        if board[i][0] == 'O':  # Left border
-            dfs(i, 0)
-        if board[i][m - 1] == 'O':  # Right border
-            dfs(i, m - 1)
+        dfs(i, 0)  # Left border
+        dfs(i, m - 1)  # Right border
     for i in range(m):
-        if board[0][i] == 'O':  # Top border
-            dfs(0, i)
-        if board[n - 1][i] == 'O':  # Bottom border
-            dfs(n - 1, i)
+        dfs(0, i)  # Top border
+        dfs(n - 1, i)  # Bottom border
     for i in range(n):
         for j in range(m):
             if board[i][j] == 'O':
