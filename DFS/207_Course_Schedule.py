@@ -7,19 +7,25 @@ from collections import defaultdict, deque
 import unittest2 as unittest
 
 
-def can_finish_dfs(numCourses, prerequisites):
+def can_finish_dfs(num_courses, prerequisites):
     """ This is a direct application of topological sort. Note that this type of sort can only be applied on Directed
         Acyclic Graphs (DAG). A Directed cyclic graph fails to yield a topological sort because of the presence of a
         cycle. This property is the intuition of this questions's algorithm.
-        If node v has not been visited, then mark it as 0.
-        If node v is being visited, then mark it as -1. If we find a vertex marked as -1 during DFS, then this vertex
-        is part of a cycle.
-        If node v has been visited, then mark it as 1. If a vertex was marked as 1, then no cycle contains v or its
-        successors.
+        Recall that DFS maintains a color for each vertex. Initially, all vertices are white (0). When a vertex is
+        first discovered, it is colored gray (-1). When DFS finishes processing a vertex, that vertex is colored black
+        (1). As soon as we discover an edge from a gray vertex back to a gray vertex, a cycle exists and we can stop.
+        If node course has not been visited, then mark it as 0.
+        If node course is being visited, then mark it as -1. If we find a vertex marked as -1 during DFS, then this
+        vertex is part of a cycle.
+        If node course has been visited, then mark it as 1. If a vertex was marked as 1, then no cycle contains course
+        or its successors.
         -1 means this node is part of the current trip. If you see it again, it's a cycle. 1 means a DFS has been done
         starting from this node, and no cycle was found. if we hit this, going down this path won't find any cycles.
-    Time complexity: O(|V| + |E|), where V is the number of vertices and E is the number of edges
-    Space complexity: O(|V| + |E|)
+        In summary, a cycle exists if and only if DFS discovers an edge from a gray (-1) vertex to a gray vertex.
+    Time complexity: O(|V| + |E|), where V is the number of vertices and E is the number of edges. We iterate over all
+    vertices, and spend a constant amount of time per edge
+    Space complexity: O(|V|), which is the maximum stack depth. If we go deeper than |V| calls, some vertex must
+    repeat, implying a cycle in the graph, which leads to early termination.
     """
     def dfs(i):
         if visited[i] == -1:  # If ith node is marked as being visited, then a cycle is found
@@ -34,10 +40,11 @@ def can_finish_dfs(numCourses, prerequisites):
         return True
 
     graph = defaultdict(list)
-    for src, dest in prerequisites:  # Create graph
-        graph[src].append(dest)
-    visited = [0] * numCourses
-    for i in range(numCourses):  # Visit each node
+    for course, prereq in prerequisites:  # Create graph
+        graph[course].append(prereq)
+    visited = [0] * num_courses
+    for i in range(num_courses):  # Visit each node.  Since the graph may not be strongly connected, we must examine
+        # each vertex and run DFS from it if it has not already been explored
         if not dfs(i):
             return False
     return True
@@ -52,19 +59,20 @@ def can_finish_bfs(numCourses, prerequisites):
     """
     graph = defaultdict(list)
     indegree = [0] * numCourses
-    for src, dest in prerequisites:  # Create graph, better be seen as is_prerequisite_of graph: graph[src] = dest
-        # means dest is a prerequisite of src
-        graph[dest].append(src)
-        indegree[src] += 1  # Recording the number of prerequisites each course i has
-    queue = deque(v for v in range(numCourses) if indegree[v] == 0)  # Iterate the indegree map and find the node that
-    # has 0 indegree, which maps to 0 prerequisites. If none is found, then there must be a cycle.
+    for course, prereq in prerequisites:  # Create graph, better be seen as is_prerequisite_of graph:
+        # graph[prerq] = course means prereq is a prerequisite of course
+        graph[prereq].append(course)
+        indegree[course] += 1  # Recording the number of prerequisites each course i has
+    queue = deque(course for course in range(numCourses) if indegree[course] == 0)  # Iterate over the indegrees list
+    # and find the node that has 0 indegree, which maps to 0 prerequisites. If none is found, then there must be a
+    # cycle.
     n = len(queue)  # n is initialized to len(queue) because the queue contains the courses that have 0 prerequisites
     # so they can be finished without any pre-processing
     while queue and n != numCourses:  # adding n != numCourses to terminate loop earlier
-        v = queue.popleft()
-        for neighbor in graph[v]:  # Iterate through the courses that have 'v' as prerequisite
-            indegree[neighbor] -= 1  # This is equivalent to removing the edge neighbor -> v, which in other words
-            # means taking course 'v' and 'v' is no longer in the list of prerequisite of 'neighbor'
+        course = queue.popleft()
+        for neighbor in graph[course]:  # Iterate through the courses that have 'course' as prerequisite
+            indegree[neighbor] -= 1  # This is equivalent to removing the edge neighbor -> course, which in other words
+            # means taking course 'course' and 'course' is no longer in the list of prerequisite of 'neighbor'
             if indegree[neighbor] == 0:  # We've taken all the prerequisites of course 'neighbor' ..
                 n += 1  # .. so one more course has been finished
                 queue.append(neighbor)  # Now explore the courses that have 'neighbor' as prerequisite
