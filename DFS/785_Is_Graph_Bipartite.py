@@ -30,7 +30,8 @@ def is_bipartite_v1(graph):
         return True
 
     n, colors = len(graph), {}
-    for vertex in range(n):
+    for vertex in range(n):  # Since the graph may not be strongly connected, we must examine each vertex and run DFS
+        # from it if it has not already been colored
         if vertex not in colors and not dfs(vertex, 0):
             return False
     return True
