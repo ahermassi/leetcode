@@ -26,7 +26,7 @@ def clone_graph_v1(node):
         stored reference of the cloned node.
         If we don't find the node in the hash map, we create a copy of it and put it in the hash map. It's important to
         create a copy of the node and add it to the hash map before entering recursion. In the absence of such an
-        ordering, we would be caught in the recursion because on encountering the node again in somewhere down the
+        ordering, we would be caught in the recursion because of encountering the node again in somewhere down the
         recursion again, we will be traversing it again thus getting into cycles.
         Now make the recursive call for the neighbors of the node. Each recursive call made would return the clone of a
         neighbor. We will prepare the list of these clones returned and put into neighbors of clone node which we had
@@ -35,12 +35,12 @@ def clone_graph_v1(node):
     Space complexity: O(V)
     """
 
-    def dfs(node):  # The job of dfs() is to clone a node an recursively clone its neighbors. One again, we TRUST that
+    def dfs(node):  # The job of dfs() is to clone a node and recursively clone its neighbors. One again, we TRUST that
         # the recursive call will handle copying the neighbors
-        if node in clones:
-            return clones[node]
+        if node.val in clones:
+            return clones[node.val]
         new_node = Node(node.val)
-        clones[node] = new_node
+        clones[node.val] = new_node
         for neighbor in node.neighbors:
             new_node.neighbors.append(dfs(neighbor))
         return new_node
