@@ -1,7 +1,7 @@
-""" Given two words (beginWord and endWord), and a dictionary's word list, find the length of shortest transformation
-sequence from beginWord to endWord, such that:
+""" Given two words (begin_word and end_word), and a dictionary's word list, find the length of shortest transformation
+sequence from begin_word to end_word, such that:
 Only one letter can be changed at a time.
-Each transformed word must exist in the word list. Note that beginWord is not a transformed word. """
+Each transformed word must exist in the word list. Note that begin_word is not a transformed word. """
 
 from collections import deque, defaultdict
 import unittest2 as unittest
@@ -9,17 +9,17 @@ import unittest2 as unittest
 # For both solutions, check out this article: https://leetcode.com/articles/word-ladder/
 
 
-def ladder_length_v1(beginWord, endWord, wordList):
-    """ We are given a beginWord and an endWord. Let these two represent start node and end node of a graph. We have to
-        reach from the start node to the end node using some intermediate nodes/words. The intermediate nodes are
-        determined by the wordList given to us. The only condition for every step we take on this ladder of words is
+def ladder_length_v1(begin_word, end_word, word_list):
+    """ We are given a begin_word and an end_word. Let these two represent start node and end node of a graph. We have
+        to reach from the start node to the end node using some intermediate nodes/words. The intermediate nodes are
+        determined by the word_list given to us. The only condition for every step we take on this ladder of words is
         the current word should change by just one letter.
         We will essentially be working with an undirected and unweighted graph with words as nodes and edges between
         words which differ by just one letter. The problem boils down to finding the shortest path from a start node to
         a destination node, if there exists one. Hence it can be solved using Breadth First Search approach.
         One of the most important steps here is to figure out how to find adjacent nodes i.e. words which differ
         by one letter. To efficiently find the neighboring nodes for any given word, we do some pre-processing on the
-        words of the given wordList. The pre-processing involves replacing the letter of a word by a non-alphabet, say,
+        words of the given word_list. The pre-processing involves replacing the letter of a word by a non-alphabet, say,
         *. This pre-processing helps to form generic states to represent a single letter change.
         For e.g. Dog ----> D*g <---- Dig
         Both Dog and Dig map to the same intermediate or generic state D*g.
@@ -28,29 +28,30 @@ def ladder_length_v1(beginWord, endWord, wordList):
         over the entire word list and find words that differ by one letter. That would take a lot of time. This
         pre-processing step essentially builds the adjacency list first before beginning the breadth first search
         algorithm.
-        Start from beginWord and search the endWord using BFS. To prevent cycles, use a visited set. Eventually, if we
+        Start from begin_word and search the end_word using BFS. To prevent cycles, use a visited set. Eventually, if we
         reach the desired word, its level would represent the shortest transformation sequence length.
     Time complexity: O(N * M), where M is the length of words (all words have same length) and N is the total number of
-    words in the input word list. Finding out all the transformations takes M iterations for each of the NN words.
+    words in the input word list. Finding out all the transformations takes M iterations for each of the N words.
     Also, breadth first search in the worst case might go to each of the N words.
     Space complexity: O(N * M), to store all M transformations for each of the N words, in the 'transformations'
     dictionary, 'visited' set is of size N, queue for BFS in worst case would need space for all N words.
     """
-    if endWord not in wordList:
+    word_list = set(word_list)
+    if end_word not in word_list:
         return 0
     transformations = defaultdict(list)  # Dictionary to hold patterns of words that can be formed, from any given
     # word, by changing one letter at a time.
-    for word in wordList:
+    for word in word_list:
         for i in range(len(word)):
             transformations[word[:i] + '*' + word[i + 1:]].append(word)
-    queue = deque([(beginWord, 1)])
+    queue = deque([(begin_word, 1)])
     visited = set()  # Visited to make sure we don't repeat processing same word.
     while queue:
         word, depth = queue.popleft()
         for i in range(len(word)):
             pattern = word[:i] + '*' + word[i + 1:]
             for w in transformations[pattern]:  # The words which share the same intermediate state/pattern
-                if w == endWord:  # End word is 1 transformation away
+                if w == end_word:  # End word is 1 transformation away
                     return depth + 1
                 if w not in visited:
                     visited.add(w)
@@ -58,10 +59,10 @@ def ladder_length_v1(beginWord, endWord, wordList):
     return 0
 
 
-def ladder_length_v2(beginWord, endWord, wordList):
+def ladder_length_v2(begin_word, end_word, word_list):
     """ Bidirectional BFS.
         We can considerably cut down the search space of the standard breadth first search algorithm if we launch two
-        simultaneous BFS. One from the beginWord and one from the endWord. We progress one node at a time from both
+        simultaneous BFS. One from the begin_word and one from the end_word. We progress one node at a time from both
         sides and at any point in time if we find a common node in both the searches, we stop the search. This is known
         as bidirectional BFS and it considerably cuts down on the search space and hence reduces the time and space
         complexity.
@@ -91,16 +92,16 @@ def ladder_length_v2(beginWord, endWord, wordList):
                     queue.append((w, depth + 1))
         return None
 
-    if endWord not in wordList:
+    if end_word not in word_list:
         return 0
-    queue_begin = deque([(beginWord, 1)])
-    queue_end = deque([(endWord, 1)])
+    queue_begin = deque([(begin_word, 1)])
+    queue_end = deque([(end_word, 1)])
     transformations = defaultdict(list)
-    for word in wordList:
+    for word in word_list:
         for i in range(len(word)):
             transformations[word[:i] + '*' + word[i + 1:]].append(word)
-    visited_begin = {beginWord: 1}
-    visited_end = {endWord: 1}
+    visited_begin = {begin_word: 1}
+    visited_end = {end_word: 1}
     while queue_begin and queue_end:  # We do a bidirectional search starting one pointer from begin word and one
         # pointer from end word. Hopping one by one.
         res = visit_word(queue_begin, visited_begin, visited_end)  # One hop from begin word
