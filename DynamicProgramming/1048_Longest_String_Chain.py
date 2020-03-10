@@ -5,6 +5,8 @@ A word chain is a sequence of words [word_1, word_2, ..., word_k] with k >= 1, w
 word_2 is a predecessor of word_3, and so on.
 Return the longest possible length of a word chain with words chosen from the given list of words. """
 
+import string
+from collections import defaultdict, deque
 import unittest2 as unittest
 
 
@@ -32,12 +34,39 @@ def longest_str_chain_v1(words):
     return max(dp.values())
 
 
+def longest_str_chain_v2(words):
+    """ BFS solution, inspired from 127- Word Ladder.
+    Time complexity: O(N * S^2)
+    Space complexity: (N + S)
+    """
+    words, transformations = set(words), defaultdict(list)
+    res = float('-inf')
+    for word in words:
+        n = len(word)
+        for i in range(n + 1):
+            for c in string.ascii_lowercase:
+                intermediate = word[:i] + c + word[i:]
+                if intermediate in words:
+                    transformations[word].append(intermediate)
+    for word in words:
+        queue, visited = deque([(word, 1)]), set()
+        while queue:
+            word, steps = queue.popleft()
+            res = max(res, steps)
+            for w in transformations[word]:
+                if w not in visited:
+                    queue.append((w, steps + 1))
+                    visited.add(w)
+    return res
+
+
 class Test(unittest.TestCase):
     data = [(['a', 'b', 'ba', 'bca', 'bda', 'bdca'], 4)]
 
     def test_longest_str_chain(self):
         for test_words, result in self.data:
             self.assertEqual(result, longest_str_chain_v1(test_words))
+            self.assertEqual(result, longest_str_chain_v2(test_words))
 
 
 if __name__ == '__main__':
