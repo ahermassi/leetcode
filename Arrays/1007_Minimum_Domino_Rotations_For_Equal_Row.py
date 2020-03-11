@@ -10,23 +10,36 @@ import unittest2 as unittest
 
 def min_domino_rotations_v1(A, B):
     """ Pick up the first element. It has two sides: A[0] and B[0].
-        Check if we could make all elements in A row or B row to be equal to A[0]. If yes, return the minimum number
+        Check if we could make all elements in row A or row B to be equal to A[0]. If yes, return the minimum number
         of rotations needed.
-        Otherwise, check if we could make all elements in A row or B row to be equal to B[0]. If yes, return the
+        Otherwise, check if we could make all elements in row A or row B to be equal to B[0]. If yes, return the
         minimum number of rotations needed.
-        Otherwise return -1.
+        Otherwise, return -1.
+        We need the whole row to match. Therefore, if one tile does not match, we cannot have a matching row. We could
+        arbitrarily pick any tile, but we pick the 0th tile since it always exists.
+        Example: A = [2, 1, 2, 4, 2, 2]
+                 B = [5, 2, 6, 2, 3, 2]
+        We call rotate(A[0]) = rotate(2). After the loop runs, rotate_a = 2 and rotate_b = 3.
+        --> If we swap A[1] and A[3] with B[1] and B[3], respectively, A becomes [2, 2, 2, 2, 2, 2]
+        --> If we swap B[0], B[2] , and B[4] with A[0], A[2], and A[4], respectively, B becomes [2, 2, 2, 2, 2, 2]
+        Note: A = [2, 5, 5, 5, 5]
+              B = [5, 2, 2, 2, 2]
+        You might be thinking if we take only A[0], the answer will be 4 which is wrong. But what you don't see is
+        instead of making all 2's in A, we could also make all 2's in B by just flipping A[0] and B[0].
+        The function only counts number of rotations of A and B and returns the minimum of both.
     Time complexity: O(N), where N is the length of A (and B)
     Space complexity: O(1)
     """
 
     def rotate(val):
+        """ Return min number of swaps if we could make all elements in A or B equal to val. Else return -1. """
         rotate_a = rotate_b = 0
         for i in range(n):
             if A[i] != val and B[i] != val:
                 return -1
-            if A[i] != val:
+            if A[i] != val:  # A[i] != val and B[i] == val
                 rotate_a += 1
-            elif B[i] != val:
+            elif B[i] != val:  # A[i] == val and B[i] != val
                 rotate_b += 1
         return min(rotate_a, rotate_b)
 
