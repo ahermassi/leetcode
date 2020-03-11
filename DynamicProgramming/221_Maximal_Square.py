@@ -91,14 +91,16 @@ def maximal_square_v3(matrix):
     if not matrix:
         return 0
     n, m = len(matrix), len(matrix[0])
-    dp, max_len = [0] * m, 0
+    dp, max_len = [0] * (m + 1), 0
     prev = 0
     for i in range(1, n):
         for j in range(1, m):
             temp = dp[j]
-            if matrix[i][j] == '1':
-                dp[j] = min(dp[j], dp[j - 1], prev) + 1
+            if matrix[i - 1][j - 1] == '1':
+                dp[j] = min(dp[j], min(dp[j - 1], prev)) + 1
                 max_len = max(max_len, dp[j])
+            else:
+                dp[j] = 0
             prev = temp
     return max_len * max_len
 
@@ -111,6 +113,7 @@ class Test(unittest.TestCase):
         for test_matrix, result in self.data:
             self.assertEqual(result, maximal_square_v1(test_matrix))
             self.assertEqual(result, maximal_square_v2(test_matrix))
+            self.assertEqual(result, maximal_square_v3(test_matrix))
 
 
 if __name__ == '__main__':
