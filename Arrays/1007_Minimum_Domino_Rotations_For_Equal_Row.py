@@ -57,21 +57,27 @@ def min_domino_rotations_v2(A, B):
     """ Count the occurrence of all numbers in A and B, and also the intersection of A and B.
         Try all possibilities from 1 to 6. If we can make number i in a whole row, it MUST satisfy:
             countA[i] + countB[i] - intersection[i] = n
-        It is like finding the union of two sets A and B <=> A + B - (A & B)
+        It is like finding the union of two sets A and B: A + B - (A & B)
+        Example:
+        A = [2, 1, 2, 4, 2, 2]
+        B = [5, 2, 6, 2, 3, 2]
+        countA[2] = 4, as A[0] = A[2] = A[4] = A[5] = 2
+        countB[2] = 3, as B[1] = B[3] = B[5] = 2
+        intersection[2] = 1, as A[5] = B[5] = 2
+        Notice that 2 can be found at indices 0 (in A), 1 (in B), 2 (in A), 3 (in B), 4 (in A), and 5 (in both A and B).
+        We have countA[2] + countB[2] - same[2] = 6, so we can make 2 in an entire row.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    if len(A) != len(B):
-        return -1
     n, counter_a, counter_b = len(A), Counter(A), Counter(B)
     intersection = defaultdict(int)
     for a, b in zip(A, B):
         if a == b:
             intersection[a] += 1
     for i in range(1, 7):
-        if counter_a[i] + counter_b[i] - intersection[i] == n:
+        if counter_a[i] + counter_b[i] - intersection[i] == n:  # The union of all occurrences of i makes up a row
             return min(counter_a[i], counter_b[i]) - intersection[i]  # When the condition is met, we have 2 options:
-            # either swap A's elements or swap B's elements, the intersection elements stay as they are. We choose
+            # Either swap A's elements or swap B's elements. The intersection elements stay as they are. We choose
             # the minimum number of swaps which corresponds to the minimum number of occurrences of i in A or B.
     return -1
 
