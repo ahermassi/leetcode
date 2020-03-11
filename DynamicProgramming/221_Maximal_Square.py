@@ -6,7 +6,40 @@ import unittest2 as unittest
 
 # For full details, check out this article: https://leetcode.com/articles/maximal-square/
 
+
 def maximal_square_v1(matrix):
+    """ Top down, recursive solution with memoization.
+        dfs(i, j) returns the maximal side length of the square whose bottom right corner is (i, j).
+        Base case: each square whose bottom right is at first row/column has only 1 element. So if matrix[i][j] == c,
+        then dfs(i, j) = c, where c is in {0, 1}.
+        After that, since the current cell is the bottom right corner, we recursively examine the remaining 3 corners,
+        mainly top right (i - 1, j), bottom left (i, j - 1), and top left (i - 1, j - 1). The result is the minimum of
+        the maximal side length that each corner contributes with plus 1.
+    Time complexity: O((N * M)^2), in worst case we need to traverse the complete matrix for every cell equal to 1
+    Space complexity: O(N * M)
+    """
+    def dfs(i, j):
+        if matrix[i][j] == '0':
+            return 0
+        if (i, j) not in memo:
+            memo[(i, j)] = min(dfs(i - 1, j), dfs(i, j - 1), dfs(i - 1, j - 1)) + 1
+        return memo[(i, j)]
+
+    if not matrix:
+        return 0
+    n, m, memo = len(matrix), len(matrix[0]), {}
+    for j in range(m):
+        memo[(0, j)] = int(matrix[0][j])
+    for i in range(n):
+        memo[(i, 0)] = int(matrix[i][0])
+    res = 0
+    for i in range(n):
+        for j in range(m):
+            res = max(res, dfs(i, j))
+    return res * res
+
+
+def maximal_square_v2(matrix):
     """ We initialize another matrix (dp) with the same dimensions as the original one initialized with all 0’s.
         dp(i,j) represents the side length of the maximum square whose bottom right corner is the cell with index (i,j)
         in the original matrix.
@@ -44,7 +77,7 @@ def maximal_square_v1(matrix):
 # Review the following code. There is a bug somewhere.
 
 
-def maximal_square_v2(matrix):
+def maximal_square_v3(matrix):
     """ In the previous approach for calculating dp of ith row, we are using only the previous element and the (i−1)th
         row. Therefore, we don't need 2D dp matrix as 1D dp array will be sufficient for this.
         Initially, the dp array contains all 0's. As we scan the elements of the original matrix across a row, we keep
