@@ -10,13 +10,13 @@ def to_goat_latin(S):
         For each word, check if it starts with a vowel. If it does, keep going. If it does not, rotate the first letter
         to the end.
         Add the modified word to result string.
-    Time complexity: O(N ** 2): O(N) outer loop, O(N) word rotation in the worst case
+    Time complexity: O(N^2): O(N) outer loop, O(N) word rotation in the worst case
     Space complexity: O(N)
     """
     vowels = set('aeiouAEIOU')
     words, res = S.split(' '), []
     for i, word in enumerate(words, 1):
-        if word[0].lower() not in vowels:
+        if word[0] not in vowels:
             word = word[1:] + word[0]
         word += 'ma' + 'a' * i
         res.append(word)
