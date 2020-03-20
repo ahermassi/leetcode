@@ -60,6 +60,8 @@ class SolutionV2:
             1/2 (index 2 not selected) * 2/3 (index 4 not selected) = 1/3
         4 : Its probability of selection is just 1/3
         So they are each randomly selected.
+    Time complexity: O(N)
+    Space complexity: O(1)
     """
 
     def __init__(self, nums):
