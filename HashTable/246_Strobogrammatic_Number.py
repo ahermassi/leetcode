@@ -5,16 +5,16 @@ import unittest2 as unittest
 
 
 def is_strobogrammatic_v1(num):
-    """ Pretty straightforward. This solution is dictionary based.
-    Time complexity: O(N) where N is the length of num
-    Space complexity: O(N) for num_upside_down list (the dictionary is O(1))
+    """ Pretty straightforward. This solution is hash map based.
+    Time complexity: O(N), where N is the length of num
+    Space complexity: O(N), for num_upside_down list (the dictionary is O(1) space)
     """
-    d, num_upside_down = {'0': '0', '1': '1', '6': '9', '8': '8', '9': '6'}, []
-    for ch in num:
-        if ch not in d:
+    map, num_upside_down = {'0': '0', '1': '1', '6': '9', '8': '8', '9': '6'}, []
+    for c in num:
+        if c not in map:
             return False
-        num_upside_down.append(d[ch])
-    return list(num) == num_upside_down[::-1]
+        num_upside_down.append(map[c])
+    return num_upside_down[::-1] == list(num)
 
 
 def is_strobogrammatic_v2(num):
