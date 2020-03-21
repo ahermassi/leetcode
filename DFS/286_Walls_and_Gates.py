@@ -13,14 +13,16 @@ import unittest2 as unittest
 def walls_and_gates_v1(rooms):
     """ DFS.
         The condition rooms[i][j] < d solves 3 problems:
-            1- Do not update walls & gates (-1 & 0s)
-            2- Distinguish the visited and not-visited nodes (the visited can only have smaller distance)
-            3- Stop earlier when you find the previous gate has given shorter distance than the current one
-    Time complexity: O((N * M) ** 2) in the worst case, for each point in the grid, the gate could be at most N * M
+            1- Do not update walls & gates (-1s & 0s) because d will be always strictly greater than 0 except for the
+               first call to dfs() from an empty room where d = 0
+            2- Distinguish the visited and not visited nodes (the visited can only have smaller distance)
+            3- Stop early when we find a previous gate has given shorter distance than the current one
+    Time complexity: O((N * M)^2) in the worst case, for each point in the grid, the gate could be at most N * M
     steps away
+    Space complexity: O(N * M)
     """
 
-    def dfs(i, j, d):
+    def dfs(i, j, d):  # d is the distance of cell (i,j) to the nearest gate
         if not 0 <= i < n or not 0 <= j < m or rooms[i][j] < d:
             return
         rooms[i][j] = d
