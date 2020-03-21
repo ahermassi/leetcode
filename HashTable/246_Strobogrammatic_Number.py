@@ -18,14 +18,15 @@ def is_strobogrammatic_v1(num):
 
 
 def is_strobogrammatic_v2(num):
-    """ Keep two pointers and check each 2 digits from both ends.
+    """ Keep two pointers and check each 2 digits from both ends, similar to what we do to check a palindrome.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    d = {'0': '0', '1': '1', '6': '9', '8': '8', '9': '6'}
+    map = {'0': '0', '1': '1', '6': '9', '8': '8', '9': '6'}
     left, right = 0, len(num) - 1
     while left <= right:
-        if num[right] != d[num[left]]:
+        a, b = num[left], num[right]
+        if a not in map or map[a] != b:
             return False
         left += 1
         right -= 1
