@@ -18,7 +18,7 @@ def insert(head, insertVal):
         to insert the new value, we insert it between the 'pre' and 'cur' nodes. The termination condition of the loop
         is that we get back to the starting point of the two pointers (i.e. pre == head). During the loop, at each
         step, we check if the current place bounded by the two pointers is the right place to insert the new value.
-        If not, we move both pointers one step forwards.
+        If not, we move both pointers one step forward.
         Case 1). The value of new node sits between the values 'pre' and 'cur' pointers. As a result, it should be
         inserted within the list, right after 'pre'.
         Case 2). The value of new node goes beyond the minimal and maximal values of the current list, either less than
