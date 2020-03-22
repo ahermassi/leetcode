@@ -15,6 +15,8 @@ def find_strobogrammatic_v1(n):
         How about n = 5 ?
         => It can be retrieved if we insert [0, 1, 8] to the middle of solution of n = 5 - 1 = 4
         Same for n = 6, it can be retrieved if we insert [00, 11, 88, 69, 96] to the middle of solution of n = 6 - 2 = 4
+    Time/space complexity: this thread discusses that:
+    https://leetcode.com/problems/strobogrammatic-number-ii/discuss/67280/AC-clean-Java-solution
     """
     odd, even = ['0', '1', '8'], ['00', '11', '69', '88', '96']
     if n == 1:
@@ -27,6 +29,25 @@ def find_strobogrammatic_v1(n):
     for val in pre:
         for c in temp:
             res.append(val[:(n - 1) // 2] + c + val[(n - 1) // 2:])
+    return res
+
+
+def find_strobogrammatic_v2(n):
+    """ We start from the middle and expand out.
+    Time complexity: O(n), since res has at most 5 elements
+    Space complexity: O(1), temp uses constant space of at most 5
+    """
+    res = [''] if n % 2 == 0 else ['0', '1', '8']
+    for _ in range(n // 2):
+        temp = []
+        for num in res:
+            temp.append('1' + num + '1')
+            temp.append('8' + num + '8')
+            temp.append('6' + num + '9')
+            temp.append('9' + num + '6')
+            if len(num) < n - 2:
+                temp.append('0' + num + '0')
+        res = temp
     return res
 
 
