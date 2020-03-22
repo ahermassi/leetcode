@@ -58,12 +58,53 @@ def find_diagonal_order_v1(matrix):
     # Same reasoning for the moving down if/else (bottom-left corner)
 
 
+def find_diagonal_order_v2(matrix):
+    """ In this solution, a boolean variable called 'direction' will tell us whether the current diagonal is an upwards
+        or downwards going. Based on the current direction and the tail, we will determine the head of the next
+        diagonal. Initially the direction would be 1 which would indicate up. We will keep alternating this value from
+        one iteration to the next.
+        We keep processing the elements of a diagonal and once the current diagonal ends, we use the current direction
+        and the tail element to find the next head and we switch over to processing the next diagonal. Also remember to
+        flip the direction bit.
+    Time complexity: O(N * M)
+    Space complexity: O(1)
+    """
+    if not matrix:
+        return None
+    n, m, res = len(matrix), len(matrix[0]), []
+    i = j = 0
+    direction = 1
+    for _ in range(n * m):
+        res.append(matrix[i][j])
+        # Move along in the current diagonal depending upon the current direction. [i, j] -> [i - 1, j + 1] if going up
+        # and [i, j] -> [i + 1][j - 1] if going down
+        new_i = i - direction  # We can notice that new_i = i + (-1 if direction == 1 else 1)
+        new_j = j + direction  # We can notice that new_j = j + (1 if direction == 1 else -1)
+        if new_i < 0 or new_i == n or new_j < 0 or new_j == m:  # If the next element in the diagonal is not within
+            # the bounds of the matrix, we have to find the next head
+            if direction == 1:
+                if j == m - 1:
+                    i += 1
+                else:
+                    j += 1
+            else:
+                if i == n - 1:
+                    j += 1
+                else:
+                    i += 1
+            direction = -direction  # Flip the direction
+        else:  # The next element in the diagonal is not within the bounds of the matrix
+            i, j = new_i, new_j
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [1, 2, 4, 7, 5, 3, 6, 8, 9]), ([[1, 2], [3, 4]], [1, 2, 3, 4])]
 
     def test_find_diagonal_order(self):
         for test_matrix, result in self.data:
             self.assertEqual(result, find_diagonal_order_v1(test_matrix))
+            self.assertEqual(result, find_diagonal_order_v2(test_matrix))
 
 
 if __name__ == '__main__':
