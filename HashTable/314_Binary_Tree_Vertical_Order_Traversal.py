@@ -3,7 +3,6 @@ column).
 If two nodes are in the same row and column, the order should be from left to right. """
 
 from collections import defaultdict, deque
-
 import unittest2 as unittest
 
 
@@ -16,26 +15,28 @@ class TreeNode(object):
 
 
 def vertical_order(root):
-    """ Give the root a column index of 0.
-        For the left  node, set its index as col - 1
-        For the right node, you set its index as col + 1
-        Use a queue to loop through all the nodes in the tree in a BFS manner
-        Set col as a key to the hash map and value as a list of values
-        Retrieve results from the sorted keys of hash map
-    Time complexity: O(N + N logN) = O(N)
+    """ Give the root a column index of 0. For the left node, set its index to (col - 1), and for the right node set
+        its index to (col + 1). We use a queue to loop through all the nodes in the tree in a BFS manner.
+        Set the column as a key of the hash map and append the node value to the list of values for that column.
+        We also keep track of min and max indices. Finally, we retrieve the results from the hash map by looping
+        through the indices in sorted order from min index to max index.
+    Time complexity: O(N)
     Space complexity: O(N)
     """
     if not root:
         return None
+    min_col = max_col = 0
     cols, queue = defaultdict(list), deque([(root, 0)])
     while queue:
         node, col = queue.popleft()
         cols[col].append(node.val)
         if node.left:
             queue.append((node.left, col - 1))
+            min_col = min(min_col, col - 1)
         if node.right:
             queue.append((node.right, col + 1))
-    return [cols[i] for i in sorted(cols)]
+            max_col = max(max_col, col + 1)
+    return [cols[i] for i in range(min_col, max_col + 1)]
 
 
 class Test(unittest.TestCase):
