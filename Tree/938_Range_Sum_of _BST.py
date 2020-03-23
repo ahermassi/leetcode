@@ -41,3 +41,22 @@ def range_sum_bst_v2(root, L, R):
     if root.val < R:
         res += range_sum_bst_v2(root.right, L, R)  # Right child is a possible candidate
     return res
+
+
+def range_sum_bst_v3(root, L, R):
+    """ Iterative version of the DFS.
+    Time complexity: O(N)
+    Space complexity: O(h)
+    """
+    stack, res = [root], 0
+    while stack:
+        node = stack.pop()
+        if not node:
+            continue
+        if L <= node.val <= R:
+            res += node.val
+        if node.val > L:
+            stack.append(node.left)
+        if node.val < R:
+            stack.append(node.right)
+    return res
