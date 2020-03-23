@@ -32,6 +32,37 @@ def longest_ones_v1(A, K):
     return res
 
 
+def longest_ones_v2(A, K):
+    """ Same algorithm, but we can solve this problem a little efficiently. Since we have to find the MAXIMUM window,
+        we never reduce the size of the window. We either increase the size of the window or remain same but never
+        reduce the size. If the limit of zeros is reached, we contract only by one, thus we keep the window size the
+        same.
+        Take A = [0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1], K = 3 for example.
+        We know the answer is 10 with sub-array from A[2] to A[11].
+        Through the iteration, this sub-array would be found while right = 11 and left = 2.
+        What happens next ?
+        As we keep advancing 'right', we will find out that 'left' and 'right' keep adding 1 in every iteration, which
+        makes the distance between 'left' and 'right' the same (and is the CURRENT best).
+        The distance between 'left' and 'right' would change again if a longer sub-array exists.
+        So in short:
+            We are looking for bigger window size. When we find one, we use this window to iterate till we find a
+            larger one (if any).
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    n = len(A)
+    left = 0
+    for right in range(n):
+        if A[right] == 0:
+            K -= 1
+        if K < 0:  # A negative K denotes we have consumed all allowed flips and window has more than allowed zeros,
+            # thus increment left pointer by 1 to keep the window size same.
+            if A[left] == 0:  # If the left element to be thrown out is zero we increase K
+                K += 1
+            left += 1
+    return right - left + 1
+
+
 class Test(unittest.TestCase):
     data = [([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2, 6),
             ([0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1], 3, 10)]
@@ -39,6 +70,7 @@ class Test(unittest.TestCase):
     def test_longest_ones(self):
         for test_A, test_K, result in self.data:
             self.assertEqual(result, longest_ones_v1(test_A, test_K))
+            self.assertEqual(result, longest_ones_v2(test_A, test_K))
 
 
 if __name__ == '__main__':
