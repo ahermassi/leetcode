@@ -53,12 +53,32 @@ def num_rolls_to_target_v1(d, f, target):
     return roll(d, target) % (10 ** 9 + 7)
 
 
+def num_rolls_to_target_v2(d, f, target):
+    """ Top-down dynamic programming.
+        Let dp[i][j] be the number of ways we can get the sum j using i dices.
+        As an initial point, there is one way to get 0 using zero dices: dp[0][0] = 1
+        Then, for each dice i and face k, accumulate the number of ways we can get to j using the rule:
+            dp[i][j] = sum(k = 1..f such as f j-k >= 0) dp[i-1][j-k]
+    Time complexity: O(d * f * target)
+    Space complexity: O(d * target)
+    """
+    dp = [[0] * (target + 1) for _ in range(d + 1)]
+    dp[0][0] = 1
+    for i in range(1, d + 1):
+        for j in range(target + 1):
+            for k in range(1, f + 1):
+                if j - k >= 0:
+                    dp[i][j] += dp[i - 1][j - k]
+    return dp[-1][-1] % (10 ** 9 + 7)
+
+
 class Test(unittest.TestCase):
     data = [(1, 6, 3, 1), (2, 6, 7, 6), (2, 5, 10, 1), (1, 2, 3, 0), (30, 30, 500, 222616187)]
 
     def test_num_rolls_to_target(self):
         for test_d, test_f, test_target, result in self.data:
             self.assertEqual(result, num_rolls_to_target_v1(test_d, test_f, test_target))
+            self.assertEqual(result, num_rolls_to_target_v2(test_d, test_f, test_target))
 
 
 if __name__ == '__main__':
