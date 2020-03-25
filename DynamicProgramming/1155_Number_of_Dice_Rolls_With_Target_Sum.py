@@ -72,6 +72,25 @@ def num_rolls_to_target_v2(d, f, target):
     return dp[-1][-1] % (10 ** 9 + 7)
 
 
+def num_rolls_to_target_v3(d, f, target):
+    """ It turns out we can reduce the memory complexity as we only need to store counts for the current and previous
+        dices.
+    Time complexity: O(d * f * target)
+    Space complexity: O(target), as we only store counts for the previous and current dice
+    """
+    pre = [0] * (target + 1)
+    cur = [0] * (target + 1)
+    pre[0] = 1
+    for i in range(1, d + 1):
+        for j in range(target + 1):
+            for k in range(1, f + 1):
+                if j - k >= 0:
+                    cur[j] += pre[j - k]
+        pre = cur
+        cur = [0] * (target + 1)
+    return pre[-1] % (10 ** 9 + 7)
+
+
 class Test(unittest.TestCase):
     data = [(1, 6, 3, 1), (2, 6, 7, 6), (2, 5, 10, 1), (1, 2, 3, 0), (30, 30, 500, 222616187)]
 
@@ -79,6 +98,7 @@ class Test(unittest.TestCase):
         for test_d, test_f, test_target, result in self.data:
             self.assertEqual(result, num_rolls_to_target_v1(test_d, test_f, test_target))
             self.assertEqual(result, num_rolls_to_target_v2(test_d, test_f, test_target))
+            self.assertEqual(result, num_rolls_to_target_v3(test_d, test_f, test_target))
 
 
 if __name__ == '__main__':
