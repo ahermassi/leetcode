@@ -90,6 +90,9 @@ def num_rolls_to_target_v3(d, f, target):
         cur = [0] * (target + 1)
     return pre[-1] % (10 ** 9 + 7)
 
+# A further space optimization exists where only one row is used. See first comment:
+# https://leetcode.com/problems/number-of-dice-rolls-with-target-sum/discuss/355850/Python-DP-solution-(similar-to-coin-change)
+
 
 class Test(unittest.TestCase):
     data = [(1, 6, 3, 1), (2, 6, 7, 6), (2, 5, 10, 1), (1, 2, 3, 0), (30, 30, 500, 222616187)]
