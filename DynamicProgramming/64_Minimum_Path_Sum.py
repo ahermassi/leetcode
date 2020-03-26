@@ -27,30 +27,30 @@ def min_path_sum_v1(grid):
 
 
 def min_path_sum_v2(grid):
-    """ Similar to 62- Unique paths.
-        dp(i,j) represents the minimum sum of the path from top left to the index (i, j). We start by initializing the
-        top left element of dp as the first element of the given matrix. Then for each element starting from the top
-        left, we traverse onwards and fill in the matrix with the required minimum sums. Now, we need to note that at
-        every element, we can move either rightwards or downwards. Therefore, for filling in the minimum sum, we use
-        the equation:
-            dp(i,j)= grid(i,j) + min(dp(i+1,j), dp(i,j+1))
-        taking care of the boundary conditions.
+    """ Dynamic programming. Similar to 62- Unique paths.
+        Let dp(i,j) be the minimum sum of the path from top-left cell to the cell (i,j).
+        We start by initializing the top left element of dp as the first element of the given matrix. Some boundary
+        conditions need to be handled. The boundary conditions happen on the topmost row and the leftmost column.
+        Suppose the grid is like [1, 1, 1, 1], then the minimum sum to arrive at each point is simply an accumulation
+        of previous points and the result is [1, 2, 3, 4].
+        Then for each element, we traverse onwards and fill in the matrix with the required minimum sums. Now, we need
+        to note that at every cell, we could've arrived there from either top or left cell as we can move either
+        rightwards or downwards. Therefore, for filling in the minimum sum, we use the equation:
+            dp(i,j)= grid(i,j) + min(dp(i-1,j), dp(i,j-1))
     Time complexity: O(N * M), we traverse the entire matrix once
     Space complexity: O(N * M)
     """
     n, m = len(grid), len(grid[0])
-    dp = [[0 for _ in range(m)] for _ in range(n)]
-    for i in range(n):
-        for j in range(m):
-            if i == j == 0:
-                dp[i][j] = grid[i][j]
-            elif not i:
-                dp[i][j] = grid[i][j] + dp[i][j - 1]
-            elif not j:
-                dp[i][j] = grid[i][j] + dp[i - 1][j]
-            else:
-                dp[i][j] = grid[i][j] + min(dp[i][j - 1], dp[i - 1][j])
-    return dp[n - 1][m - 1]
+    dp = [[0] * m for _ in range(n)]
+    dp[0][0] = grid[0][0]
+    for i in range(1, n):
+        dp[i][0] = grid[i][0] + dp[i - 1][0]
+    for j in range(1, m):
+        dp[0][j] = grid[0][j] + dp[0][j - 1]
+    for i in range(1, n):
+        for j in range(1, m):
+            dp[i][j] = grid[i][j] + min(dp[i - 1][j], dp[i][j - 1])
+    return dp[-1][-1]
 
 
 def min_path_sum_v3(grid):
