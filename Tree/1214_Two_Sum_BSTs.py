@@ -36,3 +36,32 @@ def two_sum_bst_v1(root1, root2, target):
     return controlled_inorder(root2)
 
 
+def two_sum_bst_v2(root1, root2, target):
+    """ The drawback of the recursive approach is that we have to traverse the entire second tree, even if it's not
+        really needed. For example, if root2.val value is already present in the hash set, there is no need to traverse
+        further; We could stop immediately and return True.
+        That could be implemented with the help of iterative in-order traversal.
+    Time complexity: O(N + M)
+    Space complexity: O(2N + M)
+    """
+
+    def inorder(root):
+        if root:
+            inorder(root.left)
+            vals.add(root.val)
+            inorder(root.right)
+
+    vals = set()
+    inorder(root1)
+    stack = []
+    while stack or root2:
+        while root2:
+            stack.append(root2)
+            root2 = root2.left
+        node = stack.pop()
+        if target - node.val in vals:
+            return True
+        root2 = node.right
+    return False
+
+
