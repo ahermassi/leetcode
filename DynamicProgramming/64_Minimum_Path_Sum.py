@@ -75,27 +75,21 @@ def min_path_sum_v3(grid):
 
 
 def min_path_sum_v4(grid):
-    """ instead of using a 2D matrix for dp, we can do the same work using a dp array of the row size, since for making
-        the current entry all we need is the dp entry for the top and the left element. Thus, we start by initializing
-        only the first element of dp as the first element of the given matrix. Then, we start moving towards the right
-        and update the entry dp(j) as:
-            dp(j) = grid(i,j) + min(dp(j), dp(j-1))
+    """ Further inspecting the above code, it can be seen that maintaining 'pre' is for recovering pre[j], which is
+        simply cur[j] before its update. So it is enough to use only one row. Now the space is further optimized.
     Time complexity: O(N * M)
     Space complexity: O(M)
     """
     n, m = len(grid), len(grid[0])
-    dp = [0 for _ in range(m)]
-    for i in range(n):
-        for j in range(m):
-            if i == j == 0:
-                dp[j] = grid[i][j]
-            elif not i:
-                dp[j] = grid[i][j] + dp[j - 1]
-            elif not j:
-                dp[j] = grid[i][j] + dp[j]
-            else:
-                dp[j] = grid[i][j] + min(dp[j - 1], dp[j])
-    return dp[m - 1]
+    cur = [0] * m
+    cur[0] = grid[0][0]
+    for j in range(1, m):
+        cur[j] = grid[0][j] + cur[j - 1]
+    for i in range(1, n):
+        cur[0] += grid[i][0]
+        for j in range(1, m):
+            cur[j] = grid[i][j] + min(cur[j], cur[j - 1])
+    return cur[-1]
 
 
 def min_path_sum_v5(grid):
