@@ -54,11 +54,32 @@ def min_path_sum_v2(grid):
 
 
 def min_path_sum_v3(grid):
+    """ As can be seen, each time when we update dp[i][j], we only need dp[i-1][j] (at the previous row) and dp[i][j-1]
+        (at the left column of same row). So we don't need to maintain the full matrix. Keeping two rows at each
+        iteration is enough.
+    Time complexity: O(N * M)
+    Space complexity: O(M)
+    """
+    n, m = len(grid), len(grid[0])
+    pre, cur = [0] * m, [0] * m
+    pre[0] = grid[0][0]
+    for j in range(1, m):  # Populating the first row as it is a special case because it has no previous row
+        pre[j] = grid[0][j] + pre[j - 1]
+    for i in range(1, n):
+        cur[0] = grid[i][0] + pre[0]  # cur[j] has no left neighbor when j = 0
+        for j in range(1, m):
+            cur[j] = grid[i][j] + min(pre[j], cur[j - 1])
+        pre = cur
+        cur = [0] * m
+    return pre[-1]
+
+
+def min_path_sum_v4(grid):
     """ instead of using a 2D matrix for dp, we can do the same work using a dp array of the row size, since for making
         the current entry all we need is the dp entry for the top and the left element. Thus, we start by initializing
         only the first element of dp as the first element of the given matrix. Then, we start moving towards the right
         and update the entry dp(j) as:
-            dp(j) = grid(i,j) + min(dp(j), dp(j+1))
+            dp(j) = grid(i,j) + min(dp(j), dp(j-1))
     Time complexity: O(N * M)
     Space complexity: O(M)
     """
@@ -77,7 +98,7 @@ def min_path_sum_v3(grid):
     return dp[m - 1]
 
 
-def min_path_sum_v4(grid):
+def min_path_sum_v5(grid):
     """ Instead of using another dp matrix, we can store the minimum sums in the original matrix itself, since we need
         not retain the original matrix here. Thus, the governing equation now becomes:
             grid(i,j) = grid(i,j) + min(grid(i+1,j), grid(i,j+1))
