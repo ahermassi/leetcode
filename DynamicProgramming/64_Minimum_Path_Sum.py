@@ -7,23 +7,23 @@ import unittest2 as unittest
 
 def min_path_sum_v1(grid):
     """ Brute force. TLE
-        The Brute Force approach involves recursion. For each element, we consider two paths, rightwards and downwards
+        The brute force approach involves recursion. For each element, we consider two paths, rightwards and downwards
         and find the minimum sum out of those two. It specifies whether we need to take a right step or downward step
         to minimize the sum.
             cost(i,j) = grid[i][j] + min(cost(i+1,j), cost(i,j+1))
-    Time complexity: O(2^N * 2^M), for every move, we have at most 2 options
-    Space complexity: O(M + N), recursion of depth M + N
+    Time complexity: O(2^N * 2^M), for every move we have at most 2 options
+    Space complexity: O(N + M), for recursion stack
     """
 
-    def helper(i, j):
+    def dfs(i, j):
         if i == n or j == m:
             return float('inf')
         if i == n - 1 and j == m - 1:
             return grid[i][j]
-        return grid[i][j] + min(helper(i, j + 1), helper(i + 1, j))
+        return grid[i][j] + min(dfs(i, j + 1), dfs(i + 1, j))
 
     n, m = len(grid), len(grid[0])
-    return helper(0, 0)
+    return dfs(0, 0)
 
 
 def min_path_sum_v2(grid):
