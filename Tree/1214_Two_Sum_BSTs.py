@@ -65,3 +65,35 @@ def two_sum_bst_v2(root1, root2, target):
     return False
 
 
+def two_sum_bst_v3(root1, root2, target):
+    """ Traverse the first tree from smallest to largest node using an iterative in-order traversal.
+        Traverse the second tree from largest to smallest node using a reverse iterative in-order traversal.
+        Sum up the corresponding nodes' values at each step of the iteration.
+            1- If sum == target, return True
+            2- If sum < target, move to the in-order successor of the current node of the first tree
+            3- If sum > target, move to the in-order predecessor of the current node of the second tree
+    Time complexity: O(N + M)
+    Space complexity: O(N + M)
+    """
+    stack1, stack2 = [], []
+    while True:
+        while root1:
+            stack1.append(root1)
+            root1 = root1.left
+        while root2:
+            stack2.append(root2)
+            root2 = root2.right
+        if not stack1 or not stack2:
+            return False
+        node1, node2 = stack1[-1], stack2[-1]  # We peek at the top of each stack without popping the nodes yet
+        s = node1.val + node2.val
+        if s == target:
+            return True
+        if s < target:
+            node = stack1.pop()
+            root1 = node.right
+        else:
+            node = stack2.pop()
+            root2 = node.left
+
+
