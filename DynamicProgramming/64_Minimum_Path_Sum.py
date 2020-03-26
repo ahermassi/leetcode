@@ -93,24 +93,21 @@ def min_path_sum_v4(grid):
 
 
 def min_path_sum_v5(grid):
-    """ Instead of using another dp matrix, we can store the minimum sums in the original matrix itself, since we need
-        not retain the original matrix here. Thus, the governing equation now becomes:
-            grid(i,j) = grid(i,j) + min(grid(i+1,j), grid(i,j+1))
+    """ Instead of using another dp matrix, we can store the minimum sums in the original matrix itself, since we don't
+        need to retain the original matrix. Thus, the governing equation now becomes:
+            grid(i,j) = grid(i,j) + min(grid(i-1,j), grid(i,j-1))
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
     n, m = len(grid), len(grid[0])
-    for i in range(n):
-        for j in range(m):
-            if i == j == 0:
-                continue
-            elif not i:
-                grid[i][j] += grid[i][j - 1]
-            elif not j:
-                grid[i][j] += grid[i - 1][j]
-            else:
-                grid[i][j] += min(grid[i][j - 1], grid[i - 1][j])
-    return grid[n - 1][m - 1]
+    for i in range(1, n):
+        grid[i][0] += grid[i-1][0]
+    for j in range(1, m):
+        grid[0][j] += grid[0][j-1]
+    for i in range(1, n):
+        for j in range(1, m):
+            grid[i][j] += min(grid[i-1][j], grid[i][j-1])
+    return grid[-1][-1]
 
 
 class Test(unittest.TestCase):
@@ -122,6 +119,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, min_path_sum_v2(test_grid))
             self.assertEqual(result, min_path_sum_v3(test_grid))
             self.assertEqual(result, min_path_sum_v4(test_grid))
+            self.assertEqual(result, min_path_sum_v5(test_grid))
 
 
 if __name__ == '__main__':
