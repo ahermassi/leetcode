@@ -72,11 +72,12 @@ class CodecPreorder:
 class CodecPostorder:
     """ This class uses post-order traversal for serialization. To deserialize, use a stack to recursively get root
         node, left subtree and right subtree. In this case, root will be always the last element in the stack.
+    Time complexity: O(N), both for serialization and deserialization
+    Space complexity: O(N), since we store the entire tree
     """
 
     def serialize(self, root):
         """ Encodes a tree to a single string. """
-        values = []
 
         def postorder(root):
             if root:
@@ -84,6 +85,7 @@ class CodecPostorder:
                 postorder(root.right)
                 values.append(root.val)
 
+        values = []
         postorder(root)
         return ' '.join([str(val) for val in values])
 
@@ -100,7 +102,7 @@ class CodecPostorder:
 
         if not data:
             return None
-        values = [int(val) for val in data.split(' ')]
+        values = [int(val) for val in data.split()]
         return build(float('-inf'), float('inf'))
 
 
