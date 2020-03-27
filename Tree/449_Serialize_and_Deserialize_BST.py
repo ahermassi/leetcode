@@ -22,15 +22,23 @@ class CodecPreorder:
         By contrary, both pre-order and post-order traversals are unique identifiers of BST. That’s because from these
         traversals one could restore the in-order one: in-order = sorted(post-order) = sorted(pre-order).
 
+        The encoded string needs to be as compact as possible. One of the ways a BST tree is different from a general
+        binary tree is its structure is wholly dependent on the order in which the values are inserted. A string
+        created from a pre-order traversal of a BST will tell us the order in which the values were inserted into the
+        tree. Since we just need the order the values were inserted, we do not need to account for null nodes in the
+        string with '#' or 'null'. Hence, the final string contains only the values and separators, which makes it the
+        most compact possible.
+
         This class uses pre-order traversal for serialization. To deserialize, use a queue to recursively get root
-        node, left subtree and right subtree. In this case, root will be always the first element in the stack.
+        node, left subtree and right subtree. In this case, root will be always the first element in the queue.
         Pre-order traversal of BST will output root node first, then left children, then right:
-        root left1 left2 leftX right1 rightX
+            root left1 left2 leftX right1 rightX
+    Time complexity: O(N), both for serialization and deserialization
+    Space complexity: O(N), since we store the entire tree
     """
 
     def serialize(self, root):
         """ Encodes a tree to a single string. """
-        values = []
 
         def preorder(root):
             if root:
@@ -38,6 +46,7 @@ class CodecPreorder:
                 preorder(root.left)
                 preorder(root.right)
 
+        values = []
         preorder(root)
         return ' '.join([str(val) for val in values])
 
@@ -54,7 +63,7 @@ class CodecPreorder:
 
         if not data:
             return None
-        values = [int(val) for val in data.split(' ')]
+        values = [int(val) for val in data.split()]
         queue = deque(values)
         return build(float('-inf'), float('inf'))  # Use lower and upper bounds to verify BST properties before each
         # attempt to create right/left child.
