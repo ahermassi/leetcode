@@ -8,18 +8,22 @@ import unittest2 as unittest
 
 
 def next_greater_element_v1(nums1, nums2):
-    """ Brute force approach.
-    Time complexity: O(N * M) where N is the length of nums1 and M is the length of nums2
-    Space complexity: O(N)
+    """ We pick up every element of the nums1 array(say nums1[i]) and then search for its own occurrence in the nums2
+        array. Instead of searching for the occurrence of nums1[i] linearly in the nums2 array, we can make use of a
+        hash map to store the elements of nums2 in the form of (element,index). By doing this, we can find nums1[i]'s
+        index in nums2 array directly and then continue to search for the next larger element in a linear fashion.
+    Time complexity: O(N * M), where N is the length of nums1 and M is the length of nums2
+    Space complexity: O(M)
     """
-    res = []
-    for i in nums1:
-        next_greater = i
-        for j in nums2[nums2.index(i):]:  # Look to the right of i
-            if j > next_greater:
+    index = {num: i for i, num in enumerate(nums2)}
+    n, res = len(nums2), []
+    for num in nums1:
+        next_greater = index[num]
+        for j in range(next_greater + 1, n):
+            if nums2[j] > num:
                 next_greater = j
                 break
-        res.append(-1 if next_greater == i else next_greater)
+        res.append(-1 if next_greater == index[num] else nums2[next_greater])
     return res
 
 
