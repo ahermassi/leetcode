@@ -28,20 +28,30 @@ def next_greater_element_v1(nums1, nums2):
 
 
 def next_greater_element_v2(nums1, nums2):
-    """ We use a stack to keep a decreasing sub-sequence. Whenever we see a number x greater than stack.peek() we pop
-    all elements less than x and for all the popped ones, their next greater element is x.
-    Time complexity: O(max(N, M)) where N is the length of nums1 and M is the length of nums2
-    Space complexity: O(max(N, M))
+    """ We iterate over the nums2 array from left to right. We push every element nums2[i] to the stack if it is less
+        than the element on the top of the stack. No entry is made in map for nums2[i] right now because the elements
+′       encountered so far are coming in a descending order.
+        If we encounter an element nums2[i] such that nums2[i] > stack[-1], we keep on popping all the elements from
+        the stack until we encounter stack[k] such that stack[k] > nums[i]. For every element popped out of the stack
+        stack[j], we put the popped element along with its next greater number into the map, in the form
+        (stack[j], nums[i]). Now, it is obvious that the next greater element for all elements stack[j], such that
+        k < j ≤ top is nums[i] (since this larger element caused all the stack[j]'s to be popped out).
+        Thus, an element is popped out of the stack whenever a next greater element is found for it. Therefore, the
+        elements remaining in the stack are the ones for which no next greater element exists in the nums2 array.
+        Summary:
+        We use a stack to keep a decreasing sub-sequence. Whenever we see a number x greater than the top of the stack,
+        we pop all elements less than x and for all the popped ones, their next greater element is x.
+        For example num2 = [9, 8, 7, 3, 2, 1, 6]. The stack will first contain [9, 8, 7, 3, 2, 1] and then we see 6
+        which is greater than 1, so we pop 1, 2, and 3 whose next greater element should be 6.
+    Time complexity: O(N + M),
+    Space complexity: O(N + M)
     """
-    cache, stack, res = {}, [], []
-    for i in nums2:
-        while len(stack) and i > stack[-1]:
-            cache[stack.pop()] = i
-        else:
-            stack.append(i)
-    for i in nums1:
-        res.append(cache.get(i, -1))
-    return res
+    greater, stack = {}, []
+    for num in nums2:
+        while stack and stack[-1] < num:
+            greater[stack.pop()] = num
+        stack.append(num)
+    return [greater.get(num, -1) for num in nums1]
 
 
 class Test(unittest.TestCase):
