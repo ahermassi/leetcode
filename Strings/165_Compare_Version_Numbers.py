@@ -25,15 +25,19 @@ def compare_version_v1(version1, version2):
 
 def compare_version_v2(version1, version2):
     """ Same as above, but without appending trailing zeroes to the shortest list. An absent value is treated as 0.
+        Split both strings by dot character into two arrays.
+        Iterate over the longest array and compare chunks one by one. If one of the arrays is over, virtually add as
+        many zeros as needed to continue the comparison with the longer array.
+        If two chunks are not equal, return 1 or -1.
     Time complexity: O(N + M)
     Space complexity: O(max(N, M))
     """
     version1 = [int(i) for i in version1.split('.')]
     version2 = [int(i) for i in version2.split('.')]
-    n = max(len(version1), len(version2))
+    n, n1, n2 = max(len(version1), len(version2)), len(version1), len(version2)
     for i in range(n):
-        v1 = version1[i] if i < len(version1) else 0
-        v2 = version2[i] if i < len(version2) else 0
+        v1 = version1[i] if i < n1 else 0
+        v2 = version2[i] if i < n2 else 0
         if v1 < v2:
             return -1
         elif v1 > v2:
