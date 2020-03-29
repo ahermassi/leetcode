@@ -23,9 +23,9 @@ class TimeMapV1(object):
         if timestamp < self.data[key][0][1]:  # If the timestamp we're looking for is smaller than the first timestamp
             # inserted, then it's not possible to find a valid value.
             return ''
-        if timestamp >= self.data[key][-1][1]:  # If the timestamp we're looking for is greater than the last time
-            # inserted, then return the value associated with that timestamp since the timestamps are saved in
-            # increased order.
+        if timestamp >= self.data[key][-1][1]:  # If the timestamp we're looking for is greater than or equal to  the
+            # last time inserted, then return the value associated with that timestamp since the timestamps are saved
+            # in increased order.
             return self.data[key][-1][0]
         for value in self.data[key]:
             if value[1] <= timestamp:
@@ -49,12 +49,16 @@ class TimeMapV2(object):
         self.data[key].append((timestamp, value))  # Note how timestamp comes before value as it is the basis of search
 
     def get(self, key, timestamp):
+        """ Use binary search to find the insertion index of the timestamps.
+        Time complexity: O(logN)
+        Space complexity: O(1)
+        """
         if key not in self.data:
             return ''
         values = self.data[key]
         if timestamp < values[0][0]:
             return ''
-        if timestamp > values[-1][0]:  # This optimization results in 30 - 60ms less in execution time
+        if timestamp >= values[-1][0]:  # This optimization results in 30 - 60ms less in execution time
             return self.data[key][-1][1]
         idx = bisect.bisect(values, (timestamp, chr(127)))  # chr(127) is the char #127 in ASCII table. It is larger
         # than all the commonly used characters. It is helpful because, in tuple comparison, Python will compare
@@ -67,6 +71,29 @@ class TimeMapV2(object):
         # returns the index just after the last tuple, which is a requirement of the problem.
         # In this example, bisect will return index 2, so we need to return values[index-1][1].
         return values[idx - 1][1]
+
+
+class TimeMapV3(object):
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.timestamps = defaultdict(list)
+        self.values = defaultdict(list)
+
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        self.timestamps[key].append(timestamp)
+        self.values[key].append(value)
+
+    def get(self, key: str, timestamp: int) -> str:
+        timestamps = self.timestamps[key]
+        values = self.values[key]
+        if timestamp < timestamps[0]:
+            return ''
+        if timestamp >= timestamps[-1]:
+            return values[-1]
+        index = bisect_right(timestamps, timestamp) - 1
+        return values[index]
 
 
 class Test(unittest.TestCase):
