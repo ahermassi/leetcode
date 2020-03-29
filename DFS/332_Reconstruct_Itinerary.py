@@ -50,24 +50,29 @@ def find_itinerary_v1(tickets):
 
 
 def find_itinerary_v2(tickets):
-    """ Recursive version of above algorithm.
-        First keep going forward until you get stuck. That's a good main path already. Remaining tickets form cycles
-        which are found on the way back and get merged into that main path.
+    """ Recursive version of the above algorithm using DFS.
+        Considering the passenger has to be physically in one place before moving to another airport, we are
+        considering using up all tickets and choose lexicographically smaller solution if case of a tie. Thinking as
+        that passenger, they choose their flight greedily as the lexicographical order. Once they arrive at an airport
+        without departure flights with more tickets at hand, the passenger will push current ticket in a stack and look
+        at whether it is possible to travel to other places from the airport on their way.
     Time complexity: O(N logN)
     Space complexity: O(N)
     """
 
-    def travel(airport):
-        arrivals = d[airport]
+    def dfs(airport):
+        arrivals = graph[airport]
         while arrivals:
-            travel(heappop(arrivals))
-        res.append(airport)
+            dfs(heappop(arrivals))
+        res.append(airport)  # Notice how the first airport to be added to the path is the one with no departing
+        # flights (empty arrivals heap), but in reality this airport should be the last to visit. This is why we return
+        # a reversed list
 
-    d = defaultdict(list)
+    graph = defaultdict(list)
     for origin, dest in tickets:
-        heappush(d[origin], dest)
+        heappush(graph[origin], dest)
     res = []
-    travel('JFK')
+    dfs('JFK')
     return res[::-1]
 
 
