@@ -74,25 +74,30 @@ class TimeMapV2(object):
 
 
 class TimeMapV3(object):
+    """ In this implementation, we separate the values from the timestamps to simplify the binary search. """
     def __init__(self):
         """
         Initialize your data structure here.
         """
-        self.timestamps = defaultdict(list)
-        self.values = defaultdict(list)
+        self.timestamps = defaultdict(list)  # Each key will have a (sorted) list of timestamps associated to it
+        self.values = defaultdict(list)  # Each key will have a list of values associated to it
 
     def set(self, key: str, value: str, timestamp: int) -> None:
         self.timestamps[key].append(timestamp)
         self.values[key].append(value)
 
     def get(self, key: str, timestamp: int) -> str:
+        """ Use binary search to find the insertion index of the timestamps.
+        Time complexity: O(logN)
+        Space complexity: O(1)
+        """
         timestamps = self.timestamps[key]
         values = self.values[key]
         if timestamp < timestamps[0]:
             return ''
         if timestamp >= timestamps[-1]:
             return values[-1]
-        index = bisect_right(timestamps, timestamp) - 1
+        index = bisect.bisect_right(timestamps, timestamp) - 1
         return values[index]
 
 
