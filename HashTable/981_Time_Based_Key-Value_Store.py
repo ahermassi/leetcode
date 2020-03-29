@@ -1,4 +1,4 @@
-""" Create a timebased key-value store class TimeMap. See description on leetcode. """
+""" Create a time-based key-value store class TimeMap. See description on Leetcode. """
 
 import bisect
 from collections import defaultdict
@@ -23,7 +23,7 @@ class TimeMapV1(object):
         if timestamp < self.data[key][0][1]:  # If the timestamp we're looking for is smaller than the first timestamp
             # inserted, then it's not possible to find a valid value.
             return ''
-        if timestamp > self.data[key][-1][1]:  # If the timestamp we're looking for is greater than the last time
+        if timestamp >= self.data[key][-1][1]:  # If the timestamp we're looking for is greater than the last time
             # inserted, then return the value associated with that timestamp since the timestamps are saved in
             # increased order.
             return self.data[key][-1][0]
