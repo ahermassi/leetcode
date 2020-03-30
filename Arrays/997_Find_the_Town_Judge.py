@@ -36,12 +36,34 @@ def find_judge_v1(N, trust):
     return -1
 
 
+def find_judge_v2(N, trust):
+    """ We don't need separate arrays for indegree and outdegree. We can instead build a single array with the result
+        of (indegree - outdegree) for each person. In other words, we'll +1 to their 'score' for each person they are
+        trusted by, and -1 from their 'score' for each person they trust. Therefore, for a person to maximize their
+        'score', they should be trusted by as many people as possible, and trust as few people as possible.
+        The maximum indegree is N - 1. This represents everybody trusting the person (except for themselves). The
+        minimum outdegree is 0. This represents not trusting anybody. Therefore, the maximum value for
+        (indegree - outdegree) is (N - 1) - 0 = N - 1. These values also happen to be the definition of the town judge.
+    Time complexity O(N + T)
+    Space complexity: O(N), where N is the number of people
+    """
+    count = [0] * (N + 1)  # count[i] = indegree[i] - outdegree[i]
+    for frm, to in trust:
+        count[frm] -= 1
+        count[to] += 1
+    for i, val in enumerate(count):
+        if val == N - 1:
+            return i
+    return -1
+
+
 class Test(unittest.TestCase):
     data = [(2, [[1, 2]], 2), (3, [[1, 3], [2, 3]], 3), (3, [[1, 3], [2, 3], [3, 1]], -1)]
 
     def test_find_judge(self):
         for test_n, test_trust, result in self.data:
             self.assertEqual(result, find_judge_v1(test_n, test_trust))
+            self.assertEqual(result, find_judge_v2(test_n, test_trust))
 
 
 if __name__ == '__main__':
