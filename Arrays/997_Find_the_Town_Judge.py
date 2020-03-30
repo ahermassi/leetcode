@@ -56,6 +56,11 @@ def find_judge_v2(N, trust):
             return i
     return -1
 
+# Note: Can There Be More Than One Town Judge?
+# If there were two town judges, then they would have to trust each other, otherwise we'd have a town judge not trusted
+# by everybody. But this doesn't work, because town judges aren't supposed to trust anybody. Therefore, we know there
+# can be at most one town judge.
+
 
 class Test(unittest.TestCase):
     data = [(2, [[1, 2]], 2), (3, [[1, 3], [2, 3]], 3), (3, [[1, 3], [2, 3], [3, 1]], -1)]
