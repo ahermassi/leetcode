@@ -62,12 +62,13 @@ def sorted_list_to_bst_v1(head):
 
 
 def sorted_list_to_bst_v2(head):
-    """ This approach is a classic example of the time-space trade-off. WE can get the time complexity down by using
+    """ This approach is a classic example of the time-space trade-off. We can get the time complexity down by using
         more space.
-        Essentially, we will convert the given linked list into an array and then use that array to form our binary
-        search tree. In an array fetching the middle element is a O(1) operation and this will bring down the overall
-        time complexity.
-    Time complexity: O(N), since we convert the linked list to an array initially and then we convert the array into BST
+        Essentially, we will convert the given linked list into a (sorted) array and then use that array to form our
+        binary search tree. In an array, fetching the middle element is an O(1) operation and this will bring down the
+        overall time complexity.
+    Time complexity: O(N), since we convert the linked list to an array initially and then we convert the array into a
+    binary search tree
     Space complexity: O(N)
     """
 
@@ -75,18 +76,17 @@ def sorted_list_to_bst_v2(head):
         if left > right:
             return None
         mid = (left + right) // 2
-        root = TreeNode(vals[mid])
+        root = TreeNode(values[mid])
         # Recursively form binary search trees on the two halves of the array
         root.left = helper(left, mid - 1)
         root.right = helper(mid + 1, right)
         return root
 
-    vals = []
-    temp = head
+    values, temp = [], head
     while temp:
-        vals.append(temp.val)
+        values.append(temp.val)
         temp = temp.next
-    return helper(0, len(vals) - 1)
+    return helper(0, len(values) - 1)
 
 
 def sorted_list_to_bst_v3(head):
