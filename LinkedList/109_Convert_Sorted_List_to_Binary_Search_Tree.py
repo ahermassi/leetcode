@@ -96,7 +96,7 @@ def sorted_list_to_bst_v3(head):
         possible because the initial list given to us is sorted in ascending order.
         Iterate over the linked list to find out its length.
         We will make use of two different pointer variables here to mark the beginning and the end of the list. Let's
-        call them 'left' and 'right' with their initial values being 0 and length - 1 respectively.
+        call them 'left' and 'right' with their initial values being 0 and (length - 1) respectively.
         Remember, we have to simulate the in-order traversal here. We can find out the middle element by using
         (left + right) / 2.
         Recurse on the left half by using (left, mid - 1) as the starting and ending points.
@@ -116,10 +116,10 @@ def sorted_list_to_bst_v3(head):
         nonlocal head
         mid = (left + right) // 2
         left = in_order(left, mid - 1)  # First step of simulated in-order traversal. Recursively form the left half.
-        root = TreeNode(head.val)  # Once left half is traversed, process the current node.
+        root = TreeNode(head.val)  # Once left half is traversed, process the current node
         root.left = left
-        head = head.next  # Maintain the invariance mentioned in the algorithm.
-        root.right = in_order(mid + 1, right)  # Recurse on the right hand side and form BST out of them.
+        head = head.next  # Maintain the invariance mentioned in the algorithm
+        root.right = in_order(mid + 1, right)  # Recurse on the right hand side and form BST out of them
         return root
 
     if not head:
