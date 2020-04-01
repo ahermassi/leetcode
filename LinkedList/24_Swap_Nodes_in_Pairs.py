@@ -38,21 +38,26 @@ def swap_pairs_v1(head):
 
 
 def swap_pairs_v2(head):
-    """ Iterative solution.
+    """ Iterative solution. We break the linked list into pairs by jumping in steps of two. The only difference is,
+        unlike recursion, we swap the nodes on the go. After swapping a pair of nodes, say A and B, we need to link the
+        node B to the node that was right before A. To establish this linkage, we save the previous node of node A in
+        'pre. After swapping, we also need to assign the pre's next to the head of the swapped pair. This step would
+        ensure the currently swapped pair is linked correctly to the end of the previously swapped list.
+        The invariant of this algorithm is: pre.next is the head of the pair to swap.
     Time complexity: O(N)
     Space complexity: O(1)
     """
     dummy = ListNode(0)
     dummy.next = head
-    cur = dummy
-    while cur.next and cur.next.next:
-        first, second = cur.next, cur.next.next
-        cur.next = second  # This will set the stage to swapping the following pair and makes dummy.next point to the
+    pre = dummy
+    while pre.next and pre.next.next:
+        first, second = pre.next, pre.next.next
+        pre.next = second  # This will set the stage to swapping the following pair and makes dummy.next point to the
         # first swapped pair
         first.next = second.next
         second.next = first
-        cur = second.next  # second.next = first and first.next = second.next which is the first node in the (following)
-        # pair to swap. This ensures that cur's next always points to the first node in the pair, which is an invariant.
+        pre = first  # first.next = second.next which is the first node in the (following) pair to swap. This ensures
+        # that pre.next always points to the first node in the pair, which is an invariant.
     return dummy.next
 
 
