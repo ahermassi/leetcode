@@ -15,8 +15,16 @@ class ListNode(object):
 
 
 def swap_pairs_v1(head):
-    """ Do the swapping going backwards and return the new head of every 2 adjacent pairs at each call. This ensures
-        the last node returned is the head of the new list.
+    """ The basic intuition is to reach to the end of the linked list in steps of two using recursion, and while
+        backtracking the nodes can be swapped. In every function call we take out two nodes which would be swapped and
+        the remaining nodes are passed to the next recursive call. Assuming the recursion would return the swapped
+        remaining list of nodes, we just swap the current two nodes and attach the remaining list we get from recursion
+        to these two swapped pairs. Every recursion call is responsible for swapping a pair of nodes.
+        Once we get the pointer to the remaining swapped list from the recursion call, we can swap the first node and
+        second node i.e. the nodes in the current recursive call and then return the pointer to the second node since
+        it will be the new head after swapping.
+        Once all the pairs are swapped in the backtracking step, we would eventually be returning the pointer to the
+        head of the now swapped list. This head will essentially be the second node in the original linked list.
     Time complexity: O(N)
     Space complexity: O(N) for the call stack
     """
