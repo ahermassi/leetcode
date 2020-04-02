@@ -5,21 +5,30 @@ import unittest2 as unittest
 
 
 def find_closest_elements_v1(arr, k, x):
-    """ The logic for this problem would dwell down to finding k elements by finding the starting element. So find the
-        first index i so that arr[i] is better than arr[i+k] (with "better" we mean closer to or equally close to x).
-        If the starting element is found, [i, i+k] elements can be returned.
-        Given that k < len(arr); we can always use the 'right' index as length(arr)-k and 'left' as 0.
-        Consider binary search paradigm:
-        If arr[mid] is farther from target than arr[mid+k] which is k places ahead of mid, then we need to pull 'left'
-        to mid with 1 offset; otherwise we can pull 'right' at mid. Just think in terms of distance and don't assume
-        one is gonna be larger or smaller than the other. No assumption like that is made.
-        At the end, we'll end up with a value contained by 'left' index which can be the starting index of our solution.
+    """ The array is sorted. If we want find the one number closest to x, we don't have to check one by one. It's
+        straightforward to use binary search.
+        The idea is to find the first number which is equal to or greater than x in arr. Then, we determine the
+        indices of the start and the end of a sub-array in arr, where the sub-array is our result.
+        Assume we are taking A[i] ~ A[i + k], which is a window of size k and our final result.
+        We can binary search i. We compare the distance between x - A[mid] and A[mid + k] - x at each step.
+        If x - A[mid] > A[mid + k] - x, it means A[mid + 1] ~ A[mid + k] is better than A[mid] ~ A[mid + k],
+        so assign left = mid + 1. In other words, if arr[mid] is farther from target than arr[mid + k] which is k
+        places ahead of mid, then we need to pull 'left' to (mid + 1); otherwise we can pull 'right' at mid.
+        Just think in terms of distance.
+        At the end, we'll end up with a window contained by 'left' index which can be the starting index of our
+        solution.
         Note that we shouldn't compare the absolute value abs(x - A[mid]) and abs(A[mid + k] - x) because the absolute
         value version does not deal with the cases when x is not between A[mid] and A[mid+k].
-        Example: arr = [1, 2, 3, 4, 5], k = 4, x = -1; x is not in arr.
-        The magic of this solution is about binary search which is used here to find the best left index rather than
-        finding the closest element to x
-    Time complexity: O(log(N - k))
+        Example: arr = [1, 1, 2, 2, 2, 2, 2, 3, 3]
+        In the first run, we will see:
+        3 - 2(index 2) > 2(index 5) - 3
+        1              >             -1
+        This will make left = mid + 1 and start searching in the right part.
+        If we use abs, the result would be:
+        abs(3 - 2(index 2)) > abs(2(index 5) - 3)
+        1                   <= 1
+        This will make right = mid and start searching in the left part and ultimately return a wrong answer.
+    Time complexity: O(log(N - k) + k)
     Space complexity: O(1)
     """
     left, right = 0, len(arr) - k
