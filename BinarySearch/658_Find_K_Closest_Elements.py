@@ -33,8 +33,9 @@ def find_closest_elements_v1(arr, k, x):
 
 
 def find_closest_elements_v2(arr, k, x):
-    """ Simpler version without using binary search. However, the objective is the same: find the first index i so
-        that arr[i] is better than arr[i+k]
+    """ Simpler version without using binary search. Note that we don't need to use abs() because the only case that
+        we need to worry about is when x is less than 0th element, but in that case the condition itself is false,
+        moving the high pointer down (to finally return arr[:k]).
     Time complexity: O(N)
     Space complexity: O(1)
     """
