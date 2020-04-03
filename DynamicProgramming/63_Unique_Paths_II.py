@@ -44,12 +44,30 @@ def unique_paths_with_obstacles_v1(obstacle_grid):
     return dp[-1][-1]
 
 
+def unique_paths_with_obstacles_v2(obstacle_grid):
+    """ We can use the obstacle_grid array as the DP array thus not utilizing any additional space.
+    Time complexity: O(N * M)
+    Space complexity: O(1)
+    """
+    n, m = len(obstacle_grid), len(obstacle_grid[0])
+    obstacle_grid[0][0] = 1 - obstacle_grid[0][0]
+    for j in range(1, m):
+        obstacle_grid[0][j] = obstacle_grid[0][j - 1] * (1 - obstacle_grid[0][j])
+    for i in range(1, n):
+        obstacle_grid[i][0] = obstacle_grid[i - 1][0] * (1 - obstacle_grid[i][0])
+    for i in range(1, n):
+        for j in range(1, m):
+            obstacle_grid[i][j] = obstacle_grid[i - 1][j] + obstacle_grid[i][j - 1] if not obstacle_grid[i][j] else 0
+    return obstacle_grid[-1][-1]
+
+
 class Test(unittest.TestCase):
     data = [([[0, 0, 0], [0, 1, 0], [0, 0, 0]], 2)]
 
     def test_unique_paths_with_obstacles(self):
         for test_obstacle_grid, result in self.data:
             self.assertEqual(result, unique_paths_with_obstacles_v1(test_obstacle_grid))
+            self.assertEqual(result, unique_paths_with_obstacles_v2(test_obstacle_grid))
 
 
 if __name__ == '__main__':
