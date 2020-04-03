@@ -7,19 +7,27 @@ import unittest2 as unittest
 
 def partition_labels_v1(S):
     """ Traverse the string and record the last index of each char and use it to denote the start of the next section.
-        Reset the left pointer at the start of each new section. Store the difference of right and left pointers + 1
-        as in the result for each section.
+        Reset the left pointer at the start of each new section. Store the window size as the result for each section.
+        Consider the first label, say it's 'a'. The first partition must include it, and also the last occurrence of
+        'a'. However, between those two occurrences of 'a', there could be other labels that make the minimum size of
+        this partition bigger. For example, in 'abccaddbeffe', the minimum first partition is 'abccaddb'. This gives us
+        the idea for the algorithm: For each letter encountered, process the last occurrence of that letter, extending
+        the current partition [left, right] appropriately.
+        We need a hash map last_index[char] -> index of S where char occurs last. Then, let 'left' and 'right' be the
+        start and end of the current partition. If we are at a character c that occurs last at some index after 'right',
+        we'll extend the partition right = last_index[c]. If we are at the end of the partition (i == right), then
+        we'll append a partition size to our answer, and set the start of our new partition to (i + 1).
     Time complexity: O(N), where N is the length of S
-    Space complexity: O(1) as the hash map can never have more than 26 entries (alphabet size)
+    Space complexity: O(1), as the hash map can never have more than 26 entries (alphabet size)
     """
     last_index, res = {c: i for i, c in enumerate(S)}, []
     left = right = 0
     for i, c in enumerate(S):
-        right = max(right, last_index[c])  # This is the right end of smallest partition we're looking for. This
-        # index guarantees that all the previous characters don't occur past the index
+        right = max(right, last_index[c])  # This is the right end of the smallest partition we're looking for. This
+        # index guarantees that all the previous characters don't occur outside the window
         if i == right:  # When we hit the right end, store the partition length and start over
             res.append(right - left + 1)
-            left = right + 1  # Next partition starts just after previous one
+            left = i + 1  # Next partition starts just after the previous one
     return res
 
 
