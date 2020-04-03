@@ -32,11 +32,11 @@ def partition_labels_v1(S):
 
 
 def partition_labels_v2(S):
-    """ We can treat this problem essentially as a interval merging problem. This is similar to 56- Merge Intervals.
-        Basically we can take a range for all the characters in the sequence save it in a dictionary. Then we convert
-        the mao values to a sorted list. Finally we build a result by merging intervals and take range length of each
-        merged interval.
-    Time complexity: O(N log N), the complexity of sorting
+    """ We can treat this problem essentially as an interval merging problem. This is similar to 56- Merge Intervals.
+        Basically, we can take a range for all the characters in the string and save it in a map. Then we convert
+        the map values to a sorted list. Finally, we build the result by merging the intervals and calculating the
+        range length of each merged interval.
+    Time complexity: O(N logN), the complexity of sorting
     Space complexity: O(N)
     """
     indices = defaultdict(list)
