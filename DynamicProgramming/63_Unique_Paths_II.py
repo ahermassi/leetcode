@@ -63,6 +63,25 @@ def unique_paths_with_obstacles_v2(obstacle_grid):
 
 
 def unique_paths_with_obstacles_v3(obstacle_grid):
+    """  In the previous solutions, each time we update dp[i][j], we only need dp[i-1][j] (at the same column) and
+        dp[i][j-1] (at the left column), so it is unnecessary to maintain the full grid. Maintaining two rows is enough.
+    Time complexity: O(N * M)
+    Space complexity: O(M)
+    """
+    n, m = len(obstacle_grid), len(obstacle_grid[0])
+    pre, cur = [0] * m, [0] * m
+    pre[0] = 1 - obstacle_grid[0][0]
+    for j in range(1, m):  # Populating the first row
+        pre[j] = pre[j - 1] * (1 - obstacle_grid[0][j])
+    for i in range(1, n):
+        cur[0] = pre[0] * (1 - obstacle_grid[i][0])  # Edge case j=0, the result depends only on the above cell pre[0]
+        for j in range(1, m):
+            cur[j] = cur[j - 1] + pre[j] if not obstacle_grid[i][j] else 0
+        pre, cur = cur, [0] * m
+    return pre[-1]
+
+
+def unique_paths_with_obstacles_v4(obstacle_grid):
     """ We can use the obstacle_grid array as the DP array thus not utilizing any additional space.
     Time complexity: O(N * M)
     Space complexity: O(1)
@@ -85,7 +104,9 @@ class Test(unittest.TestCase):
     def test_unique_paths_with_obstacles(self):
         for test_obstacle_grid, result in self.data:
             self.assertEqual(result, unique_paths_with_obstacles_v1(test_obstacle_grid))
+            self.assertEqual(result, unique_paths_with_obstacles_v2(test_obstacle_grid))
             self.assertEqual(result, unique_paths_with_obstacles_v3(test_obstacle_grid))
+            self.assertEqual(result, unique_paths_with_obstacles_v4(test_obstacle_grid))
 
 
 if __name__ == '__main__':
