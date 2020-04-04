@@ -8,16 +8,16 @@ import unittest2 as unittest
 
 def two_sum_v1(numbers, target):
     """ While we iterate and insert elements into the hash table, we also look back to check if current element's
-    complement already exists in the hash table. If it exists, we have found a solution and return immediately.
-    Time complexity: O(N) for array pass
+        complement already exists in the hash table. If it exists, we have found a solution and return immediately.
+    Time complexity: O(N), for array pass
     Space complexity: O(N)
     """
-    vals = {}
+    values = {}
     for i, v in enumerate(numbers, 1):  # enumerate(numbers, 1) to account for 1-based indexing
         try:  # EAFP fashion
-            return [vals[target - v], i]
+            return [values[target - v], i]
         except KeyError:
-            vals[v] = i
+            values[v] = i
 
 
 def two_sum_v2(numbers, target):
