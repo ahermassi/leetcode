@@ -9,11 +9,13 @@ import unittest2 as unittest
 
 
 def is_one_edit_distance(s, t):
-    """ Let's assume that s is always shorter or the same length as t. If not, we could always call
+    """ First of all, let's ensure that the string lengths are not too far from each other. If the length difference is
+        2 or more characters, then s and t couldn't be one edit away strings.
+        Let's assume that s is always shorter or the same length as t. If not, we could always call
         is_one_edit_distance(t, s) to inverse the string order.
         If there is a different character so that s[i] != t[i]:
-            1- If the strings are of the same length, ALL next characters should be equal to keep one edit away
-               distance. To verify it, we compare the substrings of s and t both starting from the (i+1)th character.
+            1- If the strings are of the same length, ALL next characters should be equal to keep one edit distance
+               away. To verify it, we compare the substrings of s and t both starting from the (i+1)th character.
                Example: s = '1203', t = '1213'; mismatch at s[2] and t[2]. Since s and t have the same length, s[3:]
                and t[3:] should be equal.
             2- If t is one character longer than s, the additional character t[i] should be the only difference between
@@ -21,21 +23,21 @@ def is_one_edit_distance(s, t):
                of t starting from the (i+1)th character.
                Example: s = 'abcd', t = 'abecd'; mismatch at s[2] and t[2]. Since t is 1 character longer than s,
                s[2:] and t[3:] should be equal.
-    Time complexity: O(N), where N is a number of characters in the longest string.
-    Space complexity: O(N) (string slicing)
+    Time complexity: O(N), where N is a number of characters in the longest string
+    Space complexity: O(N), for string slicing
     """
     if s == t:
         return False
     i, n, m = 0, len(s), len(t)
     if n > m:  # Force s no longer than t
         return is_one_edit_distance(t, s)
-    if m - n > 1:  # The strings are NOT one edit away distance if the length difference is more than 1.
+    if m - n > 1:  # The strings are NOT one edit away distance if the length difference is more than 1
         return False
-    while i < n and s[i] == t[i]:
+    while i < n:
+        if s[i] != t[i]:
+            return s[i + 1:] == t[i + 1:] or s[i:] == t[i + 1:]  # Replace or delete
         i += 1
-    if n == m:
-        return s[i + 1:] == t[i + 1:]
-    return s[i:] == t[i + 1:]
+    return True  # This is necessary for the cases where s is an empty string and t is a single character
 
 
 class Test(unittest.TestCase):
