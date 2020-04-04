@@ -21,10 +21,11 @@ def two_sum_v1(numbers, target):
 
 
 def two_sum_v2(numbers, target):
-    """ Make use of the property where the input array is sorted. We use two indexes, initially pointing to the first
-    and last element respectively. Compare the sum of these two elements with target. If the sum is equal to target,
-    we found the only solution. If it is less than target, we increase the smaller index by one. If it is greater than
-    target, we decrease the larger index by one. Move the indexes and repeat the comparison until the solution is found.
+    """ Make use of the property that the input array is sorted. We use two indices, initially pointing to the first
+        and last element, respectively. Compare the sum of these two elements with target. If the sum is equal to
+        target, we found the solution. If it is less than target, we increase the smaller index by one. If it is
+        greater than target, we decrease the larger index by one. Move the indices and repeat the comparison until the
+        solution is found.
     Time complexity: O(N), each of the N elements is visited at most once
     Space complexity: O(1)
     """
@@ -33,10 +34,10 @@ def two_sum_v2(numbers, target):
         s = numbers[left] + numbers[right]
         if s == target:
             return [left + 1, right + 1]
-        if s > target:
-            right -= 1
-        else:
+        if s < target:
             left += 1
+        else:
+            right -= 1
 
 
 def two_sum_v3(numbers, target):
