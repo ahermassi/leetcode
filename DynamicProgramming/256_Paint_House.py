@@ -9,6 +9,36 @@ import unittest2 as unittest
 
 
 def min_cost_v1(costs):
+    """ Let dp[i][j] be the minimum cost of painting houses from [0, i] if we paint ith house with color j. Because j
+        can only be 3 colors - 0, 1, 2, if j = 0:
+            dp[i][0] = min(the min cost of painting (i-1)th house with either blue or green) + costs[i][0]
+                     = min(dp[i-1][1], dp[i-1][2]) + costs[i][0]
+        The basic idea is when we have painted the first (i - 1) houses, and want to paint the ith house, we have 3
+        choices: paint it either red, green, or blue.
+        If we choose to paint it red, we have the follow the deduction:
+            paint_current_red = min(paint_previous_green, paint_previous_blue) + costs[i][0]
+        Which translates to:
+            dp[i][0] = min(dp[i-1][1], dp[i-1][2]) + costs[i][0]
+        Same for the green and the blue.
+    Time complexity: O(N)
+    Space complexity: O(N * 3) = O(N)
+    """
+    if not costs:
+        return 0
+    n = len(costs)
+    dp = [[float('inf')] * 3 for _ in range(n)]
+    dp[0] = costs[0]
+    for i in range(1, n):
+        dp[i][0] = min(dp[i-1][1], dp[i-1][2]) + costs[i][0]
+        dp[i][1] = min(dp[i-1][0], dp[i-1][2]) + costs[i][1]
+        dp[i][2] = min(dp[i-1][0], dp[i-1][1]) + costs[i][2]
+        # Equivalent to:
+        # for j in range(3):
+        #     dp[i][j] = costs[i][j] + min(dp[i - 1][k] for k in range(3) if k != j)
+    return min(dp[-1])
+
+
+def min_cost_v2(costs):
     """ We don't know whether the current choice is optimal for next stage or not (the difference with greedy
     problem)? Thus, we delay the decision to make choice for current step at the next step. The trick in this
     problem is that we could not make the stage 1's choice based on current information, since it would affect our
