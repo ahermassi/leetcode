@@ -63,18 +63,19 @@ def min_cost_v2(costs):
     return min(pre_red, pre_blue, pre_green)
 
 
-def min_cost_v2(costs):
+def min_cost_v3(costs):
     """ Same idea as above but slightly different implementation that alters the input array.
-    Time complexity: O(N) where N is the length of costs array
+    Time complexity: O(N)
     Space complexity: O(1)
     """
     if not costs:
         return 0
-    for i in range(1, len(costs)):
-        cost, prev = costs[i], costs[i - 1]
-        cost[0] += min(prev[1], prev[2])
-        cost[1] += min(prev[0], prev[2])
-        cost[2] += min(prev[0], prev[1])
+    n = len(costs)
+    for i in range(1, n):
+        cost, pre = costs[i], costs[i - 1]
+        cost[0] += min(pre[1], pre[2])
+        cost[1] += min(pre[0], pre[2])
+        cost[2] += min(pre[0], pre[1])
     return min(costs[-1])
 
 
