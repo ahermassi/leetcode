@@ -22,8 +22,8 @@ class TreeNode(object):
 def count_nodes_v1(root):
     """ Iterative solution. Perform a BFS on the tree and record each level and add the number of nodes to final count.
     Time complexity: O(N)
-    Space complexity: O(2 ** h) = O(2 ** logN), since the maximum number of nodes at each level is 2 ** height of
-    that level, and height == logN
+    Space complexity: O(2^h) = O(2^logN), since the maximum number of nodes at each level is 2 ^ height of level, and
+    height == logN
     """
     if not root:
         return 0
@@ -64,13 +64,12 @@ def count_nodes_v2(root):
 
     if not root:
         return 0
-    height = get_height(root)
     left_height, right_height = get_height(root.left), get_height(root.right)
     if left_height == right_height:
         # left_height = height - 1
         # --> pow(2, height - 1) = (pow(2, left_height) - 1) + 1: number of nodes of left subtree + 1 for root
         # --> pow(2, left_height) - 1 + 1 = pow(2, left_height)
-        return pow(2, height - 1) + count_nodes_v2(root.right)
+        return pow(2, left_height) + count_nodes_v2(root.right)
         # Same as return pow(2, left_height) + count_nodes_v2(root.right)
     return pow(2, right_height) + count_nodes_v2(root.left)
 
