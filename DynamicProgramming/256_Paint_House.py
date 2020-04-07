@@ -3,7 +3,7 @@ of painting each house with a certain color is different. You have to paint all 
 houses have the same color.
 The cost of painting each house with a certain color is represented by a n x 3 cost matrix. For example, costs[0][0]
 is the cost of painting house 0 with color red; costs[1][2] is the cost of painting house 1 with color green, and so
-on... Find the minimum cost to paint all houses.  """
+on... Find the minimum cost to paint all houses. """
 
 import unittest2 as unittest
 
@@ -20,7 +20,7 @@ def min_cost_v1(costs):
         Which translates to:
             dp[i][0] = min(dp[i-1][1], dp[i-1][2]) + costs[i][0]
         Same for the green and the blue.
-    Time complexity: O(N)
+    Time complexity: O(N), where N is the length of costs array
     Space complexity: O(N * 3) = O(N)
     """
     if not costs:
@@ -39,33 +39,28 @@ def min_cost_v1(costs):
 
 
 def min_cost_v2(costs):
-    """ We don't know whether the current choice is optimal for next stage or not (the difference with greedy
-    problem)? Thus, we delay the decision to make choice for current step at the next step. The trick in this
-    problem is that we could not make the stage 1's choice based on current information, since it would affect our
-    available choices at stage 2. At current stage, we should only prepare the right information for next stage to
-    directly use, and let the next stage to make choice for the current stage.
-    Assume at stage i:
-    min_red[i] : the minimum cost to paint houses if we had only i houses and if house i was painted with red color.
-    min_blue[i] : the minimum cost to paint houses if we had only i houses and if house i was painted with blue color.
-    min_green[i] : the minimum cost to paint houses if we had only i houses and if house i was painted with green color.
-    Transitional function.
-    min_red[i] = Math.min(min_blue[i-1], min_green[i-1]) + red_cost[i]
-    We actually made the decision for the previous stage at here. (if i house was painted as red).
-
-    Time complexity: O(N) where N is the length of costs array
+    """ Since we only need data at (i-1) to update i, we only need to store the (i-1)th data point instead of the
+        whole array.
+        Assume at stage i:
+        pre_red: the minimum cost to paint houses if we had only i houses and if (i-1)th house was painted red
+        pre_blue: the minimum cost to paint houses if we had only i houses and if (i-1)th house was painted blue
+        pre_green: the minimum cost to paint houses if we had only i houses and if (i-1)th house was painted green
+        red, blue, green: the cost if we choose to paint the ith house with red, blue, or green color, respectively
+        taking into consideration the previous accrued costs.
+        Then the transition function would be:
+            red[i] = min(pre_blue, pre_green) + red_cost[i]
+        Same for the green and the blue.
+    Time complexity: O(N)
     Space complexity: O(1)
     """
-
-    if not costs:
-        return 0
-    min_red, min_blue, min_green = costs[0][0], costs[0][1], costs[0][2]
-    for i in range(1, len(costs)):
-        cost = costs[i]
-        temp_red, temp_blue, temp_green = min_red, min_blue, min_green
-        min_red = min(temp_blue, temp_green) + cost[0]
-        min_blue = min(temp_red, temp_green) + cost[1]
-        min_green = min(temp_red, temp_blue) + cost[2]
-    return min(min_red, min_blue, min_green)
+    n = len(costs)
+    pre_red = pre_blue = pre_green = 0
+    for i in range(n):
+        red = min(pre_blue, pre_green) + costs[i][0]
+        blue = min(pre_red, pre_green) + costs[i][1]
+        green = min(pre_red, pre_blue) + costs[i][2]
+        pre_red, pre_blue, pre_green = red, blue, green
+    return min(pre_red, pre_blue, pre_green)
 
 
 def min_cost_v2(costs):
