@@ -25,17 +25,17 @@ def depth_sum_v1(nestedList):
     return dfs(nestedList, 1)
 
 
-def depthSum_v2(nestedList):
-    """ Same as above, but emulating the recursion call using actual stack.
+def depth_sum_v2(nestedList):
+    """ Same as above, but emulating the recursion call using an actual stack.
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    sum, stack = 0, []
+    res, stack = 0, []
     stack = [(nested_integer, 1) for nested_integer in nestedList]
     while stack:
         elem, depth = stack.pop()
         if elem.isInteger():
-            sum += elem.getInteger() * depth
+            res += elem.getInteger() * depth
         else:
-            stack.extend([(l, depth+1) for l in elem.getList()])
-    return sum
+            stack.extend([(val, depth + 1) for val in elem.getList()])
+    return res
