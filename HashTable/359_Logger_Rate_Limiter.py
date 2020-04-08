@@ -8,10 +8,21 @@ import unittest2 as unittest
 
 
 class LoggerV1(object):
-    """ Possible optimization (follow-up):
+    """ The idea is that we keep a hashtable with the message as key, and its timestamp as the value. The hashtable
+        keeps all the unique messages along with the latest timestamp that the message was printed.
+        At the arrival of a new message, the message is eligible to be printed with either of the two conditions as
+        follows:
+            1- We have never seen the message before
+            2- We have seen the message before, and it was printed more than 10 seconds ago.
+        In both of the above cases, we would then update the entry that is associated with the message in the hashtable,
+        with the latest timestamp.
+        Possible optimization (follow-up):
         For a Logger, probably the solution is not that practical since the hash table soon will blow up.
         We can have another thread running cron job to evict timeout entries from the hash map who existed for more
         than 10 seconds.
+    Time complexity: O(1), the lookup and update of the hashtable takes a constant time
+    Space complexity: O(N), where N is the size of all incoming messages. Over the time, the hashtable would have an
+    entry for each unique message that has appeared.
     """
 
     def __init__(self):
@@ -20,14 +31,11 @@ class LoggerV1(object):
         """
         self.log = {}
 
-    def shouldPrintMessage(self, timestamp, message):
+    def should_print_message(self, timestamp, message):
         """
         Returns true if the message should be printed in the given timestamp, otherwise returns false.
         If this method returns false, the message will not be printed.
         The timestamp is in seconds granularity.
-        :type timestamp: int
-        :type message: str
-        :rtype: bool
         """
         if message not in self.log or timestamp - self.log[message] >= 10:
             self.log[message] = timestamp
