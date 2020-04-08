@@ -8,7 +8,12 @@ import unittest2 as unittest
 
 
 class LoggerV1(object):
-    """ The idea is that we keep a hashtable with the message as key, and its timestamp as the value. The hashtable
+    """ It is imperative to clarify the conditions of the problem, since it was not explicit in the problem
+        description. Here is one important note:
+            It is possible that several messages arrive roughly at the same time.
+        We could interpret that the input messages are in chronological order, i.e. the timestamps of the messages are
+        monotonically increasing, though not strictly. This constraint is critical, since it would simplify the task.
+        The idea is that we keep a hashtable with the message as key, and its timestamp as the value. The hashtable
         keeps all the unique messages along with the latest timestamp that the message was printed.
         At the arrival of a new message, the message is eligible to be printed with either of the two conditions as
         follows:
@@ -46,15 +51,20 @@ class LoggerV1(object):
 class LoggerV2:
     """ The previous solution needs to keep the record of the entire messages, even when the message is rare.
         Alternatively, we can keep a queue to get rid of the old messages and set of strings to keep the recent
-        messages only. With each call to shouldPrintMessage(), we iterate over the queue and evict all the messages
+        messages only. With each call to should_print_message(), we iterate over the queue and evict all the messages
         whose timestamps are more than 10 seconds ago. These are old messages that are no longer looked at. This way,
         before deciding if the current message should be printed at the current timestamp, we only keep record of the
-        messages that arrived less than 10 seconds ago. If the new message can still be found in the queue, we return
-        False because it was printed less than 10 seconds ago. Otherwise, we add a new entry for the new timestamp/msg
-        pair in the queue and store the message in the messages' set.
-        Note that we don't have to use a priority queue to store the (timestamp,message) pairs because the messages are
+        messages that arrived less than 10 seconds ago. For example, the arrival of the message with the timestamp 18
+        would invalidate both the messages with the timestamp of 5 and 7 which go beyond the time window of 10 seconds.
+        If the new message can still be found in the messages set, we return False because it was printed less than 10
+        seconds ago. Otherwise, we add a new entry for the new (timestamp, message) pair in the queue and store the
+        message in the messages' set.
+        Note that we don't have to use a priority queue to store the (timestamp, message) pairs because the messages are
         given in sorted order in terms of timestamp.
         This solution keeps the hash map from blowing up.
+    Time complexity: O(N), where N is the size of the queue. In the worst case, all the messages in the queue become
+    obsolete. As a result, we need clean them up.
+    Space complexity: O(N), we keep the incoming messages in both the queue and set
     """
 
     def __init__(self):
@@ -64,14 +74,14 @@ class LoggerV2:
         self.queue = deque()
         self.messages = set()
 
-    def shouldPrintMessage(self, timestamp: int, message: str) -> bool:
+    def should_print_message(self, timestamp: int, message: str) -> bool:
         """
         Returns true if the message should be printed in the given timestamp, otherwise returns false.
         If this method returns false, the message will not be printed.
         The timestamp is in seconds granularity.
         """
         while self.queue and timestamp - self.queue[0][0] >= 10:
-            ts, msg = self.queue.popleft()
+            _, msg = self.queue.popleft()
             self.messages.remove(msg)
         if message not in self.messages:
             self.messages.add(message)
@@ -82,12 +92,12 @@ class LoggerV2:
 
 class Test(unittest.TestCase):
     logger = LoggerV2()
-    foo1 = logger.shouldPrintMessage(1, "foo")
-    bar1 = logger.shouldPrintMessage(2, "bar")
-    foo2 = logger.shouldPrintMessage(3, "foo")
-    bar2 = logger.shouldPrintMessage(8, "bar")
-    foo3 = logger.shouldPrintMessage(10, "foo")
-    foo4 = logger.shouldPrintMessage(11, "foo")
+    foo1 = logger.should_print_message(1, "foo")
+    bar1 = logger.should_print_message(2, "bar")
+    foo2 = logger.should_print_message(3, "foo")
+    bar2 = logger.should_print_message(8, "bar")
+    foo3 = logger.should_print_message(10, "foo")
+    foo4 = logger.should_print_message(11, "foo")
 
     def test_logger(self):
         self.assertTrue(self.foo1)
