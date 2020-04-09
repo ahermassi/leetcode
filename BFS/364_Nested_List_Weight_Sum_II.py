@@ -36,8 +36,8 @@ def depth_sum_inverse_v1(nestedList):
 
 
 def depth_sum_inverse_v2(nestedList):
-    """ The idea is to pass the previous found integer sum into the next level of recursion, so that we don't have to
-        count the number of levels in the nested list.
+    """ The idea is to pass the previously accumulated integer sum into the next level of recursion, so that we don't
+        have to count the number of levels in the nested list beforehand.
         This idea is different in that it always carries over the previous sum. How many times it goes deep, how many
         times the previous sum will be passed. Thus the previous sum will be included very naturally.
         Much like the previous solution, it achieves the multiplication effect using repeated addition.
@@ -47,16 +47,16 @@ def depth_sum_inverse_v2(nestedList):
     in the input. For example, D = 2 for the input [[1,1],2,[1,1]], and D = 3 for the input [1,[4,[6]]].
     """
 
-    def dfs(nested_list, pre):
-        int_sum = pre  # The sum of nestedIntegers always starts off with the previous sum
-        int_list = []
+    def dfs(nested_list, pre_sum):
+        cur_sum = pre_sum  # The sum of nestedIntegers always starts off with the previous sum
+        next_level = []
         for elem in nested_list:
             if elem.isInteger():
-                int_sum += elem.getInteger()
+                cur_sum += elem.getInteger()
             else:
-                int_list.extend(elem.getList())
-        list_sum = 0 if not int_list else dfs(int_list, int_sum)
-        return int_sum + list_sum
+                next_level.extend(elem.getList())
+        next_level_sum = 0 if not next_level else dfs(next_level, cur_sum)
+        return cur_sum + next_level_sum
 
     return dfs(nestedList, 0)
 
