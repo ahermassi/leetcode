@@ -13,9 +13,9 @@ def depth_sum_inverse_v1(nestedList):
         Each integer gets added one extra time for the mere existence of each one level under it.
         The concept of weight here is implemented with repeated addition. This naturally implements the multiplication
         logic - lower level sums are added multiple times to total sum.
-        Example: nestedList = [a, [b, [c]]]
-            1st level: level sum = a; total = a
-            2nd level: level sum = level sum + b = a + b; total = total + level sum = a + (a + b)
+        Example: nestedList = [a, [b, [c]]], queue = [a, [b, [c]]]
+            1st level: level sum = a; total = a; queue = [b, [c]]
+            2nd level: level sum = level sum + b = a + b; total = total + level sum = a + (a + b); queue = [c]
             3rd level: level sum = level sum + c = a + b + c; total = total + level sum = a + (a + b) + (a + b + c)
             --> total = 3a + 2b + c
     Time complexity: O(N), where N is the total number of NestedInteger objects
