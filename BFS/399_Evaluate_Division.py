@@ -14,33 +14,33 @@ def calc_equation_v1(equations, values, queries):
         a --2--> b --3--> c
         Visualize a/b = k as a link between node a and b, the weight from a to b is k, the reverse link is 1/k. Query
         is to find a path between two nodes.
-        We simply find a path using BFS from node 'a' to node 'c' and multiply the weights of edges, i.e. 2 * 3 = 6.
+        We simply find a path using BFS from node 'a' to node 'c' and multiply the weights of edges, node.e. 2 * 3 = 6.
     Time complexity: O(V ** 3), where V is the number of vertices
     Space complexity: O(V)
     """
 
-    def bfs(num, denom):
-        if num not in graph or denom not in graph:  # If either num or denom is not in graph, or num and denom are not
-            # connected in graph, the answer doesn't exist
-            return -1.0
-        if num == denom:
-            return 1.0
-        queue, visited = deque([(num, 1.0)]), set()  # A separate 'visited' set for each query
+    def bfs(src, dest):
+        if src not in graph or dest not in graph:  # If either source or destination node is not in the graph, the
+            # answer doesn't exist
+            return -1
+        if src == dest:
+            return 1
+        queue, visited = deque([(src, 1.0)]), set()  # A separate 'visited' set for each query
         while queue:
-            i, current_product = queue.popleft()
-            if i == denom:
-                return current_product
-            visited.add(i)
-            for neighbor, coef in graph[i]:
+            node, cur_prod = queue.popleft()
+            if node == dest:
+                return cur_prod
+            visited.add(node)
+            for neighbor in graph[node]:
                 if neighbor not in visited:
-                    queue.append((neighbor, current_product * coef))
-        return -1.0
+                    queue.append((neighbor, cur_prod * graph[node][neighbor]))
+        return -1
 
-    graph = defaultdict(list)
-    for (num, denom), coef in zip(equations, values):
-        graph[num].append((denom, coef))
-        graph[denom].append((num, 1 / coef))
-    res = [bfs(x, y) for x, y in queries]
+    graph = defaultdict(dict)
+    for (src, dest), coef in zip(equations, values):
+        graph[src][dest] = coef
+        graph[dest][src] = 1 / coef
+    res = [bfs(src, dest) for src, dest in queries]
     return res
 
 
