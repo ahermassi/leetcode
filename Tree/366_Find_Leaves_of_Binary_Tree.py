@@ -1,7 +1,7 @@
 """ Given a binary tree, collect a tree's nodes as if you were doing this: Collect and remove all leaves,
 repeat until the tree is empty. """
 
-import collections
+from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -23,20 +23,18 @@ def find_leaves_v1(root):
 
     def find_height(root):
         if not root:
-            return 0
-        left_height = find_height(root.left)
-        right_height = find_height(root.right)
-        height = 1 + max(left_height, right_height)
+            return -1
+        height = 1 + max(find_height(root.left), find_height(root.right))
         heights[height].append(root.val)
         return height
 
-    heights = collections.defaultdict(list)
+    heights = defaultdict(list)
     find_height(root)
-    return list(heights.values())
+    return heights.values()
 
 
 def find_leaves_v2(root):
-    """ Same solution but without using a hash map. The height of a node is also the its index in the result list 'res'.
+    """ Same solution but without using a hash map. The height of a node is also its index in the result list 'res'.
         For example, leaves, whose heights are 0, are stored in res[0]. Once we find the height of a node, we can put
         it directly into the result.
     Time complexity: O(N)
