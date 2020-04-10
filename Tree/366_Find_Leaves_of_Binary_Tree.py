@@ -45,7 +45,7 @@ def find_leaves_v2(root):
         if not root:
             return -1
         height = 1 + max(find_height(root.left), find_height(root.right))
-        if height == len(res):  # This is where check that we have a new height not encountered previously
+        if height == len(res):  # This is where we check that we have a new height not encountered previously
             res.append([])
         res[height].append(root.val)
         return height
