@@ -1,18 +1,20 @@
 """ Equations are given in the format A / B = k, where A and B are variables represented as strings, and k is a real
 number (floating point number). Given some queries, return the answers. If the answer does not exist, return -1.0. """
-from collections import deque, defaultdict
 
+from collections import deque, defaultdict
 import unittest2 as unittest
 
 
 def calc_equation_v1(equations, values, queries):
     """ Binary relationship is usually represented as a graph.
-        Does the direction of an edge matters? -- Yes. Take a / b = 2 for example, it indicates a --2--> b as well
+        Does the direction of an edge matter? Yes. Take a / b = 2 for example, it indicates a --2--> b as well
         as b --1/2--> a. Thus, it is a directed weighted graph.
         In this graph, how do we evaluate division?
         Take a / b = 2, b / c = 3, a / c = ? for example:
         a --2--> b --3--> c
-        We simply find a path using BFS from node a to node c and multiply the weights of edges passed, i.e. 2 * 3 = 6.
+        Visualize a/b = k as a link between node a and b, the weight from a to b is k, the reverse link is 1/k. Query
+        is to find a path between two nodes.
+        We simply find a path using BFS from node 'a' to node 'c' and multiply the weights of edges, i.e. 2 * 3 = 6.
     Time complexity: O(V ** 3), where V is the number of vertices
     Space complexity: O(V)
     """
@@ -48,23 +50,26 @@ def calc_equation_v2(equations, values, queries):
     Space complexity: TODO
     """
 
-    def dfs(num, denom, visited, current_product):
-        if num not in graph or denom not in graph or num in visited:
-            return -1.0
-        if num == denom:
-            return current_product
-        visited.add(num)
-        for neighbor, coef in graph[num]:
-            temp = dfs(neighbor, denom, visited, current_product * coef)
-            if temp != -1.0:
+    def dfs(src, dest, cur_prod, visited):
+        if src not in graph or dest not in graph or src in visited:
+            return -1
+        if src == dest:
+            return 1
+        if dest in graph[src]:
+            return cur_prod * graph[src][dest]
+        visited.add(src)
+        for neighbor in graph[src]:
+            temp = dfs(neighbor, dest, cur_prod * graph[src][neighbor], visited)
+            if temp != -1:
                 return temp
-        return -1.0
+        return -1
 
-    graph, visited = defaultdict(list), set()
-    for (num, denom), coef in zip(equations, values):
-        graph[num].append((denom, coef))
-        graph[denom].append((num, 1 / coef))
-    return [dfs(x, y, set(), 1.0) for x, y in queries]  # Note that we have to pass a new 'visited' set for each query
+    graph = defaultdict(dict)
+    for (src, dest), coef in zip(equations, values):
+        graph[src][dest] = coef
+        graph[dest][src] = 1 / coef
+    return [dfs(src, dest, 1, set()) for src, dest in queries]  # Note that we have to pass a new 'visited' set for
+    # each query
 
 
 class Test(unittest.TestCase):
