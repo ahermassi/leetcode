@@ -32,12 +32,39 @@ def find_target_sum_ways_v1(nums, S):
     return values[0]
 
 
+def find_target_sum_ways_v2(nums, S):
+    """ It can be easily observed that in the last approach, a lot of redundant function calls could be made with the
+        same value of 'index' as the current index and the same value of 'total' as the current sum, since the same
+        values could be obtained through multiple paths in the recursion tree. In order to remove this redundancy,
+        we make use of memoization as well to store the results which have been calculated earlier.
+        Thus, for every call to dfs(index, total), we store the result obtained in memo[(index, total)]. By making use
+        of memoization, we can prune the search space to a good extent.
+    Time complexity: O(N * L), where L = (largest sum that can be created - smallest sum that can be created). For
+    example, for input array [1, 2, 3], the largest sum that can be created from input is 1 + 2 + 3 = 6, and the
+    smallest sum that can be created is -1 - 2 - 3 = -6, so L= 6- (-6) = 12
+    Space complexity: O(N)
+    """
+
+    def dfs(index, total):
+        if index == n:
+            return 1 if total == S else 0
+        if (index, total) not in memo:
+            plus = dfs(index + 1, total + nums[index])
+            minus = dfs(index + 1, total - nums[index])
+            memo[(index, total)] = plus + minus
+        return memo[(index, total)]
+
+    n, memo = len(nums), {}
+    return dfs(0, 0)
+
+
 class Test(unittest.TestCase):
     data = [([1, 1, 1, 1, 1], 3, 5)]
 
     def test_find_target_sum_ways(self):
         for test_nums, test_s, result in self.data:
             self.assertEqual(result, find_target_sum_ways_v1(test_nums, test_s))
+            self.assertEqual(result, find_target_sum_ways_v2(test_nums, test_s))
 
 
 if __name__ == '__main__':
