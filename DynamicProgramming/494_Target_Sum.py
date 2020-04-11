@@ -98,6 +98,32 @@ def find_target_sum_ways_v3(nums, S):
     # (n-1) elements, or the entire array
 
 
+def find_target_sum_ways_v4(nums, S):
+    """ If we look closely at the last solution, we can observe that for the evaluation of the current row of dp,
+        only the values of the last row of dp are needed. Thus, we can save some space by using a 1D dp array instead
+        of a 2D dp array. The only difference that needs to be made is that now the same dp array will be updated for
+        every row traversed.
+    Time complexity: O(N * L)
+    Space complexity: O(L)
+    """
+    n, s = len(nums), sum(nums)
+    if S > s or S < -s:
+        return 0
+    pre, cur = [0] * (2 * s + 1), [0] * (2 * s + 1)
+    pre[nums[0] + s] = 1
+    pre[-nums[0] + s] += 1
+    for i in range(1, n):
+        for j in range(2 * s + 1):
+            plus = minus = 0
+            if j - nums[i] >= 0:
+                minus += pre[j - nums[i]]
+            if j + nums[i] <= 2 * s:
+                plus += pre[j + nums[i]]
+            cur[j] = minus + plus
+        pre, cur = cur, [0] * (2 * s + 1)
+    return pre[S + s]
+
+
 class Test(unittest.TestCase):
     data = [([1, 1, 1, 1, 1], 3, 5)]
 
@@ -106,6 +132,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, find_target_sum_ways_v1(test_nums, test_s))
             self.assertEqual(result, find_target_sum_ways_v2(test_nums, test_s))
             self.assertEqual(result, find_target_sum_ways_v3(test_nums, test_s))
+            self.assertEqual(result, find_target_sum_ways_v4(test_nums, test_s))
 
 
 if __name__ == '__main__':
