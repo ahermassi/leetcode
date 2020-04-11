@@ -114,12 +114,10 @@ def find_target_sum_ways_v4(nums, S):
     pre[-nums[0] + s] += 1
     for i in range(1, n):
         for j in range(2 * s + 1):
-            plus = minus = 0
             if j - nums[i] >= 0:
-                minus += pre[j - nums[i]]
+                cur[j] += pre[j - nums[i]]
             if j + nums[i] <= 2 * s:
-                plus += pre[j + nums[i]]
-            cur[j] = minus + plus
+                cur[j] += pre[j + nums[i]]
         pre, cur = cur, [0] * (2 * s + 1)
     return pre[S + s]
 
