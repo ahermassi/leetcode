@@ -56,29 +56,33 @@ def longest_palindrome_subseq_v2(s):
 # https://leetcode.com/problems/longest-palindromic-subsequence/discuss/216717/Python-DP-solution-w-explanation
 
 def longest_palindrome_subseq_v3(s):
-    """ Bottom-up Dynamic Programming.
-        Let dp[i][j] be the longest palindromic sub sequence length of substring(i, j).
+    """ Bottom-up dynamic programming.
+        Let dp[i][j] be the longest palindromic sub-sequence length of substring (i, j).
         State transition:
-            dp[i][j] = dp[i+1][j-1] + 2 if s[i] == s[j]
-            otherwise, dp[i][j] = Math.max(dp[i+1][j], dp[i][j-1])
-            Initialization: dp[i][i] = 1
-        We will be considering substrings starting at left and ending at right (inclusive). To do this we iterate over
-        all lengths from 1 to n, and within each length iterate over staring (or left) position. The key is that we
+        If s[i] == s[j]:
+            dp[i][j] = 2 + dp[i + 1][j - 1]
+        Otherwise:
+            dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])
+        Initialization: dp[i][i] = 1
+        We will be considering substrings starting at i and ending at j (inclusive). To do this, we iterate over
+        all lengths from 1 to n, and within each length iterate over starting (or left) position. The key is that we
         get the answers for a single length at all start positions before going to the next length because the DP
         depends on the answers from shorter lengths. If we do it this way, we will have 3 cases to consider on every
-        iteration, pick the one with the highest value:
+        iteration, from which we pick the one with the highest value:
             The answer from removing the left edge char
             The answer from removing the right edge char
             And if the left and right chars are equal, 2 plus the answer from removing both left and right chars
-    Time complexity: O(N ** 2)
-    Space complexity: O(N ** 2)
+    Time complexity: O(N^2)
+    Space complexity: O(N^2)
     """
     n = len(s)
     if s == s[::-1]:
         return n
-    dp = [[0 for _ in range(n)] for _ in range(n)]
-    for i in reversed(range(n)):
+    dp = [[0] * n for _ in range(n)]
+    for i in range(n):
         dp[i][i] = 1
+    for i in reversed(range(n)):  # dp[i][j] depends on dp[i+1][j-1], this is the reason i goes from (n - 1) to 0. In
+        # other words, the result of substrings of length L depends on those of length (L - 1)
         for j in range(i + 1, n):
             if s[i] == s[j]:
                 dp[i][j] = dp[i + 1][j - 1] + 2
