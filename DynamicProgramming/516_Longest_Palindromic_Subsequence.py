@@ -25,28 +25,30 @@ def longest_palindrome_subseq_v1(s):
 
 
 def longest_palindrome_subseq_v2(s):
-    """ Top-down dynamic programming. Improving the brute force with memoization of intermediate calculations. No TLE.
+    """ Top-down dynamic programming.
+        Improving the brute force with memoization of intermediate calculations.
         Without memoization, the time complexity would be O(2^N). This follows from the fact that any recursive
         function's time complexity is O(branches^depth). However, because we are memoizing, we 'prune' the recursive
         tree and do not recurse into/solve the same sub-problem twice. We can prove this by drawing the recursive call
         tree without memoization, we will see that there will be MANY overlapping sub problems. But because we memoize,
-        in the worst case, we only need to solve all sub problems ONCE, of which there are an upper bound of N^2 total.
-    Time complexity: O(N ** 2)
-    Space complexity: O(2 ^ N), recursion call stack and 'memo' hash map
+        in the worst case, we only need to solve all sub problems ONCE, of which there is an upper bound of N^2.
+    Time complexity: O(N^2)
+    Space complexity: O(2^N), recursion call stack and memo map
     """
-    def helper(i, j):
-        if i > j:
+
+    def helper(left, right):
+        if left == right:
+            return 1
+        if left > right:
             return 0
-        if (i, j) in memo:
-            return memo[(i, j)]
-        if s[i] == s[j]:
-            memo[(i + 1, j - 1)] = helper(i + 1, j - 1)
-            return 2 + memo[(i + 1, j - 1)]
-        memo[(i + 1, j)], memo[(i, j - 1)] = helper(i + 1, j), helper(i, j - 1)
-        return max(memo[(i + 1, j)], memo[(i, j - 1)])
+        if s[left] == s[right]:
+            return 2 + helper(left + 1, right - 1)
+        if (left, right) not in memo:
+            memo[(left, right)] = max(helper(left + 1, right), helper(left, right - 1))
+        return memo[(left, right)]
 
     n = len(s)
-    memo = {(i, i): 1 for i in range(n)}  # Base case (i == j)
+    memo = {(i, i): 1 for i in range(n)}
     return helper(0, n - 1)
 
 
