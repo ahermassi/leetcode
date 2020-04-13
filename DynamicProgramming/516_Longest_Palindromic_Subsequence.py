@@ -6,19 +6,19 @@ import unittest2 as unittest
 
 def longest_palindrome_subseq_v1(s):
     """ Brute force. TLE
-        If the two ends of a string are the same, then they must be included in the longest palindrome sub sequence.
-        Otherwise, both ends cannot be included in the longest palindrome sub sequence.
+        If the two ends of a string are the same, then they must be included in the longest palindromic sub-sequence.
+        Otherwise, both ends cannot be included in the longest palindromic sub-sequence.
     Time complexity: O(2^N)
     Space complexity: O(N), recursion call stack
     """
-    def helper(i, j):
-        if i == j:
+    def helper(left, right):  # helper(left, right) is the longest palindromic substring in s[left:right+1]
+        if left == right:
             return 1
-        if i > j:
+        if left > right:
             return 0
-        if s[i] == s[j]:
-            return 2 + helper(i + 1, j - 1)
-        return max(helper(i + 1, j), helper(i, j - 1))
+        if s[left] == s[right]:
+            return 2 + helper(left + 1, right - 1)
+        return max(helper(left + 1, right), helper(left, right - 1))
 
     n = len(s)
     return helper(0, n - 1)
