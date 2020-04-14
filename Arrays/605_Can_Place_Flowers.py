@@ -30,7 +30,7 @@ def can_place_flowers_v1(flowerbed, n):
 
 
 def can_place_flowers_v2(flowerbed, n):
-    """ This solution is more suitable when the input array is read-only.
+    """ This solution is more suitable when the array is read-only.
         If there are 'zero_count' zeroes in between two 1s, then how many 1s can we place in those zeroes without
         violating the given condition? Answer is (zero_count-1)/2. The only cases this doesn't apply are when there are
         zeroes (1 or more):
