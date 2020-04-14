@@ -12,30 +12,34 @@ def can_place_flowers_v1(flowerbed, n):
         are 0 (implying an empty position). For every such element, we check if its both adjacent positions are also
         empty. If so, we can plant a flower at the current position without violating the no-adjacent-flowers-rule.
         For the first and last elements, we need not check the previous and the next adjacent positions, respectively.
-        If the 'count' obtained is greater than or equal to n, the required number of flowers to be planted, we can
-        plant n flowers in the empty spaces, otherwise not.
+        We can stop the process of checking the positions for planting the flowers as soon as 'count' becomes equal to
+        n. If 'count' never becomes equal to n, n flowers can't be planted at the empty positions.
     Time complexity: O(N)
     Space complexity: O(1)
     """
+    if not n:
+        return True
     m, count = len(flowerbed), 0
     for i in range(m):
         if flowerbed[i] == 0 and (i == 0 or flowerbed[i - 1] == 0) and (i == m - 1 or flowerbed[i + 1] == 0):
             flowerbed[i] = 1
             count += 1
-    return count >= n
+            if count == n:
+                return True
+    return False
 
 
 def can_place_flowers_v2(flowerbed, n):
     """ This solution is more suitable when the input array is read-only.
-        If there are 'count' zeroes in between two 1s, then how many 1s can we place in those zeroes without violating
-        the given condition? Answer is (count-1)/2. The only cases this doesn't apply are when there are zeroes
-        (1 or more):
+        If there are 'zero_count' zeroes in between two 1s, then how many 1s can we place in those zeroes without
+        violating the given condition? Answer is (zero_count-1)/2. The only cases this doesn't apply are when there are
+        zeroes (1 or more):
             1- At the beginning of the array.
             2- At the end of the array.
-        For these 2 cases, the number of 1s that we can place is count/2. But to generalize the algorithm and to
-        simplify code inside loop, 'count' is initialized to 1 for the first time and result += (count-1)/2 effectively
-        becomes result += count/2 for the case 1. For case 2, result is updated outside the loop, again by
-        count/2 times.
+        For these 2 cases, the number of 1s that we can place is zero_count/2. But to generalize the algorithm and to
+        simplify code inside loop, 'zero_count' is initialized to 1 for the first time and result += (zero_count-1)/2
+        effectively becomes result += count/2 for the case 1. For case 2, result is updated outside the loop, again by
+        zero_count/2 times.
         Finally, we check if the number of possible 1s that we can place is greater than or equal to n. If so, we
         return true else false.
     Time complexity: O(N)
@@ -43,15 +47,15 @@ def can_place_flowers_v2(flowerbed, n):
     """
     if not n:
         return True
-    count, res = 1, 0
+    zero_count, res = 1, 0
     for flower in flowerbed:
         if not flower:
-            count += 1
+            zero_count += 1
         else:
-            res += (count - 1) // 2
-            count = 0
-    if count:
-        res += count // 2
+            res += (zero_count - 1) // 2
+            zero_count = 0
+    if zero_count:
+        res += zero_count // 2
     return res >= n
 
 
