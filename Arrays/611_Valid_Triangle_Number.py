@@ -4,7 +4,7 @@ array that can make triangles if we take them as side lengths of a triangle. """
 import unittest2 as unittest
 
 
-def triangle_number(nums):
+def triangle_number_v1(nums):
     """ The condition for the triplets (a, b, c), representing the lengths of the sides of a triangle, to form a valid
         triangle is that the sum of any two sides should always be greater than the third side alone. i.e. a + b > c,
         b + c > a, a + c > b.
@@ -43,6 +43,24 @@ def triangle_number(nums):
     """
     nums.sort()
     n, res = len(nums), 0
+    for k in range(2, n):
+        i, j = 0, k - 1
+        while i < j:
+            if nums[i] + nums[j] > nums[k]:
+                res += j - i
+                j -= 1
+            else:
+                i += 1
+    return res
+
+
+def triangle_number_v2(nums):
+    """ Same solution, but scanning the array backwards.
+    Time complexity: O(N^2)
+    Space complexity: O(N), for the sort
+    """
+    nums.sort()
+    n, res = len(nums), 0
     for k in reversed(range(n)):
         i, j = 0, k - 1
         while i < j:
@@ -59,7 +77,8 @@ class Test(unittest.TestCase):
 
     def test_triangle_number(self):
         for test_nums, result in self.data:
-            self.assertEqual(result, triangle_number(test_nums))
+            self.assertEqual(result, triangle_number_v1(test_nums))
+            self.assertEqual(result, triangle_number_v2(test_nums))
 
 
 if __name__ == '__main__':
