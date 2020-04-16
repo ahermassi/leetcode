@@ -31,25 +31,23 @@ def find_target_v1(root, k):
 
     values = set()
     return dfs(root)
-    # if not root:
-    #     return False
-    # values, nodes = set(), [root]
-    # while nodes:
-    #     node = nodes.pop()
-    #     if k - node.val in values:
-    #         return True
-    #     values.add(node.val)
-    #     nodes.extend([kid for kid in (node.left, node.right) if kid])
-    # return False
 
 
 def find_target_v2(root, k):
-    """ Recursive DFS version of above solution.
+    """ Iterative DFS version of the previous solution.
     Time complexity: O(N)
     Space complexity: O(N)
     """
-
-
+    if not root:
+        return False
+    values, stack = set(), [root]
+    while stack:
+        node = stack.pop()
+        if k - node.val in values:
+            return True
+        values.add(node.val)
+        stack.extend([kid for kid in (node.left, node.right) if kid])
+    return False
 
 
 def find_target_v3(root, k):
