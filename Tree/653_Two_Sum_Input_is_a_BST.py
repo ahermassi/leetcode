@@ -15,21 +15,32 @@ class TreeNode(object):
 
 def find_target_v1(root, k):
     """ Check out problem 1. Two Sum. Same logic.
-    While we traverse the tree and insert nodes' values into the set, we also look back to check if current node's
-    complement already exists in the set. If it exists, we have found a solution and return immediately.
+        While we traverse the tree in a DFS manner and insert nodes' values into the set, we also look back to check if
+        current node's complement already exists in the set. If it exists, we have found a solution and return
+        immediately.
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    if not root:
-        return False
-    vals, nodes = set(), [root]
-    while nodes:
-        node = nodes.pop()
-        if k - node.val in vals:
+    def dfs(root):
+        if not root:
+            return False
+        if k - root.val in values:
             return True
-        vals.add(node.val)
-        nodes.extend([kid for kid in (node.left, node.right) if kid])
-    return False
+        values.add(root.val)
+        return dfs(root.left) or dfs(root.right)
+
+    values = set()
+    return dfs(root)
+    # if not root:
+    #     return False
+    # values, nodes = set(), [root]
+    # while nodes:
+    #     node = nodes.pop()
+    #     if k - node.val in values:
+    #         return True
+    #     values.add(node.val)
+    #     nodes.extend([kid for kid in (node.left, node.right) if kid])
+    # return False
 
 
 def find_target_v2(root, k):
@@ -38,16 +49,7 @@ def find_target_v2(root, k):
     Space complexity: O(N)
     """
 
-    def dfs(root):
-        if not root:
-            return False
-        if k - root.val in vals:
-            return True
-        vals.add(root.val)
-        return dfs(root.left) or dfs(root.right)
 
-    vals = set()
-    return dfs(root)
 
 
 def find_target_v3(root, k):
