@@ -62,15 +62,15 @@ def can_partition_k_subsets_v2(nums, k):
             if bucket[i] <= target and dfs(index + 1):  # No overflow in bucket, so move on to next item
                 return True
             bucket[i] -= nums[index]  # No solution, wrong bucket. Take item out
-            if bucket[i] == 0:  # No need to try other empty bucket. This line means that we tried to insert an
+            if bucket[i] == 0:  # No need to try another empty bucket. This line means that we tried to insert an
                 # element in this bucket and moved on to the next elements and they did not match. So we remove this
                 # element from this bucket in order to try other combinations. But if we tried to put the biggest
-                # number in an empty bucket and it did not fit, whats the point to try another smallest items? We
+                # number in an empty bucket and it did not fit, what's the point in trying another smallest item? We
                 # will have to fit the biggest in another bucket but we already tried the best bucket which is the
-                # empty one. So if by putting nums[index] in this empty bucket can't solve the game, putting nums[index]
-                # on other empty buckets can't solve the game either.
-                # Without this check, we are actually making each bucket unique.
-                # However, it doesn't make sense because all buckets have the same size and they are the same.
+                # empty one. So if putting nums[index] in this empty bucket can't solve the game, putting nums[index]
+                # in other empty buckets can't solve the game either.
+                # Without this check, we are actually making each bucket unique. However, it doesn't make sense because
+                # all buckets have the same size and they are the same.
                 # If a single number couldn't fit into one bucket, it is a waste of time to put it into the other
                 # bucket.
                 break
