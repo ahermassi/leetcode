@@ -4,38 +4,46 @@ non-empty subsets whose sums are all equal. """
 import unittest2 as unittest
 
 
+# Watch: https://www.youtube.com/watch?v=qpgqhp_9d1s
+
 def can_partition_k_subsets_v1(nums, k):
-    """ Assume sum is the sum of nums[] . The DFS/backtracking process is to find a subset of nums[] which sum equals
-        to target = sum/k. We use an array used[] to record which element in nums[] is used. Each time when we get a
-        cur_sum = target, we will start from position 0 in nums[] to look up the elements that are not used yet and
-        find another cur_sum = target. We exhaustively try all the possible combinations.
+    """ Assume 'total' is the sum of nums . The DFS/backtracking process is to find a subset of nums whose sum is equal
+        to target = total/k. We use a 'used' set to record which element in nums is used.
+        Each recursion frame will go through and try placing an item that has not been placed in a bucket and then we
+        recurse with that item placed. This is why we advance start index by 1, we only use items past the item we just
+        picked. We also add the item's value to our working sum. When we have filled a bucket, we will continue on with
+        the recursion while keeping the used items marked as seen and we set the start index to 0 since the whole array
+        is eligible again as long as an item has not been used yet and we set the working sum to 0 since we are working
+        on a new bucket.
+        When we fill (k - 1) buckets, we are done. This is because if we filled (k - 1) buckets, the last bucket MUST
+        be fillable since sum(nums) % k == 0.
     Time complexity: not trivial to calculate
-    Space complexity: O(N) for call stack and 'used' array, where N is the length of nums
+    Space complexity: O(N), for call stack and 'used' set, where N is the length of nums
     """
-    def helper(index, k, cur_sum, target):
+    def dfs(index, k, cur_sum):
         if k == 1:  # If we have filled all (k - 1) subsets/buckets up to this point and we are now on our last subset,
             # we can stop and be finished.
             return True
         if cur_sum == target:
-            return helper(0, k - 1, 0, target)  # Subset full. continue the recursion with (k - 1) as the new k value,
-            # BUT the target stays the same. We just have 1 less subset to fill.
+            return dfs(0, k - 1, 0)  # Subset full. Continue the recursion with (k - 1) as the new k value. We just
+            # have 1 less subset to fill.
         for i in range(index, n):
-            if not used[i] and cur_sum + nums[i] <= target:  # Try all values from 'index' to the end of array ONLY if:
+            if i not in used and cur_sum + nums[i] <= target:  # Try all values from 'index' to end of array ONLY if:
                 # 1- They have not been used up to this point in the recursion's path
-                # 2- They do not overflow  the current subset/bucket we are filling
-                used[i] = True
-                if helper(i + 1, k, cur_sum + nums[i], target):  # See if we can partition from this point with the
-                    # item added to the current subset progress
+                # 2- They do not overflow the current subset/bucket we are filling
+                used.add(i)
+                if dfs(i + 1, k, cur_sum + nums[i]):  # See if we can partition from this point with the item added to
+                    # the current subset progress
                     return True
-                used[i] = False  # This is where we backtrack and drop the previous choice of nums[i]
+                used.remove(i)  # This is where we backtrack and drop the previous choice of nums[i]
         return False
 
     total = sum(nums)
     if total % k != 0:
         return False
-    target = total // k
-    used, n = [False for _ in range(len(nums))], len(nums)
-    return helper(0, k, 0, target)
+    n, target = len(nums), total // k
+    used = set()
+    return dfs(0, k, 0)
 
 
 def can_partition_k_subsets_v2(nums, k):
