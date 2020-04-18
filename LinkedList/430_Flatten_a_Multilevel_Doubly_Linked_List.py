@@ -42,13 +42,13 @@ def flatten_v1(head):
 
 def flatten_v2(head):
     """ Start form the head , move one step each time to the next node.
-        When a node with child is met, say node p, follow its child chain to the end and connect the tail node with
-        p.next, by doing this we merge the child chain back to the main list.
-        Return to p and proceed until finding next node with child.
+        When a node 'cur' with child is met, follow its child chain to the end and connect the tail node with cur.next,
+        by doing this we merge the child chain back to the main list.
+        Return to 'cur' and proceed until finding next node with child.
         Repeat until reaching the end of list.
-        This is more like a top down flattening, when encounter a node with child node, we directly flatten the current
-        node, then move to the next node.
-        This solution performs Multiple passes over the list as nodes could be visited more than once, as many as there
+        This is more like a top-down flattening. When we encounter a node with child node, we directly flatten the
+        current node, then move to the next node.
+        This solution performs multiple passes over the list as nodes could be visited more than once, as many as there
         are levels in the list.
     Time complexity: O(N)
     Space complexity: O(1)
@@ -68,6 +68,42 @@ def flatten_v2(head):
                 child.next.prev = child
         cur = cur.next
     return head
+
+
+def flatten_v3(head):
+    """ Another iterative solution using a stack.
+        The stack data structure helps us to construct the iteration sequence as the one created by recursion.
+        We create a stack and then we push the head node to the stack. In addition, we create a node called 'pre' which
+        would help us to track the precedent node at each step during the iteration.
+        Within the loop, at each step, we first pop out a node 'cur' from the stack. Then we establish the links
+        between 'pre and 'cur'. Then in the following steps, we take care of the nodes pointed by the cur.next and
+        cur.child pointers respectively, and strictly in this order.
+        If cur.next does exist (i.e. there exists a right subtree), we then push the node into the stack for the next
+        iteration.
+        If cur.child does exist (i.e. there exists a left subtree), we then push the node into the stack. In addition,
+        we need to clean up the cur.child pointer since it should not be present in the final result.
+        Due to the LIFO order of the stack, a child node (if it exists) is popped out in the next iteration before the
+        next pointer's node, which is the essence of flattening.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not head:
+        return None
+    dummy = Node(0, None, head, None)
+    pre = dummy
+    stack = [head]
+    while stack:
+        cur = stack.pop()
+        cur.prev = pre
+        pre.next = cur
+        if cur.next:
+            stack.append(cur.next)
+        if cur.child:
+            stack.append(cur.child)
+            cur.child = None
+        pre = pre.next
+    dummy.next.prev = None
+    return dummy.next
 
 
 
