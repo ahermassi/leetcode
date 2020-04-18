@@ -43,21 +43,26 @@ def network_delay_time_v1(times, N, K):
 
 def network_delay_time_v2(times, N, K):
     """ Dijkstra's algorithm using priority queue (heap).
-    Time complexity: O(E logE), since heap might store E number of edges and each operation takes log E
+        We use a priority queue to store all the nodes we encounter and their distances to K using a tuple
+        (distance to K, node). For every node we visit, if its distance to K is determined, we don't need to look at it
+        anymore because we always pop the nearest one to K in the priority queue, so we can be sure that the distance
+        is the shortest. Otherwise, we keep on exploring its neighbors. [4]
+        If we don't visit every node we return -1, else we return the node which takes the longest time to reach.
+    Time complexity: O(E logE), since heap might store E number of edges and each operation takes logE
     Space complexity: O(E), graph and heap store at most E number of entries
     """
-    graph = defaultdict(list)
-    for u, v, w in times:
-        graph[u].append((v, w))
-    time = {}
-    heap = [(0, K)]
+    graph = defaultdict(dict)
+    for source, destination, time in times:
+        graph[source][destination] = time
+    time, heap = {}, [(0, K)]
     while heap:
-        t, node = heappop(heap)
+        cur_time, node = heappop(heap)
         if node in time:
             continue
-        time[node] = t
-        for v, w in graph[node]:
-            heappush(heap, (t + w, v))
+        time[node] = cur_time  # If we arrive at a node, we're sure we got here in the least amount of time since we
+        # use a min heap
+        for neighbor, t in graph[node].items():
+            heappush(heap, (cur_time + t, neighbor))  # The min heap is sorted in ascending order of time
     return max(time.values()) if len(time) == N else -1
 
 
