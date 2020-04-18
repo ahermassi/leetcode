@@ -42,7 +42,8 @@ def network_delay_time_v1(times, N, K):
 
 
 def network_delay_time_v2(times, N, K):
-    """ Dijkstra's algorithm using priority queue (heap).
+    """ Dijkstra's algorithm using priority queue (heap). The algorithm is based on repeatedly making the candidate
+        move that has the least distance traveled.
         We use a priority queue to store all the nodes we encounter and their distances to K using a tuple
         (distance to K, node). For every node we visit, if its distance to K is determined, we don't need to look at it
         anymore because we always pop the nearest one to K in the priority queue, so we can be sure that the distance
@@ -67,27 +68,26 @@ def network_delay_time_v2(times, N, K):
 
 
 def network_delay_time_v3(times, N, K):
-    """ Slight improvement over Dijkstra's algorithm using priority queue (heap). In fact, we don't have to pop all
-        the elements from the heap, and we can terminate early when N = 0, since when N = 0 we have visited all the
-        nodes along the shortest path from the source node,
+    """ Slight improvement of the previous solution. In fact, we don't have to pop all the elements from the heap, and
+        we can terminate early when N = 0, since when N = 0 we have visited all the nodes along the shortest path from
+        the source node.
     Time complexity: O(E logE)
     Space complexity: O(E)
     """
-    graph = defaultdict(list)
-    for u, v, w in times:
-        graph[u].append((v, w))
-    time = {}
-    heap = [(0, K)]
+    graph = defaultdict(dict)
+    for source, destination, time in times:
+        graph[source][destination] = time
+    time, heap = {}, [(0, K)]
     while heap:
-        t, node = heappop(heap)
+        cur_time, node = heappop(heap)
         if node in time:
             continue
-        time[node] = t
+        time[node] = cur_time
         N -= 1  # Improvement
         if not N:
             return max(time.values())
-        for v, w in graph[node]:
-            heappush(heap, (t + w, v))
+        for neighbor, t in graph[node].items():
+            heappush(heap, (cur_time + t, neighbor))
     return -1
 
 
