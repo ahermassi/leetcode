@@ -16,6 +16,31 @@ class Node(object):
 
 
 def flatten_v1(head):
+    """ If we turn the list 90 degrees around the clock, then suddenly a binary tree appears in front of us, and the
+        flatten operation is basically what we call pre-order DFS traversal (Depth-First Search). We could consider the
+        child pointer as the left pointer in binary tree which points to the left sub-tree (sublist). Similarly, the
+        next pointer can be considered as the right pointer in binary tree. Then if we traverse the tree in pre-order
+        DFS, it would generate the same visiting sequence as the flatten operation in our problem.
+    Time complexity: O(N), the DFS algorithm traverses each node once
+    Space complexity: O(N), for call stack
+    """
+    cur = head
+    while cur:
+        if cur.child:
+            nxt = cur.next
+            cur.next = flatten_v1(cur.child)
+            cur.next.prev = cur
+            cur.child = None
+            while cur.next:
+                cur = cur.next
+            if nxt:
+                cur.next = nxt
+                cur.next.prev = cur
+        cur = cur.next
+    return head
+
+
+def flatten_v2(head):
     """ Start form the head , move one step each time to the next node.
         When a node with child is met, say node p, follow its child chain to the end and connect the tail node with
         p.next, by doing this we merge the child chain back to the main list.
@@ -41,28 +66,6 @@ def flatten_v1(head):
             child.next = nxt
             if nxt:
                 child.next.prev = child
-        cur = cur.next
-    return head
-
-
-def flatten_v2(head):
-    """ Recursive version of above algorithm. This is more like a bottom up flattening or DFS, when we encounter a
-        node with a child node, we flatten the child node first, then flatten the current node.
-    Time complexity: O(N)
-    Space complexity: O(N) for call stack
-    """
-    cur = head
-    while cur:
-        if cur.child:
-            nxt = cur.next
-            cur.next = flatten_v2(cur.child)
-            cur.next.prev = cur
-            cur.child = None
-            while cur.next:
-                cur = cur.next
-            if nxt:
-                cur.next = nxt
-                cur.next.prev = cur
         cur = cur.next
     return head
 
