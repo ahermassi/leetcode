@@ -54,6 +54,27 @@ def num_friend_requests_v2(ages):
     return res
 
 
+def num_friend_requests_v3(ages):
+    """ We need a way to easily calculate the number of people in the range of [0.5 * age_a + 8, age_a].
+        We can optimize the counting by using a sliding sum of friend requests. younger_or_same_age[i] is the number of
+        people who are younger or at the same age as person i. This quantity is important because it can give us fast
+        access to the number of people whom this person can friend request. This number is:
+            younger_or_same_age[i] - younger_or_same_age[i // 2 + 7]
+        If j <= i // 2 + 7, person i can't send a friend request to person j according to the first rule.
+    Time complexity: O(N + A), where N is the number of people and A is the number of ages
+    Space complexity: O(A)
+    """
+    counter = Counter(ages)
+    younger_or_same_age = [0] * 121
+    res = 0
+    for i in range(1, 121):
+        younger_or_same_age[i] = counter[i] + younger_or_same_age[i - 1]
+    for i in range(15, 121):
+        candidates = younger_or_same_age[i] - younger_or_same_age[i // 2 + 7]
+        res += candidates * counter[i] - counter[i]  # - counter[i] as people will not friend request themselves
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([16, 16], 2), ([16, 17, 18], 2), ([20, 30, 100, 110, 120], 3)]
 
@@ -61,6 +82,7 @@ class Test(unittest.TestCase):
         for test_ages, result in self.data:
             self.assertEqual(result, num_friend_requests_v1(test_ages))
             self.assertEqual(result, num_friend_requests_v2(test_ages))
+            self.assertEqual(result, num_friend_requests_v3(test_ages))
 
 
 if __name__ == '__main__':
