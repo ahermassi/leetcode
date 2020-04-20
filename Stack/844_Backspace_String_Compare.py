@@ -6,18 +6,19 @@ import unittest2 as unittest
 
 
 def backspace_compare_v1(s, t):
-    """ To build the result of a string build(S), use a stack based approach, simulating the result of each
-    keystroke.
-    Time complexity: O(max(N, M)) where N is the length of s and M is the length of t
+    """ To build the result of a string build(S), we use a stack to simulate the result of each keystroke. Every time
+        we encounter a valid char, we add it to the stack. Every time we encounter a backspace, we pop the last char
+        that was added to the stack.
+    Time complexity: O(max(N, M)), where N is the length of s and M is the length of t
     Space complexity: O(max(N, M))
     """
 
-    def build(string):  # This is a helper function, saves us a few keystrokes
+    def build(string):
         stack = []
         for c in string:
             if c != '#':
                 stack.append(c)
-            elif len(stack):
+            elif stack:
                 stack.pop()
         return ''.join(stack)
 
