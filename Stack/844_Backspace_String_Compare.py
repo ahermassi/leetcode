@@ -26,43 +26,40 @@ def backspace_compare_v1(s, t):
 
 
 def backspace_compare_v2(s, t):
-    """ Make generators to yield the final chars from back to front. Compare the chars one-by-one.
-    This is the recommended (follow up) version in interviews.
-    Time complexity: O(max(N, M)) where N is the length of s and M is the length of t
+    """ When writing a character, it may or may not be part of the final string depending on how many backspace
+        keystrokes occur in the future. If instead we iterate through the string in reverse, then we will know how many
+        backspace characters we have seen, and therefore whether the result includes our character. If we meet a '#',
+        it tells us we need to skip next lowercase char.
+        The idea is that we read next letter from end to start. If we meet a '#', we increase the number we need to
+        step back, until backspace = 0
+    Time complexity: O(max(N, M)), where N is the length of s and M is the length of t
     Space complexity: O(1)
     """
-    def next_char_gen(string):
-        backspace = 0
-        for i in reversed(range(len(string))):
-            if string[i] == '#':
-                backspace += 1
-            elif backspace > 0:
-                backspace -= 1
-            else:
-                yield string[i]
-
-    s_gen = next_char_gen(s)
-    t_gen = next_char_gen(t)
-    for s, t in itertools.zip_longest(s_gen, t_gen):
-        if s != t:
+    i, j = len(s) - 1, len(t) - 1
+    backspace_s = backspace_t = 0
+    while i >= 0 or j >= 0:
+        while i >= 0 and (s[i] == '#' or backspace_s > 0):
+            backspace_s += 1 if s[i] == '#' else -1
+            i -= 1
+        while j >= 0 and (t[j] == '#' or backspace_t > 0):
+            backspace_t += 1 if t[j] == '#' else -1
+            j -= 1
+        if i >= 0 and j >= 0 and s[i] != t[j]:  # If two actual characters are different
             return False
+        if (i >= 0) != (j >= 0):  # If expecting to compare char to nothing
+            return False
+        i -= 1
+        j -= 1
     return True
 
 
 class Test(unittest.TestCase):
-    dataT = [('ab#c', 'ad#c'),
-             ('ab##', 'c#d#'),
-             ('a##c', '#a#c')
-             ]
-    dataF = [('a#c', 'b')]
+    data = [('ab#c', 'ad#c', True), ('ab##', 'c#d#', True), ('a##c', '#a#c', True), ('a#c', 'b', False)]
 
     def test_backspace_compare(self):
-        for test_string1, test_string2 in self.dataT:
-            self.assertTrue(backspace_compare_v1(test_string1, test_string2))
-            self.assertTrue(backspace_compare_v2(test_string1, test_string2))
-        for test_string1, test_string2 in self.dataF:
-            self.assertFalse(backspace_compare_v1(test_string1, test_string2))
-            self.assertFalse(backspace_compare_v2(test_string1, test_string2))
+        for test_s, test_t, result in self.data:
+            self.assertEqual(result, backspace_compare_v1(test_s, test_t))
+            self.assertEqual(result, backspace_compare_v2(test_s, test_t))
 
 
 if __name__ == '__main__':
