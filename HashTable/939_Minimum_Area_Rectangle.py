@@ -2,6 +2,7 @@
 sides parallel to the x and y axes.
 If there isn't any rectangle, return 0. """
 
+from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -31,12 +32,37 @@ def min_area_rect_v1(points):
     return res if res != float('inf') else 0  # If there isn't any rectangle, return 0.
 
 
+def min_area_rect_v2(points):
+    """ Group the points by x coordinates, so that we have columns of points. Then, for every pair of points in a
+        column (with coordinates (x,y1) and (x,y2)), check for the smallest rectangle with this pair of points as the
+        rightmost edge. We can do this by keeping memory of what pairs of points we've seen before.
+    Time complexity: O(N^2)
+    Space complexity: O(N)
+    """
+    columns, last_x = defaultdict(list), {}  # last_x[(y1, y2)] is the x-coordinate of the last pair (x,y1), (x,y2) seen
+    res = float('inf')
+    for x, y in points:
+        columns[x].append(y)
+    for x in sorted(columns):  # Iterating over x-coordinates in sorted order will allow us to correctly set
+        # last_x[(y1, y2)]
+        column = sorted(columns[x])
+        n = len(column)
+        for i in range(n):
+            for j in range(i):
+                y1, y2 = column[i], column[j]  # y1 > y2 since the list of y-coordinates is sorted
+                if (y1, y2) in last_x:  # 2 pairs of points (x',y1) and (x',y2) was previously encountered with x' < x
+                    res = min(res, (x - last_x[(y1, y2)]) * (y1 - y2))
+                last_x[(y1, y2)] = x
+    return res if res != float('inf') else 0
+
+
 class Test(unittest.TestCase):
     data = [([[1, 1], [1, 3], [3, 1], [3, 3], [2, 2]], 4), ([[1, 1], [1, 3], [3, 1], [3, 3], [4, 1], [4, 3]], 2)]
 
     def test_min_area_rect(self):
         for test_points, result in self.data:
             self.assertEqual(result, min_area_rect_v1(test_points))
+            self.assertEqual(result, min_area_rect_v2(test_points))
 
 
 if __name__ == '__main__':
