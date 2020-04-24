@@ -44,15 +44,14 @@ def shortest_way_v2(source, target):
     Time complexity: O(N * M), where N is the length of source and M is the length of target
     Space complexity: O(1)
     """
-    res, n = 0, len(target)
+    n, res = len(target), 0
     i = 0
     while i < n:
         ptr = i
         for j, c in enumerate(source):
             if i < n and c == target[i]:
                 i += 1
-            j += 1
-        if i == ptr:
+        if i == ptr:  # Unable to move forward in target string, which means the character doesn't exist in source
             return -1
         res += 1
     return res
