@@ -19,27 +19,27 @@ def is_cousins(root, x, y):
     """ Perform a BFS to get access to nodes that exist at the same level. The only thing that is left to check is
         whether both x and y exist at the same level and have different parents.
     Time complexity: O(N)
-    Space complexity: O(N) used by the queue
+    Space complexity: O(N), used by the queue
     """
     if not root:
         return False
     queue = deque([root])
     while queue:
         n = len(queue)
-        x_exist = y_exist = False
+        x_found = y_found = False
         for _ in range(n):
             node = queue.popleft()
             if node.val == x:
-                x_exist = True
+                x_found = True
             elif node.val == y:
-                y_exist = True
+                y_found = True
             if node.left and node.right and {node.left.val, node.right.val} == {x, y}:  # Early exit if x and y are
                 # both children of same node. This check ensures that all nodes examined at all (subsequent) levels
                 # are not children of same node
                 return False
+            if x_found and y_found:  # x and y exist at the current level and have different parents
+                return True
             queue.extend([kid for kid in (node.left, node.right) if kid])
-        if x_exist and y_exist:  # x and y exist at the current level and have different parents
-            return True
 
 
 class Test(unittest.TestCase):
