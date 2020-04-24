@@ -109,9 +109,9 @@ def shortest_way_v3(source, target):
 # Following solution is not very intuitive
 
 def shortest_way_v4(source, target):
-    """ First, iterate through the source to find the characters that follow the current one. If there are more than
-        one following character, consider the least index character.
-        For source = 'abba' the table looks like this:
+    """ First, iterate through the source to find the characters that follow the current one. If there is more than
+        one such character, consider the character at the smallest index.
+        For source = 'abba', the hash map looks like this:
             {3: {'a': 4}, 2: {'a': 4, 'b': 3}, 1: {'a': 4, 'b': 2}, 0: {'a': 1, 'b': 2}}
         Then, iterate through the target characters and
         greedily construct target from source characters.
