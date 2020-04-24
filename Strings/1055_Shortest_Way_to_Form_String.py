@@ -5,7 +5,6 @@ equals target. If the task is impossible, return -1. """
 
 import bisect
 from collections import defaultdict
-
 import unittest2 as unittest
 
 
@@ -15,24 +14,24 @@ def shortest_way_v1(source, target):
         We traverse the target string while matching source string multiple times.
         i: index for target string
         j: index for source string
+        Match characters in source and target by moving indices i and j. Every time we run out of characters in the
+        source, we increase the number of sub-sequences and reset the source index (j = 0).
         We use a set to save all the characters in source, and if there exists a character from target which doesn't
         exist in the set, we exist early and return -1.
     Time complexity: O(N * M), where N is the length of source and M is the length of target
     Space complexity: O(M)
     """
-    count, n = 0, len(target)
+    n, res = len(target), 0
     chars = set(source)
-    for c in target:
-        if c not in chars:
-            return -1
     i = 0
     while i < n:
+        if target[i] not in chars:
+            return -1
         for j, c in enumerate(source):
             if i < n and c == target[i]:
                 i += 1
-            j += 1
-        count += 1
-    return count
+        res += 1
+    return res
 
 
 def shortest_way_v2(source, target):
