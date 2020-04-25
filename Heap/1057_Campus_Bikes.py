@@ -31,27 +31,27 @@ def assign_bikes_v1(workers, bikes):
 
 def assign_bikes_v2(workers, bikes):
     """ Heap solution. TLE
-        Initiate a priority queue of bike and worker pairs. The heap order should be Distance ASC, WorkerIndex ASC,
-        Bike ASC.
-        Loop through all workers and bikes, calculate their distance, and then throw it to the queue.
+        Initiate a priority queue of (bike,worker) pairs. The heap order should be distance ascending, worker index
+        ascending, bike index ascending.
+        Loop through all workers and bikes, calculate their distance, and then add it to the queue.
         Initiate a set to keep track of the bikes that have been assigned.
         Initiate a result array and fill it with -1. (unassigned)
         Poll every possible pair from the priority queue and check if the person already got his bike or the bike has
         been assigned.
         Early exit when everyone gets their bike.
-        The reason of TLE is the huge number of elements in the heap which can go up to N * M, with push/pop operations
-        that take O(log(N*M)).
-    Time complexity: O(N*M log(N*M)), as the heap can have at most N * M elements
-    Space complexity: O(N * M) for the heap
+        The reason of TLE is the huge number of elements in the heap which can go up to (N * M), with push/pop
+        operations that take O(log(N * M)).
+    Time complexity: O(N * M log(N * M)), as the heap can have at most N * M elements
+    Space complexity: O(N * M), for the heap
     """
-    heap = []
-    for i, (a, b) in enumerate(workers):
-        for j, (c, d) in enumerate(bikes):
-            distance = abs(a - c) + abs(b - d)
+    heap, res, len_workers = [], [-1] * len(workers), len(workers)
+    used_bikes = set()
+    for i, (x, y) in enumerate(workers):
+        for j, (a, b) in enumerate(bikes):
+            distance = abs(x - a) + abs(y - b)
             heappush(heap, (distance, i, j))
-    res, used_bikes = [-1] * len(workers), set()
-    while len(used_bikes) < len(workers):
-        distance, worker, bike = heappop(heap)
+    while len(used_bikes) < len_workers:
+        _, worker, bike = heappop(heap)
         if res[worker] == -1 and bike not in used_bikes:
             res[worker] = bike
             used_bikes.add(bike)
