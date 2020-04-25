@@ -5,21 +5,24 @@ import unittest2 as unittest
 
 
 def assign_bikes_v1(workers, bikes):
-    """ Since the range of distance is [0, 2000] (because each x and y coordinate is <= 1000), it's reasonable to use
-        bucket sort. Basically, it's to put each pair into the bucket representing its distance. Eventually, we can
-        loop through each bucket from lower distance.
+    """ Since the range of distances is [0, 1998] (because each x and y coordinate is >= 0 and < 1000), it's reasonable
+        to use bucket sort. Basically, it's to put each pair into the bucket representing its distance. Eventually, we
+        can loop through each bucket from lower distance.
+        Note that when pushing back (worker_id, bike_id) into the distances array, the worker with smaller id will be
+        pushed first, because we are iterating from worker_id 0 to the (len(workers) - 1). The case for bike_id is
+        similar. In the assignment part, for the same Manhattan distance, we always have workers with smaller id be
+        assigned first.
     Time complexity: O(N * M), where N is the number of workers and M is the number of bikes
     Space complexity: O(N * M), as we have N * M pairs of distances
     """
-    distances = [[] for _ in range(2001)]
-    for i, (a, b) in enumerate(workers):
-        for j, (c, d) in enumerate(bikes):
-            distance = abs(a - c) + abs(b - d)
-            distances[distance].append((i, j))  # distance[i]: list of pairs (worker,bike) whose Manhattan distance is i
-    res = [-1] * len(workers)
-    used_bikes = set()
-    for i in range(len(distances)):  # Looping through 'distances' array guarantees we pick the shortest distance first
-        for worker, bike in distances[i]:
+    distances = [[] for _ in range(1999)]
+    for i, (x, y) in enumerate(workers):
+        for j, (a, b) in enumerate(bikes):
+            distance = abs(x - a) + abs(y - b)
+            distances[distance].append((i, j))  # distance[d]: list of pairs (worker,bike) whose Manhattan distance is d
+    res, used_bikes = [-1] * len(workers), set()
+    for pairs in distances:  # Looping through 'distances' array guarantees we pick the shortest distance first
+        for worker, bike in pairs:
             if res[worker] == -1 and bike not in used_bikes:
                 res[worker] = bike
                 used_bikes.add(bike)
