@@ -66,27 +66,27 @@ def assign_bikes_v3(workers, bikes):
         Until each worker has a bike, pop the smallest distance from the heap.
         If this bike is not used, update the result for this worker, else add the next closest tuple for this worker to
         the heap.
-    Time complexity: O(N*M (log N + log M)) == O(N*M log(N*M)). For each worker, making list of distances to each bike
-    is O(N * M). For each worker, sort the list of distances is O(N (M log M)), which dominates making the lists above.
-    There is one distance on the heap for each worker, so each pop or push is O(log M).
-    In the worst case where the closest bike on the heap is always used, there may be O(N * M) pops, so O((N*M) log M))
+    Time complexity: O(N * M (log N + log M)) == O(N * M log(N * M)). For each worker, making list of distances to each
+    bike is O(N * M). Sorting the lists of distances is O(N * (M logM)), which dominates creating the above lists.
+    There is one distance on the heap for each worker, so each pop or push is O(logM).
+    In the worst case where the closest bike on the heap is always used, there may be O(N * M) pops, so O((N * M) logM))
     for the heap. So in the best case the first bike on the heap is always free and there will be O(N) pops.
-    So O(N log N) for the heap and overall O(N (M log M + log N))
+    So O(N logN) for the heap and overall O(N (M logM + logN))
     Space complexity: TODO
     """
     n = len(workers)
-    heap, distances = [], [[] for _ in range(n)]  # distances[i] is tuple of (distance, worker, bike) for each worker i
-    for i, (a, b) in enumerate(workers):
-        for j, (c, d) in enumerate(bikes):
-            distance = abs(a - c) + abs(b - d)
+    heap, distances = [], [[] for _ in range(n)]  # distances[i] is a tuple (distance, worker, bike) for each worker i
+    for i, (x, y) in enumerate(workers):
+        for j, (a, b) in enumerate(bikes):
+            distance = abs(x - a) + abs(y - b)
             distances[i].append((distance, i, j))
-        distances[i].sort(reverse=True)  # Reverse so we can pop the smallest distance we construct the heap
-        # At the end of each iteration 'i', distance[i] is a list of (distance, worker, bike) for worker 'i'
+        distances[i].sort(reverse=True)  # Reverse so we can pop the smallest distance as we construct the heap
+        # At the end of each iteration i, distance[i] is a list of (distance, worker, bike) for worker i
     for distance in distances:
         heappush(heap, distance.pop())  # Smallest distance for each worker, so we get a heap of size n = len(workers)
     res, used_bikes = [-1] * n, set()
     while len(used_bikes) < n:
-        distance, worker, bike = heappop(heap)
+        _, worker, bike = heappop(heap)
         if bike not in used_bikes:
             res[worker] = bike
             used_bikes.add(bike)
@@ -99,7 +99,7 @@ class Test(unittest.TestCase):
     data = [([[0, 0], [2, 1]], [[1, 2], [3, 3]], [1, 0]),
             ([[0, 0], [1, 1], [2, 0]], [[1, 0], [2, 2]], [2, 1])]
 
-    def test_search(self):
+    def test_assign_bikes(self):
         for test_workers, test_bikes, result in self.data:
             self.assertEqual(result, assign_bikes_v1(test_workers, test_bikes))
 
