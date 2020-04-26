@@ -1,7 +1,7 @@
 """ Given the root of a binary tree, the level of its root is 1, the level of its children is 2, and so on.
 Return the smallest level X such that the sum of all the values of nodes at level X is maximal. """
 
-from collections import deque
+from collections import deque, defaultdict
 
 
 def max_level_sum_v1(root):
@@ -28,6 +28,32 @@ def max_level_sum_v1(root):
         #     max_sum, res = cur_sum, cur_level
         # queue = [kid for node in queue for kid in [node.left, node.right] if kid]
         # cur_level += 1
+    return res
+
+
+def max_level_sum_v2(root):
+    """ Create a hash map 'level_sum' which keeps a sum for the current level. Implement recursive traversal which
+        takes a node and its level as input variables and recursively updates level_sum[level]. Return the key with max
+        value in 'level_sum'.
+    Time complexity: O(N)
+    Space complexity: O(h), O(logN) in the average case of balanced tree and O(N) in the worst case of the skewed tree
+    """
+
+    def dfs(root, cur_level):
+        if not root:
+            return
+        level_sum[cur_level] += root.val
+        number_of_levels[0] = max(number_of_levels[0], cur_level)
+        dfs(root.left, cur_level + 1)
+        dfs(root.right, cur_level + 1)
+
+    level_sum = defaultdict(int)
+    number_of_levels = [1]  # Total number of levels in the tree. Used to iterate over the map keys in ascending order
+    max_sum, res = float('-inf'), -1
+    dfs(root, 1)
+    for i in range(1, number_of_levels[0] + 1):
+        if level_sum[i] > max_sum:
+            max_sum, res = level_sum[i], i
     return res
 
 
