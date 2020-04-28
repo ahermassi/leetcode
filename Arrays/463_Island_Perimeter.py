@@ -7,26 +7,20 @@ Determine the perimeter of the island.
 import unittest2 as unittest
 
 
-def island_perimeter(grid):
+def island_perimeter_v1(grid):
     """ For each cell with land on it, add the number of cells around it that have water. All cells that are not on
         the grid are also considered to have water.
     Time complexity: O(N * M), where N is the length of grid and M is the width grid
     Space complexity: O(1)
     """
-    def sum_adjacent(i, j):
-        res = 0
-        for x, y in (i + 1, j), (i - 1, j), (i, j - 1), (i, j + 1):
-            if not 0 <= x < n or not 0 <= y < m or grid[x][y] == 0:
-                res += 1
-        return res
-
-    n, m = len(grid[0]), len(grid)
-    count = 0
+    n, m, res = len(grid[0]), len(grid), 0
     for i in range(n):
         for j in range(m):
-            if grid[i][j] == 1:
-                count += sum_adjacent(i, j)
-    return count
+            if grid[i][j]:
+                for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+                    if not 0 <= x < n or not 0 <= y < m or not grid[x][y]:
+                        res += 1
+    return res
 
 
 class Test(unittest.TestCase):
@@ -38,7 +32,7 @@ class Test(unittest.TestCase):
 
     def test_island_perimeter(self):
         for test_grid, result in self.data:
-            self.assertEqual(result, island_perimeter(test_grid))
+            self.assertEqual(result, island_perimeter_v1(test_grid))
 
 
 if __name__ == '__main__':
