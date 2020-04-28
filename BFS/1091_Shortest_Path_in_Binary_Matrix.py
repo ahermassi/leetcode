@@ -40,12 +40,36 @@ def shortest_path_binary_matrix_v1(grid):
     return -1
 
 
+def shortest_path_binary_matrix_v2(grid):
+    """ If we're allowed to modify the grid, we can securely set the visited cells as non-empty to avoid revisiting
+        without using a 'visited' set.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if grid[0][0] or grid[-1][-1]:
+        return -1
+    n, m = len(grid), len(grid[0])
+    queue = deque([(0, 0, 1)])
+    while queue:
+        i, j, distance = queue.popleft()
+        if i == n - 1 and j == m - 1:
+            return distance
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j - 1), (i - 1, j + 1), (i + 1, j - 1), \
+                    (i + 1, j + 1):
+            if not 0 <= x < n or not 0 <= y < m or grid[x][y]:
+                continue
+            queue.append((x, y, distance + 1))
+            grid[x][y] = 1  # Mark the cell visited
+    return -1
+
+
 class Test(unittest.TestCase):
     data = [([[0, 1], [1, 0]], 2), ([[0, 0, 0], [1, 1, 0], [1, 1, 0]], 4)]
 
     def test_shortest_path_binary_matrix(self):
         for test_grid, result in self.data:
             self.assertEqual(result, shortest_path_binary_matrix_v1(test_grid))
+            self.assertEqual(result, shortest_path_binary_matrix_v2(test_grid))
 
 
 if __name__ == '__main__':
