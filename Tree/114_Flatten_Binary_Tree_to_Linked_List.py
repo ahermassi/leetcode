@@ -189,4 +189,34 @@ def flatten_v2(root):
     reverse_post_order(root)
 
 
+def flatten_v3(root):
+    """ There is a well known tree traversal out there that doesn't use any additional space at all. It's known as
+        Morris Traversal. With recursion, we only re-wire the connections for the current nod" once we are already done
+        processing the left and the right subtrees completely. However, the postponing of rewiring of connections on
+        the current node until the left subtree is done is basically what recursion is. Recursion is all about
+        postponing decisions until something else is completed. So, we will have to come up with a greedy way that will
+        be costlier in terms of time, but will be space efficient in achieving the same results.
+            For a current node, we will check if it has a left child or not. If it does, we will find the last node in
+            the rightmost branch of the subtree rooted at this left child. Once we find this rightmost node, we will
+            hook it up with the right child of the current node.
+        By doing this operation for every node, we are simply trying to move stuff to the right hand side one step at
+        a time.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    if not root:
+        return
+    cur = root
+    while cur:
+        if cur.left:
+            rightmost = cur.left
+            while rightmost.right:  # Find the rightmost node
+                rightmost = rightmost.right
+            # Rewire the connections
+            rightmost.right = cur.right
+            cur.right = cur.left
+            cur.left = None
+        cur = cur.right  # If the current node has no left child, we simply move on to the right hand side
+
+
 
