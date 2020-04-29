@@ -62,22 +62,131 @@ def flatten_v1(root):
     left_tail.right = right  # Concatenate flattened left subtree with flattened right subtree
 
 
-next = None
-
-
-def flatten(root):
+def flatten_v2(root):
     """ In the flattened tree, each node's right child points to the next node of a pre-order traversal. So we're
-        basically performing a reverse pre-order traversal. 'next' variable is the next node of current node in a
-        pre-order traversal, with 'next' pointing initially to None.
+        basically performing a reverse post-order traversal. 'pre' is the next (right) node of current node, pointing
+        initially to None.
+        Example:
+            1
+           / \
+          2   5
+         / \   \
+        3  4   6
+        Basically, the traversing order after flattening is pre-order traversal in (root, left, right), like:
+            1
+             \
+              2
+               \
+                3
+                 \
+                  4
+                   \
+                    5
+                     \
+                      6
+        If we traverse the flattened tree in the reverse way, we would notice that [6 -> 5 -> 4 -> 3 -> 2 -> 1] is in
+        (right, left, root) order of the original tree:
+            The reverse post-order traversal of the original tree is the reverse order of the flattened tree
+        The idea is to traverse the original tree in reverse post-order and then set each node's right pointer as the
+        previous one in [6 -> 5 -> 4 -> 3 -> 2 -> 1] and set the left child as null. It turns out that the previous
+        node that needs to be set as the current node's right is the root node of the previous recursion.
+            1
+           / \
+          2   5
+         / \   \
+        3  4   6
+        -----------
+        pre = None
+        root = 6
+
+            1
+           / \
+          2   5
+         / \   \
+        3  4   6
+        -----------
+        pre = 6
+        root = 5
+
+
+            1
+           / \
+          2   5
+         / \   \
+        3   4   6
+        -----------
+        pre = 5
+        root = 4
+
+            1
+           /
+          2
+         / \
+        3   4
+             \
+              5
+               \
+                6
+        -----------
+        pre = 4
+        root = 3
+
+            1
+           /
+          2
+         /
+        3
+         \
+          4
+           \
+            5
+             \
+              6
+        -----------
+        pre = 3
+        root = 2
+
+            1
+           /
+          2
+           \
+            3
+             \
+              4
+               \
+                5
+                 \
+                  6
+        -----------
+        pre = 2
+        root = 1
+
+            1
+             \
+              2
+               \
+                3
+                 \
+                  4
+                   \
+                    5
+                     \
+                      6
     Time complexity: O(N)
-    Space complexity: O(1)
+    Space complexity: O(N)
     """
-    if not root:
-        return
-    flatten(root.right)
-    flatten(root.left)
-    root.right = next
-    root.left = None
-    next = root
+
+    def reverse_post_order(root):
+        if not root:
+            return
+        reverse_post_order(root.right)
+        reverse_post_order(root.left)
+        root.right = pre[0]
+        root.left = None
+        pre[0] = root
+
+    pre = [None]
+    reverse_post_order(root)
+
 
 
