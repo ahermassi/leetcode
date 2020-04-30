@@ -4,12 +4,12 @@ import unittest2 as unittest
 
 
 def maximum_product_v1(nums):
-    """ Start by sorting nums. But, we can note that the product will be maximum only if all the numbers in nums
-        array are positive. But, in the given problem statement, negative elements could exist as well. Thus, it could
+    """ Start by sorting nums. We can notice that the product will be maximum only if all the numbers in nums array
+        are positive. But, in the given problem statement, negative elements could exist as well. Thus, it could
         also be possible that two negative numbers lying at the left extreme end could also lead to a larger product if
         the third number in the triplet being considered is the largest positive number in the nums array.
-    Time complexity: O(N logN) for Timsort
-    Space complexity: O(logN) for Timsort
+    Time complexity: O(N logN)
+    Space complexity: O(N), for the sort
     """
     nums.sort()
     return max(nums[-1] * nums[-2] * nums[-3], nums[0] * nums[1] * nums[-1])
