@@ -17,13 +17,14 @@ def maximum_product_v1(nums):
 
 def maximum_product_v2(nums):
     """ We need not necessarily sort nums array to find the maximum product. Instead, we can only find the required 2
-        smallest values (min1 and min2) and the three largest values (max1, max2, max3) in the nums array by iterating
+        smallest values (min1, min2) and the three largest values (max1, max2, max3) in the nums array by iterating
         over the array only once. At the end, we can find out the largest value out of (min1 × min2 × max1) and
         (max1 × max2 × max3) to find the required maximum product.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    max1, max2, max3, min1, min2 = float('-inf'), float('-inf'), float('-inf'), float('inf'), float('inf')
+    min1 = min2 = float('inf')  # min1 <= min2
+    max1 = max2 = max3 = float('-inf')  # max3 <= max2 <= max1
     for num in nums:
         if num > max1:
             max1, max2, max3 = num, max1, max2
@@ -35,7 +36,7 @@ def maximum_product_v2(nums):
             min1, min2 = num, min1
         elif num < min2:
             min2 = num
-    return max(min1 * min2 * max3, max1 * max2 * max3)
+    return max(min1 * min2 * max1, max1 * max2 * max3)
 
 
 class Test(unittest.TestCase):
