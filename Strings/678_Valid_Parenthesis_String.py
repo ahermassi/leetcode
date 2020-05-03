@@ -98,6 +98,39 @@ def check_valid_string_v2(s):
     return min_unpaired_left == 0  # If we wait for no ')' at the end, then we are good
 
 
+def check_valid_string_v3(s):
+    """ The basic idea is to track the index of the left bracket and star position.
+        Step 1: Here we consider '*' as an opening parenthesis IF open stack becomes empty.
+        Push all the indices of the star and left bracket to their stack respectively. Once a right bracket comes try
+        to match it, so pop left bracket stack first if it is not empty. If the left bracket stack is empty, pop the
+        star stack if it is not empty. A false return can be made if both stacks are empty.
+        Step 2: Here we consider '*' as a closed parenthesis. Now attention is paid to the remaining stuff in these two
+        stacks. Note that the left bracket CANNOT appear after the star as there is NO way to balance the bracket. In
+        other words, if index at top of open stack > index at top of ast stack, it means there was no '*' after the
+        last '(' , so return false. Otherwise, pop out each from the left bracket and star stack.
+        A correct sequence should have an empty left bracket stack, which means we were able to balance the complete
+        string.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    open, star = [], []
+    for i, c in enumerate(s):
+        if c == '(':
+            open.append(i)
+        elif c == '*':
+            star.append(i)
+        elif open:
+            open.pop()
+        elif star:
+            star.pop()
+        else:
+            return False
+    while open and star:
+        if open.pop() > star.pop():
+            return False
+    return not open
+
+
 class Test(unittest.TestCase):
     data = [('()', True), ('(*)', True), ('(*))', True)]
 
@@ -105,6 +138,7 @@ class Test(unittest.TestCase):
         for test_s, result in self.data:
             self.assertEqual(result, check_valid_string_v1(test_s))
             self.assertEqual(result, check_valid_string_v2(test_s))
+            self.assertEqual(result, check_valid_string_v3(test_s))
 
 
 if __name__ == '__main__':
