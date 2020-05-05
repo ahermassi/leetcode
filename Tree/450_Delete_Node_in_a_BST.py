@@ -17,7 +17,7 @@ def delete_node_v1(root, key):
     right, first to search the node to delete (O(H1)) and then to actually delete it. H1 is a tree height from the root
     to the node to delete. Delete process takes O(H2), where H2 is a tree height from the root to delete to the leafs.
     That in total results in O(H1 + H2) = O(H), where H is a tree height, equal to logN in the case of the balanced tree
-    Space complexity: O(logN) to keep the recursion stack
+    Space complexity: O(logN), to keep the recursion stack
     """
     if not root:
         return None
@@ -37,7 +37,6 @@ def delete_node_v1(root, key):
             pre = predecessor(root)
             root.val = pre.val
             root.left = delete_node_v1(root.left, pre.val)
-        return root
     return root
 
 # Utility functions
@@ -62,4 +61,30 @@ def predecessor(root):
     root = root.left
     while root.right:
         root = root.right
+    return root
+
+
+def delete_node_v2(root, key):
+    """ Another way of doing it. When the key is the root of a subtree, if the subtree does not have a left child, we
+        just return its right child to its father, and they will be connected on the higher level recursion. If it has
+        a left child, we want to find the max value on the left subtree (in-order predecessor) to replace the node we
+        want to delete. Now we don't want the predecessor, so we just use our function to delete it.
+    Time complexity: O(h)
+    Space complexity: O(h)
+    """
+    if not root:
+        return None
+    if root.val < key:
+        root.right = delete_node_v2(root.right, key)
+    elif root.val > key:
+        root.left = delete_node_v2(root.left, key)
+    else:
+        if not root.left:
+            return root.right
+        else:
+            temp = root.left
+            while temp.right:
+                temp = temp.right
+            root.val = temp.val
+            root.left = delete_node_v2(root.left, temp.val)
     return root
