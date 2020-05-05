@@ -6,9 +6,9 @@ Basically, the deletion can be divided into two stages:
 Note: Time complexity should be O(height of tree). """
 
 
-def delete_node(root, key):
+def delete_node_v1(root, key):
     """ There are three possible situations here:
-            1- Node is a leaf, and one could delete it straightforward : node = null.
+            1- Node is a leaf, and we could delete it straightforwardly : node = null.
             2- Node is not a leaf and has a right child. Then the node could be replaced by its successor which is
                somewhere lower in the right subtree. Then we could proceed down recursively to delete the successor.
             3- Node is not a leaf, has no right child and has a left child. The node could be replaced by its
@@ -23,20 +23,20 @@ def delete_node(root, key):
         return None
     # We always want to delete the node when it's the root of a subtree, so we handle left or right according to the val
     if root.val < key:
-        root.right = delete_node(root.right, key)
+        root.right = delete_node_v1(root.right, key)
     elif root.val > key:
-        root.left = delete_node(root.left, key)
+        root.left = delete_node_v1(root.left, key)
     else:  # Now the key is the root of a subtree
         if not root.left and not root.right:  # The node is a leaf
             root = None
         elif root.right:  # The node is not a leaf and has a right child
             suc = successor(root)
             root.val = suc.val
-            root.right = delete_node(root.right, suc.val)
+            root.right = delete_node_v1(root.right, suc.val)
         else:  # The node is not a leaf, has no right child, and has a left child
             pre = predecessor(root)
             root.val = pre.val
-            root.left = delete_node(root.left, pre.val)
+            root.left = delete_node_v1(root.left, pre.val)
         return root
     return root
 
