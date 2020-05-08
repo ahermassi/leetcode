@@ -6,34 +6,24 @@ class LogSystemV1(object):
         simple list will do.
         Let's focus on the retrieve function. For each granularity, we should consider all timestamps to be truncated
         to that granularity. For example, if the granularity is 'Day', we should truncate the timestamp
-        '2017:07:02:08:30:12' to be '2017:07:02'. Now for each log, if the truncated timetuple cur is between start and
-        end, then we should add the id of that log into our answer.
+        '2017:07:02:08:30:12' to be '2017:07:02'. Now for each log, if the truncated timetuple is between 'start' and
+        'end', then we should add the id of that log to our answer.
     Time complexity: O(1) for put(), O(N) for retrieve()
+    Space complexity: O(N)
     """
 
     def __init__(self):
-        self.granularities = {'Year': 4, 'Month': 7, 'Day': 10, 'Hour': 13, 'Minute': 16, 'Second': 19}
+        self.granularity = {'Year': 4, 'Month': 7, 'Day': 10, 'Hour': 13, 'Minute': 16, 'Second': 19}
         self.logs = []
 
     def put(self, id, timestamp):
-        """
-        :type id: int
-        :type timestamp: str
-        :rtype: None
-        """
         self.logs.append((id, timestamp))
 
     def retrieve(self, s, e, gra):
-        """
-        :type s: str
-        :type e: str
-        :type gra: str
-        :rtype: List[int]
-        """
-        idx = self.granularities[gra]
-        s, e, res = s[:idx], e[:idx], []
+        index = self.granularity[gra]
+        s, e, res = s[:index], e[:index], []
         for id, timestamp in self.logs:
-            if s <= timestamp[:idx] <= e:
+            if s <= timestamp[:index] <= e:
                 res.append(id)
         return res
 
