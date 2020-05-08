@@ -36,17 +36,16 @@ class LogSystemV2(object):
     """
 
     def __init__(self):
-        self.granularities = {'Year': 1, 'Month': 2, 'Day': 3, 'Hour': 4, 'Minute': 5, 'Second': 6}
+        self.granularity = {'Year': 1, 'Month': 2, 'Day': 3, 'Hour': 4, 'Minute': 5, 'Second': 6}
         self.logs = {}
 
     def put(self, id: int, timestamp: str):
         self.logs[id] = tuple(timestamp.split(':'))
 
     def retrieve(self, s: str, e: str, gra: str):
-        index, res = self.granularities[gra], []
-        start = tuple(s.split(':')[:index])
-        end = tuple(e.split(':')[:index])
-        for k, v in self.logs.items():
-            if start <= v[:index] <= end:
-                res.append(k)
+        index, res = self.granularity[gra], []
+        start, end = tuple(s.split(':')[:index]), tuple(e.split(':')[:index])
+        for key, value in self.logs.items():
+            if start <= value[:index] <= end:
+                res.append(key)
         return res
