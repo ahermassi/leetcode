@@ -25,12 +25,45 @@ def validate_stack_sequences_v1(pushed, popped):
     return not stack
 
 
+def validate_stack_sequences_v2(pushed, popped):
+    """ Can we do better ?
+        We cannot improve the time complexity but we can improve the space complexity.
+        If we observe carefully, we can notice that pushed array's content would be the same as that of the stack we
+        use in approach 1.
+        Ex: pushed = [1, 2, 3, 4], popped = [4, 3, 2, 1]
+        In this sequence we notice that stack = [1, 2, 3, 4] when i=3 and j=0, which means that we can reuse the pushed
+        array as a stack.
+        However, in cases like pushed = [1, 2, 3, 4, 5], popped = [4, 5, 3, 2, 1] , where i=3 and j=0 we have to remove
+        pushed[3].
+        Removing from an array at index i which would take O(N) time, increasing our time complexity.
+        The solution is to use partition algorithm. We maintain 2 pointers :
+            i: pointer which represents the top of stack in pushed array
+            j: pointer which represents the current element to be processed in popped array
+        We maintain the pushed array such that:
+            Anything in the range of 0 till i : valid stack elements
+            Anything in the range of current element val's index till n : To be pushed elements
+            Anything in the range of i till current element 'val' : Popped elements.
+        The idea is to overwrite the popped elements with new elements to be pushed in the subsequent iterations.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    i, j, n = 0, 0, len(pushed)
+    for val in pushed:
+        pushed[i] = val
+        while i >= 0 and pushed[i] == popped[j]:
+            i -= 1
+            j += 1
+        i += 1
+    return i == 0
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3, 4, 5], [4, 5, 3, 2, 1], True), ([1, 2, 3, 4, 5], [4, 3, 5, 1, 2], False)]
 
     def test_validate_stack_sequences(self):
         for test_pushed, test_popped, result in self.data:
             self.assertEqual(result, validate_stack_sequences_v1(test_pushed, test_popped))
+            self.assertEqual(result, validate_stack_sequences_v2(test_pushed, test_popped))
 
 
 if __name__ == '__main__':
