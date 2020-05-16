@@ -7,29 +7,31 @@ are the same size, both will explode. Two asteroids moving in the same direction
 import unittest2 as unittest
 
 
-def asteroid_collision(asteroids):
-    """ This is a recursive solution. The recursion arises because whenever a collision happens, the same logic/process
-        needs to be applied to the remaining stack elements in order to detect further collisions. In other words, a
-        collision might trigger another collision, and so on and so forth, even before a 'new' asteroid comes into play.
+def asteroid_collision_v1(asteroids):
+    """ A row of asteroids is stable if no further collisions will occur. After adding a new asteroid to the right,
+        some more collisions may happen before it becomes stable again, and all of those collisions (if they happen)
+        must occur right to left. This is the perfect situation for using a stack.
+        Say we have our answer as a stack with rightmost asteroid top, and a new asteroid comes in. If new is moving
+        right (asteroid > 0), or if top is moving left (stack[-1] < 0), no collision occurs.
+        Otherwise, if abs(asteroid) < abs(stack[-1]), then the new asteroid will blow up;
+        if abs(asteroid) == abs(stack[-1]), then both asteroids will blow up; and if abs(asteroid) > abs(stack[-1]),
+        then the top asteroid will blow up and possibly more asteroids will, so we should continue checking.
     Time complexity: O(N)
     Space complexity:  O(N)
     """
-
-    def collide(asteroid, stack):
-        if not stack or asteroid * stack[-1] > 0:
-            stack.append(asteroid)
-        elif stack[-1] > 0 and asteroid < 0:
-            if stack[-1] == abs(asteroid):  # Asteroids of same size cancel each other
-                stack.pop()
-            elif abs(asteroid) > stack[-1]:  # This is where a recursion might appear: a collision is detected
-                stack.pop()
-                collide(asteroid, stack)
-        else:
-            stack.append(asteroid)
-
     stack = []
     for asteroid in asteroids:
-        collide(asteroid, stack)
+        while stack and asteroid < 0 and stack[-1] > 0:  # We only need to resolve collisions under the following
+            # conditions: 1) Stack is non-empty  2) Current asteroid is negative  3) Top of the stack is positive
+            if abs(asteroid) == abs(stack[-1]):  # Both asteroids are equal, destroy both and break
+                stack.pop()
+                break
+            elif abs(asteroid) > stack[-1]:  # Stack top is smaller, remove it and continue the comparison
+                stack.pop()
+            else:  # Stack top is larger, incoming negative asteroid is destroyed
+                break
+        else:  # Incoming negative asteroid made it all the way to the bottom of the stack and destroyed all asteroids
+            stack.append(asteroid)
     return stack
 
 
@@ -41,7 +43,7 @@ class Test(unittest.TestCase):
 
     def test_asteroid_collision(self):
         for test_asteroids, result in self.data:
-            self.assertEqual(result, asteroid_collision(test_asteroids))
+            self.assertEqual(result, asteroid_collision_v1(test_asteroids))
 
 
 if __name__ == '__main__':
