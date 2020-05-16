@@ -17,7 +17,7 @@ def asteroid_collision_v1(asteroids):
         if abs(asteroid) == abs(stack[-1]), then both asteroids will blow up; and if abs(asteroid) > abs(stack[-1]),
         then the top asteroid will blow up and possibly more asteroids will, so we should continue checking.
     Time complexity: O(N)
-    Space complexity:  O(N)
+    Space complexity: O(N)
     """
     stack = []
     for asteroid in asteroids:
@@ -35,6 +35,35 @@ def asteroid_collision_v1(asteroids):
     return stack
 
 
+def asteroid_collision_v2(asteroids):
+    """ We can make some observations about the asteroids.
+        - Negative asteroids without any positive asteroids on the left can be ignored as they will never interact with
+        the upcoming asteroids regardless of their direction.
+        - Positive asteroids (right-moving) may interact with negative asteroids (left-moving) that come LATER.
+        We can iterate through the list of asteroids and handle those scenarios.
+        If the asteroid is positive, push it into the stack. It will never interact with existing asteroids in the
+        stack but may interact with future negative asteroids.
+        If the asteroid is negative, we need to simulate the collision process by repeatedly popping the positive
+        smaller asteroids from the top of the stack. We may or may not need to push the negative asteroid to the stack
+        depending on the value of the positive asteroids it encounters. Push the negative asteroid if it survives all
+        the collisions.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    stack = []
+    for asteroid in asteroids:
+        if asteroid > 0:
+            stack.append(asteroid)
+        else:
+            while stack and 0 < stack[-1] < abs(asteroid):
+                stack.pop()
+            if not stack or stack[-1] < 0:  # The asteroid and stack[-1] are both negative, moving in the same direction
+                stack.append(asteroid)
+            elif abs(asteroid) == abs(stack[-1]):
+                stack.pop()
+    return stack
+
+
 class Test(unittest.TestCase):
     data = [([5, 10, -5], [5, 10]),
             ([8, -8], []),
@@ -44,6 +73,7 @@ class Test(unittest.TestCase):
     def test_asteroid_collision(self):
         for test_asteroids, result in self.data:
             self.assertEqual(result, asteroid_collision_v1(test_asteroids))
+            self.assertEqual(result, asteroid_collision_v2(test_asteroids))
 
 
 if __name__ == '__main__':
