@@ -10,30 +10,35 @@ import unittest2 as unittest
 def min_sub_array_len_v1(s, nums):
     """ Keep 2 pointers, one for the start and another for the end of the current sub array (window) and make optimal
         moves so as to keep the sum greater than s as well as maintain the lowest size possible.
-        Initialize left pointer 'window_left' to 0 and sum 'window_sum' to 0 .
-        Initialize right pointer 'window_right' to -1 so as first move makes window_left == window_right (1-element
-        window)
-        Iterate over the nums:
-            - Add nums[i] to sum
-            - While sum is greater than or equal to s:
+        Initialize the left pointer 'left', the right pointer 'right', and the window sum 'cur_sum' to 0 .
+        Iterate over nums array:
+            - Add nums[right] to current 'cur_sum'
+            - While 'cur_sum' is greater than or equal to s:
                 * Update res = min(res ,right - left + 1), where (right - left + 1) is the size of current window
-                * It means that the first index can safely be incremented, since, the minimum sub array starting with
-                    this index with sum ≥ s has been achieved
-                * Subtract nums[left] from sum and increment left to make the window smaller
+                * It means that the first index can safely be incremented, since the minimum sub array starting with
+                  this index with sum ≥ s has been achieved
+                * Subtract nums[left] from 'cur_sum' and increment 'left' to make the window smaller
+        Since the given array contains only positive integers, the sub-array sum can only increase by including more
+        elements. Therefore, we don't have to include more elements once the current sub-array already has a sum large
+        enough.
+        The essential idea is if a sub-array starts at 'left', then try to get min length sub-array by adding elements
+        into it. Once the sum is over s, then it means we just found the min sub-array starting at 'left'. In this case,
+        instead of moving forward 'left' one step, we can just subtract any elements starting from first element of the
+        current min sub-array till the sum is less than s. Min length of sub-arrays starting at the updating 'left'
+        index are updated during the subtraction.
     Time complexity: O(N), each element can be visited at most twice, once by the right pointer and (at most) once by
     the left pointer.
     Space complexity: O(1)
     """
-    window_left = window_sum = 0
-    window_right = -1
-    res = float('inf')
-    for num in nums:
-        window_sum += num
-        window_right += 1
-        while window_sum >= s:
-            res = min(res, window_right - window_left + 1)
-            window_sum -= nums[window_left]
-            window_left += 1
+    n, res = len(nums), float('inf')
+    left = right = cur_sum = 0
+    while right < n:
+        cur_sum += nums[right]
+        while cur_sum >= s:
+            res = min(res, right - left + 1)
+            cur_sum -= nums[left]
+            left += 1
+        right += 1
     return res if res != float('inf') else 0
 
 
