@@ -1,5 +1,5 @@
-""" Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous sub array of
-which the sum ≥ s. If there isn't one, return 0 instead. """
+""" Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous sub array
+of which the sum ≥ s. If there isn't one, return 0 instead. """
 
 import unittest2 as unittest
 
@@ -43,32 +43,35 @@ def min_sub_array_len_v1(s, nums):
 
 
 def min_sub_array_len_v2(s, nums):
-    """ Use nums[i] store the sum of nums from 0 to i, then nums is a sorted array, and then we can use binary search.
-        Then, a sub array sum can expressed as the difference between two cumulative sum. Hence, given a start index
-        for the cumulative sum array, the other end index can be searched using binary search.
+    """ We cannot sort the input array as the current order actually matters. How do we get an ordered array then?
+        Since all elements are positive, the cumulative sum must be strictly increasing. Then, a sub-array sum can
+        expressed as the difference between two cumulative sums. Hence, given a start index for the cumulative sum
+        array, the other end index can be searched using binary search.
     Time complexity: O(N logN), the time required is O(N) for iteration over the array and O(logN) for finding the
-    sub array for each index using binary search.
+    sub array for each index using binary search
     Space complexity: O(1)
     """
 
-    def find_left(left, right, target):
-        while left < right:
+    def find_left(left, right, cur_sum):
+        while left <= right:
             mid = (left + right) // 2
-            if target - nums[mid] >= s:
+            if cur_sum - nums[mid] >= s:  # The sum between indices 'mid' and 'right' is >= s
                 left = mid + 1
             else:
-                right = mid
-        return left
+                right = mid - 1
+        return left  # This is the largest index such as nums[left:right+1] has a sum >= s, thus a min length sub-array
 
-    res = float('inf')
-    for i in range(1, len(nums)):  # Cumulative sum, resulting in a sorted nums array
-        nums[i] += nums[i - 1]
+    n, res = len(nums), float('inf')
+    for i in range(1, n):
+        nums[i] += nums[i - 1]  # Cumulative sum, resulting in a sorted nums array
     left = 0
-    for i, num in enumerate(nums):
-        if num >= s:  # If cumulative sum up to this index i is greater than s, then i should be the right end of a
+    for right in range(n):
+        if nums[right] >= s:  # If cumulative sum up to index 'right' is >= s, then it should be the right end of a
             # sub array that satisfies the problem property. Use binary search to find its left end.
-            left = find_left(left, i, num)
-            res = min(res, i - left + 1)
+            left = find_left(left, right, nums[right])  # Note that we don't initialize 'left' at each iteration.
+            # As 'right' keeps moving forward, the cumulative sum keeps increasing, and 'left' is the largest index
+            # (guaranteeing a min length sub array) from previous iterations, so it's a waste of time to initialize it
+            res = min(res, right - left + 1)
     return res if res != float('inf') else 0
 
 
