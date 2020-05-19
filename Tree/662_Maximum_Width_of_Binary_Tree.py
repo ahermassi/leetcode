@@ -30,3 +30,30 @@ def width_of_binary_tree_v1(root):
                 queue.append((node.right, 2 * position + 1))
     return res
 
+
+def width_of_binary_tree_v2(root):
+    """ Traverse the tree in depth-first order, keeping track of each node's position. For each depth, the position of
+        the FIRST node reached of that depth will be kept in depth_leftmost_position[depth].
+        Then, for each node, a candidate width is (position - depth_leftmost_position[depth] + 1). We take the maximum
+        of the candidate answers.
+        Note: If we always visit left child first, than we can make sure that 'depth_leftmost_position' stores
+        positions of the first non-null node to the left for every given level.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def dfs(root, depth, position):
+        if not root:
+            return
+        if len(depth_leftmost_position) == depth:  # The leftmost node in each level is guaranteed to be the first node
+            # to be visited in that level
+            depth_leftmost_position.append(position)
+        res[0] = max(res[0], position - depth_leftmost_position[depth] + 1)
+        dfs(root.left, depth + 1, 2 * position)
+        dfs(root.right, depth + 1, 2 * position + 1)
+
+    depth_leftmost_position = []
+    res = [0]
+    dfs(root, 0, 0)
+    return res[0]
+
