@@ -54,6 +54,45 @@ def check_inclusion_v2(s1, s2):
     return False
 
 
+def check_inclusion_v3(s1, s2):
+    """ Same solution as 438- Find All Anagrams in a String. No hash map comparison is involved.
+        Find the frequency of characters in the string s1 using 'chars' hash map, two variables 'left' and 'right' to
+        represent the left and right boundaries of the sliding window, and a variable 'need' to represent the number
+        of characters in the string s1 that need to be matched.
+        If the character on the right boundary is already in the hash table, indicating that the character appears in
+        s1, then 'need' is decremented by 1, and then the entry of the current character in the hash table is also
+        decremented by 1 anyways. If 'need' is reduced to 0 at any time, it means that the characters in s1 are
+        matched in the current window, so we return true.
+        If the window size (right - left + 1) is equal to the length of s1, it means that the leftmost character should
+        be removed from the window. If after removal (corresponding entry in the frequency map is incremented by 1)
+        the count of the left character is greater than 0, it means that the character exists in s1. Why ?
+        Well, because each character is decremented by 1 above, and if it is not a character in s1, then the character's
+        frequency in the hash table should be 0, and it will be -1 after decrementing by 1, so that we know whether
+        the character exists in s1. So if the leftmost character we removed exists in s1, 'need' is incremented by 1.
+    Time complexity: O(N + M)
+    Space complexity: O(1)
+    """
+    n, m = len(s1), len(s2)
+    chars = Counter(s1)
+    left, right, need, res = 0, 0, len(s1), []
+    while right < m:
+        cur_char = s2[right]
+        if chars[cur_char] > 0:  # The current character is in s1
+            need -= 1  # One less character is needed
+        chars[cur_char] -= 1  # Decrement the count of current character anyway, so when it is not part of s1 it gets
+        # a negative entry in the map
+        if need == 0:
+            return True
+        if right - left + 1 == n:  # Current window size is equal to s1's length
+            chars[s2[left]] += 1  # Discard the leftmost character
+            if chars[s2[left]] > 0:  # If the discarded character was part of s1, then it would have an entry equal to
+                # 0 at least, and if it's the case it would be > 0 after being incremented
+                need += 1
+            left += 1
+        right += 1
+    return False
+
+
 class Test(unittest.TestCase):
     data = [('ab', 'eidbaooo', True), ('ab', 'eidboaoo', False)]
 
@@ -61,6 +100,7 @@ class Test(unittest.TestCase):
         for test_s1, test_s2, result in self.data:
             self.assertEqual(result, check_inclusion_v1(test_s1, test_s2))
             self.assertEqual(result, check_inclusion_v2(test_s1, test_s2))
+            self.assertEqual(result, check_inclusion_v3(test_s1, test_s2))
 
 
 if __name__ == '__main__':
