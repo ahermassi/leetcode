@@ -32,7 +32,7 @@ def majority_element_v2(nums):
 
 def majority_element_v3(nums):
     """ This is Boyer-Moore voting algorithm.
-        We can Soup entries into two subgroups: Those containing the majority element, and those that do not hold the
+        We can group entries into two subgroups: Those containing the majority element, and those that do not hold the
         majority element. Since the first subgroup is given to be larger in size than the second, if we see two entries
         that are different, at most one can be the majority element. By discarding both, the difference in size of the
         first subgroup and second subgroup remains the same, so the majority of the remaining entries remains unchanged.
