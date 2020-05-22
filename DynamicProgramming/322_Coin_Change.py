@@ -86,7 +86,7 @@ def coin_change_v3(coins, amount):
     """
     dp = [float('inf')] * (amount+1)
     dp[0] = 0  # The answer to making change with minimum coins for 0 will always be 0 coins no matter what the coins
-    # we are given are
+    # we are given
     for i in range(1, amount+1):  # Solve every sub-problem from 1 to 'amount'
         for coin in coins:  # For each coin we are given ..
             if coin <= i:  # if it is less than or equal to the sub problem amount ..
