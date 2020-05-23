@@ -6,20 +6,20 @@ from heapq import heappush, heappop
 
 def frequency_sort_v1(s):
     """ Use a max heap to store each character along with its frequency in the string. Pop elements from heap to
-        construct final result.
-    Time complexity: if we assume N is the length of the string, then O(N) to create hash map, O(N logN) in the worst
-    case to build the heap (worst case == all characters are different so heap size is N), but since there are only 128
-    different possible characters possible, we can argue that O(N logN) becomes O(N) since log(constant) = O(1).
-    So overall time complexity is (N)
-    Space complexity: O(N) for heap an counter
+        construct the final result.
+    Time complexity: O(N + K logK), where N is the length of the string and K the number of unique characters in the
+    string, then O(N) to create hash map, O(K logK) for the heap, which is O(N logN) in the worst case (worst case = all
+    characters are different so heap size is N), but since there are only 128 different possible characters, we can
+    argue that O(N logN) becomes O(N) since log(constant) = O(1). So overall time complexity is (N)
+    Space complexity: O(N), for heap and hash map
     """
-    counter, heap, res = Counter(s), [], ''
-    for key, value in counter.items():
-        heappush(heap, (-value, key))
+    counter, heap, res = Counter(s), [], []
+    for char, count in counter.items():
+        heappush(heap, (-count, char))
     while heap:
-        repeat, chars = heappop(heap)
-        res += chars * -repeat
-    return res
+        count, char = heappop(heap)
+        res.append(char * -count)
+    return ''.join(res)
 
 
 def frequency_sort_v2(s):
