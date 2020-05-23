@@ -23,26 +23,30 @@ def frequency_sort_v1(s):
 
 
 def frequency_sort_v2(s):
-    """ This solution is based on counting sort.
-        Build a map of characters to the number of times it occurs in the string.
+    """ This solution is based on bucket sort.
+        Observe that because all of the characters came out of a string of length n, the maximum frequency for any one
+        character is n. This means that once we've determined all the letter frequencies using a hash map, we can sort
+        them in linear time using bucket sort.
+        Build a map of characters to the number of times they occur in the string.
         Create an array where the index of the array represents how many times that character occurred in the string.
-        Iterate from the end of the array to the beginning, and at each index, append each character to the return
+        While we could simply make our bucket array length n, we're best to just look for the maximum value (frequency)
+        in the hash map. That way, we only use as much space as we need, and won't need to iterate over empty buckets
+        during the next phase.
+        Iterate from the end of the array to the beginning, and at each index append each character to the result
         string that number of times.
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    counter, res = Counter(s), ''
-    bucket = [None] * (len(s) + 1)  # Array size is len(s) + 1 because, in the worst case, all characters are the
-    # same, so we end up with an array where only the last index is occupied and that index would be len(s) + 1
-    for key, value in counter.items():
-        if not bucket[value]:
-            bucket[value] = [key]
-        else:
-            bucket[value].append(key)
-    for i in reversed(range(len(bucket))):
-        if bucket[i]:
-            for c in bucket[i]:
-                res += c * i
-    return res
+    if not s:
+        return ''
+    counter, res = Counter(s), []
+    max_frequency = max(counter.values())
+    bucket = [[] for _ in range(max_frequency + 1)]
+    for char, count in counter.items():
+        bucket[count].append(char)
+    for frequency in reversed(range(max_frequency + 1)):
+        for char in bucket[frequency]:
+            res.append(char * frequency)
+    return ''.join(res)
 
 
