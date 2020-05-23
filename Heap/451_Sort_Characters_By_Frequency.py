@@ -1,6 +1,6 @@
 """ Given a string, sort it in decreasing order based on the frequency of characters. """
 
-from collections import Counter
+from collections import Counter, defaultdict
 from heapq import heappush, heappop
 
 
@@ -47,6 +47,25 @@ def frequency_sort_v2(s):
     for frequency in reversed(range(max_frequency + 1)):
         for char in bucket[frequency]:
             res.append(char * frequency)
+    return ''.join(res)
+
+
+def frequency_sort_v3(s):
+    """ Create a hash map 'counter' of character to character frequency for the input string. Then, iterate 'counter'
+        to create a second hash map 'substrings' with key as frequency and value as substrings of repeated strings with
+        length as the frequency. Finally, lookup all potential frequencies in decreasing order in 'substrings' and
+        produce the final result.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not s:
+        return ''
+    counter, substrings, res = Counter(s), defaultdict(list), []
+    for char, count in counter.items():
+        substrings[count].append(char * count)
+    max_frequency = max(counter.values())
+    for i in reversed(range(max_frequency + 1)):
+        res.extend(substrings[i])
     return ''.join(res)
 
 
