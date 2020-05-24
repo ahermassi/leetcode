@@ -21,16 +21,16 @@ def is_complete_tree_v1(root):
     """ Use BFS to do a level order traversal, add children to the BFS queue, until we meet the first empty node.
         For a complete binary tree, there should not be any node after we meet an empty one.
         It's using the key feature of level order traversal - from top to bottom and from left to right, so as soon as
-        we see null node (previous level or last level), there should be no more non-null node as we continue the
+        we see null node (previous level or last level), there should be no more non-null nodes as we continue the
         traversal.
     Time complexity: O(N), where N is the number of nodes in the tree
     Space complexity: O(N)
     """
-    queue, i = [root], 0
-    while queue[i]:  # Using an index-based stack to mimic the queue
-        queue.extend([kid for kid in (queue[i].left, queue[i].right)])
-        i += 1
-    return not any(queue[i:])
+    queue = deque([root])
+    while queue[0]:
+        node = queue.popleft()
+        queue.extend([node.left, node.right])
+    return not any(queue)
 
 
 def is_complete_tree_v2(root):
