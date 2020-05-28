@@ -47,12 +47,45 @@ def find_min_arrow_shots_v1(points):
     return count
 
 
+def find_min_arrow_shots_v2(points):
+    """ We can also sort the balloons in increasing order of the start position. We then scan the sorted pairs, and
+        maintain a pointer for the minimum end position 'arrow_limit' for current "active balloons" whose diameters
+        are overlapping. When the next balloon starts after the 'arrow_limit' of active balloons, we shoot an arrow to
+        burst all active balloons, and start to record next active balloons. Otherwise, we need to update 'arrow_limit'
+        to be the minimum between current 'arrow_limit' and the end position of the current balloon we've just added.
+        The so-called Overlapping Interval Problems share some similarities in their solutions:
+            - Sort intervals/pairs in increasing order of the start position.
+            - Scan the sorted intervals, and maintain an "active set" for overlapping intervals. At most times, we do
+              not need to use an explicit set to store them. Instead, we just need to maintain several key parameters,
+              e.g. the number of overlapping intervals (count), the minimum ending point among all overlapping intervals
+              (min_end).
+            - If the interval that we are currently checking overlaps with the active set, which can be characterized
+              by cur.start > min_end, we need to renew those key parameters or change some states.
+            - If the current interval does not overlap with the active set, we just drop current active set, record
+              some parameters, and create a new active set that contains the current interval.
+    Time complexity: O(N logN)
+    Space complexity: O(N)
+    """
+    if not points:
+        return 0
+    points.sort()
+    arrow_limit, res = points[0][1], 1
+    for start, end in points:
+        if start <= arrow_limit:
+            arrow_limit = min(arrow_limit, end)
+        else:
+            arrow_limit = end
+            res += 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([[10, 16], [2, 8], [1, 6], [7, 12]], 2)]
 
     def test_find_min_arrow_shots(self):
         for test_points, result in self.data:
             self.assertEqual(result, find_min_arrow_shots_v1(test_points))
+            self.assertEqual(result, find_min_arrow_shots_v2(test_points))
 
 
 if __name__ == '__main__':
