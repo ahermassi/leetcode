@@ -8,30 +8,39 @@ import unittest2 as unittest
 
 
 def find_cheapest_price(flights, src, dst, K):
-    """ Dijkstra's algorithm using priority queue (heap).
-        Here, 'K' limited the time we can visit a single node that it won't go into an infinite loop.
+    """ Dijkstra's algorithm using priority queue.
+        The key difference with the classic Dijkstra's algorithm is that we don't maintain the global optimal distance
+        to each node, i.e. ignore below optimization:
+            distance ← dist[u] + length(u, v)
+            if distance < dist[v]: ...
+        Because there could be routes whose length is shorter but pass more stops, and those routes don't necessarily
+        constitute the best route in the end. To deal with this, rather than maintain the optimal routes with 0..K
+        stops for each node, the solution simply puts all possible routes into the priority queue, so that all of them
+        has a chance to be processed. It returns the first qualified route, and it's easy to prove this must be the
+        best route. The reason for this is that Dijkstra's (and this modified Dijkstra's) always selects greedily, as
+        in it always picks the node with the lowest cost off the top of the priority queue. This means when we pop the
+        'dst' node off the heap, we have the lowest cost to that node since we always pick the lowest place to go, and
+        obviously the distance from original source to current node (which is 'dst') is less than K. If we still have
+        stops left (stops > 0), we put its neighbor into the priority queue, so each city in the priority queue must be
+        within the stops limit.
+        This question is a little different from the Dijkstra's problem in the sense that there's a trade-off between
+        lower price and fewer stops.
         Heap entries take the form of (cost, node, stops). 'cost' is the accumulated cost, 'node' is the current node's
         location, 'stops' is stop times left as we only have at most K stops.
-        Once 'stops' is used up (stops == 0), we no longer push that node to our queue. Once a popped node is our
-        destination, we get our lowest valid cost.
-        For Dijkstra, there is no need to maintain a best cost for each node since it's kind of greedy search. It
-        always chooses the lowest cost node for next search. So the previous searched node always has a lower cost and
-        has no chance to be updated. The first time we pop our destination from our queue, we have found the lowest
-        cost to our destination.
-    Time complexity: O(E + NlogN), E is the number of edges and N is number of nodes
+    Time complexity: O(E + N logN), E is the number of edges and N is number of nodes
     Space complexity: O(N), graph and heap store at most N number of entries
     """
     graph = defaultdict(list)
-    for u, v, w in flights:
-        graph[u].append((v, w))
+    for source, destination, cost in flights:
+        graph[source].append((destination, cost))
     heap = [(0, src, K + 1)]
     while heap:
-        cost, node, stops = heappop(heap)
+        total_cost, node, stops = heappop(heap)
         if node == dst:
-            return cost
+            return total_cost
         if stops:
-            for v, w in graph[node]:
-                heappush(heap, (cost + w, v, stops - 1))
+            for neighbor, cost in graph[node]:
+                heappush(heap, (total_cost + cost, neighbor, stops - 1))
     return -1
 
 
