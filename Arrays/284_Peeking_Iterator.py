@@ -32,3 +32,34 @@ class PeekingIteratorV1:
     def hasNext(self):
         """ If there's a value waiting in 'nextElement', we should return true. """
         return self.nextElement is not None
+
+
+# Follow up: How would you extend your design to be generic and work with all types, not just integer?
+
+
+class PeekingIteratorV2:
+    """ For the most part, our code would work fine if we replaced integers with another data type (e.g. strings).
+        There is one case where this does not work, and that's if the underlying Iterator might return null/None from
+        .next() as an actual value. If our code is using None to represent an exhausted Iterator, then the conditionals
+        in PeekingIterator will not behave as expected on these values coming out of the underlying Iterator.
+        We can solve it by using a boolean variable 'noNextElement' to state whether or not there's a next value or the
+        Iterator is exhausted, instead of trying to infer this information based on null status of value variables.
+    """
+    def __init__(self, iterator):
+        self.iterator = iterator
+        self.nextElement = self.iterator.next()
+        self.noNextElement = False
+
+    def peek(self):
+        return self.nextElement
+
+    def next(self):
+        val = self.nextElement
+        if self.iterator.hasNext():
+            self.nextElement = self.iterator.next()
+        else:
+            self.noNextElement = True
+        return val
+
+    def hasNext(self):
+        return not self.noNextElement
