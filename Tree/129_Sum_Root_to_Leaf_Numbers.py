@@ -24,3 +24,22 @@ def sum_numbers_v1(root):
     res = [0]
     dfs(root, 0)
     return res[0]
+
+
+def sum_numbers_v2(root):
+    """ Here we implement standard iterative pre-order traversal with the stack.
+    Time complexity: O(N)
+    Space complexity: O(h), to keep the recursion stack, where h is tree height
+    """
+    if not root:
+        return 0
+    res, stack = 0, [(root, 0)]
+    while stack:
+        node, total = stack.pop()
+        total = total * 10 + node.val
+        if not node.left and not node.right:
+            res += total
+        else:
+            stack.extend([(child, total) for child in (node.left, node.right) if child])
+    return res
+
