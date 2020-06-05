@@ -6,6 +6,8 @@ The replacement must be in-place and use only constant extra memory.
 import unittest2 as unittest
 
 
+# Video explanation: https://www.youtube.com/watch?v=quAS1iydq7U
+
 def next_permutation(nums):
     """ The key insight is that we want to increase the permutation by as little as possible. We will use the
         permutation (6,2,1,5,4,3,0) to develop this approach.
