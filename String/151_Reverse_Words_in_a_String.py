@@ -51,7 +51,7 @@ def reverse_words_v2(s):
 
 def reverse_words_v3(s):
     """ Reversing the individual words in the string without reversing the string itself.
-        Read the original string backwards and construct the reversed words. Each reversed word is appended ot 'res'
+        Read the original string backwards and construct the reversed words. Each reversed word is appended to 'res'
         list. Finally, join the reversed words together and return the final reversed string.
     Time complexity: O(N)
     Space complexity: O(N)
