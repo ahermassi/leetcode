@@ -31,3 +31,22 @@ def search_v1(reader, target):
         else:
             right = mid - 1
     return -1
+
+
+def search_v2(reader, target):
+    """ The constraints state that each number is unique and is within the range [-9999, 9999]. There must be at most
+        20000 such numbers. (19999 to be exact). Therefore, there is no need to run an extra loop to find the right
+        boundary.
+    Time complexity: O(1)
+    Space complexity: O(1)
+    """
+    left, right = 0, 20000
+    while left <= right:
+        mid = (left + right) // 2
+        if reader.get(mid) == target:
+            return mid
+        if reader.get(mid) < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
