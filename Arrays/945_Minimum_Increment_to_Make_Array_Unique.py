@@ -28,11 +28,30 @@ def min_increment_for_unique_v1(A):
     return res
 
 
+def min_increment_for_unique_v2(A):
+    """ We use bucket sort instead of sorting the input array. Let's count the quantity of each element. Clearly, we
+        want to increment the duplicated values.
+    Time complexity: O(N)
+    Space complexity: O(max(A))
+    """
+    bucket, res = [0 for _ in range(80000)], 0  # Why 80000? Consider the case in which all the elements are 40000,
+    # then we need to increment all of them (except the first one)
+    for num in A:
+        bucket[num] += 1
+    for i in range(len(bucket) - 1):
+        if bucket[i] > 1:
+            duplicates = bucket[i] - 1
+            res += duplicates
+            bucket[i + 1] += duplicates  # We propagate the duplicates to the following number and repeat
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 2], 1), ([3, 2, 1, 2, 1, 7], 6)]
 
     def test_min_increment_for_unique(self):
         for test_a, result in self.data:
+            self.assertEqual(result, min_increment_for_unique_v2(test_a))
             self.assertEqual(result, min_increment_for_unique_v1(test_a))
 
 
