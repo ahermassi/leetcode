@@ -16,8 +16,8 @@ def add_bold_tag_v1(s, dict):
         bold[i] && (i == N-1 || !bold[i+1]).
         Once we know which letters are the first and last bold letters of a group, we know where to put the '<b>' and
         '</b>' tags.
-    Time complexity:
-    Space complexity:
+    Time complexity: O(N * W), where N is the length of s and W is the number of words
+    Space complexity: O(N)
     """
     n = len(s)
     bold = [False] * n
@@ -44,8 +44,8 @@ def add_bold_tag_v2(s, dict):
         [[0, 3], [1, 4], [4, 6]]
           aaa     aab      bc
         We merge these intervals: [0,6], so we know 'aaabbc' needs to be surrounded by bold tag.
-    Time complexity:
-    Space complexity:
+    Time complexity: O(N * W + N logN), where N is the length of s and W is the number of words
+    Space complexity: O(N)
     """
     n, intervals, merged, res = len(s), [], [], []
     for i in range(n):
