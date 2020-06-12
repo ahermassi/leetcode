@@ -3,14 +3,14 @@
 
 
 def longest_palindrome_v1(s):
-    """ Expand Around Center.
+    """ Expand around center.
         We observe that a palindrome mirrors around its center. Therefore, a palindrome can be expanded from its center.
         There are two cases of palindromes: even and odd length.
     Time complexity: O(N^2), since expanding a palindrome around its center could take O(N)
     Space complexity: O(1)
     """
 
-    def palindrome_at(left, right):  # Starting at (left, right) expand outwards to find the longest palindrome
+    def palindrome_at(left, right):  # Starting at (left, right), expand outwards to find the longest palindrome
         while left >= 0 and right < n and s[left] == s[right]:
             left -= 1
             right += 1
@@ -37,7 +37,7 @@ def longest_palindrome_v2(s):
         way up finding all 2-letter palindromes, and so on.
         Why are we counting down for i, but counting up for j? Each sub-problem dp[i][j] depends on dp[i+1][j-1].
     Time complexity: O(N^2)
-    Space complexity: O(N^2) to store dp array
+    Space complexity: O(N^2), to store dp array
     """
     n, res = len(s), ''
     dp = [[False] * n for _ in range(n)]
@@ -46,7 +46,7 @@ def longest_palindrome_v2(s):
         res = s[i]
     for i in reversed(range(n)):
         for j in range(i + 1, n):
-            if s[i] == s[j] and (j - i == 1 or dp[i + 1][j - 1]):  # dp[i+1][j-1] represents the middle of the current
+            if s[i] == s[j] and (j == i + 1 or dp[i + 1][j - 1]):  # dp[i+1][j-1] represents the middle of the current
                 # considered substring
                 dp[i][j] = True  # If the middle is a palindrome and the endpoints equal each other, it follows that
                 # s[i:j+1] is a palindrome
