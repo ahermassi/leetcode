@@ -23,29 +23,27 @@ def two_sum_v2(nums, target):
         In the first iteration, we add each element's value and its index to the table. Then, in the second iteration,
         we check if each element's complement (target - nums[i]) exists in the table. Beware that the complement must
         not be nums[i] itself.
-    Time complexity: O(N) for 2 array passes
+    Time complexity: O(N), for 2 array passes
     Space complexity: O(N)
     """
-    d = {v: i for i, v in enumerate(nums)}  # Add each element's value and its index to the table
-    n = len(nums)
-    for i in range(n):
-        s = nums[i]
-        if target - s in d and d[target-s] != i:  # The complement (target - s) found in O(1) lookup
-            return [i, d[target-s]]
+    indices = {num: i for i, num in enumerate(nums)}  # Add each element value and its index to the table
+    for i, num in enumerate(nums):
+        if target - num in indices and indices[target-num] != i:  # The complement (target - num) found in O(1) lookup
+            return [i, indices[target-num]]
 
 
 def two_sum_v3(nums, target):
     """ We can do it in one pass. While we iterate and insert elements into the hash map, we also look back to check
         if current element's complement already exists in the hash map. If it exists, we have found a solution and
         return immediately.
-    Time complexity: O(N) for one array pass
+    Time complexity: O(N), for one array pass
     Space complexity: O(N)
     """
-    vals = {}
-    for i, v in enumerate(nums):
-        if target - v in vals:
-            return [vals[target - v], i]
-        vals[v] = i
+    indices = {}
+    for i, num in enumerate(nums):
+        if target - num in indices:
+            return [indices[target - num], i]
+        indices[num] = i
 
 
 class Test(unittest.TestCase):
