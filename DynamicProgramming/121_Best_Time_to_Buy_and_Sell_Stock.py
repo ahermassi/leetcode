@@ -18,8 +18,8 @@ def max_stock_profit_v1(prices):
         So next element is 6. If we sell the stock at that price we will earn profit of $1.
             Buy:5     Sell:6               Profit:$1             max profit=$1
 
-        Now the next element is 2 which have lower price than the stock we bought previously which was 5. So if we buy 
-        this stock at price $2 and sells it in future then we will surely earn more profit than the stock we bought at 
+        Now the next element is 2 which is lower price than the stock we bought previously which was 5. So if we buy
+        this stock at price $2 and sell it in the future, we will surely earn more profit than the stock we bought at
         price 5. So we buy stock at $2.
             Buy:2     Sell:-              Profit:-                  max profit=$1
 
@@ -63,7 +63,8 @@ def max_stock_profit_v2(prices):
         find a contiguous sub-array giving maximum profit. If the difference falls below 0, reset it to zero. By
         resetting max_cur to 0, it essentially means that we have found a point i where prices[i] is lower than the
         time we bought at and that we should then try to buy at point i to see if we can achieve a bigger gain.
-        We are basically applying Kadane's algorithm to the difference array of prices to find the maximum subarry sum.
+        We are basically applying Kadane's algorithm to the difference array of prices to find the maximum sub-array
+        sum.
         Example:
         prices = [7, 1, 5, 3, 6, 4] --> prices_difference = [0, -6, 4, -2, 3, -2]
         At each step i, we update cur_max: cur_max = max(0, cur_max + prices_difference[i]), such as:
@@ -73,9 +74,9 @@ def max_stock_profit_v2(prices):
     """
     cur_max = max_profit = 0
     for i in range(1, len(prices)):
-        cur_max = max(0, cur_max + prices[i] - prices[i-1])  # At any point, either I buy stock and have a current
-        # maximum profit of 0 (buying and selling at the same day is not possible, so I'm basically starting over), or
-        # sell stock and update my new current max profit
+        cur_max = max(0, cur_max + prices[i] - prices[i-1])  # At any point, we either buy stock and have a current
+        # maximum profit of 0 (buying and selling at the same day is not possible, so we're basically starting over),
+        # or sell stock and update our new current max profit
         max_profit = max(cur_max, max_profit)  # Keep track of the maximum profit found so far
     return max_profit
 
@@ -84,9 +85,11 @@ def max_stock_profit_v3(prices):
     """ Let dp[i] denote the max profit on ith day. dp[i] = 0 means that it's not possible to make any (positive)
         profit selling the stock at hand. Resetting it to 0 is like saying start over and buy stock at time i. Positive
         dp[i] indicates how much profit can be made selling stock at time i.
-        On any given day, I can either be in a trade, or not. If I'm in a trade, my profit at the end of that day is
-        dp[i] = prices[i] - prices[i-1] + dp[i-1]: the price movement today, plus the profit from yesterday. If I'm not
-        in a trade, my profit is 0. Since I'm looking for profitable trades, I can take the max of that:
+        At any given day, we can either be in a trade, or not. If we're in a trade, our profit at the end of that day
+        is:
+            dp[i] = prices[i] - prices[i-1] + dp[i-1]
+        The price movement today, plus the profit from yesterday. If we're not in a trade, our profit is 0. Since we're
+        looking for profitable trades, we can take the max of that:
             dp[i] = max(0, prices[i] - prices[i-1] + dp[i-1])
     Time complexity: O(N)
     Space complexity: O(N)
