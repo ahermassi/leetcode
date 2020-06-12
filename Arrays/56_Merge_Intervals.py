@@ -36,12 +36,12 @@ def merge(intervals):
     """
     intervals.sort()
     res = []
-    for interval in intervals:
-        if res and interval[0] <= res[-1][1]:  # If the list of merged intervals is not empty and if the current
+    for start, end in intervals:
+        if res and start <= res[-1][1]:  # If the list of merged intervals is not empty and if the current
             # interval overlaps with the previous, merge the current and previous intervals.
-            res[-1][1] = max(res[-1][1], interval[1])
+            res[-1][1] = max(res[-1][1], end)
         else:  # Otherwise, simply append the current interval
-            res.append(interval)
+            res.append([start, end])
     return res
 
 # There seems to be a follow-up at Facebook to implement the algorithm with no sorting, using a BST.
