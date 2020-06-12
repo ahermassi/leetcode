@@ -23,12 +23,9 @@ def add_two_numbers_v1(l1, l2):
     dummy = tail = ListNode(0)
     carry = 0
     while l1 or l2:
-        val1 = l1.val if l1 else 0
-        val2 = l2.val if l2 else 0
-        s = val1 + val2 + carry
+        s = (l1.val if l1 else 0) + (l2.val if l2 else 0) + carry
         tail.next = ListNode(s % 10)
-        carry = s // 10
-        tail = tail.next
+        tail, carry = tail.next, carry // 10
         l1 = l1.next if l1 else None
         l2 = l2.next if l2 else None
     if carry:
@@ -44,14 +41,11 @@ def add_two_numbers_v2(l1, l2):
     dummy = tail = ListNode(0)
     carry = 0
     while l1 or l2 or carry:
-        if l1:
-            carry += l1.val
-            l1 = l1.next
-        if l2:
-            carry += l2.val
-            l2 = l2.next
+        carry += (l1.val if l1 else 0) + (l2.val if l2 else 0)
         tail.next = ListNode(carry % 10)
         tail, carry = tail.next, carry // 10
+        l1 = l1.next if l1 else None
+        l2 = l2.next if l2 else None
     return dummy.next
 
 
