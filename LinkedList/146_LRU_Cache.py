@@ -30,12 +30,11 @@ class LRUCacheV1(object):
         Rules:
             1- Always add new node BEFORE the tail: this is the most recently used
             2- As a result of previous rule, the LRU node is always the one right AFTER the head
+    Time complexity: O(1)
+    Space complexity: O(N)
     """
 
     def __init__(self, capacity):
-        """
-        :type capacity: int
-        """
         self.nodes = {}  # (key: node) pairs
         self.capacity = capacity
         self.size = 0
@@ -46,10 +45,6 @@ class LRUCacheV1(object):
         self.tail.pre = self.head
 
     def get(self, key):
-        """
-        :type key: int
-        :rtype: int
-        """
         if key not in self.nodes:
             return -1
         node = self.nodes[key]
@@ -58,11 +53,6 @@ class LRUCacheV1(object):
         return node.val
 
     def put(self, key, value):
-        """
-        :type key: int
-        :type value: int
-        :rtype: None
-        """
         if key in self.nodes:  # If key already exists, then this is essentially an update
             self.remove(self.nodes[key])  # The node is now most recently accessed, so remove it
         node = Node(key, value)
@@ -79,9 +69,9 @@ class LRUCacheV1(object):
 
     def add(self, node):
         tail = self.tail
-        p = tail.pre
-        p.next = node
-        node.pre = p
+        pre = tail.pre
+        pre.next = node
+        node.pre = pre
         tail.pre = node
         node.next = tail
         self.nodes[node.key] = node
@@ -94,10 +84,10 @@ class LRUCacheV2(object):
             Put the key
             Delete the first added key
         The first two operations in O(1) time are provided by the standard hash map, and the last one by linked list.
-        We can maintain a separate queue of keys. In the hash table we store for each key a reference to its location
+        We can maintain a separate queue of keys. In the hash table, we store for each key a reference to its location
         in the queue. Each time an item is looked up and is found in the hash table, it is moved to the front of the
         queue. (This requires us to use a linked list implementation of the queue, so that items in the middle of the
-        queue can be moved to the head). When the length of the queue exceeds the capacity,when a new element is added
+        queue can be moved to the head). When the length of the queue exceeds the capacity, when a new element is added
         to the cache, the item at the tail of the queue is deleted from the cache, i.e., from the queue and the hash
         table.
         There is a structure called ordered dictionary which combines behind the scenes both hash map and linked list.
@@ -105,17 +95,12 @@ class LRUCacheV2(object):
     """
 
     def __init__(self, capacity):
-        """
-        :type capacity: int
-        """
         self.nodes = OrderedDict()
         self.capacity = capacity
         self.size = 0
 
     def get(self, key):
         """ When an element is accessed, that makes it a recently used element, so we need to pop and place it again.
-        :type key: int
-        :rtype: int
         """
         if key not in self.nodes:
             return -1
@@ -124,11 +109,6 @@ class LRUCacheV2(object):
         return val
 
     def put(self, key, value):
-        """
-        :type key: int
-        :type value: int
-        :rtype: None
-        """
         if key in self.nodes:  # If key already exists, then this is essentially an update
             self.nodes.pop(key)
         elif self.size == self.capacity:  # Max capacity reached
