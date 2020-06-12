@@ -39,7 +39,7 @@ def search(nums, target):
         mid = (left + right) // 2
         if nums[mid] == target:
             return mid
-        if nums[left] <= nums[mid]:  # It's <= instead of < because when there's only two elements, the mid and low
+        if nums[left] <= nums[mid]:  # It's <= instead of < because when there's only two elements, 'mid' and 'left'
             # point to exactly the same element. Then we have to include = to make sure it covers this case.
             if nums[left] <= target < nums[mid]:
                 right = mid - 1
