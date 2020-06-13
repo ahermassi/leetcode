@@ -19,28 +19,25 @@ def word_break_v1(s, word_dict):
     """
 
     def dfs(index):
-        """ dfs(index) returns True if the substring starting at 'index' can be partitioned according to the
-            dictionary's words.
-        """
+        """ Return True if the substring starting at 'index' can be partitioned according to the words dictionary. """
         if index == n:
             return True
-        for j in range(index, n):  # Try all the possible chopping indices
-            if s[index:j+1] in word_dict and dfs(j+1):  # If the substring up to index j can be found in the
+        for i in range(index, n):  # Try all the possible chopping indices
+            if s[index:i+1] in word_dict and dfs(i+1):  # If the substring up to index i can be found in the
                 # dictionary and the rest of the string can be partitioned the same way, then we're done.
                 return True
         return False
 
-    n = len(s)
-    word_dict = set(word_dict)
+    n, word_dict = len(s), set(word_dict)
     return dfs(0)
 
 
 def word_break_v2(s, word_dict):
     """ In the previous approach, we can see that many sub problems were redundant, i.e we were calling the recursive
         function multiple times for a particular string. To avoid this, we can use memoization method, where an array
-        memo is used to store the results of the sub problems. Now, when the function is called again for a particular
-        string, value will be fetched and returned using the memo array, if its value has been already evaluated.
-        With memoization many redundant sub problems are avoided and recursion tree is pruned and thus it reduces the
+        'memo' is used to store the results of the sub problems. Now, when the function is called again for a particular
+        string, value will be fetched and returned using the 'memo' array, if its value has been already evaluated.
+        With memoization, many redundant sub problems are avoided and recursion tree is pruned and thus it reduces the
         time complexity by a large factor.
     Time complexity: O(N^2)
     Space complexity: O(N)
@@ -53,12 +50,11 @@ def word_break_v2(s, word_dict):
             for i in range(index, n):
                 if s[index:i + 1] in word_dict and dfs(i + 1):
                     memo[index] = True
-                    return memo[index]
+                    return True
         memo[index] = False
-        return memo[index]
+        return False
 
-    n = len(s)
-    word_dict, memo = set(word_dict), {}
+    n, word_dict, memo = len(s), set(word_dict), {}
     return dfs(0)
 
 
@@ -106,8 +102,7 @@ def word_break_v4(s, word_dict):
     for i in range(1, n + 1):
         for word in word_dict:
             if dp[i - len(word)] and s[i - len(word):i] == word:  # dp[i-len(word)] guarantees that dp is True right
-                # before the word we're looking for, and s[i-len(word):i] == word just means that we've found the word
-                # in s.
+                # before the word we're looking for, and s[i-len(word):i] == word means that we've found the word in s.
                 dp[i] = True
     return dp[n]
 
