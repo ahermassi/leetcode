@@ -9,7 +9,7 @@ def exist_v1(board, word):
     """ DFS that alters the original board. We mark a visited cell as '#' to avoid using the same cell more than once.
         When we exhaust all search possibilities, we backtrack and remove the mark of the visited cell.
     Time complexity: O(N * M * (4^S)), where N and M are the dimensions of the board and S is the length of the word.
-    First we have to find the first letter to start, which gives time O(N * M), then for each search step it has 2~4
+    First, we have to find the first letter to start which gives time O(N * M). Then, for each search step it has 2~4
     neighbours to go, and it has S steps, where S is the length of the word to be searched.
     https://cs.stackexchange.com/questions/96626/whats-the-big-o-runtime-of-a-dfs-word-search-through-a-matrix
     Space complexity: O(S), for the recursion call stack
@@ -72,13 +72,13 @@ def exist_v3(board, word):
     Space complexity: O(S)
     """
 
-    def search(index, i, j, visited):
+    def search(i, j, index, visited):
         if index == len(word):
             return True
         if not 0 <= i < n or not 0 <= j < m or (i, j) in visited or board[i][j] != word[index]:
             return False
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            if search(index + 1, x, y, visited | {(i, j)}):  # visited | {(i, j)} is equivalent to (path + new_val)
+            if search(x, y, index + 1, visited | {(i, j)}):  # visited | {(i, j)} is equivalent to (path + new_val)
                 return True
         return False
 
