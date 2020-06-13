@@ -7,7 +7,7 @@ import unittest2 as unittest
 
 
 def find_kth_largest_v1(nums, k):
-    """ The naive solution would be to sort an array first and then return kth element from the end.
+    """ The naive solution would be to sort the array first and then return kth element from the end.
     Time complexity: O(N logN)
     Space complexity: O(N)
     """
@@ -16,9 +16,9 @@ def find_kth_largest_v1(nums, k):
 
 def find_kth_largest_v2(nums, k):
     """ Build a min heap that stores the K largest values. The algorithm iterates over the whole input and maintains
-        the size of the heap as k.
-    Time complexity: O(N logK) for heap construction
-    Space complexity: O(k) to store heap elements
+        the size of the heap equal to K.
+    Time complexity: O(N logK), for heap construction
+    Space complexity: O(k), to store heap elements
     """
     heap = []
     for num in nums:
@@ -33,20 +33,19 @@ def find_kth_largest_v3(nums, k):
         This approach is basically the same as for quick sort. For simplicity, notice that kth largest element is
         the same as (N - k)th smallest element (when indexing is 0-based), hence we could implement kth smallest
         algorithm for this problem.
-        First we choose a pivot, and define its position in a sorted array in a linear time. This could be done with
-        the help of partition algorithm. As an output we have an array where pivot is on its perfect position in the
+        First, we choose a pivot and define its position in sorted array in a linear time. This could be done with
+        the help of partition algorithm. As an output, we have an array where pivot is at its perfect position in the
         ascending sorted array, all elements on the left of the pivot are smaller than pivot, and all elements on the
         right of the pivot are larger than or equal to pivot.
         If the pivot's rank is smaller than the rank we want to find, we are sure all elements before pivot actually
         have even smaller rank, we search the target at the part after pivot.
         If the pivot's rank is larger than the rank we want to find, we search the target at the left part before pivot.
-        The idea is so powerful and beautiful.
     Time complexity: O(N)
     Space complexity: O(1)
     """
 
     def partition(left, right):
-        """ This is the same partitioning routine of quicksort. """
+        """ This is the same partitioning routine of quick sort. """
         random_index = randint(left, right)  # Select a random pivot index between left and right, so that even when
         # the worst case input would be provided the algorithm wouldn't be affected
         pivot = nums[random_index]
@@ -68,7 +67,7 @@ def find_kth_largest_v3(nums, k):
 
     n = len(nums)
     left, right = 0, n - 1
-    k = n - k  # In reality, kth largest is same as (n-k+1)th smallest. Since indexing is 0-base, k is set to (n - k)
+    k = n - k  # In reality, kth largest is same as (n-k+1)th smallest. Since indexing is 0-based, k is set to (n - k)
     while True:
         pivot = partition(left, right)
         if pivot == k:
