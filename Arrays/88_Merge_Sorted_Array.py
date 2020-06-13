@@ -32,14 +32,35 @@ def merge_v1(nums1, m, nums2, n):
 def merge_v2(nums1, m, nums2, n):
     """ We do have spare space at the end of the first array. We take advantage of this by filling the first array
         from its end. The last element in the result will be written to index (m + n - 1).
-        For example, if A = [5, 13, 17, , , , , ] and B = [3, 7, 11, 19], then A is updated in the following manner:
-        [5, 13, 17, , , , 19, ]
-        [5, 13, 17, , , 17, 19, ]
-        [5, 13, 17, , 13, 17, 19, ]
-        [5, 13, 17, 11, 13, 17, 19, ]
-        [5, 13, 7, 11, 13, 17, 19, ]
-        [5, 5, 7, 11, 13, 17, 19, ]
-        [3, 5, 7, 1, 13, 17, 19, ]
+        For example, if A = [5, 13, 17, , , , , ], B = [3, 7, 11, 19], then A is updated in the following manner:
+                                    ^        ^                     ^
+                                    i       w_i                    j
+
+        A = [5, 13, 17, , , , 19, ], B = [3, 7, 11, 19]
+                    ^      ^                    ^
+                    i      w_i                  j
+
+        A = [5, 13, 17, , , 17, 19, ], B = [3, 7, 11, 19]
+                ^        ^                        ^
+                i       w_i                       j
+
+        A = [5, 13, 17, , 13, 17, 19, ], B = [3, 7, 11, 19]
+             ^         ^                            ^
+             i        w_i                           j
+
+        A = [5, 13, 17, 11, 13, 17, 19, ], B = [3, 7, 11, 19]
+             ^      ^                              ^
+             i     w_i                             j
+
+        A = [5, 13, 7, 11, 13, 17, 19, ], B = [3, 7, 11, 19]
+             ^  ^                              ^
+             i w_i                             j
+
+        A =    [5, 5, 7, 11, 13, 17, 19, ], B = [3, 7, 11, 19]
+            ^   ^                                ^
+           i<0 w_i                               j
+
+        A = [3, 5, 7, 1, 13, 17, 19, ]
         Note that we will never overwrite an entry in the first array that has not already been processed. The reason
         is that even if every entry of the second array is larger than each element of the first array, all elements
         of the second array will fill up indices m to (m + n - 1) inclusive, which does not conflict with entries
