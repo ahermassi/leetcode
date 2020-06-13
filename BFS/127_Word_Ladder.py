@@ -45,7 +45,7 @@ def ladder_length_v1(begin_word, end_word, word_list):
         for i in range(len(word)):
             transformations[word[:i] + '*' + word[i + 1:]].append(word)
     queue = deque([(begin_word, 1)])
-    visited = set()  # Visited to make sure we don't repeat processing same word.
+    visited = set()  # Visited to make sure we don't repeat processing same word
     while queue:
         word, depth = queue.popleft()
         n = len(word)
@@ -85,9 +85,10 @@ def ladder_length_v2(begin_word, end_word, word_list):
         word, depth = queue.popleft()
         n = len(word)
         for i in range(n):
-            for w in transformations[word[:i] + '*' + word[i + 1:]]:
+            pattern = word[:i] + '*' + word[i + 1:]
+            for w in transformations[pattern]:
                 if w in other_visited:  # If the intermediate state/word has already been visited from the other
-                    # parallel traversal this means we have found the answer.
+                    # parallel traversal, this means we have found the answer.
                     return depth + other_visited[w]
                 if w not in visited:
                     queue.append((w, depth + 1))
