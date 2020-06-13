@@ -57,8 +57,8 @@ def spiral_order_v3(matrix):
     res = []
     while row_begin <= row_end and col_begin <= col_end:
         # Traverse Right
-        for i in range(col_begin, col_end + 1):
-            res.append(matrix[row_begin][i])
+        for j in range(col_begin, col_end + 1):
+            res.append(matrix[row_begin][j])
         row_begin += 1
         # Traverse Down
         for i in range(row_begin, row_end + 1):
@@ -66,8 +66,8 @@ def spiral_order_v3(matrix):
         col_end -= 1
         # Traverse Left
         if row_begin <= row_end:
-            for i in reversed(range(col_begin, col_end + 1)):
-                res.append(matrix[row_end][i])
+            for j in reversed(range(col_begin, col_end + 1)):
+                res.append(matrix[row_end][j])
         row_end -= 1
         # Traverse Up
         if col_begin <= col_end:
