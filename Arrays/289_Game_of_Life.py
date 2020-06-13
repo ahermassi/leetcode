@@ -10,7 +10,7 @@ def game_of_life_v1(board):
         So, we never lose the original value for a cell. Whenever a rule is applied to any of the cells, we look at its
         neighbors in the hash map and change the original board accordingly. Here we keep the copy unmodified since the
         problem asks us to make the changes to the original array in-place.
-    Time complexity: O(N * M) where N is the number of rows and M is the number of columns of the board
+    Time complexity: O(N * M), where N is the number of rows and M is the number of columns of the board
     Space complexity: O(N * M), this is the space occupied by the copy board we created initially
     """
     n, m = len(board), len(board[0])
@@ -18,8 +18,7 @@ def game_of_life_v1(board):
     for i in range(n):
         for j in range(m):
             live_neighbors = 0
-            for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j - 1), (i - 1, j + 1), (i + 1, j - 1), \
-                        (i + 1, j + 1):
+            for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1):
                 if 0 <= x < n and 0 <= y < m and copy[x][y]:
                     live_neighbors += 1
             if copy[i][j] and (live_neighbors < 2 or live_neighbors > 3):
@@ -29,16 +28,16 @@ def game_of_life_v1(board):
 
 
 def game_of_life_v2(board):
-    """ O(N * M) space complexity could be too expensive when the board is very large. We only have two states live(1)
-        or dead(0) for a cell. We can use some dummy cell value to signify previous state of the cell along with the
+    """ O(N * M) space complexity could be too expensive when the board is very large. We only have two states live (1)
+        or dead (0) for a cell. We can use some dummy cell value to signify previous state of the cell along with the
         new changed value.
-        For example if the value of the cell was 1 originally but it has now become 0 after applying the rule, then we
+        For example, if the value of the cell was 1 originally but it has now become 0 after applying the rule, then we
         can change the value to 2. Also, if the value of the cell was 0 originally but it has now become 1 after
         applying the rule, then we can change the value to 3. Hence:
-        0, 3 are 'dead' and 'dead->live'
-        1, 2 are 'live' and 'live->dead'
-        We iterate the board again and change the value of a cell to a 0 if its value currently is 2 and change the
-        value to a 1 if its current value is 3.
+            0, 3 are 'dead' and 'dead->live'
+            1, 2 are 'live' and 'live->dead'
+        We iterate over the board again and change the value of a cell to a 0 if its value currently is 2 and change
+        the value to a 1 if its current value is 3.
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
