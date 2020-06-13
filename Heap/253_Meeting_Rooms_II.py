@@ -8,7 +8,7 @@ import unittest2 as unittest
 # More details: https://leetcode.com/articles/meeting-rooms-ii/
 
 def min_meeting_rooms_v1(intervals):
-    """ In the worst case we can assign a new room to all of the meetings but that is not really optimal right? Unless
+    """ In the worst case we can assign a new room to all of the meetings but that is not really optimal, right? Unless
         of course they all collide with each other. We need to be able to find out efficiently if a room is available
         or not for the current meeting and assign a new room only if none of the assigned rooms is currently free.
         We can't really process the given meetings in any random order. The most basic way of processing the meetings
@@ -27,12 +27,12 @@ def min_meeting_rooms_v1(intervals):
         If the new event collides with everyone, then a new room must be created; if the new event does not collide
         with someone, then it must not collide with the earliest finish one, so greedily choose that one and re-use
         that room. So the invariant is maintained.
-    Time complexity: O(N logN), There are two major portions that take up time here. One is sorting of the array that
+    Time complexity: O(N logN), there are two major portions that take up time here: One is sorting of the array that
     takes O(N logN). Then we have the min-heap. In the worst case, all N meetings will collide with each other. In any
     case we have N add operations on the heap. In the worst case we will have N extract-min operations as well. Overall
     complexity being O(N logN) since extract-min operation on a heap takes O(logN)
-    Space complexity: O(N) because we construct the min-heap and that can contain N elements in the worst case as
-    described above in the time complexity
+    Space complexity: O(N), we construct the min-heap and that can contain N elements in the worst case as described
+    above in the time complexity
     """
     if not intervals:
         return 0
@@ -43,9 +43,7 @@ def min_meeting_rooms_v1(intervals):
         interval = intervals[i]
         if interval[0] >= heap[0]:  # If the room due to free up the earliest is free, assign that room to this meeting
             heappop(heap)
-            heappush(heap, interval[1])
-        else:
-            heappush(heap, interval[1])  # If a new room is to be assigned, then also we add to the heap
+        heappush(heap, interval[1])  # If a new room is to be assigned, we also add it to the heap
     return len(heap)
 
 
@@ -68,8 +66,8 @@ def min_meeting_rooms_v2(intervals):
         meeting at s_ptr had to start. So we can reuse one of the rooms. Otherwise, we have to allocate a new room.
         If a meeting has indeed ended i.e. if start[s_ptr] >= end[e_ptr], then we increment e_ptr.
         Repeat this process until s_ptr processes all of the meetings.
-    Time complexity: O(N logN) for Timsort
-    Space complexity: O(N) because we create two separate arrays of size N, one for recording the start times and one
+    Time complexity: O(N logN), for the sort
+    Space complexity: O(N), we create two separate arrays of size N, one for recording the start times and one
     for the end times
     """
     if not intervals:
