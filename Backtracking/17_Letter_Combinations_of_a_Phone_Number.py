@@ -8,14 +8,14 @@ import unittest2 as unittest
 
 def letter_combinations_v1(digits):
     """ If there is no more digits to check, that means that the current combination 'path' is done.
-        If there are still digits to check :
-            Iterate over the letters mapping the next available digit (at index 'index' of digits)
-            Append the current letter to the current combination: path = path + letter.
-            Proceed to check next digits : dfs(index + 1, path + letter).
+        If there are still digits to check:
+            - Iterate over the letters mapping the next available digit (at index 'index' of digits)
+            - Append the current letter to the current combination: path = path + letter.
+            - Proceed to check next digits : dfs(index + 1, path + letter).
     Time complexity: O(3^N + 4^M), where N is the number of digits in the input that map to 3 letters (e.g. 2, 3, 4,
     5, 6, 8) and M is the number of digits in the input that map to 4 letters (e.g. 7, 9), and N+M is the total number
     of digits in the input. So overall, O(4^N) worst case where N is the length of digits.
-    Space complexity: O(3^N + 4^M) since we have to keep O(3^N + 4^M) solutions, or O(4^N).
+    Space complexity: O(3^N + 4^M), since we have to keep O(3^N + 4^M) solutions, or O(4^N).
     """
 
     def dfs(index, path):
