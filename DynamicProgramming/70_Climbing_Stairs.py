@@ -17,28 +17,26 @@ def climb_stairs_v2(n):
     """ Top down + memoization
         Here are the steps to get the solution incrementally:
         Base cases:
-            if n == 1, then there is only one NEW way to climb the stair.
-            if n == 2, then there are two NEW ways to climb the stairs.
+            if n == 1, then there is only one NEW way to climb the stair
+            if n == 2, then there are two NEW ways to climb the stairs
         The key intuition to solve the problem is that given a number of stairs n, if we know the number of ways to get
-        to the points (n-1) and (n-2) respectively, denoted as n1 and n2 , then the total ways to get to the point n
-        is n1 + n2. Because from the (n-1)th point, we can take one single step to reach n. And from the (n-2)th point,
+        to the points (n-1) and (n-2), respectively, denoted as n1 and n2 , then the total ways to get to the point n
+        is n1 + n2. Because from the (n-1)th point we can take one single step to reach n, and from the (n-2)th point
         we can take two steps to get there.
-        In other words: show me how many distinct ways you can climb to the (n-1)th and (n-2)th steps, because when
-        you reach those points you can climb 1 or 2 steps, respectively, to reach the top. So at the end it is the sum
-        of how many distinct ways you can climb to points (n-1) and (n-2).
-        Now given the above intuition, we can construct a hash map where each node stores the solution for each number
-        n. Or if we look at it closer, it is clear that this is basically a fibonacci number, with the starting numbers
-        as 1 and 2, instead of 1 and 1.
+        In other words: show me how many distinct ways we can climb to the (n-1)th and (n-2)th steps, because when
+        we reach those points we can climb 1 or 2 steps, respectively, to reach the top. So at the end, it is the sum
+        of how many distinct ways we can climb to points (n-1) and (n-2).
+        Now given the above intuition, we can construct a hash map where each entry stores the solution for each number
+        n. Or if we look at it closer, it is clear that this is basically a fibonacci number with the starting numbers
+        as 1 and 2 instead of 1 and 1.
     Time complexity: O(n)
     Space complexity: O(n)
     """
 
     def climb(n):
-        if n in memo:
-            return memo[n]
-        res = climb(n-1) + climb(n-2)
-        memo[n] = res
-        return res
+        if n not in memo:
+            memo[n] = climb(n-1) + climb(n-2)
+        return memo[n]
 
     memo = {1: 1, 2: 2}  # Base cases
     return climb(n)
@@ -49,15 +47,15 @@ def climb_stairs_v3(n):
         i.e. its optimal solution can be constructed efficiently from optimal solutions of its sub-problems. We can use
         dynamic programming to solve the problem.
         We can reach ith step in one of the two ways:
-            1- Taking a single step from (i−1)th step.
-            2- Taking a step of 2 from (i-2)th step.
-        Let dp[i] denote the number of ways to reach ith step if we can take 1 or 2 steps.
+            1- Taking a single step from (i−1)th step
+            2- Taking a step of 2 from (i-2)th step
+        Let dp[i] denote the number of ways to reach ith step if we can take 1 or 2 steps:
             dp[i] = dp[i-1] + dp[i-2]
     Time complexity: O(n)
     Space complexity: O(n)
     """
-    dp = [0] * (n + 1)  # We create an array of size (n + 1). It is so we can just return dp[n] at the end instead of
-    # fumbling with dp[n-1]
+    dp = [0] * (n + 1)  # We create an array of size (n + 1) so we can just return dp[n] at the end instead of fumbling
+    # with dp[n-1]
     dp[0] = dp[1] = 1
     for i in range(2, n + 1):
         dp[i] = dp[i-1] + dp[i-2]
@@ -66,7 +64,7 @@ def climb_stairs_v3(n):
 
 def climb_stairs_v4(n):
     """ No need to store every middle result. We notice that this is just the Fibonacci series. We can just use local
-        variables to keep track of the items 1 and 2 behind where we stand.
+        variables to keep track of the items 1 step and 2 steps behind where we stand.
     Time complexity: O(n)
     Space complexity: O(1)
     """
