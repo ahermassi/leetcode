@@ -12,8 +12,8 @@ def move_zeroes_v1(nums):
         elements. If the newly found element is not a zero, we record it just after the last found non-zero element.
         The position of last found non-zero element is denoted by the 'non_zero_index' variable.
         The code will maintain the following invariants:
-            1- All elements before 'non_zero_index' are non-zeroes.
-            2- All elements between 'non_zero_index' and i are zeroes.
+            1- All elements before 'non_zero_index' are non-zeroes
+            2- All elements between 'non_zero_index' and i are zeroes
             3- All elements after i are undecided (yet)
         Therefore, when we encounter a non-zero element, we need to swap elements pointed by i and 'non_zero_index',
         then advance both pointers. If it's a zero element, we just advance i pointer.
@@ -22,8 +22,8 @@ def move_zeroes_v1(nums):
     Space complexity: O(1)
     """
     non_zero_index = 0
-    for i in range(len(nums)):
-        if nums[i] != 0:
+    for i, num in enumerate(nums):
+        if num:
             nums[i], nums[non_zero_index] = nums[non_zero_index], nums[i]
             non_zero_index += 1
 
@@ -38,13 +38,13 @@ def move_zeroes_v2(nums):
     that the algorithm does is N.
     Space complexity: O(1)
     """
-    non_zero_index = 0
+    n, non_zero_index = len(nums), 0
     for i, num in enumerate(nums):
         if num:  # If the current element is not 0, then we need to append it just in front of last non 0 we found.
             nums[non_zero_index] = num
             non_zero_index += 1
-    for i in range(non_zero_index, len(nums)):  # After we have finished processing new elements, all the non-zero
-        # elements are already at beginning of array. We just need to fill remaining array with 0's.
+    for i in range(non_zero_index, n):  # After we have finished processing new elements, all the non-zero elements
+        # are already at beginning of array. We just need to fill remaining array with 0's.
         nums[i] = 0
 
 
