@@ -17,22 +17,22 @@ def longest_common_prefix_v1(strings):
         The first string stands as a BASE LINE for the longest possible common prefix, while the last string acts as a
         verifier that all strings BEFORE the last have this common prefix. Otherwise, it wouldn't have been the last
         string in sorted order.
-        For example, 'flood', 'flower', 'flowers'. The max is 'flowers', and the min is 'flood', we can only compare
+        For example, ['flood', 'flower', 'flowers']. The max is 'flowers', and the min is 'flood'. We can only compare
         them to get common prefix 'flo'.
-        Another example, 'flood', 'flower', 'flowers', 'food'. The max is 'food', and the min is 'flood'. we can only
+        Another example, ['flood', 'flower', 'flowers', 'food']. The max is 'food', and the min is 'flood'. We can only
         compare them to get common prefix 'f'
-        The reason is the max string has the longest or shortest common prefix with words that are not min or max.
-        So, we can get accurate results through comparing max and min.
+        The reason is that the max string has the longest or shortest common prefix with words that are not min or max.
+        So, we can get accurate results through comparing min and max.
     Time complexity: O(S), where S is the length of the shortest string in the array
     Space complexity: O(L), where L is the length of the longest string
     """
     if not strings:
         return ''
-    shortest, longest = min(strings), max(strings)  # These are the first and last in the alphabetical order, NOT length
-    i = 0
-    while i < len(shortest) and shortest[i] == longest[i]:
+    first, last = min(strings), max(strings)  # These are the first and last in the alphabetical order, NOT length
+    i, n = 0, len(first)
+    while i < n and first[i] == last[i]:
         i += 1
-    return shortest[:i]
+    return first[:i]
 
 
 def longest_common_prefix_v2(strings):
@@ -53,16 +53,16 @@ def longest_common_prefix_v2(strings):
 
 
 def longest_common_prefix_v3(strings):
-    """ This one uses zip() in a rather elegant way. Use zip() to look at respective characters in order.
-    Time complexity: O(S), where S is the length of the shortest string in the array
+    """ This solution uses zip() in a rather elegant way. Use zip() to look at respective characters in order.
+    Time complexity: O(S * N), where S is the length of the shortest string in the array and N is the number of strings
     Space complexity: O(L), where L is the length of the longest string
     """
-    prefix = ''
+    prefix = []
     for letters in zip(*strings):
         if len(set(letters)) > 1:  # If not all respective characters are the same
             break
-        prefix += letters[0]  # If all characters are equal (equal to same character), append that character
-    return prefix
+        prefix.append(letters[0])  # If all characters are the same, append that character
+    return ''.join(prefix)
 
 
 class Test(unittest.TestCase):
