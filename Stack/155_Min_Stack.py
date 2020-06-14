@@ -9,77 +9,69 @@ import unittest2 as unittest
 
 
 class MinStackV1(object):
-    """ The idea is to store tuples (value, min_value_till_now) in the stack. This makes getMin() an O(1) operation. """
+    """ An important invariant of a Stack is that when a new number, which we'll call x, is placed on a Stack, the
+        numbers below it will not change for as long as number x remains on the Stack. So, whenever number x is the top
+        of the Stack, the minimum will always be the same, as it's simply the minimum out of x and all the numbers
+        below it. Therefore, in addition to putting a number on an underlying Stack inside our MinStack, we could also
+        put its corresponding minimum value alongside it.
+        Therefore, when we put a new number on the underlying Stack, we need to decide whether the minimum at that
+        point is the new number itself, or whether it's the minimum before. It makes sense that it would always be the
+        smallest of these two values.
+        The idea is to store tuples (value, min_value_till_now) in the stack. This makes getMin() an O(1) operation.
+    Time complexity: O(N), for all operations, where N is the total number of operations performed
+    Space complexity: O(N), worst case is that all the operations are push
+    """
 
     def __init__(self):
-        """
-        initialize your data structure here.
-        """
         self.stack = []
 
     def push(self, x):
-        """
-        :type x: int
-        :rtype: None
-        """
         if not self.stack:
-            self.stack.append((x, x))  # Notice the tuple here
+            self.stack.append((x, x))
         else:
             self.stack.append((x, min(x, self.stack[-1][1])))  # self.stack[-1][1] will always hold the min value
 
     def pop(self):
-        """
-        :rtype: None
-        """
         self.stack.pop()
 
     def top(self):
-        """
-        :rtype: int
-        """
         return self.stack[-1][0]
 
     def getMin(self):
-        """
-        :rtype: int
-        """
-        if not self.stack:
-            return None
-        return self.stack[-1][1]
+        return self.stack[-1][1] if self.stack else None
 
 
 class MinStackV2:
-    """ If the value x we want to push is less than or equal to the current min value, we push min to the stack and
-        update min to be equal to x. This way when the pop operation could result in popping the current min value,
-        we pop twice and change the current min value to the previous min value.
-        Core Idea:
-            1- Minimum value is always followed by the second minimum value
-            2- While popping, if we pop min we also pop 2nd min so that we get the correct min value for the remaining
-               stack and the remaining stack top also points to the correct value.
+    """ There's another, somewhat different approach to implementing a MinStack. Approach 1 required storing two values
+        in each slot of the underlying Stack. Sometimes though, the minimum values are very repetitive. We could
+        instead have two Stacks inside our MinStack. The main Stack should keep track of the order numbers arrived
+        (a standard Stack), and the second Stack should keep track of the current minimum.
+        The push method for this implementation of MinStack is straightforward. Items should always be pushed onto the
+        main Stack, but they should only be pushed onto the min-tracker Stack if they are smaller than or equal to the
+        current top of it.
+    Time complexity: O(1)
+    Space complexity: O(N)
     """
 
     def __init__(self):
-        """
-        initialize your data structure here.
-        """
         self.stack = []
-        self.min = float('inf')
+        self.min_stack = []
 
-    def push(self, x):
-        if x <= self.min:
-            self.stack.append(self.min)
-            self.min = x
+    def push(self, x: int) -> None:
         self.stack.append(x)
+        if not self.min_stack or x <= self.min_stack[-1]:
+            self.min_stack.append(x)
 
-    def pop(self):
-        if self.stack.pop() == self.min:
-            self.min = self.stack.pop()
+    def pop(self) -> None:
+        val = self.stack.pop()
+        if val == self.min_stack[-1]:
+            self.min_stack.pop()
 
-    def top(self):
+    def top(self) -> int:
         return self.stack[-1]
 
-    def getMin(self):
-        return self.min
+    def getMin(self) -> int:
+        return self.min_stack[-1]
 
 
 class Test(unittest.TestCase):
