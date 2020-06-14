@@ -59,7 +59,7 @@ def is_valid_bst_v3(root):
         property is violated at a node whose depth is small.
         Specifically, we use a queue, where each queue entry contains a node, as well as an upper and a lower bound on
         the keys stored at the subtree rooted at that node. The queue is initialized to the root, with lower bound -∞
-        and upper bound +∞, We iteratively check the constraint on each node. If it violates the constraint we stop:
+        and upper bound +∞. We iteratively check the constraint on each node. If it violates the constraint we stop:
         The BST property has been violated. Otherwise, we add its children along with the corresponding constraint.
     Time complexity: O(N)
     Space complexity: O(N)
