@@ -29,14 +29,11 @@ def lowest_common_ancestor_v1(root, p, q):
     Space complexity: O(N), in the worst case space utilized by the stack, the parent pointer dictionary and the
     ancestor set, would be N each, since the height of a skewed binary tree could be N
     """
-    parent = {}
-    stack = [(root, None)]
+    parent, stack = {}, [(root, None)]
     while p not in parent or q not in parent:
         node, par = stack.pop()
-        if node:
-            parent[node] = par
-            stack.append((node.left, node))
-            stack.append((node.right, node))
+        parent[node] = par
+        stack.extend([(kid, node) for kid in (node.left, node.right) if kid])
     p_ancestor = set()
     while p:
         p_ancestor.add(p)
@@ -75,7 +72,7 @@ def lowest_common_ancestor_v2(root, p, q):
     left = lowest_common_ancestor_v2(root.left, p, q)
     right = lowest_common_ancestor_v2(root.right, p, q)
     if left and right:  # We got something back on the left AND right. That means this node is the LCA because our
-        # recursion returns from bottom to up, so we return what we hold: 'root'
+        # recursion returns from bottom to top, so we return what we hold: 'root'
         return root
     # Either one of the children returned a node, meaning either p or q found on left or right branch. Return whatever
     # we got.
