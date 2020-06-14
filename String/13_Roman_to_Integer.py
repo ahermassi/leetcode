@@ -4,7 +4,12 @@ import unittest2 as unittest
 
 
 def roman_to_int(s):
-    """ If one letter is less than its next neighbor, this letter is subtracted.
+    """ Each symbol adds its own value, except for when a smaller valued symbol is before a larger valued symbol. In
+        those cases, instead of adding both symbols to the total, we need to subtract the large from the small, adding
+        that instead.
+        Therefore, the simplest algorithm is to use a pointer to scan through the string, at each step we can process
+        one symbol. We still need to determine whether or not our current symbol should be added or subtracted by
+        looking at the right neighbour.
     Time complexity: O(N)
     Space complexity: O(1)
     """
