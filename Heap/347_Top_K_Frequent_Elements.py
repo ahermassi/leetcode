@@ -9,12 +9,11 @@ import unittest2 as unittest
 def top_k_frequent_v1(nums, k):
     """ Build a frequency hash map. The next step is to build a heap and maintain a size of k.
     Time complexity: The complexity of building the hash map is O(N). The time complexity of adding an element in a
-    heap is O(logK) (binary tree of k elements) and we do it N times, that means O(N logK). Hence the overall
+    heap is O(logK) (binary tree of K elements) and we do it N times, that means O(N logK). Hence the overall
     complexity of the algorithm is O(N + N logK) = O(N logK).
-    Space complexity: O(N) to store the hash map
+    Space complexity: O(N), to store the hash map
     """
-    counter = Counter(nums)
-    heap, res = [], []
+    counter, heap, res = Counter(nums), [], []
     for key, value in counter.items():
         heappush(heap, (value, key))
         if len(heap) > k:
@@ -34,11 +33,9 @@ def top_k_frequent_v2(nums, k):
     Time complexity: O(N)
     Space complexity: O(N) for the hash maps
     """
-    n, counter, freq, res = len(nums), defaultdict(int), defaultdict(list), []
-    for num in nums:
-        counter[num] += 1
-    for key, v in counter.items():
-        freq[v].append(key)
+    n, counter, freq, res = len(nums), Counter(nums), defaultdict(list), []
+    for c, count in counter.items():
+        freq[count].append(c)
     for i in reversed(range(n+1)):
         if i in freq:
             res.extend(freq[i])
@@ -54,11 +51,9 @@ def top_k_frequent_v3(nums, k):
     """
     n = len(nums)
     bucket = [[] for _ in range(n+1)]
-    counter, res = defaultdict(int), []
-    for num in nums:
-        counter[num] += 1
-    for key, value in counter.items():
-        bucket[value].append(key)
+    counter, res = Counter(nums), []
+    for c, count in counter.items():
+        bucket[count].append(c)
     for i in reversed(range(n+1)):  # Traverse the bucket right-to-left to get the greatest counts first
         if bucket[i]:
             res.extend(bucket[i])
