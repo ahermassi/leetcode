@@ -35,13 +35,13 @@ def search_matrix_v1(matrix, target):
             # smallest of the matrix, and the bottom-right element is always the biggest
             return False
         mid = (left + right) // 2
-        row = top
-        # Locate a row such that matrix[row-1][mid] < target < matrix[row][mid]
-        while row <= bottom and matrix[row][mid] <= target:
-            if matrix[row][mid] == target:
+        cur_row = top
+        # Locate a row such that matrix[row-1][mid] <= target < matrix[row][mid]
+        while cur_row <= bottom and matrix[cur_row][mid] <= target:
+            if matrix[cur_row][mid] == target:
                 return True
-            row += 1
-        return search_submatrix(left, mid - 1, row, bottom) or search_submatrix(mid + 1, right, top, row - 1)
+            cur_row += 1
+        return search_submatrix(left, mid - 1, cur_row, bottom) or search_submatrix(mid + 1, right, top, cur_row - 1)
 
     if not matrix:
         return False
@@ -64,9 +64,9 @@ def search_matrix_v2(matrix, target):
         than target, we know that every value to its right will also be too large. A very similar argument can be made
         for the columns, so this manner of search will always find target in the matrix (if it is present).
     Time complexity: O(N + M), the key to the time complexity analysis is noticing that, on every iteration (during
-    which we do not return True) either row or col is is decremented/incremented exactly once. Because row can only be
-    decremented N times and col can only be incremented M times before causing the while loop to terminate, the loop
-    cannot run for more than N + M iterations.
+    which we do not return True) either 'row' or 'col' is decremented/incremented exactly once. Because 'row' can only
+    be decremented N times and col can only be incremented M times before causing the while loop to terminate, the loop
+    cannot run for more than (N + M) iterations.
     Space complexity: O(1)
     """
     if not matrix:
