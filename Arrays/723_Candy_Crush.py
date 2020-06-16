@@ -67,6 +67,41 @@ def candy_crush_v1(board):
     return candy_crush_v1(board)
 
 
+def candy_crush_v2(board):
+    """ In this solution, the way we mark whether a candy needs to be crushed is to set an opposite value to it, so
+        that we don't have to maintain another data structure 'cells_to_crush'.
+    Time complexity: O((N * M)^2)
+    Space complexity: O(1)
+    """
+
+    def drop_cells():
+        for j in range(m):
+            read_index = write_index = n - 1
+            while read_index >= 0:
+                if board[read_index][j] >= 0:
+                    board[write_index][j] = board[read_index][j]
+                    write_index -= 1
+                read_index -= 1
+            while write_index >= 0:
+                board[write_index][j] = 0
+                write_index -= 1
+
+    n, m = len(board), len(board[0])
+    should_continue = False
+    for i in range(n):
+        for j in range(m):
+            if board[i][j]:
+                value = abs(board[i][j])
+                if i + 2 < n and abs(board[i + 1][j]) == abs(board[i + 2][j]) == value:
+                    board[i][j] = board[i + 1][j] = board[i + 2][j] = -value
+                    should_continue = True
+                if j + 2 < m and abs(board[i][j + 1]) == abs(board[i][j + 2]) == value:
+                    board[i][j] = board[i][j + 1] = board[i][j + 2] = -value
+                    should_continue = True
+    drop_cells()
+    return candy_crush_v2(board) if should_continue else board
+
+
 class Test(unittest.TestCase):
     data = [([[110, 5, 112, 113, 114], [210, 211, 5, 213, 214], [310, 311, 3, 313, 314], [410, 411, 412, 5, 414],
               [5, 1, 512, 3, 3], [610, 4, 1, 613, 614], [710, 1, 2, 713, 714], [810, 1, 2, 1, 1], [1, 1, 2, 2, 2],
@@ -78,6 +113,7 @@ class Test(unittest.TestCase):
     def test_candy_crush(self):
         for test_board, result in self.data:
             self.assertEqual(result, candy_crush_v1(test_board))
+            self.assertEqual(result, candy_crush_v2(test_board))
 
 
 if __name__ == '__main__':
