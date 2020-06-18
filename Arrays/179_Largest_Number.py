@@ -24,7 +24,7 @@ def largest_number(nums):
         We can prove that this sorts into the proper order as follows:
         Assume that (without loss of generality), for some pair of integers a and b, our comparator dictates that a
         should precede b in sorted order. This means that a⌢b > b⌢a (where ⌢ represents concatenation). For the sort
-        to produce an incorrect ordering, there must be some c for which b precedes c and cc precedes a. This is a
+        to produce an incorrect ordering, there must be some c for which b precedes c and c precedes a. This is a
         contradiction because a⌢b > b⌢a and b⌢c > c⌢b implies a⌢c > c⌢a. In other words, our custom comparator
         preserves transitivity, so the sort is correct.
         Once the array is sorted, the most 'significant' number will be at the front. There is a minor edge case that
@@ -35,8 +35,8 @@ def largest_number(nums):
     complexity of sort.
     Space complexity: O(N), we allocate O(N) additional space to store the sorted nums
     """
-    nums = sorted(map(str, nums), key=CompareStrings, reverse=True)
-    return ''.join(nums) if nums[0] != '0' else '0'
+    sorted_nums = sorted(map(str, nums), key=CompareStrings, reverse=True)
+    return ''.join(sorted_nums) if sorted_nums[0] != '0' else '0'
 
 
 class Test(unittest.TestCase):
