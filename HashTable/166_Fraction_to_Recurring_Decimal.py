@@ -31,8 +31,8 @@ def fraction_to_decimal(numerator, denominator):
             break
         remainders[remainder] = len(res)
         remainder *= 10
-        res.append(remainder // denominator)
-        remainder %= denominator
+        n, remainder = divmod(remainder, denominator)
+        res.append(n)
     return ''.join(map(str, res))
 
 
