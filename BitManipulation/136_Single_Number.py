@@ -12,12 +12,12 @@ def single_number_v1(nums):
     Space complexity: O(N)
     """
     counter = {}
-    for i in nums:
+    for num in nums:
         # try-except, EAFP fashion
         try:
-            counter.pop(i)
+            counter.pop(num)
         except KeyError:
-            counter[i] = 1
+            counter[num] = 1
     return counter.popitem()[0]
 
 
@@ -34,8 +34,8 @@ def single_number_v2(nums):
     Space complexity: O(1)
     """
     single = 0
-    for i in nums:
-        single ^= i
+    for num in nums:
+        single ^= num
     return single
 
 
