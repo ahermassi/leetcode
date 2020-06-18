@@ -32,36 +32,24 @@ class NestedIteratorV1(object):
         returns the very first element. Second, in the hasNext() function, we peek the first element currently in the
         stack, and if it is an Integer, we will return true and pop the element. If it is a list, we will further
         flatten it.
-        While this solution can pass Leetcode test cases, it is 'wrong' in real world situations because hasNext()
-        changes the state.
-        This can also be wrong if the first call is next() without calling hasNext(). We can avoid it by adding the
-        check if hasNext() inside next() function.
+        While this solution can pass test cases, it is 'wrong' in real world situations because hasNext() changes the
+        state. It can also be wrong if the first call is next() without calling hasNext(). We can avoid it by adding
+        the check if hasNext() inside next() function.
     """
 
     def __init__(self, nestedList):
-        """
-        Initialize your data structure here.
-        :type nestedList: List[NestedInteger]
-        """
         self.stack = nestedList[::-1]  # Store the nested list elements in reversed order to allow faster access
         # to stack top
 
     def next(self):
-        """
-        :rtype: int
-        """
         return self.stack.pop().getInteger()
 
     def hasNext(self):
-        """
-        :rtype: bool
-        """
         while self.stack:
             top = self.stack[-1]
             if top.isInteger():
                 return True
-            for val in self.stack.pop().getList()[::-1]:  # Flatten
-                self.stack.append(val)
+            self.stack.extend([val for val in self.stack.pop().getList()[::-1]])  # Flatten
         return False
 
 
@@ -70,7 +58,7 @@ class NestedIteratorV2(object):
         It is cleaner if hasNext() simply returns false if the stack is empty, otherwise true.
         For the test case '[[]]', hasNext() will return true since the stack is not empty (empty nested list is still a
         nested list), but actually there is no 'next integer' in this list. It's impossible for next() to return a
-        valid value since it can only return a int. So we should first flatten the list and then check if the stack is
+        valid value since it can only return an int. So we should first flatten the list and then check if the stack is
         really empty. The best way is to advance to the next actual Integer BEFORE we call next(), then hasNext() is
         just checking if the pointer is at an integer.
     """
@@ -89,10 +77,8 @@ class NestedIteratorV2(object):
     def advanceToNextInteger(self):
         while self.stack:
             top = self.stack[-1]
-            if top.isInteger():
-                return
-            for val in self.stack.pop().getList()[::-1]:
-                self.stack.append(val)
+            if not top.isInteger():
+                self.stack.extend([val for val in self.stack.pop().getList()[::-1]])  # Flatten
 
 
 # Your NestedIterator object will be instantiated and called as such:
