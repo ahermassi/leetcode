@@ -20,23 +20,25 @@ def find_order_v1(numCourses, prerequisites):
         Now we know how to get all the courses that have a particular course as a prerequisite. If a valid ordering of
         courses is possible, the course A would come before all the other set of courses that have it as a prerequisite.
         This idea for solving the problem can be explored using depth first search.
-        visited[i] == -1: the node is encountered again while his children are being examined. This indicates a cycle.
-        visited[i] == 1: this node's children have been examined in an earlier call and no cycle was detected. Move on.
+        visited[node] == -1: the node is encountered again while his children are being examined. This indicates a
+        cycle.
+        visited[node] == 1: this node's children have been examined in an earlier call and no cycle was detected.
+        Move on.
     Time complexity: O(|V| + |E|), where V is the number of vertices and E is the number of edges
     Space complexity: O(|V| + |E|)
     """
 
-    def dfs(i):
-        if visited[i] == -1:  # Don't recurse further if we found a cycle already
+    def dfs(node):
+        if visited[node] == -1:  # Don't recurse further if we found a cycle already
             return False
-        if visited[i] == 1:
+        if visited[node] == 1:
             return True
-        visited[i] = -1  # Start the recursion
-        for j in graph[i]:
-            if not dfs(j):
+        visited[node] = -1  # Start the recursion
+        for neighbor in graph[node]:
+            if not dfs(neighbor):
                 return False
-        res.append(i)
-        visited[i] = 1
+        res.append(node)
+        visited[node] = 1
         return True
 
     graph = [[] for _ in range(numCourses)]  # Create the adjacency list representation of the graph
@@ -44,8 +46,9 @@ def find_order_v1(numCourses, prerequisites):
     for src, dest in prerequisites:
         graph[src].append(dest)
     res = []
-    for i in range(numCourses):
-        if not dfs(i):
+    for node in range(numCourses):
+        if not dfs(node):  # If a cycle exists, no topological ordering exists and therefore it will be impossible to
+            # take all courses.
             return []
     return res
 
@@ -66,12 +69,12 @@ def find_order_v2(numCourses, prerequisites):
     """
     graph, indegree = defaultdict(list), [0] * numCourses
     for src, dest in prerequisites:
-        graph[dest].append(src)  # Create graph, better seen as is_prerequisite_of graph: graph[src] = dest means dest
+        graph[dest].append(src)  # Create graph, better seen as is_prerequisite_of graph: graph[dest] = src means dest
         # is a prerequisite of src
         indegree[src] += 1  # Recording the number of prerequisites each course 'src' has
     queue = deque(course for course in range(numCourses) if indegree[course] == 0)  # Iterate the in-degree list and
     # find the nodes that have 0 in-degree, which maps to 0 prerequisites. If none is found, then there must be a cycle
-    # And a topological ordering is not possible.
+    # and a topological ordering is not possible.
     res = []
     while queue:
         course = queue.popleft()
@@ -80,6 +83,6 @@ def find_order_v2(numCourses, prerequisites):
             indegree[neighbor] -= 1
             if indegree[neighbor] == 0:
                 queue.append(neighbor)
-    return res if len(res) == numCourses else None
+    return res if len(res) == numCourses else []
 
 
