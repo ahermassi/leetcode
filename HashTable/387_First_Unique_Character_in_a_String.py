@@ -3,21 +3,19 @@ return -1.
 Note: You may assume the string contain only lowercase letters. """
 
 import string
-from collections import defaultdict
+from collections import Counter
 import unittest2 as unittest
 
 
 def first_uniq_char_v1(s):
-    """ The idea is to go through the string and save in a hash map the number of times each character appears in the
-    string. And then we go through the string the second time, this time we use the hash map as a reference to check
-    if a character is unique or not.
+    """ The idea is to iterate over the string and save in a hash map the number of times each character appears in the
+        string. Then, we iterate over the string a second time and use the hash map as a reference to check if a
+        character is unique.
     Time complexity: O(N)
     Space complexity: O(1), if English alphabet is assumed the algorithm is iterating over a constant (26) number of
     bins as keys for hash map.
     """
-    counter = defaultdict(int)
-    for c in s:
-        counter[c] += 1
+    counter = Counter(s)
     for i, c in enumerate(s):
         if counter[c] == 1:
             return i
@@ -31,16 +29,15 @@ def first_uniq_char_v2(s):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    map = defaultdict(int)
+    indices, res = {}, float('inf')
     for i, c in enumerate(s):
-        if c in map:
-            map[c] = -1
+        if c in indices:
+            indices[c] = -1
         else:
-            map[c] = i
-    res = float('inf')
-    for v in map.values():
-        if v != -1:
-            res = min(res, v)
+            indices[c] = i
+    for index in indices.values():
+        if index != -1:
+            res = min(res, index)
     return res if res != float('inf') else -1
 
 
@@ -53,10 +50,9 @@ def first_uniq_char_v3(s):
     takes O( |Σ| * N). Since the alphabet in question is just lowercase letters, |Σ| = 26 so this is O(26 * N).
     s.index() also takes O(N) and is called |Σ| times. This takes O( |Σ| * N), or O(N) since |Σ| is constant.
     min() takes O(|Σ|) -> O(1) time.
-    Space complexity: O(1), since 'indices' list can hold at most |Σ| values.
+    Space complexity: O(1), since 'indices' list can hold at most |Σ| values
     """
-    characters = string.ascii_lowercase
-    indices = []
+    characters, indices = string.ascii_lowercase, []
     for c in characters:
         if s.count(c) == 1:
             indices.append(s.index(c))
