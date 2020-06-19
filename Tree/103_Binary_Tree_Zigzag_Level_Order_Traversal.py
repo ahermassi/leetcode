@@ -37,8 +37,8 @@ def zigzag_level_order_v1(root):
         return None
     level, zigzag, res = [root], 1, []
     while level:
-        values, next_level = [], []
-        for _ in range(len(level)):
+        values, next_level, n = [], [], len(level)
+        for _ in range(n):
             node = level.pop()
             values.append(node.val)
             if zigzag == 1:
@@ -61,17 +61,16 @@ def zigzag_level_order_v2(root):
         return None
     res, queue, zigzag = [], deque([root]), 1
     while queue:
-        n, level = len(queue), []
+        n, values = len(queue), []
         for _ in range(n):
             if zigzag == 1:
                 node = queue.pop()
-                level.append(node.val)
                 queue.extendleft([kid for kid in (node.left, node.right) if kid])
             else:
                 node = queue.popleft()
-                level.append(node.val)
                 queue.extend([kid for kid in (node.right, node.left) if kid])
-        res.append(level)
+            values.append(node.val)
+        res.append(values)
         zigzag = -zigzag
     return res
 
