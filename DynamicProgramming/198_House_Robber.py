@@ -12,10 +12,10 @@ import unittest2 as unittest
 
 def rob_v1(nums):
     """ A robber has 2 options:
-            1- rob current house i
-            2- don't rob current house.
+            1- Rob current house i
+            2- Don't rob current house i
         If 1st option is selected, it means the robber can't rob previous (i-1) house but can safely proceed to the
-        one before previous (i-2) and gets all cumulative loot that follows.
+        one before previous (i-2) and get all cumulative loot that follows.
         If 2nd option is selected, the robber gets all the possible loot from robbery of (i-1) house and all the
         following buildings.
         So it boils down to calculating what is more profitable:
@@ -43,11 +43,9 @@ def rob_v2(nums):
     def helper(i):
         if i < 0:
             return 0
-        if i in memo:
-            return memo[i]
-        res = max(nums[i] + helper(i - 2), helper(i - 1))
-        memo[i] = res
-        return res
+        if i not in memo:
+            memo[i] = max(nums[i] + helper(i - 2), helper(i - 1))
+        return memo[i]
 
     memo = {}
     return helper(len(nums) - 1)
@@ -56,7 +54,7 @@ def rob_v2(nums):
 def rob_v3(nums):
     """ Bottom-up dynamic programming.
     Time complexity: O(N)
-    Space complexity: O(1)
+    Space complexity: O(N)
     """
     if not nums:
         return 0
