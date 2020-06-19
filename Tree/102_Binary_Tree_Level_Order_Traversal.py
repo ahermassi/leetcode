@@ -2,7 +2,6 @@
 """
 
 from collections import deque
-
 import unittest2 as unittest
 
 
@@ -19,9 +18,9 @@ class TreeNode(object):
 def level_order_v1(root):
     """ Let's keep nodes of each tree level in the queue structure.
         Initiate queue with a root. While queue is not empty :
-            Compute how many elements should be on the current level : it's queue length.
-            Pop out all these elements from the queue and add them into the current level.
-            Push their child nodes into the queue for the next level.
+            Compute how many elements should be on the current level : it's queue length
+            Pop out all these elements from the queue and add them into the current level
+            Push their child nodes into the queue for the next level
     Time complexity: O(N) where N is the number of nodes
     Space complexity: O(N)
     """
@@ -46,7 +45,7 @@ def level_order_v2(root):
     """
 
     def dfs(root, level):
-        if not root:  # This catches the edge case (root == None)
+        if not root:
             return
         if level == len(res):  # Add a new level to 'res'
             res.append([])

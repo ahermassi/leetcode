@@ -14,6 +14,11 @@ import unittest2 as unittest
 
 def count_and_say_v1(n):
     """ To generate the nth term, just count and say the (n-1)th term. We can do it recursively.
+        Actually, we could consider this problem as a naive compression algorithm for a sequence of numbers.
+        Given two adjacent sequences of number, [S_n, S_n+1], there exists a pattern that can produce the sequence
+        S_n+1 from its previous sequence S_n. More specifically, we can consider the sequence S_n+1 as a sort of
+        summary to its previous sequence S_n, i.e. S_n+ contains a list of pairs as |count,digit∣ which encodes all the
+        information about its previous sequence S_n.
     Time complexity: the precise time complexity is a function of the lengths of the terms, which is extremely hard to
     analyze. Each successive number can have at most twice as many digits as the previous number. This happens when all
     digits are different. This means the maximum length number has length no more than 2^n. Since there are n recursive
@@ -41,9 +46,9 @@ def count_and_say_v2(n):
     """
     s = '1'  # Base case
     for _ in range(n-1):
-        m, i, j, temp = len(s), 0, 0, ''
-        while i < m:
-            while j < m and s[i] == s[j]:  # We keep a sliding window of identical digits with left=i and right=j
+        n, i, j, temp = len(s), 0, 0, ''
+        while i < n:
+            while j < n and s[i] == s[j]:  # We keep a sliding window of identical digits with left=i and right=j
                 j += 1
             temp += str(j - i) + s[i]
             i = j
