@@ -16,17 +16,17 @@ def is_palindrome_v1(head):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    vals = []
+    values = []
     while head:
-        vals.append(head.val)
+        values.append(head.val)
         head = head.next
-    return vals == vals[::-1]
+    return values == values[::-1]
 
 
 def is_palindrome_v2(head):
     """ Reverse the second half of the linked list in-place (modifying the list structure), and then compare it with
         the first half.
-        Imagine we have 2 runners one fast and one slow, running down the nodes of the list. At each step, the fast
+        Imagine we have 2 runners, one fast and one slow, running down the nodes of the list. At each step, the fast
         runner moves down 2 nodes, and the slow runner just 1 node. By the time the fast runner gets to the end of the
         list, the slow runner will be half way.
         Get the reverse of the second half, after which testing palindromicity of the original list reduces to testing
