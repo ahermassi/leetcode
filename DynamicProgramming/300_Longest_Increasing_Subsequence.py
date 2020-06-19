@@ -1,4 +1,4 @@
-""" Given an unsorted array of integers, find the length of longest increasing subsequence. """
+""" Given an unsorted array of integers, find the length of longest increasing sub-sequence. """
 
 import unittest as unittest
 
@@ -8,8 +8,8 @@ import unittest as unittest
 def length_of_lis_v1(nums):
     """ Let dp[i] be the length of the longest increasing sub-sequence ending at and including index i of the original
         nums array.
-        Default answer is 1. A single item is neither increasing or decreasing.
-        In order to find out dp[i], we need to try to append the current element nums[i] in every possible increasing
+        Default answer is 1. A single item is neither increasing nor decreasing.
+        In order to find dp[i], we need to try to append the current element nums[i] to every possible increasing
         sub-sequence up to the (i−1)th index (including the (i−1)th index), such that the new sequence formed by adding
         the current element is also an increasing sub-sequence. Therefore:
             dp[i] = max(dp[j] + 1 for 0 <= j < i)
@@ -19,9 +19,9 @@ def length_of_lis_v1(nums):
         At index 0 we always know that we can have a sub-sequence of length 1. In fact, at all positions the LIS can be
         at least length 1.
         We then look at index 1. We need to ask ourselves if the item at index 1 can lengthen the LIS found at index 0.
-        We check if 3 is greater than or equal to -1... it is. Great. Index 1 can be tacked on, but should we?
+        We check if 3 is greater than -1... it is. Great. Index 1 can be tacked on, but should we?
         dp[1] = 1, dp[0] = 1. It makes sense because if we tack 3 onto the LIS we found for the sub-problem of just
-        [-1] then at index 1 we will also have a LIS. So what we basically do is build a table and ask ourselves these
+        [-1], then at index 1 we will also have a LIS. So what we basically do is build a table and ask ourselves these
         questions all along the way.
         Each cell represents the answer to the sub-problem asked against the sub-sequence from index 0 to index i
         (including the element at index i).
@@ -57,7 +57,7 @@ def length_of_lis_v2(nums):
         Why is this correct ?
         When we replace increasing_sub_sequence[i] with current num, we don't change the length of answer, but we
         change the potential best candidate. Replacing increasing_sub_sequence[i] with the first element that is
-        smaller than or equal to it increases our chance to extend the array because increasing_sub_sequence[i] is
+        smaller than or equal to it increases our chance of extending the array because increasing_sub_sequence[i] is
         smaller than that element.
         So the main idea is:
             Use binary search to extend increasing sequence with larger numbers, or minimize existing values with
