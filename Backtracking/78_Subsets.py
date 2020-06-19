@@ -5,9 +5,9 @@ import unittest2 as unittest
 
 
 def subsets_v1(nums):
-    """ While iterating through all numbers, for each new number, we can either pick it or not pick it.
-            1- If pick, just add current number to every existing subset.
-            2- If not pick, just leave all existing subsets as they are.
+    """ While iterating over the numbers, for each new number, we can either pick it or not pick it.
+            1- If picked, add current number to every existing subset
+            2- If not picked, leave all existing subsets as they are
         We just combine both into our result.
         Here's an example to help understand the code:
         The set to iterate over/generate the power set for: input_set = [1, 2, 3]
@@ -70,7 +70,7 @@ def subsets_v3(nums):
 
 def subsets_v4(nums):
     """ The idea of this solution originated from Donald E. Knuth.
-        We map each subset to a bitmask of length n, where 1 on the ith position in bitmask means the presence of
+        We map each subset to a bitmask of length n, where 1 in the ith position in bitmask means the presence of
         nums[i] in the subset, and 0 means its absence.
         For instance, the bitmask 0..00 (all zeros) corresponds to an empty subset, and the bitmask 1..11 (all ones)
         corresponds to the entire input array nums.
@@ -94,12 +94,11 @@ def subsets_v5(nums):
     Space complexity: O(1)
     """
     n = len(nums)
-    p = 1 << n
-    res = []
+    p, res = 1 << n, []
     for i in range(2 ** n):
         # generate bitmask, from 0..00 to 1..11
         bitmask = bin(i | p)[3:]  # If i = 3 = 011 -> i|p = 0011|1000 = 0011 -> bin(i|p) = 0b0011 -> bin(i|p)[3:] = 011
-        # So each bitmask ends up being the binary format of i
+        # So each bitmask ends up being a string representing the the binary format of i
         res.append([nums[j] for j in range(n) if bitmask[j] == '1'])
     return res
     # Similar to:
