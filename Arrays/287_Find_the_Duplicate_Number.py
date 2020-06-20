@@ -36,13 +36,13 @@ def find_duplicate_v3(nums):
         to 0. Therefore, traversing the array in this manner from nums[0] is equivalent to traversing a cyclic linked
         list. nums[a] = b can be seen as a.next = b
         Note: We need second loop because in first loop both pointers might end up at the same index and hence we will
-        get a number which might not be a duplicate. The first loop just gives us the intersection of the indexes, the
-        second loop returns the index to the duplicate number.
-        According to Floyd's algorithm, first step, if a cycle does exist, and you advance the tortoise one node each
-        unit of time but the hare two nodes each unit of time, then they will eventually meet. This is what the first
-        while loop does. The first while loop finds their meeting point.
+        get a number which might not be a duplicate. The first loop just gives us the intersection of the indices,
+        while the second loop returns the index of the duplicate number.
+        According to Floyd's algorithm, in the first step if a cycle does exist and we advance the tortoise one node
+        each unit of time but the hare two nodes each unit of time, then they will eventually meet. This is what the
+        first while loop does. The first while loop finds their meeting point.
         Second step, take tortoise or hare to the start point of the list (i.e. let one of the animals be 0) and keep
-        the other one staying at the meeting point. Now, advance both of the animals one node each unit of time, the
+        the other one staying at the meeting point. Now, advance both of the animals one node each unit of time. The
         meeting point is the starting point of the cycle. This is what the second while loop does. The second while
         loop finds their meeting point.
     Time complexity: O(N)
@@ -50,25 +50,23 @@ def find_duplicate_v3(nums):
     """
     tortoise = hare = nums[0]  # tortoise = hare = 0 is also correct
     while True:
-        tortoise = nums[tortoise]
-        hare = nums[nums[hare]]
+        tortoise, hare = nums[tortoise], nums[nums[hare]]
         if tortoise == hare:
             break
     # Find the entrance to the cycle.
-    tortoise = nums[0]  # hare = 0 is also correct
+    tortoise = nums[0]  # tortoise = 0 is also correct
     while tortoise != hare:
-        tortoise = nums[tortoise]
-        hare = nums[hare]
+        tortoise, hare = nums[tortoise], nums[hare]
     return tortoise
 
 
 def find_duplicate_v4(nums):
     """ This solution uses binary search, based on pigeonhole principle.
-        Originally, there are n + 1 objects and n holes, this condition complies to pigeonhole principle, so at least
+        Originally, there are n + 1 objects and n holes. This condition complies to pigeonhole principle, so at least
         one hole has two objects, that is one number appears twice.
-        Each time we select a number mid (which is the one in the middle) and count all the numbers equal to or less
-        than mid. Then if the count is more than mid, the search space will be [1 .. mid] otherwise [mid+1 .. n]. We do
-        this until search space is only one number.
+        Each time we select a number 'mid' (which is the one in the middle), we count all the numbers equal to or less
+        than 'mid'. Then if the count is more than 'mid', the search space will be [1 .. mid] otherwise [mid+1 .. n].
+        We do this until search space is only one number.
         Or less formally:
         We know that the whole range is 'too crowded' and thus that the first half or the second half of the range is
         too crowded (if both weren't, then neither would be the whole range). So we check to know whether the first
@@ -86,7 +84,7 @@ def find_duplicate_v4(nums):
     Time complexity: O(N logN)
     Space complexity: O(1)
     """
-    left, right = 1, len(nums) - 1  # We use binary search on the range of POSSIBLE numbers, so left starts from 1 not 0
+    left, right = 1, len(nums) - 1  # We use binary search on the range of possible NUMBERS, so left starts from 1 not 0
     while left < right:
         mid = (left + right) // 2
         count = sum(num <= mid for num in nums)
