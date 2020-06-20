@@ -18,10 +18,10 @@ def max_profit_v1(prices):
         From this observation, from day X, the buying day will be the last continuous day that the price is smallest.
         Then, the selling day will be the last continuous day that the price is biggest.
         In other words:
-        Consider a contiguous subsequence of increasing prices. The profit-maximizing strategy within this subsequence
+        Consider a contiguous sub-sequence of increasing prices. The profit-maximizing strategy within this sub-sequence
         is to buy on the first day and sell on the last day because this is the only strategy that realizes all of the
-        day-to-day gains within the subsequence.
-        Therefore profit can be maximized by identifying each maximally-sized contiguous subsequence of increasing
+        day-to-day gains within the sub-sequence.
+        Therefore, profit can be maximized by identifying each maximally-sized contiguous sub-sequence of increasing
         prices, and buying at the beginning of it and selling at the end of it.
         Since we are only asked to return the total profit and not the actual transaction log, it suffices to sum
         together the day-to-day gains across the entire sequence.
