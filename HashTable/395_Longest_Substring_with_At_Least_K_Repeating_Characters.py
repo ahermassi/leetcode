@@ -18,8 +18,8 @@ def longest_substring_v1(s, k):
         this character wherever it occurs and check the substrings formed by that split.
         If we arrive at the last statement, it means that every character in this substring occurs at least k times,
         then this is a valid substring, so return this substring's length.
-        So the basic idea is to use those character whose frequency is than k as a 'wall' and divide the string into
-        two parts and run recursion on the two parts.
+        So the basic idea is to use those characters whose frequencies are less than k as a 'wall' and divide the
+        string into two parts and run recursion on the two parts.
     Time complexity: (N^2)
     Space complexity: O(N)
     """
@@ -43,8 +43,8 @@ def longest_substring_v1(s, k):
 
 
 def longest_substring_v2(s, k):
-    """ This problem prompts us to use the two pointer technique, however it's quite difficult to decide the conditions
-        to expand and shrink the window.
+    """ This problem prompts us to use the two pointers technique. However, it's quite difficult to decide the
+        conditions to expand and shrink the window.
         How do we explore all possible solutions (substrings that satisfy given constraints) ?
         Find all substrings which have i = 1 unique character(s) and each character in the substring repeats at least
         k times.
@@ -55,16 +55,16 @@ def longest_substring_v2(s, k):
         k times.
         At i = 26, we're done. Take max of all the above valid substrings (by tracking with 'res' variable). That'll be
         our answer.
-        We count the number of current unique letters 'unique', and the number of letters that have a count of k or
+        We count the number of current unique letters 'unique' and the number of letters that have a count of k or
         more 'no_less_than_k' using a sliding window.
-        How do we expand the window ? If the number of unique letters is less than or equal to i, we need to add a
-        letter, so we increment the right pointer, and add the count of the right letter by 1. If the count is equal
+        How do we expand the window? If the number of unique letters is less than or equal to i, we need to add a
+        letter, so we advance the right pointer and add the count of the right letter by 1. If the count is equal
         to 1, we know this is a new letter so we increment 'unique', and if its frequency is equal to k we increment
         'no_less_than_k'. Note that we need to keep expanding the window if unique <= i (less than or EQUAL) because we
-        can still have a chance at getting more letters when unique == i. For example, s = 'aaabb'; If we stop at the
-        first 'a' because unique == i == 1, we won't ever get to 'aaa' which is the answer.
-        How do we shrink the window ? If the number of unique letters is greater than i, we need to remove a letter,
-        so we increment the left pointer, and decrease the count of the left letter by 1. If the count is equal to 0,
+        can still have a chance of getting more letters when unique = i. For example, s = 'aaabb'; If we stop at the
+        first 'a' because unique = i = 1, we won't ever get to 'aaa' which is the answer.
+        How do we shrink the window? If the number of unique letters is greater than i, we need to remove a letter,
+        so we advance the left pointer and decrease the count of the left letter by 1. If the count is equal to 0,
         we decrement the number of unique letters since all instances of this letter are gone, and if its frequency is
         equal to k before removal we also decrement 'no_less_than_k'.
         The window is a valid candidate if the number of unique letters is i and the number of letters whose frequency
@@ -81,17 +81,17 @@ def longest_substring_v2(s, k):
         while right < n:
             if unique <= i:
                 c = s[right]
-                if counter[c] == 0:
-                    unique += 1
                 counter[c] += 1
+                if counter[c] == 1:
+                    unique += 1
                 if counter[c] == k:
                     no_less_than_k += 1
                 right += 1
             else:
                 c = s[left]
-                if counter[c] == k:
-                    no_less_than_k -= 1
                 counter[c] -= 1
+                if counter[c] == k - 1:
+                    no_less_than_k -= 1
                 if counter[c] == 0:
                     unique -= 1
                 left += 1
