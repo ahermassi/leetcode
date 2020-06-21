@@ -28,8 +28,7 @@ def unique_paths_v1(m, n):
         if (i, j) in {(n - 1, m - 2), (n - 2, m - 1), (n - 1, m - 1)}:
             return 1
         if (i, j) not in memo:
-            res = helper(i + 1, j) + helper(i, j + 1)
-            memo[(i, j)] = res
+            memo[(i, j)] = helper(i + 1, j) + helper(i, j + 1)
         return memo[(i, j)]
 
     memo = {}
@@ -60,8 +59,8 @@ def unique_paths_v2(m, n):
 
 def unique_paths_v3(m, n):
     """ Bottom-up dynamic programming using 1D array.
-        Notice that each time when we update dp[i][j], we only need dp[i-1][j] (at the previous row) and dp[i][j-1]
-        (at the current row but previous column). We only need to store the previous row/column to perform the
+        Notice that each time when we update dp[i][j], we only need dp[i-1][j] (in the previous row) and dp[i][j-1]
+        (in the current row but previous column). We only need to store the previous row/column to perform the
         calculation for the current one. So a 1D array would suffice.
     Time complexity: O(n * m)
     Space complexity: O(m)
