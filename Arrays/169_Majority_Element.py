@@ -22,9 +22,9 @@ def majority_element_v1(nums):
 
 def majority_element_v2(nums):
     """ If the elements are sorted in monotonically increasing (or decreasing) order, the majority element can be found
-    at index len(nums) // 2
-    Time complexity: O(N logN) for Timsort
-    Space complexity: O(N) for the Timsort which is not an in-place algorithm
+        at index len(nums) // 2
+    Time complexity: O(N logN), for sorting
+    Space complexity: O(N), for sorting
     """
     nums.sort()
     return nums[len(nums) // 2]
@@ -36,11 +36,12 @@ def majority_element_v3(nums):
         majority element. Since the first subgroup is given to be larger in size than the second, if we see two entries
         that are different, at most one can be the majority element. By discarding both, the difference in size of the
         first subgroup and second subgroup remains the same, so the majority of the remaining entries remains unchanged.
-        We maintain a count, which is incremented whenever we see an instance of our current candidate for majority
-        element (first subgroup) and decremented whenever we see anything else (second subgroup). Whenever count drops
-        to 0, we effectively forget about everything in nums up to the current element and consider the current number
-        as the candidate for majority element. Eventually, a suffix will be found for which count does not hit 0, and
-        the majority element of that suffix will necessarily be the same as the majority element of the overall array.
+        We maintain a counter, which is incremented whenever we see an instance of our current candidate for majority
+        element (first subgroup) and decremented whenever we see anything else (second subgroup). Whenever the counter
+        drops to 0, we effectively forget about everything in nums up to the current element and consider the current
+        number as the candidate for majority element. Eventually, a suffix will be found for which count does not hit 0,
+        and the majority element of that suffix will necessarily be the same as the majority element of the overall
+        array.
     Time complexity: O(N)
     Space complexity: O(1)
     """
