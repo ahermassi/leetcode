@@ -38,7 +38,7 @@ def divide(dividend, divisor):
     dividend, divisor = abs(dividend), abs(divisor)
     res = 0
     while dividend >= divisor:
-        subtract, count = divisor, 1  # 'count' meres how many 'subtract' is there in 1 'divisor'
+        subtract, count = divisor, 1  # 'count' represents how many 'subtract' is there in 1 'divisor'
         while dividend >= subtract:
             dividend -= subtract
             res += count  # In 1 'subtract' we count 1 'divisor', in 2 'subtract's we count 2 'divisor's, etc
