@@ -8,11 +8,11 @@ import unittest2 as unittest
 
 
 def is_valid_sudoku_v1(board):
-    """ Iterate three times over the board to ensure that :
-            1- There is no rows with duplicates.
-            2- There is no columns with duplicates.
-            3- There is no sub-boxes with duplicates.
-    Time complexity: O(1) as the number of iterations is known in advance (9 X 9 board)
+    """ Iterate three times over the board to ensure that:
+            1- There is no rows with duplicates
+            2- There is no columns with duplicates
+            3- There is no sub-boxes with duplicates
+    Time complexity: O(1), as the number of iterations is known in advance (9 X 9 board)
     Space complexity: O(1)
     """
 
@@ -23,11 +23,11 @@ def is_valid_sudoku_v1(board):
         return True
 
     def is_valid_unit(unit):
-        vals = set()
+        values = set()
         for cell in unit:
-            if cell != '.' and cell in vals:
+            if cell != '.' and cell in values:
                 return False
-            vals.add(cell)
+            values.add(cell)
         return True
 
     def is_valid_squares():
@@ -51,9 +51,9 @@ def is_valid_sudoku_v1(board):
 
 def is_valid_sudoku_v2(board):
     """ Actually, all this could be done in just one iteration.
-        We could use box_index = (row / 3) * 3 + col / 3 where / is an integer division, row is a row number, and col
-        is a column number.
-        Move along the board. Check for each cell value if it was seen already in the current row / column / box.
+        We could use box_index = (row / 3) * 3 + col / 3 where / is an integer division, 'row' is a row number, and
+        'col' is a column number.
+        Move along the board. Check for each cell value if it was seen in the current row / column / box.
     Time complexity: O(1)
     Space complexity: O(1)
     """
@@ -65,11 +65,9 @@ def is_valid_sudoku_v2(board):
             cell = board[i][j]
             if cell == '.':
                 continue
-            if cell in rows[i]:
+            if cell in rows[i] or cell in cols[j]:
                 return False
             rows[i].add(cell)
-            if cell in cols[j]:
-                return False
             cols[j].add(cell)
             box_index = (i // 3) * 3 + j // 3
             if cell in boxes[box_index]:
