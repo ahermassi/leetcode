@@ -29,7 +29,7 @@ def inorder_traversal_v1(root):
 
 
 def inorder_traversal_v2(root):
-    """ Second iterative solution. Use stack to store value and iteratively construct list.
+    """ Iterative solution. Use stack to store the nodes and iteratively construct the list of values.
     Time complexity: O(N)
     Space complexity: O(logN), this space is allocated dynamically, specifically it is the maximum depth of the
     function call stack for the recursive implementation, O(N) worst case
@@ -68,7 +68,7 @@ def inorder_traversal_v3(root):
     while root:
         if root.left:
             pre = root.left
-            while pre.right and pre.right != root:  # Find the in-order predecessor of current, which is the
+            while pre.right and pre.right != root:  # Find the in-order predecessor of current node which is the
                 # rightmost node in root's left subtree. The second condition in while loop is used when reverting
                 pre = pre.right
             if not pre.right:
