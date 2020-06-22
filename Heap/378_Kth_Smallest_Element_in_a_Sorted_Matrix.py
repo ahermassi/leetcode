@@ -9,8 +9,23 @@ import unittest2 as unittest
 def kth_smallest_v1(matrix, k):
     """ As each row (or column) of the given matrix can be seen as a sorted list, we essentially need to find the Kth
         smallest number in ‘N’ sorted lists.
-        Build a min heap of elements from the first column (every row/column is a sorted array) (could be done with
-        first row as well, same logic)
+        Before we get to this problem, let's first talk about a simpler version of the problem which is to find the
+        Kth smallest element from amongst 2 sorted lists. This is easy enough to solve since all we need are a pair of
+        pointers which act as indices in the two lists. At each step, we check which element is smaller amongst the two
+        being pointed at by the indices and progress the corresponding index accordingly. We just need to run the
+        algorithm for merging two sorted lists without actually merging them. We need to keep on running this algorithm
+        until we find our Kth element.
+        In this particular problem, we have N sorted lists instead of just 2. That's what adds to the complexity. We
+        can't really keep N different pointers now, can we? The heap data structure is perfect for this problem since
+        at all times, we want to maintain N different variables with each of them pointing to an element in their
+        corresponding lists. We want to be able to find the minimum amongst these N pointers quickly and then replace
+        that element with the next one in its corresponding list.
+        We will take the first element of each row and add each of these elements to the heap. It's important to know
+        what row and column an element belongs to. Without knowing that, we won't be able to move forward in that
+        particular list. So, apart from adding an element to the heap, we also need to add its row and column number.
+        Hence, our min-heap will contain a triplet of information (number, row, column). The heap will be arranged on
+        the basis of the values and we will use the row and column number to add a replacement for the next element in
+        case it gets popped off the heap.
         Do the following operations k times :
         Every time when we poll out the root (top element in heap), we need to know the row number and column number
         of that element. Replace that root with the next element from the same row (which is a sorted array).
@@ -32,8 +47,8 @@ def kth_smallest_v1(matrix, k):
         heappush(heap, (row[0], i, 0))
     n, number = len(matrix[0]), 0
     for _ in range(k):
-        number, row, col = heappop(heap)  # Take the smallest (top) element form the min heap. If the running count is
-        # equal to k return the number. If the row of the top element has more elements, add the next element to the
+        number, row, col = heappop(heap)  # Take the smallest (top) element from the min heap. If the running count is
+        # equal to k, return the number. If the row of the top element has more elements, add the next element to the
         # heap
         if col + 1 < n:
             heappush(heap, (matrix[row][col + 1], row, col + 1))
