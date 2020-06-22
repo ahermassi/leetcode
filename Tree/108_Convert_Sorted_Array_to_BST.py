@@ -16,8 +16,8 @@ class TreeNode:
 
 
 def sorted_array_to_bst(nums):
-    """ Intuitively, to make a minimum height BST, we want the subtrees to be as balanced as possible; there's no point
-        in one subtree being shorter than the other, since the height is determined by the taller one. More formally,
+    """ Intuitively, to make a minimum height BST, we want the subtrees to be as balanced as possible. There's no point
+        in one subtree being shorter than the other since the height is determined by the taller one. More formally,
         balance can be achieved by keeping the number of nodes in both subtrees as close as possible.
         Let N be the length of the array. To achieve optimum balance, we can make the element in the middle of the
         array, i.e., the (n/2)th entry, the root, and recursively compute minimum height BSTs for the sub-arrays on
@@ -27,17 +27,17 @@ def sorted_array_to_bst(nums):
     Example: nums = [2, 3, 5, 7, 11, 13, 77, 79, 23]. Split nums into 2 halves in first call, then RECURSIVELY split
     left and right halves in the subsequent calls, resulting in N calls to the recursive function, not logN calls.
     Space complexity: O(logN), there is no case of skewed binary tree because we're creating a balanced BST from the
-    start, by picking the middle element every time. It's not possible to have a skewed input or output
+    start by picking the middle element every time. It's not possible to have a skewed input or output
     """
 
     def convert(left, right):
         if left > right:
             return None
         mid = (left + right) // 2
-        node = TreeNode(nums[mid])
-        node.left = convert(left, mid - 1)
-        node.right = convert(mid + 1, right)
-        return node
+        root = TreeNode(nums[mid])
+        root.left = convert(left, mid - 1)
+        root.right = convert(mid + 1, right)
+        return root
 
     return convert(0, len(nums) - 1)
 
