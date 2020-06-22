@@ -14,7 +14,7 @@ class SolutionV1:
         of reset is simple, as we just store the original state of nums on construction.
         The correctness of the algorithm follows from the fact that an element (without loss of generality) is equally
         likely to be selected during all iterations of the for loop.
-        To prove this, observe that the probability of a particular element e being chosen on the kth iteration
+        To prove this, observe that the probability of a particular element e being chosen at the kth iteration
         (indexed from 0) is simply:
             P = P(e being chosen during the kth iteration) * P(e not being chosen before the kth iteration)
         At kth iteration, there are (n - k) elements in the array (k is 0-indexed). Therefore:
@@ -67,8 +67,8 @@ class SolutionV1:
 
 class SolutionV2:
     """ Fisher-Yates algorithm, modern method.
-        On each iteration of the algorithm, we generate a random integer between the current index and the last index
-        of the array. Then, we swap the elements at the current index and the chosen index - this simulates drawing
+        At each iteration of the algorithm, we generate a random integer between the current index and the last index
+        of the array. Then, we swap the elements at the current index and the chosen index. This simulates drawing
         (and removing) the element from the hat, as the next range from which we select a random index will not include
         the most recently processed one.
     """
