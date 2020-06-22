@@ -11,12 +11,12 @@ def find_celebrity_v1(n):
         We are sure that if A knows B, A cannot be the celebrity while B may be, i.e., B is the candidate. Since there
         is only one celebrity, one loop is enough to decide the candidate.
         How do we check whether the candidate is up to standard?
-        According to the definition of a celebrity, if !knows(i, candidate) || knows(candidate, i) exists, the
-        candidate is not qualified.
-        The moment we realize a call to knows(i,j) eliminates either i or j, the problem is solved. knows(i,j) == true
-        means i can't be a celebrity. Since a celebrity knows nobody and knows(i,j) == false, then j can't be a
-        celebrity since everyone must know the celebrity.
-        Notice this interesting property: for any two persons A and B, the possible candidate is always mutually
+        According to the definition of a celebrity, if !knows(i, candidate) OR knows(candidate, i), the candidate is
+        not qualified.
+        The moment we realize a call to knows(i,j) eliminates either i or j, the problem is solved. knows(i,j) means
+        i can't be a celebrity. Since a celebrity knows nobody and !knows(i,j), then j can't be a celebrity since
+        everyone must know the celebrity.
+        Notice this interesting property: For any two persons A and B, the possible candidate is always mutually
         exclusive. i.e. only one person of A and B can be candidate. Because if A knows B, A cannot be celebrity; if A
         doesn't know B, B cannot be celebrity.
         With the above property, traversing and checking every person with a current candidate will filter out all
@@ -42,7 +42,7 @@ def find_celebrity_v1(n):
 
     # Can be also written:
     # candidate = 0
-    # for i in xrange(n):
+    # for i in range(n):
     #     if knows(candidate, i):
     #         candidate = i
     # for i in range(candidate):
