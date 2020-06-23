@@ -6,36 +6,35 @@ import unittest2 as unittest
 
 def str_str_v1(haystack, needle):
     """ Standard search. Linearly scan haystack. Pay attention to the boundaries of the search range: 0 .. n - m + 1,
-        as it is useless to go beyond haystack[n - m] considering needle's size is m.
-    Time complexity: O(N * M) where N is the length of haystack and M is the length of needle
+        as it is useless to go beyond haystack[n - m] where needle's size is m.
+    Time complexity: O(N * M), where N is the length of haystack and M is the length of needle
     Space complexity: O(1)
     """
     if not needle:
         return 0
     n, m = len(haystack), len(needle)
     for i in range(n - m + 1):
-        c = haystack[i]
-        if c == needle[0] and haystack[i: i + m] == needle:
+        if haystack[i] == needle[0] and haystack[i: i + m] == needle:
             return i
     return -1
 
 
 def str_str_v2(haystack, needle):
     """ Rabin-Karp algorithm.
-        The idea is simple: move along the string, generate hash of substring in the sliding window, and compare it
+        The idea is simple: move along the string, generate a hash of substring in the sliding window, and compare it
         with the reference hash of the needle string.
         The Rabin-Karp algorithm is very similar to the brute-force algorithm, but it does not require the second loop.
-        Instead, it uses the concept of a 'fingerprint'. Specifically,let m be the length of needle. It computes hash
+        Instead, it uses the concept of a 'fingerprint'. Specifically, let m be the length of needle. It computes hash
         codes of each substring whose length is m. These are the fingerprints. The key to efficiency is using an
         incremental hash function, such as a function with the property that the hash code of a string is an additive
         function of each individual character. Such a hash function is sometimes referred to as a rolling hash.
         A rolling hash (also known as recursive hashing or rolling checksum) is a hash function where the input is
-        hashed in a window that moves through the input. For such a function, getting the hash code of a sliding window
+        hashed in a window that moves along the input. For such a function, getting the hash code of a sliding window
         of characters is very fast for each shift.
-        We could consider string 'abcd' -> [ord('a'), ord('b'), ord('c'), ord('d')] as a number in a numeral system
-        with the base 26. Hence 'abcd' -> [ord('a'), ord('b'), ord('c'), ord('d')] could be hashed as:
+        We consider the string 'abcd' -> [ord('a'), ord('b'), ord('c'), ord('d')] as a number in a numeral system with
+        the base 26. Hence 'abcd' -> [ord('a'), ord('b'), ord('c'), ord('d')] could be hashed as:
             h = ord('a') * 26^3 + ord('b') * 26^2 + ord('c') * 26^1 + ord('d') * 26^0
-        Now let's consider the slice 'abcd' -> 'bcde' (sliding window). For the arrays that means
+        Now let's consider the slice 'abcd' -> 'bcde' (sliding window). For the array that means:
         [ord('a'), ord('b'), ord('c'), ord('d')] -> [ord('b'), ord('c'), ord('d'), ord('e')]
             h = h * 26 - ord('a') * 26^4 + ord('e') * 26^0
         Now hash regeneration is perfect and fits in a constant time.
@@ -49,10 +48,10 @@ def str_str_v2(haystack, needle):
     n, m = len(haystack), len(needle)
     base = 26
     needle_hash = rolling_hash = 0
-    for i in range(m):  # Compute the hash of haystack[:m] and reference hash of needle[:m]
+    for i in range(m):  # Compute the hash of haystack[:m] and reference hash of the needle
         needle_hash = needle_hash * base + ord(needle[i])
         rolling_hash = rolling_hash * base + ord(haystack[i])
-    if needle_hash == rolling_hash:
+    if needle_hash == rolling_hash:  # Needle occurs at the first character of haystack
         return 0
     for i in range(1, n - m + 1):  # Iterate over the start position of possible match
         # Compute rolling hash based on the previous hash value: multiply previous hash by base, subtract the leftmost
