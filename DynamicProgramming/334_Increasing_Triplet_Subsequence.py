@@ -1,6 +1,6 @@
 """ Given an unsorted array return whether an increasing subsequence of length 3 exists or not in the array. """
 
-import bisect
+from bisect import bisect_left
 import unittest2 as unittest
 
 
@@ -14,11 +14,12 @@ def increasing_triplet_v1(nums):
         'second_min' is the smallest value that has something before it that is even smaller, which is 'first_min'.
         Scanning from left to right, the numbers could lie in range [-----] for any first_min < second_min < third_value
             -----first_min< -----second_min< -----third_value
-            a) If num is less than first_min: update first_min to num.
+        Let num be the current number:
+            a) If num is less than first_min, update first_min to num.
                Now the range for second_min can expand between new first_min and second_min (larger range)
-            b) If num is between first_min and second_min and less than second_min: update second_min to num.
+            b) If num is between first_min and second_min and less than second_min, update second_min to num.
                Now the range for third_value can be any number greater than second_min (larger range)
-            c) if num is greater than second_min: we've found 3 an increasing triplet sub-sequence and return true
+            c) if num is greater than second_min: we've found an increasing triplet sub-sequence and return true.
         It's worth pointing out that the algorithm is similar to keeping an array 'increasing_sub_sequence' of size 3
         and updating first_min and second_min just like 300- Longest Increasing Sub-sequence's binary search solution.
         That algorithm's time complexity is O(N logK), where K is the length of the LIS. Here, K is no larger than 2,
@@ -47,16 +48,16 @@ def increasing_triplet_v1(nums):
 
 
 def increasing_triplet_v2(nums):
-    """ Using binary search as in 300- Longest Increasing Sub-sequence. This algorithm is still O(N), for the simple
-    fact that the binary search is done over an array that has a constant size of 2, so the binary search is O(lg 2)
-    which is constant, so O(1).
+    """ Using binary search as in 300- Longest Increasing Sub-sequence. This algorithm is still O(N) for the simple
+        fact that binary search is done over an array that has a constant size of 2, so the binary search is O(log2)
+        which is constant, so O(1).
     Time complexity: O(N log2) ~= O(N)
     Space complexity: O(1)
     """
-    increasing_sub_sequence = [float('inf')] * 2
+    increasing_sub_sequence = [float('inf'), float('inf')]
     for num in nums:
-        index = bisect.bisect_left(increasing_sub_sequence, num)
-        if index >= 2:
+        index = bisect_left(increasing_sub_sequence, num)
+        if index == 2:
             return True
         increasing_sub_sequence[index] = num
     return False
@@ -69,8 +70,8 @@ def increasing_k_subsequence(nums, k):
     """
     increasing_sub_sequence = [float('inf')] * (k - 1)
     for num in nums:
-        index = bisect.bisect_left(increasing_sub_sequence, num)
-        if index >= k - 1:
+        index = bisect_left(increasing_sub_sequence, num)
+        if index == k - 1:
             return True
         increasing_sub_sequence[index] = num
     return False
