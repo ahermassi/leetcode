@@ -8,7 +8,7 @@ import unittest2 as unittest
 def my_sqrt(x):
     """ The value a we're supposed to compute could be defined as: a^2 <= x < (a + 1)^2
         Looking carefully at the problem, it should be clear that it is wasteful to take unit-sized increments.
-        For example, a^2 < x, then no number smaller than a can be the result, and if a^2 > x, then no number greater
+        For example, if a^2 < x, then no number smaller than a can be the result. If a^2 > x, then no number greater
         than or equal to a can be the result.
         This ability to eliminate large sets of possibilities is suggestive of binary search. Specifically, we can
         maintain an interval consisting of values whose squares are unclassified with respect to x, i.e., might be less
@@ -32,7 +32,7 @@ def my_sqrt(x):
     Space complexity: O(1)
     """
     left, right = 0, x
-    while left <= right:  # Everything before left has square <= x, everything after right has square > x
+    while left <= right:  # Everything before 'left' has square <= x, everything after 'right' has square > x
         mid = (left + right) // 2
         mid_squared = mid * mid
         if mid_squared > x:
