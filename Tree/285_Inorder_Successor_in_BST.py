@@ -8,7 +8,7 @@ def inorder_successor_v1(root, p):
             1- If the node has a right child, the successor is somewhere lower in the tree
             2- Otherwise, the successor is somewhere upper in the tree. There is no access to the parent nodes here,
                and hence we have to traverse the tree starting from the root and not from the node.
-        If the node has a right child, go one step right and then left till you can. Return the successor.
+        If the node p has a right child, go one step right and then left till you can. Return the successor.
         Otherwise, implement iterative in-order traversal. While there are still nodes in the tree or in the stack:
             - Go left till you can, adding nodes in stack.
             - Pop out the last node. If its predecessor is equal to p, return that last node. Otherwise, save that node
@@ -43,7 +43,7 @@ def inorder_successor_v2(root, p):
         Start from root and traverse down the BST and consider the following two cases:
             1- root.val <= p.val. In this case, root cannot be p's in-order successor, neither can root's left child.
                So we only need to consider root's right child, thus we move root to its right and check again.
-            2- root.val > p.val. In this case, root can be a candidate answer, so we store the root node first and call
+            2- root.val > p.val. In this case, root can be a candidate answer, so we store the root node first and name
                it 'candidate'. However, the in-order successor could be current root, or some smaller value in the left
                subtree. So we move root to its left and check again.
         We continuously move root until exhausted. Our search is over, just return the candidate.
@@ -54,11 +54,11 @@ def inorder_successor_v2(root, p):
     """
     candidate = None
     while root:
-        if root.val <= p.val:
-            root = root.right
-        else:
+        if root.val > p.val:
             candidate = root
             root = root.left
+        else:
+            root = root.right
     return candidate
 
 
