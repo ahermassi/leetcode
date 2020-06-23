@@ -11,7 +11,7 @@ def find_peak_element_v1(nums):
         number by reducing the search space at every step. In this case, we use a modification of this simple Binary
         Search to our advantage. We start off by finding the middle element 'mid' from the given nums array. If
         this element happens to be lying in a descending sequence of numbers, or a local falling slope (found by
-        comparing nums[i] to its right neighbour), it means that the peak will always lie towards the left of this
+        comparing nums[i] to its left neighbour), it means that the peak will always lie towards the left of this
         element. Thus, we reduce the search space to the left of 'mid' (including itself) and perform the same process
         on left sub-array.
         If the middle element 'mid' lies in an ascending sequence of numbers, or a rising slope (found by comparing
@@ -41,12 +41,12 @@ def find_peak_element_v1(nums):
         | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
         |---|---|---|---|---|---|---|---|---|
         | l | _ | m | _ | r | X | X | X | X |
-        a[m] < a[m+1] -> l = m+1 (Since m is smaller than m+1, m will for sure not be the answer)
+        a[m] < a[m+1] -> l = m+1 (Since a[m] is smaller than a[m+1], m will for sure not be the answer)
 
         | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
         |---|---|---|---|---|---|---|---|---|
         | X | X | X |l,m | r | X | X | X | X |
-        a[m] < a[m+1] -> l = m+1 (Since m is smaller than m+1, m will for sure not be the answer)
+        a[m] < a[m+1] -> l = m+1 (Since a[m] is smaller than a[m+1], m will for sure not be the answer)
 
         | 1 | 2 | 3 | 4 | 5   | 4 | 3 | 2 | 1 |
         |---|---|---|---|-----|---|---|---|---|
@@ -71,28 +71,28 @@ def find_peak_element_v2(nums):
     Time complexity: (logN)
     Space complexity: O(logN), the depth of recursion tree
     """
-    def helper(nums, left, right):
+    def helper(left, right):
         if left == right:
             return left
         mid = (left + right) // 2
         if nums[mid] > nums[mid + 1]:
-            return helper(nums, left, mid)
-        return helper(nums, mid + 1, right)
+            return helper(left, mid)
+        return helper(mid + 1, right)
 
-    return helper(nums, 0, len(nums) - 1)
+    return helper(0, len(nums) - 1)
 
 
 def find_peak_element_v3(nums):
     """ Linear scan.
         In this approach, we make use of the fact that two consecutive numbers nums[i] and nums[i+1] are never equal.
-        Thus, we can traverse over the nums array starting from the beginning. Whenever, we find a number nums[i], we
+        Thus, we can traverse over the nums array starting from the beginning. Whenever we find a number nums[i], we
         only need to check if it is larger than the next number nums[i+1] for determining if nums[i] is the peak
         element.
         Case 1: All the numbers appear in a descending order. In this case, the first element corresponds to the peak
         element. We start off by checking if the current element is larger than the next one. The first element
         satisfies this criteria, and is hence identified as the peak correctly.
         Case 2: All the elements appear in ascending order. In this case, we keep on comparing nums[i] with nums[i+1]
-        to determine if nums[i] is the peak element or not. None of the elements satisfy this criteria, indicating that
+        to determine if nums[i] is the peak element. None of the elements satisfies this criteria, indicating that
         we are currently on a rising slope and not on a peak. Thus, at the end, we need to return the last element as
         the peak element, which turns out to be correct (because nums[n] = -∞)
         Case 3: The peak appears somewhere in the middle. In this case, when we are traversing on the rising edge, as
