@@ -10,7 +10,7 @@ import unittest2 as unittest
 def plus_one_v1(digits):
     """ Read array from end, and replace each digit with 0 as long as it is a 9. Otherwise, add 1 and return.
     Time complexity: O(N)
-    Space complexity: O(1)
+    Space complexity: O(1), when digits contains at least one not-nine digit, and O(N) otherwise
     """
     i = len(digits) - 1
     while i >= 0 and digits[i] == 9:
