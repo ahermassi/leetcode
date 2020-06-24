@@ -14,8 +14,8 @@ import unittest2 as unittest
 
 
 def title_to_number(s):
-    """ Think of this problem as the same way you'd manually take a binary string and calculate its decimal
-        representation. Instead of being base 2 it is base 26.
+    """ Think of this problem as the same way we'd manually take a binary string and calculate its decimal value.
+        Instead of being base 2, it is base 26.
         For every additional digit of the string, we multiply the value of the digit by 26^n where n is the number of
         digits it is away from the one's place. This is similar to how the number 254 could be broken down as:
         (2 x 10 x 10) + (5 x 10) + (4). The reason we use 26 instead of 10 is because 26 is our base.

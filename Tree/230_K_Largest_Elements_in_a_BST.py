@@ -1,4 +1,4 @@
-""" Write a program that takes as input a BST and an integer k, and retums the k largest elements in the BST in
+""" Write a program that takes as input a BST and an integer k, and returns the k largest elements in the BST in
 decreasing order. """
 
 
