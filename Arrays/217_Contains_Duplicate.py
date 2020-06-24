@@ -7,26 +7,26 @@ import unittest2 as unittest
 
 
 def contains_duplicate_v1(nums):
-    """ The good old hash map in action. This solution performs an optimal number of operations because it can exit
+    """ The good old hash set in action. This solution performs an optimal number of operations because it can exit
         early when the first 2 array elements are equal.
     Time complexity: O(N), where N is the length of array
     Space complexity: O(N)
     """
-    counter = defaultdict(int)
+    values = set()
     for num in nums:
-        if num in counter:
+        if num in values:
             return True
-        counter[num] = 1
+        values.add(num)
     return False
 
 
 def contains_duplicate_v2(nums):
     """ If there are any duplicate integers, they will be consecutive after sorting.
         The implementation here modifies the original array by sorting it. In general, it is not a good practice to
-        modify the input unless it is clear to the caller that the input will be modified. One may make a copy of nums
+        modify the input unless it is clear to the caller that the input will be modified. We may make a copy of nums
         and operate on the copy instead.
-    Time complexity: O(N logN) for sorting
-    Space complexity: O(N) for Python's Timsort
+    Time complexity: O(N logN), for sorting
+    Space complexity: O(N)
     """
     nums.sort()
     n = len(nums)
