@@ -13,7 +13,7 @@ def num_squares_v1(n):
         The least number of perfect square numbers that sum up to (i - j^2) is dp[i - j^2]. Therefore:
             dp[i] = min(dp[i - j^2] for valid values of j) + 1
         Add 1 because j^2 itself is a perfect square.
-        At each iteration, i - j^2 has to be >= 0 because we're working only with positive integers.
+        At each iteration, (i - j^2) has to be >= 0 because we're working only with positive integers.
         i - j^2 >= 0
         --> j^2 <= i
         --> j <= sqrt(i) = i^0.5
@@ -60,8 +60,7 @@ def num_squares_v3(n):
     """ BFS using an actual queue and a 'visited' set to avoid visiting the same nodes which would lead to redundant
         calculations.
     """
-    queue = deque([(n, 0)])
-    visited = set()
+    queue, visited = deque([(n, 0)]), set()
     while queue:
         remainder, count = queue.popleft()
         for i in range(1, int(remainder ** 0.5) + 1):
