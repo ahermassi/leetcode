@@ -25,6 +25,8 @@ def trap_v1(height):
         res += min(max_left, max_right) - h
     return res
 
+# Great explanation for this solution: https://www.youtube.com/watch?v=VZpJxINSvfs
+
 
 def trap_v2(height):
     """ In the previous solution, we iterate over the left and right parts again and again just to find the highest bar
@@ -50,6 +52,44 @@ def trap_v2(height):
     return res
 
 
+def trap_v3(height):
+    """ Instead of computing the left and right parts separately, we may think of some way to do it in one iteration.
+        Notice that as long as left_max[i] < right_max[i], the water trapped depends upon 'left_max', and similar is
+        the case when right_max[i] < left_max[i]. So, we can say that if there is a larger bar at one end (say right),
+        we are assured that the water trapped would be dependant on height of (left) bar in current direction (from
+        left to right). As soon as we find out that the bar at other end (right) is smaller, we start iterating in
+        opposite direction (from right to left). We must maintain 'left_max' and 'right_max' during the iteration, but
+        now we can do it in one iteration using 2 pointers, switching between the two.
+        If 'left_max' is smaller, use left bar as current container rim.
+        If 'right_max' is smaller, use right bar as current container rim.
+        In other words:
+        We calculate the stored water at each index. At the start of every iteration, we update the current maximum
+        height from left side (that is from height[:left]) and the maximum height from right side (from height[right:]).
+        If left_max < right_max, then at least (left_max- height[left]) water can definitely be stored no matter what
+        exists between [left, right] since we know there is a barrier at the right side (left_max < right_max).
+        On the other hand, we cannot store more water than (left_max - height[left]) at index 'left' since the left
+        barrier is of height 'left_max'. So, we know the water that can be stored at index 'left' is exactly
+        (left_max - height[left]). The same logic applies to the case when right_max < left_max. At each loop we can
+        make 'left' and 'right' one step closer.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    left, right = 0, len(height) - 1
+    left_max = right_max = 0
+    res = 0
+    while left < right:
+        left_max = max(left_max, height[left])
+        right_max = max(right_max, height[right])
+        if left_max < right_max:
+            res += left_max - height[left]  # We know that we can fill the current point with water up to the previous
+            # left maximum as any more will overflow
+            left += 1
+        else:
+            res += right_max - height[right]
+            right -= 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1], 6)]
 
@@ -57,6 +97,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, trap_v1(test_array))
             self.assertEqual(result, trap_v2(test_array))
+            self.assertEqual(result, trap_v3(test_array))
 
 
 if __name__ == '__main__':
