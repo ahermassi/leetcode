@@ -23,14 +23,14 @@ def sort_colors_v2(nums):
     """ The problem is known as Dutch National Flag Problem and first was proposed by Dijkstra.
         Let's use here three pointers to track the rightmost boundary of zeros, the leftmost boundary of twos, and the
         current element under the consideration.
-        The idea of solution is to move curr pointer along the array.
-        If nums[curr] = 0, swap it with nums[left] and move both left and curr pointer forward.
-        If nums[curr] = 1, the element is already in correct place, so we don't have to swap, just move the curr
-        pointer forward.
-        If nums[curr] = 2, swap it with nums[right] and move right pointer backwards.
-        We don't increment curr pointer after swapping the value with nums[right] because we know that nums[cur] == 2
-        but we don't know the value of nums[right]. After swapping, we need to take another look at this position
-        again, e.g. the number we swapped might be 0, wo we have to check it once again.
+        The idea of solution is to move 'curr' pointer along the array.
+            - If nums[curr] = 0, swap it with nums[left] and move both 'left' and 'curr' pointers forward
+            - If nums[curr] = 1, the element is already in correct place, so we don't have to swap, just move 'curr'
+              pointer forward.
+            - If nums[curr] = 2, swap it with nums[right] and move 'right' pointer backwards.
+              We don't increment 'curr' pointer after swapping the value with nums[right] because we know that
+              nums[cur] = 2 but we don't know the value of nums[right]. After swapping, we need to take another look at
+              this position again, e.g. the number we swapped might be 0, so we have to check it once again.
         For example, suppose we have nums like this:
             0, 0, 1(left), 1, 2(curr), 1, 0(right), 2, 2
             nums[curr] is 2 --> so we swap it with nums[right], and we get:
@@ -62,7 +62,7 @@ def sort_colors_v2(nums):
 
 def sort_colors_v3(nums):
     """ Same as previous solution but with more meaningful variable names.
-        We iterate through elements in 'unclassified' zone, and move elements into one of 'red' or 'blue' groups
+        We iterate over the elements of 'unclassified' zone, and move elements into one of 'red' or 'blue' groups
         according to the relative order between the incoming unclassified element and 0/1/2.
     Time complexity: O(N)
     Space complexity: O(1)
