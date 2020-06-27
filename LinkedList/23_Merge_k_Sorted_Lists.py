@@ -34,3 +34,27 @@ def merge_k_lists_v1(lists):
         if node.next:
             heappush(heap, node.next)
     return dummy.next
+
+
+def merge_k_lists_v2(lists):
+    """ Instead of augmenting the ListNode class with __lt__,  we simply add a tie-breaker in our heap elements
+        (tuples). This assures that the heap will never compare two variables of type ListNode. When there is a tie in
+        the first value of the tuple, the heap uses the second value as the tie breaker. But since the second value is
+        an object of ListNode, which has no definition of comparision, we get an error. We can define the tuple instead
+        as (node.val, index, node), where 'index' keeps track of the node's index. This way the second value in the
+        tuple is always unique which will break ties.
+    Time complexity: O(N logK)
+    Space complexity: O(K)
+    """
+    dummy = tail = ListNode(0)
+    heap = []
+    for i, head in enumerate(lists):
+        if head:
+            heappush(heap, (head.val, i, head))
+    while heap:
+        _, i, node = heappop(heap)
+        tail.next = node
+        tail = tail.next
+        if node.next:
+            heappush(heap, (node.next.val, i, node.next))  # Recycling tie-breaker i guarantees uniqueness
+    return dummy.next
