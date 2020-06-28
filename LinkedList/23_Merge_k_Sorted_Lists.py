@@ -58,3 +58,31 @@ def merge_k_lists_v2(lists):
         if node.next:
             heappush(heap, (node.next.val, i, node.next))  # Recycling tie-breaker i guarantees uniqueness
     return dummy.next
+
+
+def merge_k_lists_v3(lists):
+    """  """
+
+    def partition(left, right):
+        if left == right:
+            return lists[left]
+        if left > right:
+            return None
+        mid = (left + right) // 2
+        left, right = partition(left, mid), partition(mid + 1, right)
+        return merge(left, right)
+
+    def merge(list1, list2):
+        dummy = tail = ListNode(0)
+        while list1 and list2:
+            if list1.val < list2.val:
+                tail.next = list1
+                list1 = list1.next
+            else:
+                tail.next = list2
+                list2 = list2.next
+            tail = tail.next
+        tail.next = list1 or list2
+        return dummy.next
+
+    return partition(0, len(lists) - 1)
