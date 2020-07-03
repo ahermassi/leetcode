@@ -61,7 +61,13 @@ def merge_k_lists_v2(lists):
 
 
 def merge_k_lists_v3(lists):
-    """  """
+    """ Use recursive merge sort.
+    Time complexity: O(N logK), where N is the total number of nodes and K is the number of lists. Recursion depth is
+    logK, and in each level we need to merge N nodes. The time complexity for each level is O(N) (e.g. if we have 4
+    lists with 10, 20, 30, 40 nodes, to merge list 1 and list 2 we need 30x operations while to merge list 3 and 4 we
+    need 70x operations, and 100x in total)
+    Space complexity: O(logK)
+    """
 
     def partition(left, right):
         if left == right:
