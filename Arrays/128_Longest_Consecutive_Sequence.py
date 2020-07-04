@@ -41,12 +41,39 @@ def longest_consecutive_v1(nums):
     return res
 
 
+def longest_consecutive_v2(nums):
+    """ Keep track of the sequence length and store that in the boundary points of the sequence.
+        Whenever a new element 'num' is encountered, do two things:
+            1- See if (num - 1) and (num + 1) exist in the map, and if so, it means there is an existing sequence next
+               to 'num'. Variables 'left' and 'right' will be the length of those two sequences, while 0 means there is
+               no sequence and 'num' will be the boundary point later. Store (left + right + 1) as the associated value
+               to key 'num' into the map.
+            2- Use 'left' and 'right' to locate the other end of the sequences to the left and right of 'num',
+               respectively, and replace the value with the new length.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    part_of_sequence_length, res = {}, 0
+    for num in nums:
+        if num not in part_of_sequence_length:
+            left = part_of_sequence_length.get(num - 1, 0)
+            right = part_of_sequence_length.get(num + 1, 0)
+            length = left + right + 1
+            part_of_sequence_length[num] = length
+            res = max(res, length)
+            # Extend the length to the boundary(s) of the sequence. Will do nothing if 'num' has no neighbors
+            part_of_sequence_length[num - left] = length
+            part_of_sequence_length[num + right] = length
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([100, 4, 200, 1, 3, 2], 4)]
 
     def test_longest_consecutive(self):
         for test_nums, result in self.data:
             self.assertEqual(result, longest_consecutive_v1(test_nums))
+            self.assertEqual(result, longest_consecutive_v2(test_nums))
 
 
 if __name__ == '__main__':
