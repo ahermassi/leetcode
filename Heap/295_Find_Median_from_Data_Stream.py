@@ -85,3 +85,9 @@ class MedianFinder:
     def findMedian(self) -> float:
         n, m = len(self.small), len(self.large)
         return (-self.small[0] + self.large[0]) / 2.0 if n == m else -self.small[0]
+
+
+# Follow up: If all integer numbers from the stream are between 0 and 100, how would you optimize it?
+# We can maintain an integer array of length 100 to store the count of each number along with a total count. Then, we
+# can iterate over the array to find the middle value to get our median.
+# Time complexity: addNum() is O(1), findMedian() is O(1) since array has fixed size
