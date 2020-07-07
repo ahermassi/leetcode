@@ -75,7 +75,7 @@ def longest_increasing_path_v2(matrix):
     if not matrix:
         return 0
     n, m = len(matrix), len(matrix[0])
-    outdegree = [[0] * m for _ in range(m)]  # outdegree[i][j] is the number of adjacent cells bigger than matrix[i][j]
+    outdegree = [[0] * m for _ in range(n)]  # outdegree[i][j] is the number of adjacent cells bigger than matrix[i][j]
     for i in range(n):
         for j in range(m):
             for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
@@ -84,8 +84,8 @@ def longest_increasing_path_v2(matrix):
     queue = deque([(i, j) for i in range(n) for j in range(m) if outdegree[i][j] == 0])
     length = 0
     while queue:
-        n = len(queue)
-        for _ in range(n):
+        size = len(queue)
+        for _ in range(size):
             i, j = queue.popleft()
             for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
                 if 0 <= x < n and 0 <= y < m and matrix[x][y] < matrix[i][j]:
