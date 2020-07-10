@@ -118,3 +118,48 @@ def find_words_v2(board, words):
         for j in range(m):
             search(i, j, root)
     return res
+
+
+def find_words_v3(board, words):
+    """ A nicer way of defining the trie: dictionary of dictionaries.
+        Example: word = 'test', trie = {'t': {
+                                              'e': {
+                                                    's': {
+                                                          't': {
+                                                                '$': '$'
+                                                                }
+                                                         }
+                                                   }
+                                             }
+                                       }
+    """
+
+    def addWord(word, trie):
+        for c in word:
+            if c not in trie:
+                trie[c] = {}
+            trie = trie[c]
+        trie['$'] = '$'
+
+    def search(i, j, word, root):
+        if not 0 <= i < n or not 0 <= j < m or board[i][j] not in root:
+            return
+        c = board[i][j]
+        board[i][j] = '#'
+        root = root[c]
+        if '$' in root:
+            res.append(word + c)
+            del root['$']
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            search(x, y, word + c, root)
+        board[i][j] = c
+
+    root = {}
+    n, m, res = len(board), len(board[0]), []
+    for word in words:
+        trie = root
+        addWord(word, trie)
+    for i in range(n):
+        for j in range(m):
+            search(i, j, '', root)
+    return res
