@@ -3,7 +3,7 @@ Each word must be constructed from letters of sequentially adjacent cell, where 
 or vertically neighboring. The same letter cell may not be used more than once in a word. """
 
 
-class TrieNode:
+class TrieNodeV1:
     def __init__(self):
         self.children = dict()
         self.word = None
@@ -48,7 +48,7 @@ def find_words_v1(board, words):
     def addWord(word, root):
         for c in word:
             if c not in root.children:
-                root.children[c] = TrieNode()
+                root.children[c] = TrieNodeV1()
             root = root.children[c]
         root.end_of_word = True
 
@@ -66,7 +66,7 @@ def find_words_v1(board, words):
             search(x, y, word + c, root)
         board[i][j] = c  # End of exploration, we restore the cell
 
-    root = TrieNode()
+    root = TrieNodeV1()
     n, m, res = len(board), len(board[0]), []
     for word in words:
         node = root
@@ -74,4 +74,47 @@ def find_words_v1(board, words):
     for i in range(n):
         for j in range(m):
             search(i, j, '', root)
+    return res
+
+
+class TrieNodeV2:
+    def __init__(self):
+        self.children = dict()
+        self.word = None
+
+
+def find_words_v2(board, words):
+    """ One optimization is to keep words in the Trie. Doing so could improve the performance of the algorithm a bit.
+        One benefit is that we would not need to pass the prefix as the parameter in the search() call, and this could
+        speed up a bit the recursive call.
+    """
+
+    def addWord(word, root):
+        for c in word:
+            if c not in root.children:
+                root.children[c] = TrieNodeV2()
+            root = root.children[c]
+        root.word = word
+
+    def search(i, j, root):
+        if not 0 <= i < n or not 0 <= j < m or board[i][j] not in root.children:
+            return
+        c = board[i][j]
+        board[i][j] = '#'
+        root = root.children[c]
+        if root.word:  # Check if we find a match of word
+            res.append(root.word)
+            root.word = None  # Remove the matched word to avoid duplicates
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            search(x, y, root)
+        board[i][j] = c
+
+    root = TrieNodeV2()
+    n, m, res = len(board), len(board[0]), []
+    for word in words:
+        node = root
+        addWord(word, node)
+    for i in range(n):
+        for j in range(m):
+            search(i, j, root)
     return res
