@@ -44,6 +44,29 @@ def first_missing_positive_v1(nums):
     return n + 1
 
 
+def first_missing_positive_v2(nums):
+    """ The basic idea is to traverse the array and try to move the current value to the position whose index is
+        exactly the value (swap them). Then traverse again to find the first unusual value which is doesn't correspond
+        to its index.
+    Time complexity: O(N), we visit each number once, and each number will be put in its right place at most once
+    Space complexity: O(1)
+    """
+    i, n = 0, len(nums)
+    while i < n:
+        num = nums[i]
+        if 0 < num <= n and nums[num - 1] != num:  # Put 'num' to the correct place if 'num' is in the range [1, n]
+            nums[i], nums[num - 1] = nums[num - 1], nums[i]  # After swapping, we make sure that the current position
+            # holds the right number, that's why we don't increment i
+        else:
+            i += 1
+    # So far, all the integers that could find their own correct places have been put in the correct spot. Next step
+    # is to find out the spot that was occupied wrongly
+    for i, num in enumerate(nums):
+        if i + 1 != num:
+            return i + 1
+    return n + 1
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 0], 3), ([3, 4, -1, 1], 2), ([7, 8, 9, 11, 12], 1)]
 
