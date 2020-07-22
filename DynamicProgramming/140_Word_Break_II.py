@@ -39,7 +39,7 @@ def word_break_v1(s, word_dict):
         Finally, as the result, we return the entry of memo with the input string as the key.
     """
 
-    def dfs(s):
+    def dfs(s):  # dfs(s) returns a list containing all sentences derived from s
         if not s:
             return ['']
         if s not in memo:
@@ -57,6 +57,33 @@ def word_break_v1(s, word_dict):
     return dfs(s)
 
 
+def word_break_v2(s, word_dict):
+    """ The dictionary of words can be really huge, which will make the previous solution implausible. So it's better
+        to solve this problem in a formal way.
+        The logic is still the same, but we run an iteration over all the prefixes of the input string instead of words
+        of the dictionary. If the corresponding prefix happens to match a word in the dictionary, we then invoke
+        recursively the function on the suffix.
+    """
+
+    def dfs(s):
+        if not s:
+            return ['']
+        if s not in memo:
+            n, res = len(s), []
+            for i in range(n + 1):  # When i=n (last iteration), prefix=s[:n] which matches the entire string s
+                prefix, suffix = s[:i], s[i:]
+                if prefix in word_dict:
+                    rest_of_string = dfs(suffix)
+                    for subs in rest_of_string:
+                        res.append(prefix + ' ' + subs if subs else prefix)
+            memo[s] = res
+        return memo[s]
+
+    word_dict = set(word_dict)
+    memo = {}
+    return dfs(s)
+
+
 class Test(unittest.TestCase):
     data = [('catsanddog', ['cat', 'cats', 'and', 'sand', 'dog'], ['cat sand dog', 'cats and dog']), (
         'pineapplepenapple', ['apple', 'pen', 'applepen', 'pine', 'pineapple'],
@@ -66,6 +93,7 @@ class Test(unittest.TestCase):
     def test_word_break(self):
         for test_string, test_word_dict, result in self.data:
             self.assertEqual(result, word_break_v1(test_string, test_word_dict))
+            self.assertEqual(result, word_break_v2(test_string, test_word_dict))
 
 
 if __name__ == '__main__':
