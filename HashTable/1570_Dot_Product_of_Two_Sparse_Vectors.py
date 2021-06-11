@@ -1,0 +1,47 @@
+""" Given two sparse vectors, compute their dot product.
+
+Implement class SparseVector:
+
+SparseVector(nums) Initializes the object with the vector nums
+dotProduct(vec) Compute the dot product between the instance of SparseVector and vec
+A sparse vector is a vector that has mostly zero values, you should store the sparse vector efficiently and compute
+the dot product between two SparseVector.
+
+Follow up: What if only one of the vectors is sparse? """
+
+from collections import defaultdict
+
+
+class SparseVectorV1:
+
+    def __init__(self, nums):
+        """ A sparse vector is a vector that has mostly zero values, while a dense vector is a vector where most of
+        the elements are non-zero. It is inefficient to store a sparse vector as a one-dimensional array. Instead, we
+        can store the non-zero values and their corresponding indices in a dictionary, with the index being the key.
+        Any index that is not present corresponds to a value 0 in the input array.
+        Dot product requires two vectors of equal length. However, after we store the vector as a hash map, their
+        length is different based on the sparsity. Therefore, the performance will be better if we iterate through the
+        shorter hash map to see if each key is present in the other vector or not (this answers the follow up).
+        Time complexity: O(N) for creating the Hash Map; O(L) for calculating the dot product, where L is the length
+        of the shortest hash map
+        Space complexity: O(L) for creating the Hash Map, as we only store elements that are non-zero. O(1) for
+        calculating the dot product
+        """
+        self.non_zeros = defaultdict(int)
+        for i, num in enumerate(nums):
+            if num:
+                self.non_zeros[i] = num
+
+    # Return the dotProduct of two sparse vectors
+    def dotProduct(self, vec):
+        """
+        :type vec: 'SparseVector'
+        :rtype: int
+        """
+        non_zeros = self.non_zeros
+        if len(vec.non_zeros) < len(non_zeros):
+            return vec.dotProduct(self)
+        res = 0
+        for i, num in non_zeros.items():
+            res += num * vec.non_zeros[i]
+        return res
