@@ -45,3 +45,42 @@ class SparseVectorV1:
         for i, num in non_zeros.items():
             res += num * vec.non_zeros[i]
         return res
+
+
+class SparseVectorV2:
+    def __init__(self, nums):
+        """ We can also represent elements of a sparse vector as a list of <index, value> pairs. We use two pointers to
+        iterate through the two vectors to calculate the dot product.
+        Time complexity: O(N) for creating the <index, value> pair for non-zero values, O(L1 + L2) for calculating the
+        dot product, where L1 is the number of non-zero values in the first vector and L2 is the number of non-zero
+        values in the second vector
+        Space complexity: O(L) for creating the <index, value> pairs for non-zero values, O(1) for calculating the dot
+        product
+        """
+        self.pairs = []
+        for i, num in enumerate(nums):
+            if num:
+                self.pairs.append((i, num))
+
+    # Return the dotProduct of two sparse vectors
+    def dotProduct(self, vec):
+        """
+        :type vec: 'SparseVector'
+        :rtype: int
+        """
+        res = 0
+        i = j = 0
+        n, m = len(self.pairs), len(vec.pairs)
+        while i < n and j < m:
+            self_index, self_val = self.pairs[i]
+            vec_index, vec_val = vec.pairs[j]
+            if self_index == vec_index:  # Both elements at this index are non-zero, so they contribute to the product
+                res += self_val * vec_val
+                i += 1
+                j += 1
+            elif self_index < vec_index:  # We've got a non-zero value at the current index, but the next non-zero
+                # value of the other vector is ahead of us
+                i += 1
+            else:
+                j += 1
+        return res
