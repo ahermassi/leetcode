@@ -50,18 +50,18 @@ def tree_to_doubly_list_v2(root):
     """
     if not root:
         return None
-    dummy = tail = Node(0)
+    dummy_head = dummy_tail = Node(0)
     stack, cur = [], root
     while stack or cur:
         while cur:
             stack.append(cur)
             cur = cur.left
         node = stack.pop()
-        tail.right = node
-        node.left = tail
-        tail = node
+        dummy_tail.right = node
+        node.left = dummy_tail
+        dummy_tail = dummy_tail.right
         cur = node.right
-    tail.right = dummy.right  # At this stage, 'tail' points to the last node in the doubly linked list. In order to
-    # close the circle, the last node's next should point to the first node ...
-    dummy.right.left = tail  # ... and the first node's prev should point to the last node.
-    return dummy.right
+    dummy_tail.right = dummy_head.right  # At this stage, 'tail' points to the last node in the doubly linked list.
+    # In order to close the circle, the last node's next should point to the first node ...
+    dummy_head.right.left = dummy_tail  # ... and the first node's prev should point to the last node.
+    return dummy_head.right
