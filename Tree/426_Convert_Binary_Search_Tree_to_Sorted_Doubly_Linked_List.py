@@ -20,24 +20,27 @@ def tree_to_doubly_list_v1(root):
     """
 
     def inorder(root):
-        global tail
+        global dummy_tail
         if not root:
             return
         inorder(root.left)
-        tail.right = root
-        root.left = tail
-        tail = root
+        dummy_tail.right = root
+        root.left = dummy_tail
+        dummy_tail = dummy_tail.right
         inorder(root.right)
 
     if not root:
         return None
-    dummy = Node(0)
-    global tail
-    tail = dummy
+    dummy_head = Node(0)
+    global dummy_tail
+    dummy_tail = dummy_head
     inorder(root)
-    tail.right = dummy.right
-    dummy.right.left = tail
-    return dummy.right
+    dummy_tail.right = dummy_head.right  # After inorder() exits, dummy_tail would point to the last node in the
+    # sorted circular doubly-linked list. dummy_tail's right (or next) should point to the first node which is nothing
+    # but dummy_head.right
+    dummy_head.right.left = dummy_tail  # The first node in the sorted list should have its left (or prev) point to
+    # the last node in the list which is nothing but dummy_tail
+    return dummy_head.right
 
 
 def tree_to_doubly_list_v2(root):
