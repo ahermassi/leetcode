@@ -11,7 +11,7 @@ def find_buildings_v1(heights):
     """ Build a monotonically decreasing stack. It is in decreasing order for element value (height) and increasing
     order for element index. When the current height is greater than the top of the stack, we keep popping those
     shorter buildings because they can't have an ocean view.
-    Time complexity:
+    Time complexity: O(N) in the best case where all buildings are in decreasing order of height
     Space complexity: O(1)
     """
     stack = []
@@ -20,3 +20,21 @@ def find_buildings_v1(heights):
             stack.pop()
         stack.append(i)
     return stack
+
+
+def find_buildings_v2(heights):
+    """ We can traverse the buildings from the nearest to the ocean to the furthest. We record the maximum to the
+    right while traversing to determine if we can see the ocean or not. Put index in the result array if the current
+    building is taller than the highest building seen so far. In the end, we need to reverse the array.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    n, res = len(heights), []
+    cur_max = 0
+    for i in reversed(range(n)):
+        cur_height = heights[i]
+        if cur_height > cur_max:  # If the current building is taller than the tallest building to its right, then it's
+            # taller than all buildings to its right, so it has an ocean view.
+            res.append(i)
+            cur_max = cur_height
+    return res[::-1]
