@@ -5,7 +5,7 @@ parentheses string is valid and return any valid string. """
 import unittest2 as unittest
 
 
-def min_remove_to_make_valid(s):
+def min_remove_to_make_valid_v1(s):
     """ The parentheses in a string are balanced if and only if these 2 conditions are met:
             1- There is the same number of '(' and ')' in the string
             2- Scanning through the string from left to right and counting how many '(' and ')' there are so far,
@@ -20,7 +20,7 @@ def min_remove_to_make_valid(s):
             1- Remove a ')' if it is encountered when stack was already empty (prevent negative balance)
             2- Remove a '(' if it is left on stack at end (prevent non-zero final balance)
         After removing invalid ')', the number of '(' we remove is the minimum needed to ensure that
-        count('(') == count(')')
+        count('(') == count(')'), or that the balance is equal to 0.
         If we put the indexes of the '(' on the stack, then we'll know that all the indices on the stack at the end
         are the indices of the unmatched '('. We should also use a set to keep track of the unmatched ')' we come
         across. Then, we can remove the character at each of those indices and then return the edited string.
@@ -43,9 +43,10 @@ def min_remove_to_make_valid(s):
             if stack:
                 stack.pop()
             else:
+                # Meet closing parentheses but no opening parenthesis -> remove closing parenthesis
                 invalid_indices.add(i)
     while stack:
-        invalid_indices.add(stack.pop())
+        invalid_indices.add(stack.pop())  # Remove remaining open parenthesis
     return ''.join([c for i, c in enumerate(s) if i not in invalid_indices])
 
 
