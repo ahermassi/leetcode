@@ -15,7 +15,8 @@ class TreeNode(object):
 def right_side_view_v1(root):
     """ Queue version. Perform a BFS on the tree with the right side being always in the front.
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(D), where D is a tree diameter. Let's use the last level to estimate the queue size. This level
+    could contain up to N/2 tree nodes in the case of complete binary tree.
     """
     if not root:
         return None
@@ -30,9 +31,33 @@ def right_side_view_v1(root):
 
 
 def right_side_view_v2(root):
+    """ BFS using 2 queues, ne for the current level, and one for the next. The idea is to pop the nodes one by one
+        from the current level and push their children into the next level queue. Each time the current queue is empty,
+        we have the right side element in hands.
+    Time complexity: O(N)
+    Space complexity: O(D)
+    """
+    if not root:
+        return None
+    res, cur_level = [], deque([root])
+    while cur_level:
+        next_level = deque()
+        while cur_level:
+            node = cur_level.popleft()
+            next_level.extend([kid for kid in (node.left, node.right) if kid])
+        res.append(node.val)
+        cur_level = next_level
+    return res
+
+
+def right_side_view_v3(root):
     """ Do a reverse pre-order traversal where the right child is always visited after the root is processed. The idea
         is that this order guarantees that the FIRST node to be seen at each level is the one that is visible from the
         right side view. We use the level as index of the result list.
+        We will push one element at each level. So, the size of the res array will actually be equal to the number of
+        levels we have already stored the result. If the level of some element is more than the size of res array,
+        that means this will be a new level for which we have not pushed anything in the res array. So, we will push
+        this element in the res array.
     Time complexity: O(N)
     Space complexity: O(N) worst case, O(logN) average case
     """
@@ -60,6 +85,7 @@ class Test(unittest.TestCase):
     def test_right_side_view(self):
         self.assertEqual(self.result, right_side_view_v1(self.root))
         self.assertEqual(self.result, right_side_view_v2(self.root))
+        self.assertEqual(self.result, right_side_view_v3(self.root))
 
 
 if __name__ == '__main__':
