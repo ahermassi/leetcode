@@ -51,6 +51,34 @@ def right_side_view_v2(root):
 
 
 def right_side_view_v3(root):
+    """ Another approach is to push all the nodes in one queue and to use a sentinel node to separate the levels.
+        Typically, we could use null as a sentinel.
+        The first step is to initiate the first level: root + null as a sentinel. Once it's done, continue to pop the
+        nodes one by one from the left and push their children to the right. Stop each time the current node is null
+        because it means we hit the end of the current level. Each stop is a time to update a right side view list and
+        to push null in the queue to mark the end of the next level.
+    Time complexity: O(N)
+    Space complexity: O(D)
+    """
+    if not root:
+        return None
+    res, queue = [], deque([root, None])
+    cur = root
+    while queue:
+        prev = cur
+        cur = queue.popleft()
+        while cur:
+            queue.extend([kid for kid in (cur.left, cur.right) if kid])
+            prev = cur
+            cur = queue.popleft()
+        res.append(prev.val)  # Now the current node is null, i.e. we reached the end of the current level. Hence the
+        # previous node is the rightmost one and makes a part of the right side view.
+        if queue:
+            queue.append(None)
+    return res
+
+
+def right_side_view_v4(root):
     """ Do a reverse pre-order traversal where the right child is always visited after the root is processed. The idea
         is that this order guarantees that the FIRST node to be seen at each level is the one that is visible from the
         right side view. We use the level as index of the result list.
@@ -86,6 +114,7 @@ class Test(unittest.TestCase):
         self.assertEqual(self.result, right_side_view_v1(self.root))
         self.assertEqual(self.result, right_side_view_v2(self.root))
         self.assertEqual(self.result, right_side_view_v3(self.root))
+        self.assertEqual(self.result, right_side_view_v4(self.root))
 
 
 if __name__ == '__main__':
