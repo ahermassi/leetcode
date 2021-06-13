@@ -50,12 +50,43 @@ def min_remove_to_make_valid_v1(s):
     return ''.join([c for i, c in enumerate(s) if i not in invalid_indices])
 
 
+def min_remove_to_make_valid_v2(s):
+    """ Similar idea but operating on the string's characters while we go.
+        Convert string to list, because String is an immutable data structure in Python and it's much easier and
+        memory-efficient to deal with a list for this task.
+        Iterate over the list.
+        Keep track of indices with open parentheses in the stack. In other words, when we come across open parenthesis
+        we add an index to the stack.
+        When we come across close parenthesis we pop an element from the stack. If the stack is empty we replace the
+        current list element with an empty string.
+        After iteration, we replace all indices we have in the stack with empty strings because we don't have close
+        parentheses for them.
+        Convert list to string and return.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    chars = list(s)
+    stack = []
+    for i, c in enumerate(s):
+        if c == '(':
+            stack.append(i)
+        elif c == ')':
+            if not stack:
+                chars[i] = ''
+            else:
+                stack.pop()
+    for index in stack:
+        chars[index] = ''
+    return ''.join(chars)
+
+
 class Test(unittest.TestCase):
     data = [('lee(t(c)o)de)', 'lee(t(c)o)de'), ('))((', '')]
 
     def test_min_remove_to_make_valid(self):
         for test_s, result in self.data:
-            self.assertEqual(result, min_remove_to_make_valid(test_s))
+            self.assertEqual(result, min_remove_to_make_valid_v1(test_s))
+            self.assertEqual(result, min_remove_to_make_valid_v2(test_s))
 
 
 if __name__ == '__main__':
