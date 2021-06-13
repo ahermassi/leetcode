@@ -23,13 +23,13 @@ def exclusive_time_v1(n, logs):
     """
     res, stack = [0] * n, []
     for log in logs:
-        id, type, timestamp = log.split(':')
-        id, timestamp = int(id), int(timestamp)
-        if type == 'start':
-            stack.append((id, timestamp))
+        func_id, event, timestamp = log.split(':')
+        func_id, timestamp = int(func_id), int(timestamp)
+        if event == 'start':
+            stack.append((func_id, timestamp))
         else:
             elapsed = timestamp - stack.pop()[1] + 1
-            res[id] += elapsed
+            res[func_id] += elapsed
             if stack:
                 res[stack[-1][0]] -= elapsed  # The enclosing (outer) function gets a penalty
     return res
@@ -45,14 +45,17 @@ def exclusive_time_v2(n, logs):
     res, stack = [0] * n, []
     prev_time = 0  # prev_time means the start of the most recent interval
     for log in logs:
-        id, type, timestamp = log.split(':')
-        id, timestamp = int(id), int(timestamp)
-        elapsed = timestamp - prev_time
-        if type == 'start':
-            if stack:
+        func_id, event, timestamp = log.split(':')
+        func_id, timestamp = int(func_id), int(timestamp)
+        elapsed = timestamp - prev_time  # How much time elapsed between the previous and current function call
+        # (function ids can be different)
+        if event == 'start':
+            if stack:  # If we're starting a new function F2 call with a function F1 still running, it means F1 has run
+                # for the duration of 'elapsed' (F1 and F2 could be the same)
                 res[stack[-1]] += elapsed
-            stack.append(id)
-            prev_time = timestamp
+            stack.append(func_id)
+            prev_time = timestamp  # This will be needed in the next iteration: The previous function call started
+            # at the current 'timestamp'
         else:
             res[stack.pop()] += elapsed + 1
             prev_time = timestamp + 1  # Start of the next interval
