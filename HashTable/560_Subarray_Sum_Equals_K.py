@@ -6,7 +6,8 @@ from collections import defaultdict
 
 def subarray_sum(nums, k):
     """ The idea behind this approach is as follows: If the cumulative sum up to two indices is the same, the sum of
-        the elements lying in between those indices is zero.
+        the elements lying in between those indices is zero. Whenever the sum has increased by a value of k, we've
+        found a subarray of sum k.
         Extending the same thought further, if the cumulative sum up to two indices, say i and j, is at a difference of
         k, i.e. if sum[i] - sum[j] = k, the sum of elements lying between indices i and j is k.
         Based on these thoughts, we make use of a hash map which is used to store the cumulative sum up to all the
@@ -17,6 +18,11 @@ def subarray_sum(nums, k):
         Remember the frequency of all prefix sums, sum to keep track of sum of all the elements so far. If we can find
         a prefix sum in the map for (sum - k), it means we can form sum == k using the elements after the element
         corresponding to that prefix sum till the current element (included). Count all such sums at each element.
+        1. Hashmap<sum[0,i - 1], frequency>
+        2. sum[i, j] = sum[0, j] - sum[0, i - 1]    --> sum[0, i - 1] = sum[0, j] - sum[i, j]
+              k         prefix_sum     hashmap-key  -->  hashmap-key  =  prefix_sum - k
+        3. now, we have k and sum.
+        As long as we can find a sum[0, i - 1], we then get a valid subarray.
     Time complexity: O(N)
     Space complexity: O(N)
     """
