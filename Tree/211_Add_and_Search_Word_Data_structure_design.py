@@ -70,6 +70,43 @@ class WordDictionaryV1(object):
         return dfs(root, 0)
 
 
+class WordDictionaryV2(object):
+    """ A different implementation using hash map as a trie (nested hash maps). """
+
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.trie = dict()
+
+    def addWord(self, word):
+        trie = self.trie
+        for c in word:
+            if c not in trie:  # Add a dictionary for each new character, creating a nested dictionary from word's
+                # characters
+                trie[c] = dict()
+            trie = trie[c]
+        trie['#'] = '#'  # Add end of word mark to the dictionary of current node
+
+    def search(self, word):
+
+        def dfs(node, index):
+            if index == n:
+                # If any word is found there should be an end of word mark in the dictionary of current node
+                return '#' in node
+            c = word[index]
+            if c == '.':
+                # Search for any sub-string starting with current character
+                return any(dfs(node[child], index + 1) for child in node if child != '#')
+            if c not in node:
+                return False
+            return dfs(node[c], index + 1)
+
+        trie = self.trie
+        n = len(word)
+        return dfs(trie, 0)
+
+
 class Test(unittest.TestCase):
     word_dictionary = WordDictionaryV1()
     word_dictionary.addWord("bad")
