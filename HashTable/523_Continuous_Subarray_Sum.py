@@ -18,11 +18,7 @@ def check_subarray_sum_v1(nums, k):
         cur_sum = nums[i]
         for j in range(i + 1, n):
             cur_sum += nums[j]
-            if k == 0:
-                if cur_sum == 0:
-                    return True
-                continue
-            elif cur_sum % k == 0:
+            if cur_sum % k == 0:
                 return True
     return False
 
@@ -42,21 +38,26 @@ def check_subarray_sum_v2(nums, k):
         If they have the same mod, which is modk_1 == modk_2, subtracting these two running sums gives the difference:
             sum_i - sum_j = (x - y) * k = constant * k
         The difference is the sum of elements between indices i and j, and the value is a multiple of k.
+        It is based on this elementary fact:
+            For a line segment AC with a point B in it, visualized as A---B---C:
+            If mod(AC, k) == mod(AB, k), then BC must be equal to n * k
+        Key point: if we can find any two subarray of prefix sum have same mod value, then their difference MUST be
+        divisible by k.
         For e.g. in case of the array [23, 2, 6, 4, 7] and k = 6, the running sum is [23, 25, 31, 35, 42] and the
         remainders (mod 6) are [5, 1, 1, 5, 0]. We got remainder 5 at index 0 and at index 3. That means in between
         these two indices we must have added a number which is multiple of k.
     Time complexity: O(N)
     Space complexity: O(min(N,k)), hash map can contain up to min(N,k) different pairings
     """
-    indices = {0: -1}  # This initialization avoids the case when the first element of the array is multiple of k,
+    sum_index = {0: -1}  # This initialization avoids the case when the first element of the array is multiple of k,
     # since 0-(-1)= 1 is not greater than 1, while we want sub arrays of size at least 2
     cur_sum = 0
     for i, num in enumerate(nums):
         cur_sum += num
-        cur_sum = cur_sum % k if k else cur_sum
-        if cur_sum not in indices:
-            indices[cur_sum] = i
-        elif i - indices[cur_sum] > 1:  # Difference of sub array's start/end indices to ensure its size is at least 2
+        cur_sum %= k
+        if cur_sum not in sum_index:
+            sum_index[cur_sum] = i
+        elif i - sum_index[cur_sum] > 1:  # Difference of sub array's start/end indices to ensure its size is at least 2
             return True
     return False
 
