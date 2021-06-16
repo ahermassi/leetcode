@@ -15,16 +15,6 @@ class TrieNode:
 
 class WordDictionaryV1(object):
     """ Use a trie to store the words, and backtracking to check each character of word to search.
-    Time complexity:
-        addWord: O(k), where k is the length of word (worst case if the word is new)
-        search: if we exclude wildcards (.), worst case search will iterate through the longest word (i.e. linear to
-        the maximum number of characters in a word). With wildcards, it will iterate through the whole tree in the
-        worst case (i.e. linear to the total number of characters)
-    Space complexity:
-        addWord: O(k), in the worst case newly inserted word doesn't share a prefix with the the words already
-        inserted in the trie. We have to add k new nodes
-        search: O(k) if we exclude wildcards, O(N) (i.e. linear to the total number of characters) in the worst case
-        when there are wildcards.
     """
 
     def __init__(self):
@@ -34,8 +24,10 @@ class WordDictionaryV1(object):
         self.root = TrieNode()
 
     def addWord(self, word):
-        """
-        Adds a word into the data structure.
+        """ Adds a word into the data structure.
+        Time complexity: O(M), where M is the length of word
+        Space complexity: O(M) in the worst case where the newly inserted word doesn't share a prefix with the the
+        words already inserted in the trie. We have to add M new nodes.
         """
         root = self.root
         for c in word:
@@ -53,6 +45,13 @@ class WordDictionaryV1(object):
             If the first character of the suffix is the wildcard '.', then all the children of the current trie node
             are good candidates to hold the rest of the string. If any of the children returns a positive result,
             we win.
+        Time complexity: O(M) if we exclude wildcards (.), worst case search will iterate through the longest word
+        (i.e. linear to the maximum number of characters in a word). With wildcards, it will iterate through the whole
+        tree in the worst case (i.e. linear to the total number of characters), which is O(26^M) when we have an
+        undefined word '.....' whose length is M, as the branching factor is 26 and the depth is M. Each key could
+        have 26 chars, and for M length of searched word we need to search 26^M with all keys.
+        Suppose the word is '...z'; It would be O(26^M) where M is the length of the word; At each node due to dot
+        we search in 26 more branches until we find the match.
         """
 
         def dfs(root, index):
@@ -74,9 +73,6 @@ class WordDictionaryV2(object):
     """ A different implementation using hash map as a trie (nested hash maps). """
 
     def __init__(self):
-        """
-        Initialize your data structure here.
-        """
         self.trie = dict()
 
     def addWord(self, word):
@@ -97,6 +93,8 @@ class WordDictionaryV2(object):
             c = word[index]
             if c == '.':
                 # Search for any sub-string starting with current character
+                # Why exclude '#'? Since '#' is not a 'real' character and only a placeholder (and we know it won't
+                # have any children, since the word finished here), we don't want to traverse down this path.
                 return any(dfs(node[child], index + 1) for child in node if child != '#')
             if c not in node:
                 return False
