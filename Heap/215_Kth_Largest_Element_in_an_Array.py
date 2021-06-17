@@ -40,7 +40,14 @@ def find_kth_largest_v3(nums, k):
         If the pivot's rank is smaller than the rank we want to find, we are sure all elements before pivot actually
         have even smaller rank, we search the target at the part after pivot.
         If the pivot's rank is larger than the rank we want to find, we search the target at the left part before pivot.
-    Time complexity: O(N)
+        If that would be a quicksort algorithm, we would proceed recursively to use quicksort for the both parts that
+        would result in O(N logN) time complexity. Here there is no need to deal with both parts since now we know in
+        which part to search for (N - k)th smallest element, and that reduces average time complexity to O(N).
+        Unlike a quick sort, we only need to focus on one subarray in a quick select.
+    Time complexity: O(N), on average each partition operation splits the remaining input into two equal parts. We can
+    disregard one of those parts, because we know the solution is not in that part. Thus, the size of the remaining
+    input progresses like this: n, n / 2, n / 4, n / 8, ... This is equal to 2n, because 1 + 1/2 + 1/4 + 1/8 ... = 2
+    and each term is multiplied by n
     Space complexity: O(1)
     """
 
