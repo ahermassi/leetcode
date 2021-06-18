@@ -12,7 +12,9 @@ def group_strings(strings):
         to form some sort of key for each word to group them. This is similar to 49- Group Anagrams.
         Consider 'acf' and 'pru'. Now notice the difference between each two consecutive characters.
         acf = 0->2->3, pru = 0->2->3. So these two form the same group. So in this case, we can simply use integers
-        ASCII difference to form a key.
+        ASCII difference to form a key. Therefore, the key can be represented as a tuple of the "gaps" between adjacent
+        characters. Characters map to integers (e.g. ord('a') = 97). For example, 'abc' maps to (1,1) because
+        ord('b') - ord('a') = 1 and ord('c') - ord('b') = 1
         Then we build a hash map using the above shifting feature string as key and strings that share the shifting
         feature as value. We store all the strings that share the same shifting feature in a list.
         A final note, since the problem statement has given that 'az' and 'ba' belong to the same shifting sequence,
@@ -22,10 +24,11 @@ def group_strings(strings):
     """
     groups = defaultdict(list)
     for string in strings:
-        key, n = '', len(string)
+        n = len(string)
+        gaps = ()
         for i in range(1, n):
-            difference = (ord(string[i]) - ord(string[i - 1])) % 26
-            key += str(difference)
-        groups[key].append(string)
+            gap = (ord(string[i]) - ord(string[i - 1])) % 26
+            gaps += (gap, )  # This is how to append to a tuple
+        groups[gaps].append(string)  # We can a use a tuple of integers as map key unlike the list of integers
     return groups.values()
 
