@@ -38,19 +38,26 @@ def interval_intersection_v1(first_list, second_list):
     return res
 
 
-def interval_intersection_v2(A, B):
-    n, m = len(A), len(B)
-    i, j, res = 0, 0, []
+def interval_intersection_v2(first_list, second_list):
+    """ Same as the previous solution, but trying to find the overlap in a different way.
+    Time complexity: O(N + M)
+    Space complexity: O(1)
+    """
+    res = []
+    n, m = len(first_list), len(second_list)
+    i = j = 0
     while i < n and j < m:
-        a, b = A[i], B[j]
-        max_start, min_end = max(a[0], b[0]), min(a[1], b[1])  # Find the overlap, if there is any
-        if max_start <= min_end:
-            res.append([max_start, min_end])
-        # Remove the interval with the smallest endpoint
-        if a[1] < b[1]:  # If 'a' has the smallest endpoint, it can only intersect b ..
-            i += 1  # .. so we can discard 'a' since it cannot intersect anything else
-        else:  # If 'b' has the smallest endpoint, it can only intersect a ..
-            j += 1  # .. so we can discard 'b' since it cannot intersect anything else
+        first_start, first_end = first_list[i]
+        second_start, second_end = second_list[j]
+        overlap_start = max(first_start, second_start)
+        overlap_end = min(first_end, second_end)
+        if overlap_start <= overlap_end:  # Find the overlap, if there is any
+            res.append([overlap_start, overlap_end])
+        # Advance the interval with smaller endpoint in hopes of finding another overlap
+        if first_end < second_end:  # If A has the smallest endpoint, it can only intersect B ..
+            i += 1  # .. so we can discard A since it cannot intersect anything else
+        else:  # If B has the smallest endpoint, it can only intersect A ..
+            j += 1  # .. so we can discard B since it cannot intersect anything else
     return res
 
 
