@@ -59,6 +59,49 @@ def vertical_order_v1(root):
     return [columns[i] for i in range(min_col, max_col + 1)]
 
 
+def vertical_order_v2(root):
+    """ Compared to the DFS traversal, the BFS traversal gives us a head start, since the nodes in higher rows would be
+        visited later than the ones in the lower lows. As a result, we only need to focus on the column order.
+        That being said, we could simply traverse the tree in any DFS order, then we sort the resulting list strictly
+        based on two keys <column, row>, which would give us the same results as the BFS traversal.
+        During the traversal, we would then build a similar hash table with the column index as the key and the list
+        of (row, val) tuples as the value.
+        At the end of the DFS traversal, we iterate through the hash table via the key of column index. Accordingly,
+        we have a list of (row, val) tuples associated with each key. We then sort this list based on the row index.
+    Time complexity: O(W * HlogH), where W is the width of the binary tree (i.e. the number of columns in the result)
+    and H is the height of the tree. In the first part of the algorithm, we traverse the tree in DFS, which results in
+    O(N) time complexity. Once we build the hash table, we then have to sort it column by column. Let us assume the
+    time complexity of the sorting algorithm to be O(K logK) where K is the length of the input. The maximal number of
+    nodes in a column would be O(H/2) where H is the height of the tree, due to the zigzag nature of the node
+    distribution. Since we need to sort W columns, the total time complexity of the sorting operation would then be
+    O(W * HlogH). Note that, the total number of nodes N in a tree is bounded by W * H, i.e. N < W * H. As a result,
+    the time complexity of O(W * HlogH) will dominate the O(N) of the DFS traversal in the first part.
+    Space complexity: O(N), where N is the number of nodes in the tree. We kept the hash table which contains all the
+    node values in the binary tree. Since we apply the recursion for our DFS traversal, it would incur additional
+    space consumption on the function call stack. In the worst case where the tree is completely imbalanced, we would
+    have the size of call stack up to O(N).
+    """
+
+    def dfs(node, row, column):
+        if not node:
+            return
+        columns[column].append((row, node.val))
+        dfs(node.left, row + 1, column - 1)
+        dfs(node.right, row + 1, column + 1)
+
+    if not root:
+        return None
+    columns = defaultdict(list)
+    dfs(root, 0, 0)
+    min_col = min(columns.keys())
+    max_col = max(columns.keys())
+    res = []
+    for i in range(min_col, max_col+1):
+        columns[i].sort(key=lambda x: x[0])
+        res.append([value for row,value in columns[i]])
+    return res
+
+
 class Test(unittest.TestCase):
     root = TreeNode(3)
     root.left = TreeNode(9)
@@ -71,6 +114,7 @@ class Test(unittest.TestCase):
 
     def test_vertical_order(self):
         self.assertTrue(self.result, vertical_order_v1(self.root))
+        self.assertTrue(self.result, vertical_order_v2(self.root))
 
 
 if __name__ == '__main__':
