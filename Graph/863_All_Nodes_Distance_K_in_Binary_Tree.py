@@ -31,7 +31,8 @@ def distance_k_v1(root, target, K):
         node, depth = queue.popleft()  # Pull a node from the search queue. We are going to basically use our current
         # layer to populate the next layer of nodes that we need to search in the next while loop iteration
         for n in (node.left, node.right, node.par):  # Let's process all nodes in the layer. This is BFS.
-            if n and n not in visited:  # Has node been touched before?
+            if n and n not in visited:  # Every node is gonna add its children as well as its parent. We risk
+                # adding a (parent) node that's been already processed
                 queue.append((n, depth + 1))
                 visited.add(n)
     return []
