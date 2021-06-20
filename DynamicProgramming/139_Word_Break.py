@@ -77,7 +77,7 @@ def word_break_v3(s, word_dict):
     n, word_dict = len(s), set(word_dict)
     dp = [False] * (n + 1)
     dp[0] = True
-    for i in range(n + 1):
+    for i in range(1, n + 1):
         for j in range(i):
             if dp[j] and s[j:i] in word_dict:  # The first j characters of the string can be partitioned using the
                 # words in the dictionary and the rest of the string contains one of the words of the dictionary
@@ -103,6 +103,7 @@ def word_break_v4(s, word_dict):
             if dp[i - len(word)] and s[i - len(word):i] == word:  # dp[i-len(word)] guarantees that dp is True right
                 # before the word we're looking for, and s[i-len(word):i] == word means that we've found the word in s.
                 dp[i] = True
+                break
     return dp[n]
 
 
