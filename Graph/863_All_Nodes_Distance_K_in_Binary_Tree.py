@@ -41,7 +41,14 @@ def distance_k_v1(root, target, K):
 
 
 def distance_k_v2(root, target, K):
-    """ A recursive dfs function 'build_graph' help to build up a map 'graph', similar to a graph adjacency list. The
+    """ If we view the tree structure as a graph, then it is easy to come up the BFS solution to find the nodes that
+        are located at a certain distance from the target node.
+        What is missing in the original tree data structure that makes the above idea a bit tricky to implement is the
+        explicit pointer to a node's parent which is the neighbor for a node, the same as its children nodes.
+        Due to this missing pointer, there is no explicit way for a node to reach out directly its neighbor nodes that
+        is connected through the parent node.
+        So the solution becomes clear, let's construct a graph from a given tree structure.
+        A recursive dfs function 'build_graph' helps build a map 'graph', similar to a graph's adjacency list. The
         key of map is node and the value of map is a list of nodes connected to the key node.
         Then we do K times a BFS search loop to find all nodes of distance K from target.
         This solution is more suitable when the given tree is read-only and the parent annotation is not possible.
@@ -52,13 +59,13 @@ def distance_k_v2(root, target, K):
     def build_graph(node, par):  # This function serves the purpose of annotation of the previous solution. If
         # modifying the tree is not possible, we map each node to its children and each child node to its parent.
         # This results in an undirected graph, which is a more flexible representation of the given tree.
-        if node and par:
+        if not node:
+            return
+        if par:
             graph[node].append(par)
             graph[par].append(node)
-        if node.left:
-            build_graph(node.left, node)
-        if node.right:
-            build_graph(node.right, node)
+        build_graph(node.left, node)
+        build_graph(node.right, node)
 
     graph = defaultdict(list)
     build_graph(root, None)
