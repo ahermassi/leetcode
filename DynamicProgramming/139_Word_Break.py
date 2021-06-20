@@ -77,14 +77,12 @@ def word_break_v3(s, word_dict):
     n, word_dict = len(s), set(word_dict)
     dp = [False] * (n + 1)
     dp[0] = True
-    for i in range(n):  # This could be 'for i in range(n+1)', but when i = n (last iteration) 'if dp[i]' afterwards
-        # will mean 'if the first n characters verify the property' and the rest of the block would be meaningless and
-        # never executed
-        if dp[i]:  # If the first i characters of the string can be partitioned using the words in the dictionary
-            for j in range(i + 1, n + 1):
-                if s[i:j] in word_dict:  # See if the rest of the string contains one of the words of the dictionary
-                    dp[j] = True  # Since the first i characters and the characters from (i+1) to j (exclusive) verify
-                    # the property, then the first j characters verify the property as well
+    for i in range(n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_dict:  # The first j characters of the string can be partitioned using the
+                # words in the dictionary and the rest of the string contains one of the words of the dictionary
+                dp[i] = True
+                break  # Break. The first i characters can be segmented. We have no more business here
     return dp[n]
 
 
