@@ -23,8 +23,16 @@ class SolutionV1:
         return choice(self.indices[target])
 
 
+# Great explanation: https://www.youtube.com/watch?v=A1iwzSew5QY
+
+
 class SolutionV2:
-    """ We use a variable count to track the number of occurrences of the target number in nums.
+    """ Refer to Evernote notes on Reservoir Sampling before reading the following comments.
+
+        That being said, the algorithm for this problem simulates a reservoir of size 1. The reservoir is being updated
+        as we go when we find an element of value equal to target.
+
+        We use a variable count to track the number of occurrences of the target number in nums.
         Say we now we have nums = [1, 5, 5, 6, 5, 7, 9, 5] and the target is 5.
         When i=1, we get the first target number, count = 1, and by randint(1, count) we select a random number between
         [1, 1], which means actually we could only select 1, so the probability of making res = 1 is 1.
@@ -72,7 +80,14 @@ class SolutionV2:
         for i, num in enumerate(self.nums):
             if num == target:
                 count += 1
-                if randint(1, count) == 1:
+                if randint(1, count) == 1:  # The reservoir's size is k=1. n is unknown and is equal to the number
+                    # of incoming values that are equal to target. So for all the stream elements that arrive after
+                    # the reservoir is full (basically after the first occurrence of target), we randomly generate
+                    # a number X between 1 and the index of the current element (that coincides with the value of
+                    # count because the stream in which we're interested is that of elements equal to target). If X
+                    # is equal to 1 (the first and only index an element can have in our 1-sized reservoir), then
+                    # we know that the current item value can be picked with an equal probability amongst the possible
+                    # duplicates (according to Reservoir Sampling algorithm).
                     res = i
         return res  # How does it guarantee that res won't be None at the end ? When we hit the first target (and we
         # are guaranteed that there is at least one target element), count = 1 and randint(1, count) = 1. Therefore,
