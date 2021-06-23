@@ -33,12 +33,38 @@ def maximum_swap_v1(num):
     return num
 
 
+def maximum_swap_v2(num):
+    """ Actually this problem can be easily solved by only one pass from backward. During the scan, we only need to do
+        2 things:
+        - Record the largest digit cur_max and its corresponding index max_index
+        - If the current digit is smaller than the largest digit, this digit and the largest digit are the best
+          candidates for max swap so far. In this case, this digit pair is recorded (left_index and right_index).
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    digits = [int(c) for c in str(num)]
+    n = len(digits)
+    cur_max, max_index = -1, 0
+    left_index = right_index = 0
+    for i in reversed(range(n)):
+        cur_digit = digits[i]
+        if cur_digit > cur_max:
+            cur_max, max_index = cur_digit, i
+        elif cur_digit < cur_max:
+            # Best candidates for max swap if there is no more similar situation on the left side
+            left_index = i
+            right_index = max_index
+    digits[left_index], digits[right_index] = digits[right_index], digits[left_index]
+    return int(''.join(map(str, digits)))
+
+
 class Test(unittest.TestCase):
     data = [(2736, 7236), (9973, 9973), (115, 511), (10909091, 90909011)]
 
     def test_maximum_swap(self):
         for test_num, result in self.data:
             self.assertEqual(result, maximum_swap_v1(test_num))
+            self.assertEqual(result, maximum_swap_v2(test_num))
 
 
 if __name__ == '__main__':
