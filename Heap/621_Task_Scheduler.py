@@ -52,7 +52,7 @@ def least_interval_v1(tasks, n):
 
 
 def least_interval_v2(tasks, n):
-    """ The key is to find out how many idles we need.
+    """ The key is to find out how many idles we need, and only the most frequent characters can create idles.
         Let's first look at how to arrange them. It's not hard to figure out that we can do a 'greedy arrangement':
         always arrange tasks with most frequency first.
         E.g. we have the following tasks : 3 A, 2 B, 1 C, and we have n = 2. According to what we have above, we
@@ -75,12 +75,24 @@ def least_interval_v2(tasks, n):
         tasks. Calculating this is not hard. We first get the number of parts separated by A:
             part_count = count(A) - 1
         Then we can find the number of empty slots:
-            emptySlots = part_count * n
+            empty_slots = part_count * n
         We can also get how many tasks we have to put into those slots:
-            available_tasks = tasks.length - count(A)
-        Now if we have emptySlots > availableTasks which means we have not enough tasks available to fill all empty
-        slots, we must fill them with idles. Thus we have:
-            idles = max(0, emptySlots - availableTasks)
+            remaining_tasks = tasks.length - count(A)
+        Now if we have empty_slots > remaining_tasks it means we don't have enough tasks available to fill all empty
+        slots, we must fill them with idles.
+        What if we have more than n tasks with most frequency and we got empty_slots negative?
+        Like 3A, 3B, 3C, 3D, 3E, n = 2. In this case seems like we can't put all B C s inside slots since we only
+        have n = 2.
+         Well n is actually the "minimum" length of each part required for arranging A. We can always make the length
+         of part longer. E.g. 3A, 3B, 3C, 3D, 2E, n = 2. We can always first arrange A, B, C, D as:
+            A B C D | A B C D | A B C D
+        In this case we have already met the "minimum" length requirement for each part (n = 2).
+        empty_slots < 0 means we have already got enough tasks to fill in each part to make arranged tasks valid.
+        The problem actually requires us to make the "distance" between two same tasks up to at least n. Thus,
+        if empty_slots is negative, it means that we even have remaining tasks to make the "distance" between same
+        tasks longer than n. That is, no idle is needed.
+        Thus we have:
+            idles = max(0, empty_slots - remaining_tasks)
         Almost done. One special case: what if there is more than one task with max frequency ?
         OK, let's look at another example: 3 A, 3 B, 2 C, 1 D, n = 3
         Similarly we arrange A first:
@@ -93,23 +105,25 @@ def least_interval_v2(tasks, n):
         Comparing to what we have after arranging A:
             A ? ? ? A ? ? ? A
         The only changes are the length of each parts (from 3 to 2) and available tasks:
-            emptySlots = part_count * (n - number of tasks with same max frequency + 1)
-            available_tasks = tasks.length - max frequency * number of tasks with same max frequency
+            empty_slots = part_count * (n - number of tasks with same max frequency + 1)
+            remaining_tasks = tasks.length - max frequency * number of tasks with same max frequency
     Time complexity: O(n)
     Space complexity: O(1)
     """
-    counter = defaultdict(int)
+    frequency = defaultdict(int)
     total_tasks, max_frequency, same_max_frequency = len(tasks), 0, 0
     for task in tasks:
-        counter[task] += 1
-        max_frequency = max(max_frequency, counter[task])
-    for v in counter.values():
-        if v == max_frequency:
+        frequency[task] += 1
+        if frequency[task] > max_frequency:
+            max_frequency = frequency[task]
+            same_max_frequency = 1
+        elif frequency[task] == max_frequency:
             same_max_frequency += 1
     parts = max_frequency - 1
-    empty_slots = parts * (n - same_max_frequency + 1)
-    available_tasks = total_tasks - max_frequency * same_max_frequency
-    idles = max(0, empty_slots - available_tasks)
+    part_length = n - (same_max_frequency - 1)
+    empty_slots = parts * part_length
+    remaining_tasks = total_tasks - max_frequency * same_max_frequency
+    idles = max(0, empty_slots - remaining_tasks)
     return total_tasks + idles
 
 
