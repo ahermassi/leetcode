@@ -22,31 +22,33 @@ def least_interval_v1(tasks, n):
         We also decrement its pending number of instances, and if any more instances of the current task are pending,
         we store them in a temporary 'temp' list to be added later on back into the heap. We keep on doing so, till a
         cycle of cooling time has been finished. After every such cycle, we add the generated 'temp' list back to the
-        heap for considering the most critical task again.
+        heap for considering the most critical task again. If either the heap or the temporary heap list becomes empty
+        during an iteration, it means there are no more tasks to schedule and we break early.
         We keep on doing so till the heap becomes totally empty.
-        At the end of each while loop iteration, we update 'current_time'. If the (new) heap is not empty, we know that
-        a full cycle of tasks and idle states has been completed. If the heap is empty, we only account for the actual
-        work time of tasks because CPU can't be idle after finishing the execution of the complete set of tasks.
         You can see the idle state as a filler when the number of distinct tasks is less than the cycle length.
     Time complexity: O(n * logN) ~= O(n * log(26)) ~= O(n), where N is the number of tasks and n is the cool-off period
     Space complexity: O(1), there will not be more than O(26) (tasks are capital letters A to Z)
     """
-    counter, heap, cycle = Counter(tasks), [], n + 1
-    for k, v in counter.items():
-        heappush(heap, -v)  # Negative values create a max heap
-    current_time = 0
+    counter, heap = Counter(tasks), []
+    for task, instances in counter.items():
+        heappush(heap, -instances)  # Negative values create a max heap
+    cycle = n + 1
+    work_time = 0
     while heap:
-        work_time, temp = 0, []
+        temp = []
         for _ in range(cycle):
+            work_time += 1
             if heap:
-                instances = heappop(heap)
-                work_time += 1
-                if instances != -1:
-                    temp.append(instances + 1)
+                instances = -heappop(heap)
+                if instances != 1:
+                    temp.append(instances - 1)
+            if not heap and not temp:  # Check if we're out of tasks
+                break
+        # Because we transferred all of the items from the heap to temp, we're transferring them back to know if we
+        # should continue
         for instance in temp:
-            heappush(heap, instance)
-        current_time += cycle if heap else work_time
-    return current_time
+            heappush(heap, -instance)
+    return work_time
 
 
 def least_interval_v2(tasks, n):
