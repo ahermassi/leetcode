@@ -50,7 +50,10 @@ class BSTIteratorV2(object):
     to our helper function process_leftmost() which iterates over some nodes. However, the important thing to note
     here is that we only make such a call for nodes which have a right child. Otherwise, we simply return. Also, even
     if we end up calling the helper function, it won't always process N nodes. They will be much less.
-    Thus, the amortized (average) time complexity for this function would still be O(1)
+    Thus, the amortized (average) time complexity for this function would still be O(1).
+    When analyzing amortized time complexities, it is easier to reason that each node gets pushed and popped exactly
+    once in next() when iterating over all N nodes. That comes out to 2N * O(1) over N calls to next(), making it O(1)
+    on average, or O(1) amortized.
     Space complexity: O(logN) = O(height) which is occupied by our custom stack for simulating the in-order traversal
     """
 
