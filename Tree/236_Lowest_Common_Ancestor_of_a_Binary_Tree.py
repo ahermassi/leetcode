@@ -30,6 +30,9 @@ def lowest_common_ancestor_v1(root, p, q):
     ancestor set, would be N each, since the height of a skewed binary tree could be N
     """
     parent, stack = {}, [(root, None)]
+    # The following loop is nothing but the iterative version of the recursive annotate(node, par) method with a slight
+    # change: We keep storing the parent pointers in a dictionary until we find p and q both. No need to annotate the
+    # entire tree.
     while p not in parent or q not in parent:
         node, par = stack.pop()
         parent[node] = par
@@ -38,11 +41,9 @@ def lowest_common_ancestor_v1(root, p, q):
     while p:
         p_ancestor.add(p)
         p = parent[p]
-    while q:
-        if q in p_ancestor:
-            return q
+    while q not in p_ancestor:
         q = parent[q]
-    return root
+    return q
 
 
 # Check this out: https://www.youtube.com/watch?v=py3R23aAPCA
@@ -64,19 +65,19 @@ def lowest_common_ancestor_v2(root, p, q):
     Time complexity: O(N), in the worst case we might be visiting all the nodes of the binary tree
     Space complexity: O(N) worst case, O(logN) average case
     """
-    if not root:
-        return None
-    if root == p or root == q:  # If we find either value, return ourselves to the caller
+    # It is crucial to define what lowest_common_ancestor(root, p, q) means: What is the LCA of p and q in the tree
+    # ROOTED AT "root" node
+    if not root or root == p or root == q:  # If we find either value, return ourselves to the caller
         return root
     # 'root' doesn't satisfy any of our base cases. Search left and then search right
-    left = lowest_common_ancestor_v2(root.left, p, q)
-    right = lowest_common_ancestor_v2(root.right, p, q)
-    if left and right:  # We got something back on the left AND right. That means this node is the LCA because our
-        # recursion returns from bottom to top, so we return what we hold: 'root'
+    left_search = lowest_common_ancestor_v2(root.left, p, q)
+    right_search = lowest_common_ancestor_v2(root.right, p, q)
+    if left_search and right_search:  # We got something back on the left AND right. That means this node is the LCA
+        # because our recursion returns from bottom to top, so we return what we hold: 'root'
         return root
     # Either one of the children returned a node, meaning either p or q found on left or right branch. Return whatever
     # we got.
-    return left or right
+    return left_search or right_search
 
 
 class Test(unittest.TestCase):
