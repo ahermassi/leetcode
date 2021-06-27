@@ -71,3 +71,40 @@ def str2tree_v1(s):
 
     n = len(s)
     return build_tree(0)[0]
+
+
+def str2tree_v2(s):
+    """ The main problem with a recursive solution is the stack limitation. We might run into stack-overflow problems
+        if the tree is too tall and the system's stack is low on resources. Hence, we prefer to use our own stack and
+        that is the variation which we will explore in this solution.
+        We iterate over the string. If we meet an opening bracket, we move on. If we encounter a minus sign or a digit,
+        we extract the decimal value and create a new node for that number that we push to the stack. If we meet a
+        closing bracket, the element we pop should be left child of the element on top of the stack if there is no left
+        child yet, otherwise it will be the right child.
+    Time complexity: O(N), where N represents the number of characters in the string representation. This is because
+    each character is processed exactly once and we need to process the entire string so as to form our tree.
+    Space complexity: O(h)
+    """
+    if not s:
+        return None
+    stack = []
+    i, n = 0, len(s)
+    while i < n:
+        c = s[i]
+        if c == '(':
+            i += 1
+        elif c.isdigit() or c == '-':
+            j = i
+            while i < n and s[i] not in ('(', ')'):
+                i += 1
+            num = int(s[j:i])
+            node = TreeNode(num)
+            stack.append(node)
+        else:  # c == ')'
+            node = stack.pop()
+            if stack[-1].left:
+                stack[-1].right = node
+            else:
+                stack[-1].left = node
+            i += 1
+    return stack.pop()
