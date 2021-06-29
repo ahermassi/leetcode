@@ -12,8 +12,6 @@ class Node(object):
         self.val = val
         self.neighbors = neighbors
 
-# Watch: https://www.youtube.com/watch?v=vma9tCQUXk8
-
 
 def clone_graph_v1(node):
     """ The basic intuition for this problem is to just copy as we go. To avoid getting stuck in a loop, we would need
@@ -47,6 +45,8 @@ def clone_graph_v1(node):
 
     clones = {}
     return dfs(node)
+
+# Watch: https://www.youtube.com/watch?v=vma9tCQUXk8
 
 
 def clone_graph_v2(node):
