@@ -7,8 +7,8 @@ import unittest2 as unittest
 
 
 def search_range_v1(nums, target):
-    """ Modified binary search executed twice to find both left and right positions. The tricky part is handling left
-        and right pointers when a match is found.
+    """ The problem can be simply broken down as two binary searches for the beginning and end of the range,
+        respectively. The tricky part is handling left and right pointers when a match is found.
         Example:
                 0  1  2  3  4  5  6  7  8  9  10 11 12
         nums = [1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7, 9, 9], target = 5
