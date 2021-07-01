@@ -9,7 +9,26 @@ import unittest2 as unittest
 # Video explanation: https://www.youtube.com/watch?v=quAS1iydq7U
 
 def next_permutation(nums):
-    """ The key insight is that we want to increase the permutation by as little as possible. We will use the
+    """ We observe that for any given sequence that is in descending order, no next larger permutation is possible.
+        For example, no next permutation is possible for the following array: [9, 5, 4, 3, 1].
+        We need to find the first pair of two successive numbers nums[i] and nums[i−1], from the right, which satisfy
+        nums[i-1] < nums[i]. Now, no rearrangements to the right of nums[i-1] can create a larger permutation since
+        that subarray consists of numbers in descending order. Thus, we need to rearrange the numbers to the left of
+        nums[i-1] including itself.
+        Now, what kind of rearrangement will produce the next larger number? We want to create the permutation just
+        larger than the current one. Therefore, we need to replace the number nums[i-1] with the number which is just
+        larger than itself among the numbers lying to its right section, say nums[j].
+        We swap the numbers nums[i−1] and nums[j]. We now have the correct number at index (i - 1). But still the
+        current permutation isn't the permutation that we are looking for. We need the smallest permutation that can be
+        formed by using the numbers only to the right of nums[i−1]. Therefore, we need to place those numbers in
+        ascending order to get their smallest permutation.
+        But, recall that while scanning the numbers from the right, we simply kept decrementing the index until we
+        found the pair nums[i] and nums[i−1] where, nums[i] > nums[i-1]. Thus, all numbers to the right of nums[i−1]
+        were already sorted in descending order. Furthermore, swapping nums[i−1] and nums[j] didn't change that order.
+        Therefore, we simply need to reverse the numbers following nums[i−1] to get the next smallest lexicographic
+        permutation.
+        The key insight is that we want to increase the permutation by as little as possible. Just like when we count
+        up using numbers, we try to modify the rightmost elements and leave the left side unchanged. We will use the
         permutation (6,2,1,5,4,3,0) to develop this approach.
         Specifically, we start from the right, and look at the longest decreasing suffix, which is (5,4,3,0)
         for our example. We cannot get the next permutation just by modifying this suffix, since it is already the
