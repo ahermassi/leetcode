@@ -4,7 +4,7 @@ import unittest2 as unittest
 
 
 def my_pow_v1(x, n):
-    """ Assuming we have got the result of (x^n), how can we get (x^2n). Obviously we do not need to multiply x
+    """ Assuming we have got the result of (x^n), how can we get (x^2n) ? Obviously, we do not need to multiply x
         for another n times. Using the formula (x^n)^2 = x^2n, we can get (x^2n) at the cost of only one computation.
         Using this optimization, we can reduce the time complexity of our algorithm.
         If n is even, x^2n = x^n * x^n
@@ -21,7 +21,8 @@ def my_pow_v1(x, n):
         x^1 = x * x^0 * x^0 = x * x^(0*2)
         x^0 = 1: base case
         So we went from calculating x^100 to: 100 -> 50 -> 25 -> 12 -> 6 -> 3 -> 1 -> 0, giving logn time complexity.
-    Time complexity: O(logn)
+    Time complexity: O(logn), each time we apply the formula (x ^ n) ^ 2 = x ^ {2 * n}, n is reduced by half. Thus we
+    need at most O(logn) computations to get the result
     Space complexity: O(logn)
     """
 
