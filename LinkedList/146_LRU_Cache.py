@@ -13,32 +13,42 @@ import unittest2 as unittest
 
 class Node:
     def __init__(self, key, val):
-        self.key = key
+        self.key = key  # We have to store the key because we need to know a key when we remove a node from the map.
+        # Otherwise, for each remove operation we would need to scan the entire Map
         self.val = val
         self.next = None
         self.pre = None
 
 
 class LRUCacheV1(object):
-    """ The problem can be solved with a hash map that keeps track of the keys and its values in the doubly linked list.
+    """ The problem can be solved with a hash map that keeps track of the keys and its values in the doubly-linked list.
         That results in O(1) time for put and get operations and allows to remove the first added node in O(1) time as
         well.
-        One advantage of doubly linked list is that the node can remove itself without other reference. In addition, it
+        One advantage of doubly-linked list is that the node can remove itself without other reference. In addition, it
         takes constant time to add and remove nodes from the head or tail.
+        In a singly-linked list, we would also need a reference to the node before the one we wanted to remove.
+        Therefore, if we were using a singly-linked list, we wouldn't be able to remove nodes we retrieved from the
+        hash map in O(1) time because we don't have a reference to the one before it. By using a doubly-linked list,
+        we can retrieve nodes from the hash map in O(1) and then remove the node itself from the list in O(1),
+        giving the entire operation an O(1) running time.
         One particularity about the doubly linked list implemented here is that there are dummy head and dummy tail to
         mark the boundary, so that we don't need to check the null node during the update.
         Rules:
-            1- Always add new node BEFORE the tail: this is the most recently used
-            2- As a result of previous rule, the LRU node is always the one right AFTER the head
+            1- Always add new node BEFORE the dummy tail: this is the most recently used
+            2- As a result of the previous rule, the LRU node is always the one right AFTER the dummy head
     Time complexity: O(1)
     Space complexity: O(N)
     """
 
     def __init__(self, capacity):
-        self.nodes = {}  # (key: node) pairs
+        self.nodes = {}  # (Node.key: Node) pairs
         self.capacity = capacity
         self.size = 0
-        # Dummy head and tail nodes to avoid empty states
+        # Dummy head and tail nodes to avoid empty states. The tail is the pseudo node that marks the boundary of the
+        # tail, same as that the head node is a pseudo node that marks the head. The doubly-linked list can be
+        # represented as head (pseudo) <--> head <--> ....tail <--> tail (pseudo).
+        # By adding two pseudo nodes to mark the boundaries, we could reduce the boundary checking code such as
+        # if (head != null), making the code more concise and also more efficient.
         self.head = Node(0, 0)
         self.tail = Node(0, 0)
         self.head.next = self.tail
@@ -49,15 +59,15 @@ class LRUCacheV1(object):
             return -1
         node = self.nodes[key]
         self.remove(node)  # The node is now most recently accessed, so remove it ..
-        self.add(node)  # and place it right before the tail
+        self.add(node)  # and place it right before the dummy tail
         return node.val
 
     def put(self, key, value):
-        if key in self.nodes:  # If key already exists, then this is essentially an update
+        if key in self.nodes:  # If the key already exists, then this is essentially an update
             self.remove(self.nodes[key])  # The node is now most recently accessed, so remove it
         node = Node(key, value)
         self.add(node)
-        if self.size > self.capacity:  # If max capacity reached, delete the LRU node: the one after the head
+        if self.size > self.capacity:  # If max capacity reached, delete the LRU node: the one after the dummy head
             lru = self.head.next
             self.remove(lru)
 
