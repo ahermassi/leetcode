@@ -48,18 +48,19 @@ def diameter_of_binary_tree_v1(root):
 class SolutionV2:
     """ Using a class variable. """
 
-    def diameter_of_binary_tree(self, root: TreeNode) -> int:
-
+    def __init__(self):
         self.diameter = 0
 
-        def dfs(root):
+    def diameter_of_binary_tree(self, root: TreeNode) -> int:
+
+        def height(root):
             if not root:
                 return 0
-            left_height, right_height = dfs(root.left), dfs(root.right)
+            left_height, right_height = height(root.left), height(root.right)
             self.diameter = max(self.diameter, left_height + right_height)
             return 1 + max(left_height, right_height)
 
-        dfs(root)
+        height(root)
         return self.diameter
 
 
