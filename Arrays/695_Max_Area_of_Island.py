@@ -21,20 +21,22 @@ def max_area_of_island_v1(grid):
     Space complexity: O(N * M), for both 'visited' set and recursion call stack
     """
 
-    def dfs(i, j):
+    def dfs(i, j):  # dfs(i, j) returns the area of the island "rooted" at cell (i,j)
         if not 0 <= i < n or not 0 <= j < m or (i, j) in visited or grid[i][j] == 0:
             return 0
         visited.add((i, j))
-        return 1 + dfs(i - 1, j) + dfs(i + 1, j) + dfs(i, j - 1) + dfs(i, j + 1)
+        area = 1
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            area += dfs(x, y)
+        return area
 
     n, m = len(grid), len(grid[0])
-    visited, res = set(), 0
+    visited, max_area = set(), 0
     for i in range(n):
         for j in range(m):
-            if grid[i][j] == 1 and (i, j) not in visited:
-                area = dfs(i, j)
-                res = max(res, area)
-    return res
+            area = dfs(i, j)
+            max_area = max(max_area, area)
+    return max_area
 
 
 def max_area_of_island_v2(grid):
