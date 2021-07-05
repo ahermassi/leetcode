@@ -53,6 +53,43 @@ def is_complete_tree_v2(root):
     return True
 
 
+def is_complete_tree_v3(root):
+    """ DFS. It uses the node number technique in heap structures like this:
+              1
+            /  \
+           2   3
+          / \  /
+         4  5 6
+         This solution relies on is two properties of a heap. First, a heap is always a complete binary tree. So if a
+         tree can be viewed as a heap, it is complete. Second, inside a heap (which is an array), a parent with index
+         i has two children with index (i * 2) and (i * 2 + 1), if the parent has two children in the first place.
+         With these two properties known, it is easy to understand this solution. Suppose we have an array which
+         represents a heap of size 'node_count'. The algorithm tries to verify whether the tree with 'node_count' nodes
+         can fit into the array. The tree can fit into the array if and only if all nodes' indices are within the
+         boundary of the array, that is, 'node_count'. The dfs() essentially checks whether the index of a node exceeds
+         the boundary of a heap with size 'node_count'. If index > node_count, there must be an empty slot in the
+         array, which means the tree cannot fit into the array so dfs() returns false. If idx <= total, dfs()
+         recursively checks the children of root.
+    Time complexity:
+    Space complexity:
+    """
+
+    def count_nodes(root):
+        if not root:
+            return 0
+        return 1 + count_nodes(root.left) + count_nodes(root.right)
+
+    def dfs(root, index, node_count):
+        if not root:
+            return True
+        if index > node_count:
+            return False
+        return dfs(root.left, index * 2, node_count) and dfs(root.right, index * 2 + 1, node_count)
+
+    node_count = count_nodes(root)
+    return dfs(root, 1, node_count)
+
+
 class Test(unittest.TestCase):
     root = TreeNode(1)
     root.left = TreeNode(2)
@@ -64,6 +101,7 @@ class Test(unittest.TestCase):
     def test_is_complete_tree(self):
         self.assertTrue(is_complete_tree_v1(self.root))
         self.assertTrue(is_complete_tree_v2(self.root))
+        self.assertTrue(is_complete_tree_v3(self.root))
 
 
 if __name__ == '__main__':
