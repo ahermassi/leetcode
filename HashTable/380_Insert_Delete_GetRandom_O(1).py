@@ -47,6 +47,9 @@ class RandomizedSet(object):
         """
         if val not in self.indices:
             return False
+        # Essentially, we're going to move the last element in the list into the location of the element we want to
+        # remove. This is a significantly more efficient operation than the obvious solution of removing the item and
+        # shifting the values of every item iin the dictionary to match their new position in the list
         index = self.indices[val]  # Get val index in list
         last = self.nums[-1]  # Get the last added element
         self.nums[index] = last  # Overwrite val index with last element
