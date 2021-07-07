@@ -56,16 +56,50 @@ def knight_dialer_v2(n):
     Time complexity: O(2^N)
     Space complexity: O(N)
     """
-    def dfs(cell, remaining_steps):
-        if remaining_steps == 1:
+
+    def dfs(cell, remaining_hops):
+        if remaining_hops == 1:
             return 1
         res = 0
         for neighbor in next_hop[cell]:
-            res += dfs(neighbor, remaining_steps - 1)
+            res += dfs(neighbor, remaining_hops - 1)
         return res
 
     next_hop = {0: (4, 6), 1: (6, 8), 2: (7, 9), 3: (4, 8), 4: (0, 3, 9), 5: (), 6: (0, 1, 7), 7: (2, 6), 8: (1, 3),
                 9: (2, 4)}
+    res = 0
+    for i in range(10):
+        res += dfs(i, n)
+    return res % (10 ** 9 + 7)
+
+
+def knight_dialer_v3(n):
+    """ Can we do better? The crucial insight here is that many function calls repeat, each time returning the same
+        value. After we compute their result once there’s no need to recompute them. We can use memoization, which
+        basically means we record results of function calls we’ve seen before and use those instead of redoing the work.
+    Time complexity: O(N), each function call’s result is stored in the cache, and it’s inserted there exactly once.
+    This allows us to re-frame the question as “how does the size of the cache grow with the size of the input?” Given
+    that the cache is keyed by position and number of hops, and there are exactly 10 positions, we can conclude that
+    the cache grows in direct proportion to the number of requested hops. This follows from the pigeonhole principle:
+    Once we have an entry in the cache for every combination of position and jump count, all calls will hit the cache
+    rather than result in a new function call.
+    Space complexity: O(N)
+    """
+
+    def dfs(cell, remaining_hops):
+        if (cell, remaining_hops) in cache:
+            return cache[(cell, remaining_hops)]
+        if remaining_hops == 1:
+            return 1
+        res = 0
+        for neighbor in next_hop[cell]:
+            res += dfs(neighbor, remaining_hops - 1)
+        cache[(cell, remaining_hops)] = res
+        return res
+
+    next_hop = {0: (4, 6), 1: (6, 8), 2: (7, 9), 3: (4, 8), 4: (0, 3, 9), 5: (), 6: (0, 1, 7), 7: (2, 6), 8: (1, 3),
+                9: (2, 4)}
+    cache = {}
     res = 0
     for i in range(10):
         res += dfs(i, n)
