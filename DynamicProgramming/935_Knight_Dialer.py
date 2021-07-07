@@ -48,3 +48,25 @@ def knight_dialer_v1(n):
         for j in range(3):
             res += dfs(i, j, n)
     return res % (10 ** 9 + 7)
+
+
+def knight_dialer_v2(n):
+    """" This is same as previous solution, but it uses a hash map to compute the keys to which we can hop from a
+        given position, also known as the neighbors.
+    Time complexity: O(2^N)
+    Space complexity: O(N)
+    """
+    def dfs(cell, remaining_steps):
+        if remaining_steps == 1:
+            return 1
+        res = 0
+        for neighbor in next_hop[cell]:
+            res += dfs(neighbor, remaining_steps - 1)
+        return res
+
+    next_hop = {0: (4, 6), 1: (6, 8), 2: (7, 9), 3: (4, 8), 4: (0, 3, 9), 5: (), 6: (0, 1, 7), 7: (2, 6), 8: (1, 3),
+                9: (2, 4)}
+    res = 0
+    for i in range(10):
+        res += dfs(i, n)
+    return res % (10 ** 9 + 7)
