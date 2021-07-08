@@ -99,6 +99,63 @@ def min_knight_moves_v3(x, y):
                 queue.append((new_i, new_j, distance + 1))
 
 
+def min_knight_moves_v4(x, y):
+    """ Top-down Dynamic Programming.
+        We also use the symmetry property defined in the previous solution for this algorithm. We focus on the first
+        quadrant of the coordinate plane where both x and y are positive.
+        Rather than starting from the origin, we start from the target and walk backwards to reach the origin.
+        For a target that is situated in the first quadrant, though technically we could move in 8 different directions,
+        there are only two directions (i.e. left-down and down-left) that will move us closer to the origin.
+        Indeed, before we reach the immediate neighborhood of the origin, we only need to explore the two left-down
+        directions (with offsets of (-1, -2) and (-2, -1)), since the rest of the directions will deviate further away
+        from the origin.
+        The immediate neighborhood of the origin refers to the points of where the sum of coordinates is less than or
+        equal to 2, i.e. x + y <= 2. As it turns out, any immediate neighbors with (x + y == 2) takes exactly 2 steps
+        to reach when starting from the origin.
+        With the above insights in mind, we can begin to work on our DFS algorithm.
+        Assume that the function dfs(i, j) returns the minimum steps required to reach the target point (i, j). The
+        idea of DFS can be expressed in the following formula:
+            dfs(x, y) = min(dfs(∣x| − 2,∣y| − 1), dfs(∣x| − 1,∣y| − 2)) + 1
+        The formula can be interpreted as such: At each step of the backward exploration process, by only exploring
+        the left-down directions we can obtain the shortest path.
+        As we might notice, the above function is a recursive function, and it is critical to define the base cases to
+        make the definition sound. There are in general two base cases:
+            - Case 1): i = 0, j = 0, when we reach the origin, no further steps are required to reach our goal, i.e.
+              dfs(i, j) = 0.
+            - Case 2): i + j = 2, when we are at a immediate neighbor as we discussed before, it takes two more steps
+              to reach our goal, i.e. dfs(i, j) = 2. The moment we reach (0, 2), (2, 0), or (1, 1) the knight cannot
+              move further to (0, 0) without going into negative coordinates quadrant. Or the best way is if we are on
+              (0, 2) move the knight to (2, 1) then from there it could move to (0, 0), and this takes 2 moves . Same
+              applies for (1, 1) and (2, 0).
+        Additionally, it is important to apply the memoization technique to prevent duplicate calculations from
+        occurring during the recursive process.
+    Time complexity: O(|x| * |y|), we restrict the exploration to the first quadrant of the board. Therefore, in the
+    worst case, we will explore all of the cells between the origin and the target in the first quadrant. In total,
+    there are ∣x⋅y∣ cells in a rectangle that spans from the origin to the target.
+    Space complexity: O(|x| * |y|), first of all, due to the presence of recursion in the algorithm, it will incur
+    additional memory consumption in the function call stack. The consumption is proportional to the level of the
+    execution tree, i.e. max(∣x∣,∣y∣). Secondly, due to the application of memoization technique, we will keep all the
+    intermediate results in the memory for reuse. As we have seen in the above time complexity analysis, the maximum
+    number of intermediate results will be O(|x| * |y|). To sum up, the overall space complexity of the algorithm is
+    O(|x| * |y|), which is dominated by the memoization part.
+    """
+
+    def dfs(i, j):
+        if i == j == 0:
+            return 0
+        if i + j == 2:
+            return 2
+        if (i, j) in cache:
+            return cache[(i, j)]
+        res = min(dfs(abs(i - 1), abs(j - 2)), dfs(abs(i - 2), abs(j - 1))) + 1
+        cache[(i, j)] = res
+        return res
+
+    x, y = abs(x), abs(y)
+    cache = {}
+    return dfs(x, y)
+
+
 class Test(unittest.TestCase):
     data = [(2, 1, 1), (5, 5, 4)]
 
@@ -107,6 +164,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, min_knight_moves_v1(test_x, test_y))
             self.assertEqual(result, min_knight_moves_v2(test_x, test_y))
             self.assertEqual(result, min_knight_moves_v3(test_x, test_y))
+            self.assertEqual(result, min_knight_moves_v4(test_x, test_y))
 
 
 if __name__ == '__main__':
