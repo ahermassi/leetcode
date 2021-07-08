@@ -33,32 +33,32 @@ def top_k_frequent_v2(nums, k):
     Time complexity: O(N)
     Space complexity: O(N) for the hash maps
     """
-    n, counter, freq, res = len(nums), Counter(nums), defaultdict(list), []
-    for c, count in counter.items():
-        freq[count].append(c)
+    n, res = len(nums), []
+    counter = Counter(nums)
+    freq = defaultdict(list)
+    for num, count in counter.items():
+        freq[count].append(num)
     for i in reversed(range(n+1)):
-        if i in freq:
-            res.extend(freq[i])
-            if len(res) >= k:
-                return res[:k]
+        res.extend(freq[i])
+        if len(res) >= k:
+            return res[:k]
 
 
 def top_k_frequent_v3(nums, k):
     """ Same idea as previous solution but using bucket sort. In this version, 'bucket' array replaces 'frequencies'
         hash map.
     Time complexity: O(N)
-    Space complexity: O(N) for 'counter' hash map
+    Space complexity: O(N)
     """
     n = len(nums)
     bucket = [[] for _ in range(n+1)]
     counter, res = Counter(nums), []
-    for c, count in counter.items():
-        bucket[count].append(c)
+    for num, count in counter.items():
+        bucket[count].append(num)
     for i in reversed(range(n+1)):  # Traverse the bucket right-to-left to get the greatest counts first
-        if bucket[i]:
-            res.extend(bucket[i])
-            if len(res) >= k:
-                return res[:k]
+        res.extend(bucket[i])
+        if len(res) >= k:
+            return res[:k]
 
 
 class Test(unittest.TestCase):
