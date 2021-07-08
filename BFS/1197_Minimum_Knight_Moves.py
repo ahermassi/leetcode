@@ -70,27 +70,33 @@ def min_knight_moves_v2(x, y):
                 distance_from_target[(target_i + a, target_j + b)] = target_moves + 1
 
 
-def min_knight_moves(x, y):
-    """ The moves are symmetric. Hence, we can just assume the problem to be in the first quadrant and push only
-        positive coordinates to the queue. Consequently, a simple BFS would give us the required result.
+def min_knight_moves_v3(x, y):
+    """ Before explaining the following BFS optimization, we should address the symmetry of the answers, which we
+        haven't touched on so far.
+            We claim that the target (x, y), its horizontally, vertically, and diagonally symmetric points
+            (i.e. (x, -y), (-x, y), (-x, -y)) share the same answer as the target point.
+        Based on the above insight, we can focus on the first quadrant of the coordinate plane where both x and y are
+        positive. Any target that is outside of the first quadrant can be shifted to its symmetric point in the first
+        quadrant by taking the absolute value of each coordinate, i.e. (|x|, |y|).
         However, code fails when (x, y) = (1, 1). To reach (1, 1) from (0, 0), the best way is to get (2, -1) or (-1, 2)
-        first, then (1,1) (two steps). If we eliminate all coordinates with negative values and consider only those in
+        first, then (1, 1) (two steps). If we eliminate all coordinates with negative values and consider only those in
         the first quadrant, we can't reach (1, 1) from (0, 0) in two steps.
-        Since adjusted target is in the first quadrant, we'd like to explore towards that direction rather than the
-        opposite. So whenever there's a step that lies < (-1, -1), we'd like to stop exploring that direction.
+        The coordinates in general to compute the knight moves are: (x - 2, y - 1), (x - 2, y + 1), (x - 1, y - 2) ...
+        where for all x, y >= 2 the next "move" will always be >= 0 (i.e. in the first quadrant). Only for
+        (x = 1, y = 1) the next move may fall in the negative quadrant, and hence x = -1, y = -1 boundary is considered.
     """
     x, y = abs(x), abs(y)
     queue, visited = deque([(0, 0, 0)]), set()
-    moves = [(2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (-1, 2), (1, -2), (-1, -2)]
+    directions = [(-1, 2), (-2, 1), (-1, -2), (-2, -1), (1, 2), (2, 1), (1, -2), (2, -1)]
     while queue:
         i, j, distance = queue.popleft()
         if i == x and j == y:
             return distance
-        for move in moves:
-            a, b = i + move[0], j + move[1]
-            if (a, b) not in visited and a >= -1 and b >= -1:
-                visited.add((a, b))
-                queue.append((a, b, distance + 1))
+        for a, b in directions:
+            new_i, new_j = i + a, j + b
+            if (new_j, new_j) not in visited and new_i >= -1 and new_j >= -1:
+                visited.add((new_i, new_j))
+                queue.append((new_i, new_j, distance + 1))
 
 
 class Test(unittest.TestCase):
@@ -98,7 +104,9 @@ class Test(unittest.TestCase):
 
     def test_min_knight_moves(self):
         for test_x, test_y, result in self.data:
-            self.assertEqual(result, min_knight_moves(test_x, test_y))
+            self.assertEqual(result, min_knight_moves_v1(test_x, test_y))
+            self.assertEqual(result, min_knight_moves_v2(test_x, test_y))
+            self.assertEqual(result, min_knight_moves_v3(test_x, test_y))
 
 
 if __name__ == '__main__':
