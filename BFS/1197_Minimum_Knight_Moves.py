@@ -36,6 +36,40 @@ def min_knight_moves_v1(x, y):
                 queue.append((new_i, new_j, distance + 1))
 
 
+def min_knight_moves_v2(x, y):
+    """ Based on the above idea of BFS, one optimization that we can apply is to perform bidirectional exploration
+        instead of unidirectional exploration, which means we start BFS from both origin and target coordinates.
+        To implement the bidirectional BFS algorithm, we will double the usage of the data structures in the
+        unidirectional BFS. Additionally, we need to make the following adaptations
+            Instead of using the set data structure to keep track of the visited places, we use the map data
+            structure, which contains not only the information of visited cells but also the distance between each
+            cell and the starting exploration point.
+    Time complexity: Reducing the scope of exploration by half does speed up the algorithm. However, it does not change
+    the time complexity of the algorithm which remains O((max(|x|, |y|)) ^ 2)
+    """
+    origin_queue = deque([(0, 0, 0)])
+    target_queue = deque([(x, y, 0)])
+    distance_from_origin = {(0, 0): 0}
+    distance_from_target = {(x, y): 0}
+    directions = [(-1, 2), (-2, 1), (-1, -2), (-2, -1), (1, 2), (2, 1), (1, -2), (2, -1)]
+    while True:
+        origin_i, origin_j, origin_moves = origin_queue.popleft()
+        if (origin_i, origin_j) in distance_from_target:  # Check if we reach the exploration circle of target
+            return origin_moves + distance_from_target[(origin_i, origin_j)]
+        target_i, target_j, target_moves = target_queue.popleft()
+        if (target_i, target_j) in distance_from_origin:  # Check if we reach the exploration circle of origin
+            return target_moves + distance_from_origin[(target_i, target_j)]
+        for a, b in directions:
+            # Expand the exploration circle of origin
+            if (origin_i + a, origin_j + b) not in distance_from_origin:
+                origin_queue.append((origin_i + a, origin_j + b, origin_moves + 1))
+                distance_from_origin[(origin_i + a, origin_j + b)] = origin_moves + 1
+            # Expand the exploration circle of target
+            if (target_i + a, target_j + b) not in distance_from_target:
+                target_queue.append((target_i + a, target_j + b, target_moves + 1))
+                distance_from_target[(target_i + a, target_j + b)] = target_moves + 1
+
+
 def min_knight_moves(x, y):
     """ The moves are symmetric. Hence, we can just assume the problem to be in the first quadrant and push only
         positive coordinates to the queue. Consequently, a simple BFS would give us the required result.
