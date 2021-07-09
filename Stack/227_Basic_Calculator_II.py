@@ -9,6 +9,41 @@ def calculate_v1(s):
     """ This solution is stack based. The stack is used to hold temporary results for partial expressions with lower
         precedence levels, which are + and -. This helps delaying calculations until an operator with a higher
         precedence is met.
+        We know that there could be 4 types of operations: addition (+), subtraction (-), multiplication (*) and
+        division (/). Without parenthesis, we know that, multiplication (*) and division (/) operations would always
+        have higher precedence than addition (+) and subtraction (-) based on operator precedence rules:
+
+            4 + 3 * 5               4 + 3 - 5               4 * 3 / 5               4 * 3 - 5
+            4 +  15  = 19             7   - 5 = 2             12  / 5 = 2             12  - 5 = 7
+
+        If we look at the above examples, we can make the following observations:
+
+            - If the current operation is addition (+) or subtraction (-), then the expression is evaluated based on
+              the precedence of the next operation.
+              In example 1, 4 + 3 is evaluated later because the next operation is multiplication (3 * 5) which has
+              higher precedence. But, in example 2, 4 + 3 is evaluated first because the next operation is subtraction
+              (3 - 5) which has equal precedence.
+            - If the current operator is multiplication (*) or division (/), then the expression is evaluated
+              irrespective of the next operation. This is because in the given set of operations (+,-,*,/), the * and /
+              operations have the highest precedence and therefore must be evaluated first.
+              In the above examples 2 and 3, 4 * 3 is always evaluated first irrespective of the next operation.
+
+        Using this intuition let's look at the algorithm to implement the problem.
+        Scan the input string s from left to right and evaluate the expressions based on the following rules:
+            - If the current character is a digit 0-9 ( operand ), add it to the number 'num'.
+            - Otherwise, the current character must be an operation (+,-,*, /). Evaluate the expression based on the
+              type of LAST operation:
+                1) Addition (+) or Subtraction (-): We must evaluate the expression later based on the next operation.
+                   So, we must store 'num' to be used later. Let's push 'num' to the Stack.
+                   The last pushed number in the stack would be popped out first for evaluation. In addition, when we
+                   pop from the stack and evaluate this expression in the future, we need a way to determine if the
+                   LAST operation was Addition (+) or Subtraction (-). To simplify our evaluation, we can push -num to
+                   the stack if the last operation was subtraction (-) and assume that the operation for all the values
+                   in the stack is addition (+). This works because (a - num) is equivalent to (a + (-num)).
+                2) Multiplication (*) or Division (/): Pop the top values from the stack and evaluate the current
+                   expression. Push the evaluated value back to the stack.
+        Once the string is scanned, pop from the stack and add to the result.
+
         Every time an operation sign is met, 'last_operator' variable tells us what type of a PREVIOUS operation the
         last integer we read is part of: 11 - 2 * 5: say we read 11 and then encounter '-', we look at 'last_operator'
         which is '+' by default, so we know that 11 is part of an addition operation (0 + 11). Then we read 2 and meet
@@ -24,14 +59,15 @@ def calculate_v1(s):
         (after popping it), and change last operator to '+'. Now last operand is read i.e. num = 22, and we are at the
         end of the string, and since last operator was '+' then push +num = 22.
         Finally, the stack content is just 22, the multiplication of -31 by 52, and 22. The result is sum of the stack.
-    Time complexity: O(N) where N is the length of s
+    Time complexity: O(N), where N is the length of s
     Space complexity: O(N)
     """
+    n = len(s)
     num, stack, last_operator = 0, [], '+'
     for i, c in enumerate(s):
         if c.isdigit():
             num = num * 10 + int(c)
-        if c in '+-*/' or i == len(s) - 1:
+        if c in '+-*/' or i == n - 1:
             if last_operator == '+':  # We have a new operation sign in hand and the accumulated integer 'num' is
                 # part of a PREVIOUS addition operation
                 stack.append(num)
@@ -43,9 +79,9 @@ def calculate_v1(s):
                 # waiting in the stack since multiplication is a higher level operation
             else:  # We have a new operation sign in hand and the accumulated integer 'num' is part of a PREVIOUS
                 # division operation
-                stack.append(int(stack.pop() / num))  # Perform the division of the previously accumulated integer
-                # that's been waiting in the stack by the accumulated integer 'num' since division is a higher level
-                # operation
+                stack.append(int(float(stack.pop()) / num))  # Perform the division of the previously accumulated
+                # integer that's been waiting in the stack by the accumulated integer 'num' since division is a higher
+                # precedence operation
             num = 0
             last_operator = c
     return sum(stack)
