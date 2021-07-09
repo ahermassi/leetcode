@@ -91,34 +91,39 @@ def calculate_v1(s):
 # https://leetcode.com/problems/basic-calculator-ii/discuss/63088/Explanation-for-Java-O(n)-time-and-O(1)-space-solution
 
 def calculate_v2(s):
-    """ Same logic but constant space.
-        To have O(1) space solution, we have to drop the stack. To see why we can drop it, we need to reexamine the main
-        purpose of the stack: it is used to hold temporary results for partial expressions with lower precedence.
-        We only have two precedence levels: lower level with '+' and '-' operations and higher level with '*' and '/'
-        operations. So the stack can be replaced by two variables, one for the lower level and the other for the higher
-        level.
+    """ In the previous approach, we used a stack to track the values of the evaluated expressions. In the end, we pop
+        all the values from the stack and add to the result. Instead of that, we could add the values to the result
+        beforehand and keep track of the last calculated number, thus eliminating the need for the stack.
+        Instead of using a stack, we use a variable 'prev_num' to track the value of the last evaluated expression.
+        If the operation is Addition (+) or Subtraction (-), add the 'prev_num' to the result instead of pushing it to
+        the stack. The 'prev_num' would be updated to 'cur_num' for the next iteration.
+        If the operation is Multiplication (*) or Division (/), we must evaluate the expression (prev_num * cur_num)
+        and update the 'prev_num' with the result of the expression. This would be added to the result after the entire
+        string is scanned.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    num, last_operator = 0, '+'
-    low = high = 0  # 'high' variable acts as an accumulator of the partial results that used to sit in the stack
+    n = len(s)
+    cur_num = prev_num = 0
+    last_operator = '+'
+    res = 0
     for i, c in enumerate(s):
         if c.isdigit():
-            num = num * 10 + int(c)
-        if c in '+-*/' or i == len(s) - 1:
-            if last_operator == ''+'':
-                high += low
-                low = num
+            cur_num = cur_num * 10 + int(c)
+        if i == n - 1 or c in '+-/*':
+            if last_operator == '+':
+                res += prev_num
+                prev_num = cur_num
             elif last_operator == '-':
-                high += low
-                low = -num
+                res += prev_num
+                prev_num = -cur_num
             elif last_operator == '*':
-                low *= num
+                prev_num *= cur_num
             else:
-                low = int(low / num)
-            num = 0
+                prev_num = int(float(prev_num) / cur_num)
             last_operator = c
-    return high + low
+            cur_num = 0
+    return res + prev_num
 
 
 class Test(unittest.TestCase):
