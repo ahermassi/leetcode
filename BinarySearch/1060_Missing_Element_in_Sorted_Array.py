@@ -5,25 +5,25 @@ import unittest2 as unittest
 
 
 def missing_element_v1(nums, k):
-    """ Linearly scan the array and use a variable 'expected' to anticipate the next value we should encounter in the
-        sorted order of elements.
-            1- If the current value is different from what's expected, calculate the number of missing numbers between
-               previous index and current index.
-               If missing < k, update k and continue.
-               Else, return previous index's value + k.
-            2- Otherwise, set 'expected' to current value + 1 and continue
+    """ Linearly scan the array and use a variable 'missing' to calculate the number of missing numbers between the
+        previous index and the current index.
+            1- If missing >= k, return previous index's value + k
+            2- Otherwise, subtract 'missing' from k to discard the previous missing numbers and continue
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    n, expected = len(nums), nums[0]
-    for i in range(n):
-        if nums[i] != expected:
-            missing = nums[i] - expected
-            if k > missing:
-                k -= missing
-            else:
-                return nums[i - 1] + k
-        expected = nums[i] + 1
+    n = len(nums)
+    for i in range(1, n):
+        missing = nums[i] - nums[i - 1] - 1  # The key is to understand that the number of the missing numbers between
+        # nums[left] and nums[right] is (nums[right] - nums[left] + 1) - (right - left + 1)
+        # = (nums[right] - nums[left]) - (right - left)
+        # = number of values in the interval if no element was missing - interval length
+        # Therefore, missing = (nums[i] - nums[i-1] + 1) - (i - (i - 1) + 1)
+        #                    = (nums[i] - nums[i-1] + 1) - 2
+        #                    =  nums[i] - nums[i-1] - 1
+        if missing >= k:
+            return nums[i - 1] + k
+        k -= missing
     return nums[-1] + k
 
 
