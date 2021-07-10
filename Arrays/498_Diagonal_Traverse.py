@@ -11,41 +11,48 @@ def find_diagonal_order_v1(matrix):
             2- The head or the starting point for the diagonal depending upon its direction
         The slightly tricky part is figuring out the head of the next diagonal. The good part is, we already know the
         end of the previous diagonal. We can use that information to figure out the head of the next diagonal.
-        Next head to go DOWN: The general rule that we will be following when we want to find the head for a
+
+        Next head to go DOWN: The general rule that we will be following when we want to find the head for an
         downwards going diagonal is that:
-            If the tail lies in the last column of the matrix, the head would be the node directly BELOW the tail. (1)
+            If the tail of the previous diagonal lies in the last column of the matrix, the head of the next diagonal
+            would be the node directly BELOW the tail. (1)
             Otherwise, the head would be the node to the RIGHT of the tail of the previous diagonal. (2)
-        Next head to go UP: The general rule that we will be following when we want to find the head for an
-        upwards going diagonal is that:
-            If the tail lies in the last row of the matrix, the head would be the node RIGHT next to the tail. (3)
+
+        Next head to go UP: The general rule that we will be following when we want to find the head for an upwards
+        going diagonal is that:
+            If the tail of the previous diagonal lies in the last row of the matrix, the head of the next diagonal
+            would be the node to the RIGHT of the tail. (3)
             Otherwise, the head would be the node directly BELOW the tail of the previous diagonal. (4)
+
         Notice that all values in the same diagonal share the same sum (i + j). The direction of going up right or
         going down left depends whether that sum is even (going up) or odd (going down).
+        For each even or odd diagonal, there are three cases:
+            1- There is room to go that direction
+            2- there is no row space to go further but there is col space
+            3- There is no col space to go further but there is row space
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
-    if not matrix:
-        return None
     n, m, res = len(matrix), len(matrix[0]), []
-    i = j = 0
+    row = col = 0
     for _ in range(n * m):
-        res.append(matrix[i][j])
-        if (i + j) % 2 == 0:  # Moving up
-            if j == m - 1:  # (1) For last column, go below that cell to switch direction
-                i += 1
-            elif i == 0:  # (2)  For first row and non-last column, go to the right of that cell to switch direction
-                j += 1
+        res.append(matrix[row][col])
+        if (row + col) % 2 == 0:  # Moving up
+            if col == m - 1:  # (1) For last column, go below that cell to switch direction
+                row += 1
+            elif row == 0:  # (2)  For first row and non-last column, go to the right of that cell to switch direction
+                col += 1
             else:  # Continue moving along the up diagonal
-                i -= 1
-                j += 1
+                row -= 1
+                col += 1
         else:  # Moving down
-            if i == n - 1:  # (3)  For last row, go to the right of that cell to switch direction
-                j += 1
-            elif j == 0:  # (4)  For first column and non-last row, go below that cell to switch direction
-                i += 1
+            if row == n - 1:  # (3)  For last row, go to the right of that cell to switch direction
+                col += 1
+            elif col == 0:  # (4)  For first column and non-last row, go below that cell to switch direction
+                row += 1
             else:  # Continue moving along the down diagonal
-                i += 1
-                j -= 1
+                row += 1
+                col -= 1
     return res
     # Note: we can not change the order of the if/else, i.e, if we write something like this:
     # if (i + j) % 2 == 0:  # Moving up
