@@ -1,5 +1,6 @@
 """ Given a matrix of M x N elements (M rows, N columns), return all elements of the matrix in diagonal order. """
 
+from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -66,42 +67,26 @@ def find_diagonal_order_v1(matrix):
 
 
 def find_diagonal_order_v2(matrix):
-    """ In this solution, a boolean variable called 'direction' will tell us whether the current diagonal is an upwards
-        or downwards going. Based on the current direction and the tail, we will determine the head of the next
-        diagonal. Initially the direction would be 1 which would indicate up. We will keep alternating this value from
-        one iteration to the next.
-        We keep processing the elements of a diagonal and once the current diagonal ends, we use the current direction
-        and the tail element to find the next head and we switch over to processing the next diagonal. Also remember to
-        flip the direction bit.
+    """ In this solution, we use no direction checks. The key is to realize that the sum of indices on all diagonals
+        are equal (same property used in the previous algorithm).
+        We can loop through the matrix, store each element by the sum of its indices in a dictionary. We end up with
+        a collection of all elements on shared diagonals. The zigzag can be achieved by reversing every diagonal whose
+        index is even.
+        Note that this solution is possible as of Python 3.6+ where dictionaries are ordered by key insertion time.
     Time complexity: O(N * M)
-    Space complexity: O(1)
+    Space complexity: O(N * M)
     """
-    if not matrix:
-        return None
-    n, m, res = len(matrix), len(matrix[0]), []
-    i = j = 0
-    direction = 1
-    for _ in range(n * m):
-        res.append(matrix[i][j])
-        # Move along in the current diagonal depending upon the current direction. [i, j] -> [i - 1, j + 1] if going up
-        # and [i, j] -> [i + 1][j - 1] if going down
-        new_i = i - direction  # We can notice that new_i = i + (-1 if direction == 1 else 1)
-        new_j = j + direction  # We can notice that new_j = j + (1 if direction == 1 else -1)
-        if new_i < 0 or new_i == n or new_j < 0 or new_j == m:  # If the next element in the diagonal is not within
-            # the bounds of the matrix, we have to find the next head
-            if direction == 1:
-                if j == m - 1:
-                    i += 1
-                else:
-                    j += 1
-            else:
-                if i == n - 1:
-                    j += 1
-                else:
-                    i += 1
-            direction = -direction  # Flip the direction
-        else:  # The next element in the diagonal is not within the bounds of the matrix
-            i, j = new_i, new_j
+    n, m = len(matrix), len(matrix[0])
+    res = []
+    diagonals = defaultdict(list)
+    for i in range(n):
+        for j in range(m):
+            diagonals[i + j].append(matrix[i][j])
+    for s, nums in diagonals.items():
+        if s % 2 == 0:
+            res.extend(nums[::-1])
+        else:
+            res.extend(nums)
     return res
 
 
