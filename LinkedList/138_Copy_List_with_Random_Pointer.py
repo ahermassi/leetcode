@@ -67,8 +67,8 @@ def copy_random_list_v3(head):
     """ Instead of a separate dictionary to keep the old node --> new node mapping, we can tweak the original linked
         list and keep every cloned node next to its original node. This interleaving of old and new nodes allows us to
         solve this problem without any extra space.
-        1- Traverse the original list and clone the nodes as you go and place the cloned copy next to its original node.
-           This new linked list is essentially a interweaving of original and cloned nodes.
+        1- Traverse the original list and clone the nodes as we go and place the cloned copy next to its original node.
+           This new linked list is essentially an interweaving of original and cloned nodes.
         2- Iterate the list having both the new and old nodes intertwined with each other and use the original nodes'
            random pointers to assign references to random pointers for cloned nodes. For eg. if B has a random pointer
            to A, this means B' has a random pointer to A'.
