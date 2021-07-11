@@ -39,33 +39,28 @@ def copy_random_list_v2(head):
         1- Traverse the linked list starting at head of the linked list.
         2- Random Pointer
             - If the random pointer of the current node i points to node j, and a clone of j already exists in
-              the 'copies' dictionary, we will simply use the cloned node reference from the 'copies' dictionary.
+              the 'clones' dictionary, we will simply use the cloned node reference from the 'clones' dictionary.
             - If the random pointer of the current node i points to node j which has not been created yet, we create a
-              new node corresponding to j and add it to the 'copies' dictionary.
+              new node corresponding to j and add it to the 'clones' dictionary.
         3- Same goes for next pointer
         4- We repeat steps 2 and 3 until we reach the end of the linked list.
     Time complexity: O(N), we make one pass over the original linked list
     Space complexity: O(N), we have a dictionary containing mapping from old list nodes to new list nodes
     """
 
-    def get_node_copy(node):
-        if node in copies:
-            return copies[node]
-        copy = Node(node.val)
-        copies[node] = copy
-        return copy
-
-    if not head:
-        return None
-    copies = {None: None}  # To avoid constantly checking if next/random is null
-    new_head = Node(head.val)
-    copies[head] = new_head
+    clones = {None: None}  # To avoid constantly checking if next/random is null
     cur = head
     while cur:
-        new_head.next = get_node_copy(cur.next)
-        new_head.random = get_node_copy(cur.random)
-        cur, new_head = cur.next, new_head.next
-    return copies[head]
+        if cur not in clones:
+            clones[cur] = Node(cur.val)
+        if cur.next not in clones:
+            clones[cur.next] = Node(cur.next.val)
+        if cur.random not in clones:
+            clones[cur.random] = Node(cur.random.val)
+        clones[cur].next = clones[cur.next]
+        clones[cur].random = clones[cur.random]
+        cur = cur.next
+    return clones[head]
 
 
 def copy_random_list_v3(head):
