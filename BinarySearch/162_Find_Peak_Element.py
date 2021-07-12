@@ -2,6 +2,9 @@
 Given an input array nums, where nums[i] ≠ nums[i+1], find a peak element and return its index.
 The array may contain multiple peaks, in that case return the index to any one of the peaks is fine. """
 
+# Some useful templates
+# https://leetcode.com/problems/find-peak-element/discuss/788474/General-Binary-Search-Thought-Process-%3A-4-Templates
+
 
 def find_peak_element_v1(nums):
     """ We can view any given sequence in nums array as alternating ascending and descending sequences. By making
@@ -32,7 +35,19 @@ def find_peak_element_v1(nums):
         which they start decreasing, and that point would be a peak.
         So by seeing what happens at the middle and choosing the continuation accordingly, we can be sure to eventually
         arrive at a peak.
-
+        What is helpful is the following statement in the question description:
+        "You may imagine that nums[-1] = nums[n] = -∞"
+        This means a peak will always exist. Example: 3 is peak in following two arrays:
+        -∞ | 0,1,2,3|-∞
+        -∞ | 3,2,1,0|-∞
+        So all we need to do is find the end of any increasing slope in the input array.
+        Lets say we have a mid number at index x, nums[x]. If nums[x+1] > nums[x], that means a peak element HAS to
+        exist on the right half of that array, because (since every number is unique):
+            - If the numbers keep increasing on the right side, then the peak will be the last element.
+            - If the numbers stop increasing and there is a 'dip', or there exists somewhere a number such that
+              nums[y] < nums[y-1], which means number[x] is a peak element.
+        This same logic can be applied to the left hand side (nums[x] < nums[x-1]).
+        Example:
         | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
         |---|---|---|---|---|---|---|---|---|
         | l | _ | _ | _ | m | _ | _ | _ | r |
@@ -52,6 +67,24 @@ def find_peak_element_v1(nums):
         |---|---|---|---|-----|---|---|---|---|
         | X | X | X | X | l,r | X | X | X | X |
         l is the answer
+
+                 5   5                           5
+                / \ / \                         / \
+               4   4   4                       4  -∞
+              /         \                     /
+             3           3           3       3
+            /             \         / \     /
+           2               2       2   2   2
+          /                 \     /     \ /
+        -∞                   1   1       1
+                              \ /
+                               0
+        0 1 2 3 4 5 6 7 8 910111213141516171819 indices
+        2,3,4,5,4,5,4,3,2,1,0,1,2,3,2,1,2,3,4,5 (20 nums)
+       l                 m                   r l=0, m=9, r=19
+       l       m         r                     l=0, m=4, r= 9
+                 l   m   r                     l=5, m=7, r= 9
+                 l>m r                         l=5, m=6, r= 7
 
     Time complexity: (logN)
     Space complexity: O(1)
