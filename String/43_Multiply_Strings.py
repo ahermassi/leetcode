@@ -6,7 +6,7 @@ import unittest2 as unittest
 
 # Check out: https://leetcode.com/problems/multiply-strings/discuss/17605/Easiest-JAVA-Solution-with-Graph-Explanation
 
-def multiply(num1, num2):
+def multiply_v1(num1, num2):
     """ Start from right to left, perform multiplication on every pair of digits, and add them together.
         We can immediately conclude that:
             num1[i] * num2[j] will be placed at indices [i + j, i + j + 1]
@@ -18,7 +18,7 @@ def multiply(num1, num2):
         only the remainder at the 'right' position.
         Remember that leading zeros should be skipped. If skipping them leaves us with an empty list, then return '0'.
         Otherwise, return the result 'res'
-    Time complexity: O(N * M) where N is the length of num1 and M is the length of num2
+    Time complexity: O(N * M), where N is the length of num1 and M is the length of num2
     Space complexity: O(N + M)
     """
     n, m = len(num1), len(num2)
@@ -32,8 +32,23 @@ def multiply(num1, num2):
             right = i + j + 1
             mul += res[right]  # There could be an integer at 'right' index from a previous calculation
             res[right] = mul % 10
-            res[left] += mul // 10  # res[left] could be 9 and mul > 10, but it will be ultimately taken care of by
-            # res[right] = mul % 10 in later traversal where left will become the right of following iteration
+            res[left] += mul // 10
+            # res[left] could be 9 and mul > 10, but it will be ultimately taken care of by res[right] = mul % 10 in
+            # later traversal where left will become the right of following iteration. Current 'left' will be 'right'
+            # in next iteration, and the % operation will always get right result in 'right' position. Finally, the
+            # overflow will end at head but will not overflow again.
+            # Example: num1 = 99, num2 = 99
+            # Before -> [0, 0, 0, 0]
+            # After  -> [0, 0, 8, 1]
+            # =================
+            # Before -> [0, 0, 8, 1]
+            # After  -> [0, 8, 9, 1]
+            # =================
+            # Before -> [0, 8, 9, 1]
+            # After  -> [0, 17, 0, 1]
+            # =================
+            # Before -> [0, 17, 0, 1]
+            # After  ->  [9, 8, 0, 1]
     i = 0
     while i < len(res) and res[i] == 0:  # Move through the 'res' array and locate where the zero padding ends
         i += 1
@@ -46,7 +61,7 @@ class Test(unittest.TestCase):
 
     def test_multiply(self):
         for test_num1, test_num2, result in self.data:
-            self.assertEqual(result, multiply(test_num1, test_num2))
+            self.assertEqual(result, multiply_v1(test_num1, test_num2))
 
 
 if __name__ == '__main__':
