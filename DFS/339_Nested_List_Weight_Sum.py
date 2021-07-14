@@ -1,5 +1,6 @@
 """ Given a nested list of integers, return the sum of all integers in the list weighted by their depth.
 Each element is either an integer, or a list -- whose elements may also be integers or other lists. """
+from collections import deque
 
 
 def depth_sum_v1(nested_list):
@@ -26,17 +27,23 @@ def depth_sum_v1(nested_list):
     return dfs(nested_list, 1)
 
 
-def depth_sum_v2(nestedList):
-    """ Same as above, but emulating the recursion call using an actual stack.
+def depth_sum_v2(nested_list):
+    """ We can also solve the problem using a breadth-first search. The algorithm for this is closely based on the
+        standard breadth-first search template. The algorithm fully processes each depth before moving to the next one.
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(N), the worst-case for space complexity in BFS occurs where most of the elements are in a
+    single layer, for example, a flat list such as [1, 2, 3, 4, 5] as all of the elements must be put on the queue at
+    the same time. Therefore, this approach also has a worst-case space complexity of O(N).
     """
-    res, stack = 0, []
-    stack = [(nested_integer, 1) for nested_integer in nestedList]
-    while stack:
-        elem, depth = stack.pop()
-        if elem.isInteger():
-            res += elem.getInteger() * depth
-        else:
-            stack.extend([(val, depth + 1) for val in elem.getList()])
+    queue = deque(nested_list)
+    depth, res = 1, 0
+    while queue:
+        n = len(queue)
+        for _ in range(n):
+            element = queue.popleft()
+            if element.isInteger():
+                res += element.getInteger() * depth
+            else:
+                queue.extend(element.getList())
+        depth += 1
     return res
