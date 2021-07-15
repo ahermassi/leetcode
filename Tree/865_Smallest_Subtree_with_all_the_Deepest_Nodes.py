@@ -1,0 +1,51 @@
+""" Given the root of a binary tree, the depth of each node is the shortest distance to the root.
+
+Return the smallest subtree such that it contains all the deepest nodes in the original tree.
+
+A node is called the deepest if it has the largest depth possible among any node in the entire tree.
+
+The subtree of a node is tree consisting of that node, plus the set of all descendants of that node. """
+
+
+def subtree_with_all_deepest_v1(root):
+    """ The problem statement can be reformulated as:
+            If the deepest level has only one node, return that node. Otherwise, return the lowest common ancestor of
+            all the nodes in the deepest level.
+        We identify the nodes of the tree whose descendants are the deepest nodes. To do this, we have to annotate the
+        height (not depth) of each node. We can do this with a depth first search. Afterwards, we will use that
+        annotation to help us find the answer:
+            - If both the left and right child of a node have the same height, then the answer is this parent node.
+            - Otherwise, if some child has a larger height, then the answer is that child.
+            - Otherwise, the answer for this subtree doesn't exist.
+        At each node, we keep a pair (height_of_node, node). At a given node, if we realize that the
+        left_height == right_height, it means we have found the smallest subtree with all deepest nodes rooted at the
+        current node. If left_height > right_height, it means the smallest subtree with all deepest nodes must be
+        rooted at left child. If right_height > left_height, it means the smallest subtree with all deepest nodes must
+        be rooted at right child.
+        Which traversal allows us to traverse from bottom-up? Postorder! So we use it in the code.
+    Time complexity: O(N), where N is the number of nodes in the tree
+    Space complexity: O(N)
+    """
+
+    def dfs(root):
+        # dfs(root) answers two questions:
+        # 1- What's the height of node 'root' ?
+        # 2- What's the root of the smallest subtree that contains ALL the deepest nodes such that it's a subtree of
+        # the tree rooted at node 'root' ? Smallest here is synonymous of the lowest common ancestor.
+        if not root:
+            return 0, None
+        left_height, smallest_left_subtree = dfs(root.left)
+        right_height, smallest_right_subtree = dfs(root.right)
+        cur_height = max(left_height, right_height) + 1
+        if left_height == right_height:  # Left and right subtrees have an equal height, which means the deepest node
+            # in the left subtree has the same depth as the deepest node in the right subtree. As such, we should
+            # return the current node as it is the root of the current subtree that contains the deepest nodes on the
+            # left and right subtree and is the LCA.
+            return cur_height, root
+        if left_height > right_height: # Left subtree has a greater height than the right subtree. This means ALL the
+            # deepest nodes can only be situated in the (last level of) left side. Therefore, search to the left.
+            return cur_height, smallest_left_subtree
+        return cur_height, smallest_right_subtree
+
+    return dfs(root)[1]
+
