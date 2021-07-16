@@ -12,35 +12,42 @@ def num_distinct_islands_v1(grid):
         Since two islands are the same if one can be translated to match another, the path taken by our depth-first
         search will be the same if and only if the shape is the same. We can exploit this by recording the path we
         take as our shape - keeping in mind to record both when we enter and when we exit the function.
-        DO NOT FORGET to add exit state, otherwise a different shape can have the same path:
-        Example:              1 1 1   and    1 1 0
+        When we start a depth-first search on the top-left square of some island, the path taken by our depth-first
+        search will be the same if, and only if, the shape is the same. We can exploit this by using the path as a hash.
+        Each time we discover the first cell in a new island, we initialize an empty 'pattern' string. Then each time
+        dfs is called for that island, we firstly determine whether or not the cell being entered is un-visited land.
+        If it is, then we append the direction we entered it from to the 'pattern' string.
+        DO NOT FORGET to add exit state where we backtracked. This occurs each time we exit a call to the dfs function,
+        otherwise a different shape can have the same path. For example:
+                              1 1 1   and    1 1 0
                               0 1 0          0 1 1
-        With exit state:      rdbr           rdr
-        Without exit state:   rdr            rdr
+        Without exit state:   ordr           ordr
+        With exit state:     ordbrbb        ordrbbb
         We need to record when we 'hit a wall' and return.
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
 
-    def dfs(i, j, path, dir):
+    def dfs(i, j, pattern, dir):
         if not 0 <= i < n or not 0 <= j < m or (i, j) in visited or not grid[i][j]:
             return
         visited.add((i, j))
-        path.append(dir)
-        dfs(i - 1, j, path, 'u')
-        dfs(i + 1, j, path, 'd')
-        dfs(i, j - 1, path, 'l')
-        dfs(i, j + 1, path, 'r')
-        path.append('b')  # Record the exit
+        pattern.append(dir)
+        dfs(i - 1, j, pattern, 'u')
+        dfs(i + 1, j, pattern, 'd')
+        dfs(i, j - 1, pattern, 'l')
+        dfs(i, j + 1, pattern, 'r')
+        pattern.append('b')  # Record the backtrack/exit
 
-    n, m, res, visited = len(grid), len(grid[0]), set(), set()
+    n, m = len(grid), len(grid[0])
+    patterns, visited = set(), set()
     for i in range(n):
         for j in range(m):
             if grid[i][j] and (i, j) not in visited:
-                path = []
-                dfs(i, j, path, 'o')  # Record the origin
-                res.add(tuple(path))
-    return len(res)
+                pattern = []
+                dfs(i, j, pattern, 'e')  # Record the entry
+                patterns.add(tuple(pattern))
+    return len(patterns)
 
 
 def num_distinct_islands_v2(grid):
