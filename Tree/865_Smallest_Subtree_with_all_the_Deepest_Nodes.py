@@ -5,6 +5,7 @@ Return the smallest subtree such that it contains all the deepest nodes in the o
 A node is called the deepest if it has the largest depth possible among any node in the entire tree.
 
 The subtree of a node is tree consisting of that node, plus the set of all descendants of that node. """
+from collections import deque
 
 
 def subtree_with_all_deepest_v1(root):
@@ -48,4 +49,36 @@ def subtree_with_all_deepest_v1(root):
         return cur_height, smallest_right_subtree
 
     return dfs(root)[1]
+
+
+def subtree_with_all_deepest_v2(root):
+    """ Find all deepest nodes by traversing the tree using BFS. The root of the smallest subtree with all deepest
+        nodes is nothing but the LCA of all the deepest nodes. Finding LCA of all nodes at the same level is equivalent
+        to finding LCA of the leftmost and rightmost node. Therefore, we keep track of the leftmost node and the
+        rightmost node while doing BFS and finally return their LCA.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def lowest_common_ancestor(root, left, right):
+        if not root or root == left or root == right:
+            return root
+        left_search = lowest_common_ancestor(root.left, left, right)
+        right_search = lowest_common_ancestor(root.right, left, right)
+        if left_search and right_search:
+            return root
+        return left_search or right_search
+
+    leftmost_node = rightmost_node = None
+    queue = deque([root])
+    while queue:
+        n = len(queue)
+        for i in range(n):
+            node = queue.popleft()
+            if i == 0:
+                leftmost_node = node
+            if i == n - 1:
+                rightmost_node = node
+            queue.extend([kid for kid in (node.left, node.right) if kid])
+    return lowest_common_ancestor(root, leftmost_node, rightmost_node)
 
