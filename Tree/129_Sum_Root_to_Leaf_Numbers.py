@@ -27,6 +27,25 @@ def sum_numbers_v1(root):
 
 
 def sum_numbers_v2(root):
+    """ DFS but without the use of a "global" variable to store the result.
+    Time complexity: O(N)
+    Space complexity: O(h)
+    """
+
+    def dfs(root, cur_sum):
+        if not root:
+            return 0
+        cur_sum = cur_sum * 10 + root.val
+        if not root.left and not root.right:
+            return cur_sum
+        left_sum = dfs(root.left, cur_sum)
+        right_sum = dfs(root.right, cur_sum)
+        return left_sum + right_sum
+
+    return dfs(root, 0)
+
+
+def sum_numbers_v3(root):
     """ Here we implement standard iterative pre-order traversal with the stack.
     Time complexity: O(N)
     Space complexity: O(h), to keep the recursion stack, where h is tree height
