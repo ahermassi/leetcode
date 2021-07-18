@@ -26,6 +26,8 @@ Each element is either an integer, or a list -- whose elements may also be integ
 #        Return None if this NestedInteger holds a single integer
 #        :rtype List[NestedInteger]
 #        """
+from collections import deque
+
 
 class NestedIteratorV1(object):
     """ In the constructor, we push all the nestedList into the stack from back to front, so when we pop the stack, it
@@ -109,6 +111,23 @@ class NestedIteratorV2(object):
             # Unpack the list at the top by putting its items onto the stack in reverse order.
             for element in reversed(self.stack.pop().getList()):
                 self.stack.append(element)
+
+
+class NestedIteratorV3(object):
+    """ Same solution using a queue instead of a stack.
+    """
+
+    def __init__(self, nestedList):
+        self.queue = deque(nestedList)
+
+    def next(self):
+        return self.queue.popleft().getInteger()
+
+    def hasNext(self):
+        while self.queue and not self.queue[0].isInteger():
+            for element in reversed(self.queue.popleft().getList()):
+                self.queue.appendleft(element)
+        return self.queue
 
 
 # Your NestedIterator object will be instantiated and called as such:
