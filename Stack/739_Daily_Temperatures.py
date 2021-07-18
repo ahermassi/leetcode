@@ -31,22 +31,52 @@ def daily_temperatures_v2(temperatures):
     """ We can also process the temperatures list backwards.
         If the temperature at current index i is smaller than the one seen at the previous index sitting on top of the
         stack, we simply get the difference of the indices (stack[-1] - i) and insert i into the stack.
-        If the temperature at current index i is smaller than the one seen at the previous index sitting on top of the
+        If the temperature at current index i is greater than the one seen at the previous index sitting on top of the
         stack, we keep removing all the indices (since we need to find a greater temperature larger). If found, then
         great. If not, then it has result 0.
         One great reason we can just remove the smaller indices from the stack (seen to the right) is that now when we
         encounter a temperature x that is larger than its right elements, x will itself be the nearest largest
         temperature to the current one.
-        Example: temperatures = [73, 74, 75, 71, 69, 72, 76, 73]
-        i = 7, stack = [7 (73)]. res[i] = 0
-        i = 6, stack = [6 (76)]. ans[i] = 0
-        i = 5, stack = [5 (72), 6 (76)]. ans[i] = 1
-        i = 4, stack = [4 (69), 5 (72), 6 (76)]. ans[i] = 1
-        i = 3, stack = [3 (71), 5 (72), 6 (76)]. ans[i] = 2
-        i = 2, stack = [2 (75), 6 (76)]. ans[i] = 4
-        i = 1, stack = [1 (74), 2 (75), 6 (76)]. ans[i] = 1
-        i = 0, stack = [0 (73), 1 (74), 2 (75), 6 (76)]. ans[i] = 1
-        Note that the final stack is increasing as opposed to the previous solution which leaves a decreasing stack.
+        For an element temperatures[i] encountered, we pop all the elements stack[top] from the stack such that
+        temperatures[stack[top]] < temperatures[i]. We continue the popping till we encounter a stack[top] satisfying
+        temperatures[stack[top]] >= temperatures[i]. Now, it is obvious that the current stack[top] only can act as the
+        next greater element for temperatures[i].
+        If no element remains on the top of the stack, it means no larger element than temperatures[i] exists to its
+        right. Along with this, we also push the index of the element just encountered (temperatures[i]), i.e. i over
+        the top of the stack, so that temperatures[i] (or stack[top]) now acts as the next greater element for the
+        elements lying to its left.
+        Example: temperatures = [89, 62, 70, 58, 47, 47, 46, 76, 100, 70].
+        Our first element in the stack is going to be 9 (index of 70, the last element) and our initial condition will
+        be:
+            {9} //stack
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0} //result vector
+        We then move to the penultimate element (index 8) and since its matching element is bigger than the one in
+        the stack, we remove it, we do not update the result vector (there is nothing bigger right of it) and push it
+        in the stack:
+            {8} //stack
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0} //result vector
+        Okay, next is index 7, matching element of value 76: Since we have something in the stack which is bigger than
+        that, we update the 8th element (the one with index 7, again) of the result vector with the difference between
+        the current element and the top of the stack and move on after pushing it too:
+            {7, 8} //stack
+            {0, 0, 0, 0, 0, 0, 0, 1, 0, 0} //result vector
+        Next we have index 6 for element of value 46. Nothing in the stack less than that, so no removals from the
+        stack, we update the distance from the next bigger (the previous element) and we just push it:
+            {6, 7 , 8} //stack
+            {0, 0, 0, 0, 0, 0, 1, 1, 0, 0} //result vector
+        We move to index 5 and matching value 47. This time we pop until we have no greater values (so, just once) and
+        update the vector with the distance (the next bigger was 2 positions to the right), before pushing it in the
+        stack:
+            {5, 7 , 8} //stack
+            {0, 0, 0, 0, 0, 2, 1, 1, 0, 0} //result vector
+        Now, an interesting case: Index 4 matches another identical value, but identical is not greater than, so we pop
+        all the way up to a value greater than 47, update the vector with the computed distance, push the element into
+        the stack:
+            {4, 7 , 8} //stack
+            {0, 0, 0, 0, 3, 2, 1, 1, 0, 0} //result vector
+        After the last few steps:
+            {8} //stack
+            {8, 1, 5, 4, 3, 2, 1, 1, 0, 0} //result vector
     Time complexity: O(N)
     Space complexity: O(N)
     """
