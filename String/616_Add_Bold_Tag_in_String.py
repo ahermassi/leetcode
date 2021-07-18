@@ -40,7 +40,7 @@ def add_bold_tag_v1(s, words):
     return ''.join(res)
 
 
-def add_bold_tag_v2(s, dict):
+def add_bold_tag_v2(s, words):
     """ We can create a list of intervals with opening/closing positions, e.g. [open_tag_index, close_tag_index].
         After that, we merge the list of intervals similar to 56- Merge Intervals. Finally, we go over the merged
         intervals list and insert the tags into the string in the appropriate positions.
@@ -52,24 +52,28 @@ def add_bold_tag_v2(s, dict):
     Time complexity: O(N * W + N logN), where N is the length of s and W is the number of words
     Space complexity: O(N)
     """
-    n, intervals, merged, res = len(s), [], [], []
+    n = len(s)
+    bold_intervals = []
     for i in range(n):
-        for word in dict:
+        for word in words:
             if s[i:].startswith(word):
-                intervals.append([i, min(n - 1, i + len(word) - 1)])
-    if not intervals:
-        return s
-    for start, end in intervals:
-        if not merged or start > merged[-1][1] + 1:  # + 1 to account for cases [x, y], [y+1, z] -> [x, z]
-            merged.append([start, end])
+                bold_intervals.append([i, i + len(word) - 1])
+    merged_bold_intervals = []
+    for start, end in bold_intervals:
+        if not merged_bold_intervals or start > merged_bold_intervals[-1][1] + 1:
+            # + 1 to account for cases [x, y], [y+1, z] -> [x, z]
+            merged_bold_intervals.append([start, end])
         else:
-            merged[-1][1] = max(merged[-1][1], end)
-    previous_index = -1
-    for i, (start, end) in enumerate(merged):
-        res.append(s[previous_index + 1:start])
-        res.append('<b>' + s[start:end + 1] + '</b>')
-        previous_index = end
-    res.append(s[merged[-1][1] + 1:])
+            merged_bold_intervals[-1][1] = max(merged_bold_intervals[-1][1], end)
+    res = []
+    previous_tag_end = -1
+    for i, (start, end) in enumerate(merged_bold_intervals):
+        res.append(s[previous_tag_end + 1: start])
+        res.append('<b>')
+        res.append(s[start: end + 1])
+        res.append('</b>')
+        previous_tag_end = end
+    res.append(s[previous_tag_end + 1:])
     return ''.join(res)
 
 
