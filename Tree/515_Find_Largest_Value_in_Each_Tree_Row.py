@@ -22,21 +22,21 @@ def largest_values_v1(root):
 
 
 def largest_values_v2(root):
-    """ DFS. Do a pre-order traversal and use depth to expand result list size and put the max value in the appropriate
-        position.
+    """ DFS. Do a pre-order traversal and use 'level' to expand result list size and put the max value in the
+        appropriate position.
     Time complexity: O(N)
     Space complexity: O(N)
     """
 
-    def dfs(root, depth):
+    def dfs(root, level):
         if not root:
             return
-        if depth == len(res):
+        if level == len(res):
             res.append(root.val)
         else:
-            res[depth] = max(res[depth], root.val)
-        dfs(root.left, depth + 1)
-        dfs(root.right, depth + 1)
+            res[level] = max(res[level], root.val)
+        dfs(root.left, level + 1)
+        dfs(root.right, level + 1)
 
     res = []
     dfs(root, 0)
