@@ -19,8 +19,8 @@ def daily_temperatures_v1(temperatures):
     Space complexity: O(N)
     """
     stack, res = [], [0] * len(temperatures)
-    for i, val in enumerate(temperatures):
-        while stack and temperatures[stack[-1]] < val:
+    for i, temperature in enumerate(temperatures):
+        while stack and temperature > temperatures[stack[-1]]:
             j = stack.pop()
             res[j] = i - j
         stack.append(i)
