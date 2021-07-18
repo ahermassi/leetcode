@@ -45,12 +45,10 @@ class NestedIteratorV1(object):
         return self.stack.pop().getInteger()
 
     def hasNext(self):
-        while self.stack:
-            top = self.stack[-1]
-            if top.isInteger():
-                return True
-            self.stack.extend([val for val in self.stack.pop().getList()[::-1]])  # Flatten
-        return False
+        while self.stack and not self.stack[-1].isInteger():
+            for element in reversed(self.stack.pop().getList()):
+                self.stack.append(element)
+        return self.stack
 
 
 class NestedIteratorV2(object):
