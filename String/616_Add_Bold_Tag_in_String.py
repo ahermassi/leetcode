@@ -37,6 +37,18 @@ def add_bold_tag_v1(s, words):
         res.append(c)
         if bold[i] and (i == n - 1 or not bold[i + 1]):
             res.append('</b>')
+    # Similar (but simpler) loop:
+    # i = 0
+    # while i < n:
+    #     if not bold[i]:
+    #         res.append(s[i])
+    #         i += 1
+    #     else:
+    #         res.append('<b>')
+    #         while i < n and bold[i]:
+    #             res.append(s[i])
+    #             i += 1
+    #         res.append('</b>')
     return ''.join(res)
 
 
