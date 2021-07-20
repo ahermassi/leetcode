@@ -34,6 +34,27 @@ def compress_v1(chars):
     return left
 
 
+def compress_v2(chars):
+    """ Another way of looking at things.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    write_index = read_index = 0
+    while read_index < len(chars):
+        c, count = chars[read_index], 0
+        while read_index < len(chars) and chars[read_index] == c:
+            count, read_index = count + 1, read_index + 1
+        chars[write_index] = c
+        if count == 1:
+            write_index += 1
+        else:
+            write_index += 1
+            for digit in str(count):
+                chars[write_index] = digit
+                write_index += 1
+    return write_index
+
+
 class Test(unittest.TestCase):
     data = [(['a', 'a', 'b', 'b', 'c', 'c', 'c'], 6, ['a', '2', 'b', '2', 'c', '3']),
             (['a', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'], 4, ['a', 'b', '1', '2']),
