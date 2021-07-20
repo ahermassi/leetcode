@@ -10,7 +10,7 @@ Return 6, and the first 6 characters of the input array should be: ['a','2','b',
 import unittest2 as unittest
 
 
-def compress(chars):
+def compress_v1(chars):
     """ Group the array into repeated chunks, keeping track of the character and the count. This forms the encoded
         contents.
         Update the original array with the encoded contents. We maintain a left pointer to know which position to
@@ -25,12 +25,12 @@ def compress(chars):
         while right < len(chars) and chars[left] == chars[right]:
             right += 1
         count = right - left
-        if count > 1:
+        if count == 1:
+            left += 1
+        else:
             digits = list(str(count))
             chars[left + 1:right] = digits
             left += len(digits) + 1
-        else:
-            left += 1
     return left
 
 
@@ -41,7 +41,7 @@ class Test(unittest.TestCase):
 
     def test_compress(self):
         for test_chars, result, new_array in self.data:
-            i = compress(test_chars)
+            i = compress_v1(test_chars)
             self.assertEqual(new_array, test_chars[:i])
 
 
