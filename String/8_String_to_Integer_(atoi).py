@@ -15,19 +15,17 @@ def my_atoi(str):
     sign, i, res, n = 1, 0, 0, len(str)
     while i < n and str[i].isspace():  # Discard left whitespaces
         i += 1
-    if i == n or (not str[i].isdigit() and str[i] not in '+-'):
+    if i == n:
         return 0
     # Handling pos/neg sign
-    if str[i] == '-':
-        sign = -1
-        i += 1
-    elif str[i] == '+':
+    if str[i] in '+-':
+        sign = -1 if str[i] == '-' else 1
         i += 1
     while i < n and str[i].isdigit():  # Actual conversion to int
         res = res * 10 + (ord(str[i]) - ord('0'))  # ord() is faster than int()
         i += 1
     res *= sign
-    return min(max(res, -2147483648), 2147483647)  # Handling overflow. max(res, -2147483648) prevents from going
+    return min(2147483647, max(res, -2147483648))  # Handling overflow. max(res, -2147483648) prevents from going
     # below Integer.MIN_VALUE; outer min() prevents from going beyond Integer.MAX_VALUE
 
 
