@@ -37,3 +37,37 @@ def validate_binary_tree_nodes_v1(n, leftChild, rightChild):
     return len(visited) == n  # If len(visited) != n it means that some nodes are unreachable
 
 
+def validate_binary_tree_nodes_v2(n, leftChild, rightChild):
+    """ This time we use DFS to traverse the tree using the root and check if all nodes have been visited exactly once.
+        dfs(root) checks whether the graph is connected, i.e. whether all nodes are reachable from the node 'root'.
+        We add all nodes reachable from the root to a hash set.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def dfs(root):
+        visited.add(root)
+        for child in leftChild[root], rightChild[root]:
+            if child != -1 and child not in visited:
+                dfs(child)
+
+    parents = [0] * n
+    for node in range(n):
+        left, right = leftChild[node], rightChild[node]
+        if left != -1:
+            parents[left] += 1
+        if right != -1:
+            parents[right] += 1
+        if parents[left] > 1 or parents[right] > 1:
+            return False
+    root = -1
+    for node in range(n):
+        if parents[node] == 0:
+            if root != -1:
+                return False
+            root = node
+    visited = set()
+    dfs(root)
+    return len(visited) == n  # If the total number of visited nodes is not n, it means there are islands
+
+
