@@ -6,14 +6,25 @@ import unittest2 as unittest
 
 
 def count_substrings_v1(s):
-    """ Expand Around Center. Same as 5- Longest Palindromic Substring
-        We observe that a palindrome mirrors around its center. Therefore, a palindrome can be expanded from its center.
-        There are two cases of palindromes: even and odd length.
-    Time complexity: O(N ** 2), since expanding a palindrome around its center could take O(N)
+    """ Expand Around Center. Same as 5- Longest Palindromic Substring.
+        There are two types of palindromes: Odd and even length palindromes.
+        Odd length palindromes have a single character in the middle. Even length palindromes have two characters
+        that constitute the middle, both of which are same. e.g. 'noon' with two middle characters 'o'.
+        Multiple palindromes have the same centers. If we choose a center, we can continue to expand around it as long
+        as we can make larger and larger palindromes. Let's take the string 'lever' as an example: If we choose the
+        character 'v' as the center, we can see that the palindromes 'v and 'eve' are possible. However, the final
+        expansion 'lever' is not a palindrome (the first and last characters don't match).
+        We choose all possible centers for potential palindromes:
+            - Every single character in the string is a center for possible odd-length palindromes
+            - Every pair of consecutive characters in the string is a center for possible even-length palindromes
+        For every center, we can expand around it as long as we get palindromes (i.e. the first and last characters
+        should match).
+    Time complexity: O(N^2), since expanding a palindrome around its center could take O(N). Each center can
+    potentially expand to the length of the string, so time spent on each center is linear on average.
     Space complexity: O(1)
     """
 
-    def palindrome_at(i, j):
+    def palindromes_at(i, j):
         count = 0
         while i >= 0 and j < n and s[i] == s[j]:
             count += 1
@@ -23,8 +34,9 @@ def count_substrings_v1(s):
 
     res, n = 0, len(s)
     for i in range(n):
-        res += palindrome_at(i, i)
-        res += palindrome_at(i, i + 1)
+        odd_palindromes = palindromes_at(i, i)
+        even_palindromes = palindromes_at(i, i + 1)
+        res += odd_palindromes + even_palindromes
     return res
 
 
