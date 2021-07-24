@@ -42,13 +42,35 @@ def count_substrings_v1(s):
 
 def count_substrings_v2(s):
     """ Bottom-up Dynamic Programming.
-        We observe how we can avoid unnecessary re-computation while validating palindromes. Consider the case "ababa".
-        If we already knew that "bab" is a palindrome, it is obvious that "ababa" must be a palindrome since the two
-        left and right end letters are the same.
-        We define dp[i][j] as following:
-            dp[i][j] is True if substring s[i:j + 1] is palindrome
-        Therefore:
-            dp[i][j] = (s[i] == s[j]) AND (dp[i+1][j-1])
+        This problem displays two, necessary characteristics of a dynamic programming problem:
+            1- Optimal substructure: Remember that larger palindromes are made of smaller palindromes. Congratulation,
+               we have discovered a substructure to our problem! Knowing that a string is made up of a palindrome helps
+               us determine if the string itself is a palindrome. Here's an example: for the string 'axbobxa', the
+               first and the last characters match, so it's a potential palindrome. If we knew already that its
+               substring 'xbobx' is also a palindrome, there wouldn't be a need for any further checks.
+               But is this substructure optimal? Yes! Since the optimal result for a string relies only on the optimal
+               result for just one sub-problem, and has to do just one check for the boundary characters (in constant
+               time), this is an optimal substructure. We cannot get this result by checking fewer than one sub-problem
+               (it wouldn't be a substructure anymore) or doing the boundary characters check faster (it's already
+               constant time!).
+            2- Overlapping sub-problems: While checking all substrings of a large string for palindromicity, we might
+               need to check some smaller substrings for the same, repeatedly. If we store the result of processing
+               those smaller substrings, we can reuse those while processing larger substrings.
+               Here's an example: for the string 'axbobx'", the substring 'bob' needs to checked for the substring
+               'xbobx' and the string 'axbobxa'. In fact, to check all three of these strings, the single character
+               string 'o' needs to be checked.
+        We define our state dp[i][j] as following:
+
+            dp[i][j] is True if the substring composed of the ith to the jth characters of the input string is a
+            palindrome
+
+        A string is considered a palindrome if:
+            - Its first and last characters are equal, and
+            - The rest of the string (excluding the boundary characters) is also a palindrome
+        Thus, the answer to our problem lies in counting all substrings whose state is true:
+
+                dp[i][j] = (s[i] == s[j]) AND (dp[i+1][j-1])
+
         But here, we should explain why we use dp[i+1][j-1] to calculate dp[i][j]. The reason is that i is in
         descending order and j is in ascending order. Then we know that before d[i][j] the value of d[i+1][j-1] is
         already known and calculated in a previous iteration.
@@ -60,7 +82,7 @@ def count_substrings_v2(s):
         For condition (1), a simple check will do. For condition (2), we use the table. If both conditions are met,
         mark dp[i][j] as True and increase the count.
     Time complexity: O(N^2)
-    Space complexity: O(N^2) to store dp array
+    Space complexity: O(N^2), to store dp array
     """
     n, res = len(s), 0
     dp = [[False] * n for _ in range(n)]
