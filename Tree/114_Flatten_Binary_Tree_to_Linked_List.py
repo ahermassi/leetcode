@@ -196,25 +196,27 @@ def flatten_v3(root):
         the current node until the left subtree is done is basically what recursion is. Recursion is all about
         postponing decisions until something else is completed. So, we will have to come up with a greedy way that will
         be costlier in terms of time, but will be space efficient in achieving the same results.
+
             For a current node, we will check if it has a left child or not. If it does, we will find the last node in
             the rightmost branch of the subtree rooted at this left child. Once we find this rightmost node, we will
             hook it up with the right child of the current node.
+
         By doing this operation for every node, we are simply trying to move stuff to the right hand side one step at
         a time.
-    Time complexity: O(N)
+    Time complexity: O(N), since we process each node of the tree at most twice. If you think about it, we process the
+    nodes once when we actually run our algorithm on them as the current node 'cur'. The second time when we come
+    across the nodes is when we are trying to find our rightmost node
     Space complexity: O(1)
     """
-    if not root:
-        return
     cur = root
     while cur:
         if cur.left:
             rightmost = cur.left
-            while rightmost.right:  # Find the rightmost node
+            while rightmost.right:  # Find the rightmost node that will link to current node's right subtree
                 rightmost = rightmost.right
             # Rewire the connections
             rightmost.right = cur.right
-            cur.right = cur.left
+            cur.right = cur.left  # Use current node's left subtree to replace its right subtree
             cur.left = None
         cur = cur.right  # If the current node has no left child, we simply move on to the right hand side
 
