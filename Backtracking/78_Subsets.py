@@ -42,7 +42,18 @@ def subsets_v1(nums):
 def subsets_v2(nums):
     """ DFS recursively. At each index i, add the current element to the current subset, recursively find the subsets
         that include nums[i], and finally retract nums[i] from the current subset to explore other possibilities.
-    Time complexity: O(N * 2^N), here are 2^N subsets to generate and each one takes O(N) time to copy into 'res'
+        We define a backtrack function named compute_subsets_at_index(index, subset) which takes the index of first
+        element to add and a current combination 'subset' as arguments.
+            - If the current combination is done, we add the combination to the final output
+            - Otherwise, we iterate over the indexes i from 'index' to the length of the entire sequence n:
+                - Add integer nums[i] into the current combination 'subset'
+                - Proceed to add more integers into the combination : compute_subsets_at_index(i + 1, subset).
+                - Backtrack by removing nums[i] from 'subset'
+    Time complexity: O(N * 2^N), there are 2^N subsets to generate and each one takes O(N) time to copy into 'res'.
+    The recursive function is called 2^N times. Because we have 2 choices at each iteration in nums array: Either we
+    include nums[i] in the current set, or we exclude nums[i]. We need to create a copy of the current set because we
+    reuse the original one to build all the valid subsets. This copy costs O(N) and it is performed at each call of the
+    recursive function, which is called 2^N times. So total time complexity is O(N * 2^N).
     Space complexity: O(N), for call stack
     """
 
