@@ -19,16 +19,24 @@ def subsets_v1(nums):
             num = 1 -> [[], [1]]
             num = 2 -> [[], [1], [2], [1, 2]]
             num = 3 -> [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+        The solution comes from the observation that the subsets are 'nested', meaning it is easy to construct a subset
+        of n numbers if we already know what is the subset of the first (n - 1) numbers, where the base case for n = 0
+        is an empty subset S = {}. Then we can obtain S_n from S_(n-1) in the following way:
+
+            S_n = {S_(n-1), S_(n-1) + n)}
+
+        S_(n-1) + n is obtained by appending n to each element in S_(n-1).
+        For example, S_(1) = {{}, {1}}, then S_(2) = {S_(1), S_(1) + 2} = {S_(1), {2}, {1,2}} = {{}, {1}, {2}, {1,2}}.
     Time complexity: O(2^N)
     Space complexity: O(1)
     """
-    res = [[]]
+    all_subsets = [[]]
     for num in nums:
         temp = []
-        for l in res:
-            temp.append(l + [num])
-        res.extend(temp)
-    return res
+        for subset in all_subsets:
+            temp.append(subset + [num])
+        all_subsets.extend(temp)
+    return all_subsets
 
 
 def subsets_v2(nums):
