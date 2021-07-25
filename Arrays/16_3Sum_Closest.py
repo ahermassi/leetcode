@@ -5,30 +5,29 @@ import unittest2 as unittest
 
 
 def three_sum_closest(nums, target):
-    """ First, sort the list. Then, use 3 pointers to point current element, next element and the last element. If the
+    """ First, sort the list. Then, use 3 pointers to point to current element, next element and the last element. If the
         sum is less than target, it means we have to add a larger element so next element moves to the next. If the sum
         is greater, it means we have to add a smaller element so last element moves to the second last element. Keep
         doing this until the end. Each time compare the gap between sum and target, and if it is less than the minimum
         gap found so far, then the current sum is the best we could achieve so far.
     Time complexity: O(N^2)
-    Space complexity: O(1)
+    Space complexity: O(N), for sorting
     """
     nums.sort()
-    n, res, = len(nums), nums[0] + nums[1] + nums[2]  # Initial result could be any 3 elements. This could be the sum
-    # of any 3 elements but not a random number
+    n, closest_sum, = len(nums), float('inf')
     for i in range(n - 2):
         left, right = i + 1, n - 1
         while left < right:
-            s = nums[i] + nums[left] + nums[right]
-            if s == target:  # A gap of 0 between target and s. We can't achieve better.
-                return s
-            if abs(target - s) < abs(target - res):
-                res = s
-            if s < target:
+            cur_sum = nums[i] + nums[left] + nums[right]
+            if cur_sum == target:  # A gap of 0 between target and cur_sum. We can't achieve better.
+                return cur_sum
+            if abs(target - cur_sum) < abs(target - closest_sum):
+                closest_sum = cur_sum
+            if cur_sum < target:
                 left += 1
             else:
                 right -= 1
-    return res
+    return closest_sum
 
 
 class Test(unittest.TestCase):
