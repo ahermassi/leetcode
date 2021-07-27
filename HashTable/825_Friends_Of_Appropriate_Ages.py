@@ -38,10 +38,12 @@ def num_friend_requests_v1(ages):
 def num_friend_requests_v2(ages):
     """ Since the condition age_a > 100 and age_a < 100 is covered by age_b > age_a, we can conclude that A can friend
         request B if and only if 0.5 * age_a + 7 < age_b <= age_a holds.
-        Note that if 0.5 * age_a + 7 >= age[A], i.e., age_a <= 14, then the above condition won't hold. Thus the
-        complete conditions for A friend request B are:
+        Note that if age_a <= 14, then 0.5 * age_a + 7 <= age_a won't hold. Thus the complete conditions for A friend
+        request B are:
+
             1) age_a > 14
             2) 0.5 * age_a + 7 < age_b <= age_a
+
         People younger than 15 cannot make requests due to the first rule.
         From the age of 15, people can make requests to the same age: counter_a * (counter_a - 1) requests.
         People can make requests to younger people older than 0.5 * age_a + 7: counter_a * counter_b requests
