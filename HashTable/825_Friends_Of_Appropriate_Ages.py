@@ -15,11 +15,13 @@ def num_friend_requests_v1(ages):
     """ Instead of processing all 20000 people, we can process pairs of (age, count) representing how many people are
         that age. Since there are only 120 possible ages, this is a much faster loop.
         For each pair (age_a, count_a), (age_b, count_b), if the conditions are satisfied with respect to age, then
-        count_a * count_b friend requests are made from people of age age_a to people with age age_b.
-        If age_a == age_a, then we over counted: we should have count_a * (count_a - 1) pairs of people making friend
+        (count_a * count_b) friend requests are made from people of age 'age_a' to people of age 'age_b'.
+        If age_a == age_b, then we over counted: We should have (count_a * (count_b - 1)) pairs of people making friend
         requests instead, as we cannot friend request ourselves.
         Note that the three rules could be merged into one:
-            The Person with age age_a can request person with age age_b if: age_b is in range ( 0.5 * age_a + 7, age_a ]
+
+            The Person with age age_a can request person with age age_b if: age_b is in range (0.5 * age_a + 7, age_a]
+
         age_b > 100 and age_a < 100 is redundant as the condition is already covered by the second rule.
     Time complexity: O(N + A^2), where N is the number of people and A is the number of ages
     Space complexity: O(A)
