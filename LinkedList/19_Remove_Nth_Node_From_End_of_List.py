@@ -69,6 +69,30 @@ def remove_nth_from_end_v2(head, n):
 
 
 def remove_nth_from_end_v3(head, n):
+    """ One-pass without using a dummy head node.
+        Instead of creating a new head node we can also check if 'fast' is null after we iterate n steps and simply
+        remove the head.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+
+    fast = head
+    for _ in range(n):
+        fast = fast.next
+    if not fast:
+        # If fast is null at the end of the for loop, it means that the nth node from the end is actually the first
+        # node. The while loop is an attempt to move slow to the node before the node to be removed, which obviously
+        # can't happen if the node to be removed is the first node, as there is no node before it. So if fast == null,
+        # then we should just return the list with the first node removed, or head.next.
+        return head.next
+    slow = head
+    while fast.next:
+        slow, fast = slow.next, fast.next
+    slow.next = slow.next.next
+    return head
+
+
+def remove_nth_from_end_v4(head, n):
     """ Recursive solution.
         Recursively advance through the list until the tail is reached. At this point, start moving backwards and keep
         count of number of steps. (n-1)th step lands on the node that needs to be deleted.
