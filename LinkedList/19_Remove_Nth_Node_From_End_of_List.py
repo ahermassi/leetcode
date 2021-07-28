@@ -17,17 +17,16 @@ def remove_nth_from_end_v1(head, n):
     Time complexity: O(N), where N is list length
     Space complexity: O(1)
     """
-    length, temp = 0, head
-    while temp:
+    length, cur = 0, head
+    while cur:
         length += 1
-        temp = temp.next
+        cur = cur.next
     if n == length:  # This is for the case of n == length of list, which means removing head of list
         return head.next
-    length -= n
-    temp = head
-    for _ in range(length - 1):
-        temp = temp.next
-    temp.next = temp.next.next
+    cur = head
+    for _ in range(length - n - 1):
+        cur = cur.next
+    cur.next = cur.next.next
     return head
 
 
