@@ -43,18 +43,16 @@ def max_level_sum_v2(root):
         if not root:
             return
         level_sum[cur_level] += root.val
-        number_of_levels[0] = max(number_of_levels[0], cur_level)
         dfs(root.left, cur_level + 1)
         dfs(root.right, cur_level + 1)
 
     level_sum = defaultdict(int)
-    number_of_levels = [1]  # Total number of levels in the tree. Used to iterate over the map keys in ascending order
-    max_sum, res = float('-inf'), -1
+    max_sum, max_level = float('-inf'), -1
     dfs(root, 1)
-    for i in range(1, number_of_levels[0] + 1):
-        if level_sum[i] > max_sum:
-            max_sum, res = level_sum[i], i
-    return res
+    for level, s in level_sum.items():  # Python 3 dictionaries preserve the insertion order of keys
+        if s > max_sum:
+            max_sum, max_level = s, level
+    return max_level
 
 
 
