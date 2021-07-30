@@ -24,3 +24,20 @@ def find_diagonal_order_v1(nums):
     for values in diagonals.values():
         res.extend(values[::-1])
     return res
+
+
+def find_diagonal_order_v2(nums):
+    """ To avoid reversing the values, we can iterate starting from the bottom rows as theey are the starting values of
+        the diagonals.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    diagonals = defaultdict(list)
+    n = len(nums)
+    for i in reversed(range(n)):
+        for j in range(len(nums[i])):
+            diagonals[i + j].append(nums[i][j])
+    res = []
+    for values in diagonals.values():
+        res.extend(values)
+    return res
