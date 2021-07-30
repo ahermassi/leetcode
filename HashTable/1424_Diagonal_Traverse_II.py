@@ -1,7 +1,7 @@
 """ Given a list of lists of integers, nums, return all elements of nums in diagonal order as shown in the below images.
 """
 
-from collections import defaultdict
+from collections import defaultdict, deque
 
 
 def find_diagonal_order_v1(nums):
@@ -40,4 +40,26 @@ def find_diagonal_order_v2(nums):
     res = []
     for values in diagonals.values():
         res.extend(values)
+    return res
+
+
+def find_diagonal_order_v3(nums):
+    """ We can think of the given matrix as a tree and use BFS to solve this problem.
+        The top-left number, nums[0][0], is the root node. nums[1][0] is its left child, and nums[0][1] is its right
+        child. Same analogy applies to all nodes nums[i][j].
+        Note that nums[i][j] is both the left child of nums[i-1][j] and the right child of nums[i][j-1]. To avoid
+        double counting, we only consider a number's left child when we are at the leftmost column (j == 0).
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, res = len(nums), []
+    queue = deque([(0, 0)])
+    while queue:
+        row, col = queue.popleft()
+        res.append(nums[row][col])
+        if col == 0 and row < n - 1:  # We only add the number at the bottom (left child) if we are at column 0. This
+            # is because this node couldn't have been added by a parent node to its left as a right child
+            queue.append((row + 1, col))
+        if col < len(nums[row]) - 1:  # Add the number on the right (right child)
+            queue.append((row, col + 1))
     return res
