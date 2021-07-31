@@ -49,16 +49,16 @@ def is_bipartite_v2(graph):
     Time complexity: O(V + E)
     Space complexity: O(E)
     """
-    n, colors = len(graph), {}
+    n, colors = len(graph), dict()
     for i in range(n):
         if i not in colors:
             stack = [(i, 0)]
             while stack:
                 vertex, color = stack.pop()
+                if vertex in colors and colors[vertex] != color:
+                    return False
                 colors[vertex] = color
                 for neighbor in graph[vertex]:
-                    if neighbor in colors and colors[neighbor] == color:
-                        return False
                     if neighbor not in colors:
                         stack.append((neighbor, 1 - color))
     return True
