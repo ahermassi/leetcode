@@ -14,22 +14,29 @@ def is_bipartite_v1(graph):
         We should be able to greedily color the graph if and only if it is bipartite.
         We'll keep a hash map to lookup the color of each node.
         IMPORTANT: We should be careful to consider disconnected components of the graph, by searching each node.
+        For each node:
+            - If it hasn't been colored, use a color to color it. Then use the other color to color all its adjacent
+              nodes (DFS).
+            - If it has been colored, check if the current color is the same as the color that is going to be used to
+              color it.
     Time complexity: O(V + E), where V is the number of vertices in the graph, and E is the number of edges. We explore
     each node once when we transform it from uncolored to colored, traversing all its edges in the process.
     Space complexity: O(V + E), the space used to store the colors and the call stack
     """
 
     def dfs(vertex, color):
+        if vertex in colors:
+            # This vertex is the neighbor of a previously explored vertex and has been already colored..
+            return colors[vertex] == color
+            # so check if its current color is the same as the color that was going to be used to color it.
         colors[vertex] = color
         for neighbor in graph[vertex]:
-            if neighbor in colors and colors[neighbor] == color:  # Immediate neighbor has the same color
-                return False
-            if neighbor not in colors and not dfs(neighbor, 1 - color):  # Color the neighbor with the opposite color
-                # and carry on coloring neighbors of neighbor using alternate colors
+            if not dfs(neighbor, 1 - color):  # Color the neighbor with the opposite color and carry on coloring
+                # neighbors of neighbor using alternate colors
                 return False
         return True
 
-    n, colors = len(graph), {}
+    n, colors = len(graph), dict()
     for vertex in range(n):  # Since the graph may not be strongly connected, we must examine each vertex and run DFS
         # from it if it has not already been colored
         if vertex not in colors and not dfs(vertex, 0):
