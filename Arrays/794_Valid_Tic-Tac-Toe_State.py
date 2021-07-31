@@ -11,16 +11,15 @@ def valid_tic_tac_toe(board):
         - Since players take turns, the number of 'X's must be equal to or one greater than the number of 'O's
         - If the first player wins, the number of 'X's is one more than the number of 'O's
         - If the second player wins, the number of 'X's is equal to the number of 'O's
-        - The board can't simultaneously have three 'X's and three 'O's in a row: once one player has won (on their
+        - The board can't simultaneously have three 'X's and three 'O's in a row: Once one player has won (on their
           move), there are no subsequent moves
-        - Number of 'X' is equal to number of 'O', but 'X' wins. It is impossible because if X wins, the game is over
-          and 'O' cannot play again, so the number of 'O' MUST be less than 'X'
-        - Number of 'X' is more than number of 'O', but 'O' wins. It is impossible because if 'O' wins, the game is
-          over and 'X' cannot play again, so the number of 'X' CANNOT be greater than 'O'.
+        - If X wins, the game is over and 'O' cannot play again, so the number of 'O' MUST be less than 'X'. Since
+          player X plays the first move, if player X wins, the player X's count would be 1 more than player O.
+        - If 'O' wins, the game is over and 'X' cannot play again, so the number of 'X' CANNOT be greater than 'O'.
         We'll count the number of 'X's and 'O's as 'x_count' and 'o_count'. 'rows' stores the number of X or O in each
         row. 'cols' stores the number of X or O in each column. 'diagonal' stores the number of X or O in diagonal.
-        'anti_diagonal' stores the number of X or O in anti-diagonal. When any of the value gets to 3, it means X wins.
-        When any of the value gets to -3, it means O wins.
+        'anti_diagonal' stores the number of X or O in anti-diagonal. When any of the values gets to 3, it means X wins.
+        When any of the values gets to -3, it means O wins.
         After, we just have to check our conditions as stated above.
         Since X starts first, x_count >= o_count. So if o_count > x_count, we can return False.
         Since the players take turns, we could also return False if x_count > o_count + 1.
@@ -31,15 +30,16 @@ def valid_tic_tac_toe(board):
     x_count = o_count = 0
     rows, cols = [0] * 3, [0] * 3
     diagonal = anti_diagonal = 0
-    for i, row in enumerate(board):
-        for j, c in enumerate(row):
+    for i in range(3):
+        for j in range(3):
+            c = board[i][j]
             if c == ' ':
                 continue
-            add = [-1, 1][c == 'X']
             if c == 'X':
                 x_count += 1
             else:
                 o_count += 1
+            add = [-1, 1][c == 'X']
             rows[i] += add
             cols[j] += add
             if i == j:
@@ -48,8 +48,9 @@ def valid_tic_tac_toe(board):
                 anti_diagonal += add
     if o_count > x_count or x_count > o_count + 1:
         return False
-    x_won = 3 in {rows[0], rows[1], rows[2], cols[0], cols[1], cols[2], diagonal, anti_diagonal}
-    o_won = -3 in {rows[0], rows[1], rows[2], cols[0], cols[1], cols[2], diagonal, anti_diagonal}
+    win_values = {rows[0], rows[1], rows[2], cols[0], cols[1], cols[2], diagonal, anti_diagonal}
+    x_won = 3 in win_values
+    o_won = -3 in win_values
     if x_won and o_won:
         return False
     if x_won and x_count != o_count + 1:
