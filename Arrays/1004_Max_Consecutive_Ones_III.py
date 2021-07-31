@@ -4,7 +4,7 @@ Return the length of the longest (contiguous) sub-array that contains only 1s. "
 import unittest2 as unittest
 
 
-def longest_ones_v1(A, K):
+def longest_ones_v1(nums, K):
     """ We can use a simple sliding window approach to solve this problem. The solution is pretty intuitive. We keep
         expanding the window by moving the right pointer. When the window has reached the limit of 0's allowed, we
         contract (if possible) and save the longest window till now. The answer is the longest desirable window.
@@ -14,21 +14,24 @@ def longest_ones_v1(A, K):
         the window are in the allowed range of [0, K].
         Once we have a window which has more than the allowed number of 0's, we can move the left pointer ahead one by
         one until we encounter 0 on the left too. This step ensures we are throwing out the extra zero.
+        Note that using a 'while' loop means we always have a valid window, not only a window whose size is equal to
+        the maximum size of a valid window.
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    n, res = len(A), 0
-    left = 0
-    for right in range(n):
-        if A[right] == 0:
+    n, res = len(nums), 0
+    left = right = 0
+    while right < n:
+        if nums[right] == 0:
             K -= 1  # If we include a zero in the window we reduce the value of K since K is the maximum zeros allowed
             # in a window.
         while K < 0:  # A negative K denotes we have consumed all allowed flips and window has more than allowed zeros.
             # We need to advance the left pointer until the current window is valid
-            if A[left] == 0:  # If the left element to be thrown out is zero we increase K
+            if nums[left] == 0:  # If the left element to be thrown out is zero we increase K
                 K += 1
             left += 1
         res = max(res, right - left + 1)
+        right += 1
     return res
 
 
