@@ -70,16 +70,16 @@ def is_bipartite_v3(graph):
     Time complexity: O(V + E)
     Space complexity: O(E)
     """
-    n, colors = len(graph), {}
+    n, colors = len(graph), dict()
     for i in range(n):
         if i not in colors:
             queue = deque([(i, 0)])
             while queue:
                 vertex, color = queue.popleft()
+                if vertex in colors and colors[vertex] != color:
+                    return False
                 colors[vertex] = color
                 for neighbor in graph[vertex]:
-                    if neighbor in colors and colors[neighbor] == color:
-                        return False
                     if neighbor not in colors:
                         queue.append((neighbor, 1 - color))
     return True
