@@ -13,17 +13,33 @@ def combination_sum_v1(candidates, target):
         where to start adding candidates. At every step that is taken to complete a path, only elements explored from
         that point onwards are considered. As a result, extending the path always involves adding a larger or equal
         number to what was previously present. That is why it stays unique.
-    Time complexity: O(#candidates ^ target)
-    Space complexity: O(target) for call stack
+        An important detail on choosing the next number for the combination is that we select the candidates in order,
+        where the total candidates are treated as a list. Once a candidate is added into the current combination, we
+        will not look back to all the previous candidates in the next explorations.
+    Time complexity: O(#candidates ^ (target/m)), where m is the minimal value among the candidates. The total number
+    of steps during the backtracking would be the number of nodes in the execution tree. The fan-out of each node would
+    be bounded to the total number of candidates (number of choices). The maximal depth of the tree would be (target/m),
+    where we keep on adding the smallest candidate to the combination. Note that the actual number of nodes in the
+    execution tree would be much smaller than the upper bound, since the fan-out of the nodes are decreasing level by
+    level.
+    Space complexity: O(target/m), for the call stack. The number of recursive calls can pile up to (target/m), where
+    we keep on adding the smallest element to the combination
     """
 
-    def dfs(index, path, remaining):
-        if remaining == 0:
-            res.append(path)
+    def dfs(index, combination, remaining):
+        # This function call populates the combinations, starting from the current combination 'combination', the
+        # remaining sum to fulfill 'remaining', and the current cursor 'index' to the list of candidates.
+        if remaining < 0:  # There is no use in exploring a combination that sums beyond target
             return
-        for i in range(index, n):  # We include 'index' because we're allowed to choose the same number multiple times
-            if candidates[i] <= remaining:  # There is no use in exploring a combination that sums to beyond target
-                dfs(i, path + [candidates[i]], remaining - candidates[i])
+        if remaining == 0:
+            res.append(combination)
+            return
+        for i in range(index, n):  # We include 'index' because we're allowed to choose the same number multiple times.
+            # We are giving the element another chance in the next exploration, since the combination can contain
+            # duplicate numbers.
+            # With each iteration of the for loop, we will reduce the number of candidates. This is important to prevent
+            # duplicates.
+            dfs(i, combination + [candidates[i]], remaining - candidates[i])
 
     n, res = len(candidates), []
     dfs(0, [], target)
@@ -65,6 +81,7 @@ def combination_sum_v3(candidates, target):
     Time complexity: O(#candidates ^ target)
     Space complexity: Space complexity: O(target) for call stack
     """
+
     def dfs(index, remaining):
         if remaining == 0:
             res.append(path[:])  # This is the difference: we append a copy of the path as it is used throughout the
