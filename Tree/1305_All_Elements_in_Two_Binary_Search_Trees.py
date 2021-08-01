@@ -35,3 +35,31 @@ def get_all_elements_v1(root1, root2):
     elif j < m:
         res.extend(vals2[j:])
     return res
+
+
+def get_all_elements_v2(root1, root2):
+    """ A more elegant way here is to iteratively build inorder traversals for both trees in parallel, and at each step
+        update the output list by the smallest value between both trees. That will be a one pass solution.
+    Time complexity: O(N + M)
+    Space complexity: O(N + M)
+    """
+    stack1, stack2 = [], []
+    res = []
+    while stack1 or stack2 or root1 or root2:
+        # Update both stacks by going left till we no longer can
+        while root1:
+            stack1.append(root1)
+            root1 = root1.left
+        while root2:
+            stack2.append(root2)
+            root2 = root2.left
+        # Add the smallest value into output, pop it from the stack, and then go one step right
+        if not stack2 or stack1 and stack1[-1].val < stack2[-1].val:
+            node = stack1.pop()
+            res.append(node.val)
+            root1 = node.right
+        else:
+            node = stack2.pop()
+            res.append(node.val)
+            root2 = node.right
+    return res
