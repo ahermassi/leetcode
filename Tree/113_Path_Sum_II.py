@@ -40,20 +40,20 @@ def path_sum_v1(root, sum):
 
 
 def path_sum_v2(root, sum):
-    """ Good old DFS using stack.
+    """ Good ol' iterative DFS using stack.
     Time complexity: O(N)
-    Space complexity: in the worst case, the tree is completely unbalanced and we would keep all N nodes in the stack
-    so O(N); in the best case (the tree is completely balanced), it is O(log N) which is the height of the tree
+    Space complexity: In the worst case, the tree is completely unbalanced and we would keep all N nodes in the stack
+    so O(N); in the best case (the tree is completely balanced), it is O(logN) which is the height of the tree
     """
     if not root:
         return None
     stack, res = [(root, [], sum)], []
     while stack:
-        node, path, s = stack.pop()
-        if node.val == s and not node.left and not node.right:
+        node, path, remaining = stack.pop()
+        if node.val == remaining and not node.left and not node.right:
             res.append(path + [node.val])
         else:
-            stack.extend([(kid, path + [node.val], s - node.val) for kid in (node.right, node.left) if kid])
+            stack.extend([(kid, path + [node.val], remaining - node.val) for kid in (node.right, node.left) if kid])
     return res
 
 
