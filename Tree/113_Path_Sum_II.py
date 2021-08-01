@@ -58,29 +58,45 @@ def path_sum_v2(root, sum):
 
 
 def path_sum_v3(root, sum):
-    """ Same as previous solution, but with a backtracking flavor .
-        During the execution, we first blindly add (or use) the node, and check if it satisfies the condition we expect
-        to meet. If it does, we add the path to the resulting list. After removing ourselves from the partial list, we
-        basically say "let's try this without me" and explore other branches of decision tree.
-        Here, we are using the same vector path to save the result. If we don't use path.pop(), after we call helper()
-        on the left branch, the path will contain all the elements that it were pushed on the left branch. This way,
-        when we call helper() on the right branch, the result on the right branch will be screwed.
+    """ DFS with a backtracking flavor.
+        During the execution, we first blindly add (or use) the current node and check if it satisfies the condition
+        we expect to meet. If it does, we add the path to the resulting list. After removing ourselves from the partial
+        list, we basically say "let's try this without me" and explore other branches of the decision tree.
+        Here, we are using the same vector path to save the result. If we don't use path.pop(), after we call dfs()
+        on the left branch, the path will contain all the elements that were pushed on the left branch. This way, when
+        we call dfs() on the right branch, the result on the right branch will be screwed.
+        Let's say the sum is 8, and we are at node 4, see the tree below:
+
+                1
+               / \
+              2   3
+             / \
+            4   5
+        The current solution array is [1, 2, 4], as 4 is the leaf node, we are done with this path. The next node we
+        need to scan is 5, and the solution list should look like [1, 2, 5] which represents the correct path, that's
+        why we need to remove 4 from the solution array, otherwise, the solution array will be [1, 2, 4, 5].
     Time complexity: O(N^2), for tree traversal and copying the list of nodes
     Space complexity: O(N)
     """
-    def helper(root, sum, path):
+    def dfs(root, remaining, path):
         if not root:
             return
         path.append(root.val)
-        if not root.left and not root.right and root.val == sum:
-            res.append(path[:])  # Notice how we add a copy, otherwise we'll store a REFERENCE to path not path itself
+        if root.val == remaining and not root.left and not root.right:
+            res.append(path[:])  # Notice how we add a copy, otherwise we'll store a REFERENCE to path not path itself.
+            # Without copying the items from 'path' into a new list, 'res' will contain a reference to the 'path'
+            # array, not the array content itself, so changes to 'path' will create changes to the specified index of
+            # 'res'.
         else:
-            helper(root.left, sum - root.val, path)
-            helper(root.right, sum - root.val, path)
-        path.pop()  # Remove current node
+            dfs(root.left, remaining - root.val, path)
+            dfs(root.right, remaining - root.val, path)
+        path.pop()  # Remove current node. This is the backtracking point. If we execute two recursive calls in the
+        # else branch and still can't get a match 'path', this means the current node which was already added into the
+        # list 'path' can not lead us to the correct answer, so we need to remove it from 'path' and try other possible
+        # branches. This is what backtracking is all about.
 
     res = []
-    helper(root, sum, [])
+    dfs(root, sum, [])
     return res
 
 
