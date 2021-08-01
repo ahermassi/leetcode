@@ -52,22 +52,22 @@ def combination_sum_v2(candidates, target):
         Sorting is not for correctness but for speed. What we do by sorting is we limit the range of numbers on which
         we call DFS recursively, as we know the numbers outside the range cannot be in our solution. For small inputs,
         this speed up may not be substantial. For larger inputs, sorting will definitely give a faster solution.
-    Time complexity: O(#candidates ^ (target/min(candidates))), the largest number of elements in a combination sum
-    would be [min(candidates), min(candidates), min(candidates) ...] (think when candidates = [1, 2, 3] and
-    target = 1000), and to get the upper bound, we can say that for each element in the max length combination array,
-    we can pick from any of the elements we are given.
-    Space complexity: O(target) for call stack
+    Time complexity: O(#candidates ^ (target/m)), the largest number of elements in a combination sum would be
+    [min(candidates), min(candidates), min(candidates) ...] (think when candidates = [1, 2, 3] and target = 1000), and
+    to get the upper bound, we can say that for each element in the max length combination array, we can pick from any
+    of the elements we are given.
+    Space complexity: O(target), for call stack
     """
 
-    def dfs(index, path, remaining):
+    def dfs(index, combination, remaining):
         if remaining == 0:
-            res.append(path)
+            res.append(combination)
             return
         for i in range(index, n):
             if candidates[i] > remaining:  # If one 'candidate' in bigger than 'remaining', the remaining items must
-                # bigger than 'remaining', so break early
+                # be bigger than 'remaining', so break early. No use exploring a combination that sums beyond 'target'
                 break
-            dfs(i, path + [candidates[i]], remaining - candidates[i])
+            dfs(i, combination + [candidates[i]], remaining - candidates[i])
 
     n, res = len(candidates), []
     candidates.sort()
