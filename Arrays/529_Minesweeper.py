@@ -16,6 +16,8 @@ If an empty square 'E' with at least one adjacent mine is revealed, then change 
 the number of adjacent mines.
 Return the board when no more squares will be revealed. """
 
+from collections import deque
+
 
 def update_board_v1(board, click):
     """ This is a typical search problem the can be solved using DFS. Search rules:
@@ -48,4 +50,33 @@ def update_board_v1(board, click):
         board[x][y] = 'X'
     else:
         reveal(x, y)  # Run dfs to reveal the board
+    return board
+
+
+def update_board_v2(board, click):
+    """ Same algorithm using BFS.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, m = len(board), len(board[0])
+    directions = {(-1, 0), (1, 0), (0, -1), (0, 1), (-1, 1), (-1, -1), (1, -1), (1, 1)}
+    x, y = click
+    if board[x][y] == 'M':
+        board[x][y] = 'X'
+        return board
+    queue = deque([(x, y)])
+    while queue:
+        i, j = queue.popleft()
+        if not 0 <= i < n or not 0 <= j < m or board[i][j] != 'E':
+            continue
+        mines_nearby = 0
+        for a, b in directions:
+            if 0 <= i + a < n and 0 <= j + b < m and board[i + a][j + b] == 'M':
+                mines_nearby += 1
+        if not mines_nearby:
+            board[i][j] = 'B'
+            for a, b in directions:
+                queue.append((i + a, j + b))
+        else:
+            board[i][j] = str(mines_nearby)
     return board
