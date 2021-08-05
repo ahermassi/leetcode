@@ -30,7 +30,7 @@ class MyCircularDequeV1(object):
         (retreat 'rear').
         The best way to conceive of how an array deque works is by visualizing it as a circle created by connecting the
         ends of the array. In a non-empty array deque, the content is specified by elements in positions 'front' to
-        'rear' going clockwise.
+        'rear' going clockwise. (See visualization in notes)
     """
 
     def __init__(self, k):
@@ -88,6 +88,99 @@ class MyCircularDequeV1(object):
         if self.isEmpty():
             return -1
         return self.queue[self.rear]
+
+    def isEmpty(self):
+        """ Checks whether the circular deque is empty or not. """
+        return self.size == 0
+
+    def isFull(self):
+        """ Checks whether the circular deque is full or not. """
+        return self.size == self.capacity
+
+
+class Node(object):
+    def __init__(self, val):
+        self.val = val
+        self.next = None
+        self.prev = None
+
+
+class MyCircularDequeV2(object):
+    """ Doubly-linked list implementation.
+        Different than a fixed-size array, a linked list could be more memory efficient, since it does not pre-allocate
+        memory for unused capacity.
+        Similar to 146- LRU Cache, the "real" deque front is the next node of 'front', and the deque's rear is the
+        prev node of 'rear'.
+    """
+
+    def __init__(self, k):
+        """ Initialize your data structure here. Set the size of the deque to be k. """
+        self.front = Node(-1)
+        self.rear = Node(-1)
+        self.front.next = self.rear
+        self.rear.prev = self.front
+        self.capacity = k
+        self.size = 0
+
+    def insertFront(self, value):
+        """ Adds an item at the front of Deque. Return true if the operation is successful. """
+        if self.isFull():
+            return False
+        node = Node(value)
+        # Place the node next to/after 'front'
+        node.next = self.front.next
+        node.prev = self.front
+        self.front.next.prev = node
+        self.front.next = node
+        self.size += 1
+        return True
+
+    def insertLast(self, value):
+        """ Adds an item at the rear of Deque. Return true if the operation is successful. """
+        if self.isFull():
+            return False
+        node = Node(value)
+        # Place the node before 'rear'
+        node.prev = self.rear.prev
+        node.next = self.rear
+        self.rear.prev.next = node
+        self.rear.prev = node
+        self.size += 1
+        return True
+
+    def deleteFront(self):
+        """ Deletes an item from the front of Deque. Return true if the operation is successful. """
+        if self.isEmpty():
+            return False
+        # Delete the node after 'rear'
+        nxt = self.front.next.next
+        nxt.prev = self.front
+        self.front.next = nxt
+        self.size -= 1
+        return True
+
+    def deleteLast(self):
+        """ Deletes an item from the rear of Deque. Return true if the operation is successful. """
+        if self.isEmpty():
+            return False
+        # Delete the node before 'rear'
+        prev = self.rear.prev.prev
+        prev.next = self.rear
+        self.rear.prev = prev
+        self.size -= 1
+        return True
+
+    def getFront(self):
+        """ Get the front item from the deque. """
+        if self.isEmpty():
+            return -1
+        return self.front.next.val
+
+    def getRear(self):
+        """ Get the last item from the deque. """
+        if self.isEmpty():
+            return -1
+        return self.rear.prev.val
 
     def isEmpty(self):
         """ Checks whether the circular deque is empty or not. """
