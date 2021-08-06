@@ -10,22 +10,37 @@ import unittest2 as unittest
 def min_meeting_rooms_v1(intervals):
     """ In the worst case we can assign a new room to all of the meetings but that is not really optimal, right? Unless
         of course they all collide with each other. We need to be able to find out efficiently if a room is available
-        or not for the current meeting and assign a new room only if none of the assigned rooms is currently free.
+        for the current meeting and assign a new room only if none of the assigned rooms is currently free.
         We can't really process the given meetings in any random order. The most basic way of processing the meetings
         is in increasing order of their start times and this is the order we will follow. After all if you're an IT guy,
         you should allocate a room to the meeting that is scheduled for 9 a.m. in the morning before you worry about the
         5 p.m. meeting, right?
-        Instead of manually iterating on every room that's been allocated and checking if the room is available or not,
-        we can keep all the rooms in a min heap where the key for the min heap would be the ending time of meeting.
-        So, every time we want to check if any room is free or not, simply check the topmost element of the min heap as
-        that would be the room that would get free the earliest out of all the other rooms currently occupied. If the
+        Sorting part is easy, but for every meeting how do we find out efficiently if a room is available? At any point
+        in time we have multiple rooms that can be occupied and we don't really care which room is free as long as we
+        find one when required for a new meeting.
+        A naive way to check if a room is available is to iterate on all the rooms and see if one is available when we
+        have a new meeting at hand.
+        Instead of manually iterating on every room that's been allocated and checking if the room is available, we can
+        keep all the rooms in a min heap where the key for the min heap would be the ending time of meeting.
+        So, every time we want to check if ANY room is free or not, simply check the topmost element of the min heap as
+        that would be the room that would get free the EARLIEST out of all the other rooms currently occupied. If the
         room we extracted from the top of the min heap isn't free, then no other room is. So, we can save time here and
         simply allocate a new room.
+        If the room is free, then we extract the topmost element and add it back with the ending time of the current
+        meeting we are processing. If not, then we allocate a new room and add it to the heap.
         After processing all the meetings, the size of the heap will tell us the number of rooms allocated. This will
         be the minimum number of rooms needed to accommodate all the meetings.
+        If we look at these events in a timeline one after the other (like stream data), then this solution is a greedy
+        solution. The heap stores all conflicting events, which must be resolved by independent rooms. The heap's head
+        is the event that has the earliest end/finish time. All other events collide with each other mutually in the
+        heap. When a new event comes (this is the reason that we need to sort by start time), we greedily choose the
+        event A that finished the earliest (this is the reason we use min heap on end time). If the new event does not
+        collide with A, then the new event can reuse A's room by simply EXTENDING A's room to the new event's end time.
+        If the new event collides with A, then it must collide with all events in the heap, so a new room must be
+        created.
         The reason for correctness is the invariant: heap size is always the minimum number of rooms we need so far.
         If the new event collides with everyone, then a new room must be created; if the new event does not collide
-        with someone, then it must not collide with the earliest finish one, so greedily choose that one and re-use
+        with someone, then it must not collide with the earliest finishing one, so greedily choose that one and reuse
         that room. So the invariant is maintained.
     Time complexity: O(N logN), there are two major portions that take up time here: One is sorting of the array that
     takes O(N logN). Then we have the min-heap. In the worst case, all N meetings will collide with each other. In any
@@ -34,17 +49,16 @@ def min_meeting_rooms_v1(intervals):
     Space complexity: O(N), we construct the min-heap and that can contain N elements in the worst case as described
     above in the time complexity
     """
-    if not intervals:
-        return 0
     intervals.sort()
-    heap = []
-    heappush(heap, intervals[0][1])  # Add the first meeting. We have to give a new room to the first meeting
-    for i in range(1, len(intervals)):
-        interval = intervals[i]
-        if interval[0] >= heap[0]:  # If the room due to free up the earliest is free, assign that room to this meeting
-            heappop(heap)
-        heappush(heap, interval[1])  # If a new room is to be assigned, we also add it to the heap
-    return len(heap)
+    earliest_ending = []
+    for start, end in intervals:
+        if earliest_ending and start >= earliest_ending[0]:
+            # If the room due to free up the earliest is free, assign that room to this meeting
+            heappop(earliest_ending)
+        # If a new room is to be assigned, we also add it to the heap. If an old room is reused, then we also have to
+        # add to the heap the updated end time (after removing the room in the previous step)
+        heappush(earliest_ending, end)
+    return len(earliest_ending)
 
 
 def min_meeting_rooms_v2(intervals):
