@@ -33,22 +33,22 @@ def is_valid_bst_v1(root):
 
 
 def is_valid_bst_v2(root):
-    """ Use recursion. Pass down two parameters: lower (which means that all nodes in the the current subtree must
-        be greater than this value) and upper (all must be less than it). Compare root of the current subtree
-        with these two values. Then, recursively check the left and right subtree of the current one. Take care of the
+    """ Use recursion. Pass down two parameters: 'lower' (which means that all nodes in the the current subtree must
+        be greater than this value) and 'upper' (all must be less than it). Compare the root of the current subtree
+        with these two values. Then, recursively check the left and right subtrees of the current one. Take care of the
         values passed down.
     Time complexity: O(N), since we visit each node exactly once
     Space complexity: O(N), since we keep up to the entire tree
     """
 
-    def helper(root, lower, upper):
+    def validate(root, lower, upper):
         if not root:
             return True
         if not lower < root.val < upper:
             return False
-        return helper(root.left, lower, root.val) and helper(root.right, root.val, upper)
+        return validate(root.left, lower, root.val) and validate(root.right, root.val, upper)
 
-    return helper(root, float('-inf'), float('inf'))
+    return validate(root, float('-inf'), float('inf'))
 
 
 def is_valid_bst_v3(root):
