@@ -49,3 +49,24 @@ def longest_arith_seq_length_v1(nums):
                 longest_arithmetic_seq_at_index[i][difference] = longest_arithmetic_seq_at_index[j][difference] + 1
             max_len = max(max_len, longest_arithmetic_seq_at_index[i][difference])
     return max_len
+
+
+def longest_arith_seq_length_v2(nums):
+    """ Same solution using an array of arrays instead of an array of dictionaries.
+        Note that the arithmetic common difference could be negative, therefore we offset the difference by its maximum
+        value to ensure we would never have a negative index in our tabulation. According to the problem statement,
+        0 <= nums[i] <= 500, so the lower bound of difference is (0 - 500 = -500), and its upper bound is
+        (500 - 0 = 500). By offsetting, they become 0 and 1000, respectively. That's why each list is indexed up to
+        1001.
+    Time complexity: O(N^2)
+    Space complexity: O(N^2)
+    """
+    n = len(nums)
+    longest_arithmetic_seq_at_index = [[1] * 1001 for _ in range(n)]
+    max_len = 1
+    for i in range(n):
+        for j in range(i):
+            difference = nums[i] - nums[j] + 500
+            longest_arithmetic_seq_at_index[i][difference] = longest_arithmetic_seq_at_index[j][difference] + 1
+            max_len = max(max_len, longest_arithmetic_seq_at_index[i][difference])
+    return max_len
