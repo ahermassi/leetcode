@@ -83,6 +83,28 @@ def generate_parenthesis_v1(n):
     return res
 
 
+def generate_parenthesis_v2(n):
+    """ Same algorithm but with "explicit" backtracking. Also, string concatenation can be expensive.
+    Time complexity: O(4^n)
+    Space complexity: O(n)
+    """
+    def backtrack(open, close, s):
+        if open == close == n:
+            res.append(''.join(s))
+        if open < n:
+            s.append('(')
+            backtrack(open + 1, close, s)
+            s.pop()
+        if open > close:
+            s.append(')')
+            backtrack(open, close + 1, s)
+            s.pop()
+
+    res = []
+    backtrack(0, 0, [])
+    return res
+
+
 class Test(unittest.TestCase):
     data = [(3, [
         '((()))',
@@ -95,6 +117,7 @@ class Test(unittest.TestCase):
     def test_generate_parenthesis(self):
         for test_pairs, result in self.data:
             self.assertEqual(result, generate_parenthesis_v1(test_pairs))
+            self.assertEqual(result, generate_parenthesis_v2(test_pairs))
 
 
 if __name__ == '__main__':
