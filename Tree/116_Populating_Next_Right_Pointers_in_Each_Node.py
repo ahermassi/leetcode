@@ -18,11 +18,22 @@ def connect_v1(root):
     """ Since we are manipulating tree nodes on the same level, it's easy to come up with a very standard BFS solution
         using queue. But because of next pointer, we actually don't need a queue to store the order of tree nodes at
         each level, we just use a next pointer like it's a linked list at each level.
+        Let's look at the two types of next pointer connections we need to establish for a given tree.
+            - This first case is the one where we establish the next pointers between the two children of a given node.
+              This is the easier of the two cases since both the children are accessible via the same node. We can
+              simply do the following to establish this connection:  node.left.next = node.right
+            - This next case is not too straightforward to handle. In addition to establishing the next pointers
+              between the nodes having a common parent, we also need to set up the correct pointers between nodes which
+              have a different parent. More specifically, it's the link between the right child of a node and the left
+              child of the next node. Since we already have the next pointers set up on the current level, we use this
+              to set up the correct pointers on the next level: node.right.next = node.next.left
         The basic idea for this approach is based on the fact that:
-        We only move on to the level N+1 when we are done establishing the next pointers for the level N. Since we have
-        access to all the nodes on a particular level via the next pointers, we can use these next pointers to
-        establish the connections for the next level or the level containing their children.
-        We establish the next pointers for a level N while we are still on level N−1, and once we are done
+
+            We only move on to the level N+1 when we are done establishing the next pointers for the level N. Since we
+            have access to all the nodes on a particular level via the next pointers, we can use these next pointers
+            to establish the connections for the next level or the level containing their children.
+
+        We establish the next pointers for a level N while we are still on level (N − 1), and once we are done
         establishing these new connections, we move on to N and do the same thing for N+1.
         When we go over the nodes of a particular level, their next pointers are already established. This is what
         helps get rid of the queue data structure and helps save space. To start on a particular level, we just need
