@@ -29,3 +29,26 @@ def count_battleships_v1(board):
                 dfs(i, j)
                 res += 1
     return res
+
+# Follow up: Could you do it in one-pass, using only O(1) extra memory and without modifying the board?
+
+
+def count_battleships_v2(board):
+    """ Going over all cells, we can count only those that are the "first" cell of the battleship. First cell will be
+        defined as the most top-left cell. We can check for first cells by only counting cells that do not have an 'X'
+        to the left and do not have an 'X' above them.
+        At any point on the board, if the cell is an 'X', we need to know if it is part of an existing ship or a new
+        one and count only the new ones. To check if the cell is part of an existing ship, we just need to check if the
+        cell just above (board[i-1][j]) or just to the left (board[i][j-1]) is an 'X'.
+    Time complexity: O(N * M)
+    Space complexity: O(1)
+    """
+    n, m = len(board), len(board[0])
+    res = 0
+    for i in range(n):
+        for j in range(m):
+            if board[i][j] == 'X' \
+                    and (j == 0 or j > 0 and board[i][j - 1] != 'X') \
+                    and (i == 0 or i > 0 and board[i - 1][j] != 'X'):
+                res += 1
+    return res
