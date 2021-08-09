@@ -7,9 +7,12 @@ import unittest2 as unittest
 
 
 def num_islands_v1(grid):
-    """ Iterate through each of the cells, and if it is an island do dfs to mark all adjacent islands, then increase
-        the counter by 1.
-        This solution uses a 'visited' set in order to avoid an infinite recursion.
+    """ Treat the 2d grid map as an undirected graph and there is an edge between two horizontally or vertically
+        adjacent nodes of value '1'.
+        Iterate through each of the cells, and if it is an island do DFS to mark all adjacent islands, then increase
+        the counter by 1. This solution uses a 'visited' set in order to avoid an infinite recursion.
+        Count the number of root nodes that trigger DFS, this number would be the number of islands since each DFS
+        starting at some root identifies an island.
     Time complexity: O(N * M), where N is the number of rows in the given grid and M is the number of columns. We visit
     every square once.
     Space complexity: O(N * M), for both 'visited' set and recursion call stack
@@ -18,12 +21,11 @@ def num_islands_v1(grid):
         if not 0 <= i < n or not 0 <= j < m or (i, j) in visited or grid[i][j] == '0':
             return
         visited.add((i, j))
-        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            dfs(x, y)
+        for x, y in directions:
+            dfs(i+x, j+y)
 
-    if not grid:
-        return 0
     n, m, res, visited = len(grid), len(grid[0]), 0, set()
+    directions = {(-1, 0), (1, 0), (0, -1), (0, 1)}
     for i in range(n):
         for j in range(m):
             if grid[i][j] == '1' and (i, j) not in visited:
