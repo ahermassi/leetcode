@@ -44,12 +44,11 @@ def num_islands_v2(grid):
         if not 0 <= i < n or not 0 <= j < m or grid[i][j] == '0':
             return
         grid[i][j] = '0'
-        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            dfs(x, y)
+        for x, y in directions:
+            dfs(i+x, j+y)
 
-    if not grid:
-        return 0
     n, m, res = len(grid), len(grid[0]), 0
+    directions = {(-1, 0), (1, 0), (0, -1), (0, 1)}
     for i in range(n):
         for j in range(m):
             if grid[i][j] == '1':
