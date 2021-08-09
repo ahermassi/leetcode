@@ -63,10 +63,82 @@ def num_islands_v3(grid):
         Search. Put it into a queue and and mark it as visited node. Iteratively search the neighbors of enqueued nodes
         until the queue becomes empty.
     Time complexity: O(N * M)
-    Space complexity: not clear
+    Space complexity: O(min(N, M)). Considering BFS always starts from the upper left corner, grid[0][0], and BFS is
+    scanning by the order of the same depth/level (FIFO), so there is no way an element can be added into the queue
+    after we have already scanned it at that same position. Which leads to the maximum size of queue should be the
+    maximum diagonal length of the grid, same as, min(N, M) (Find visualization in notes).
+    Think about an example where dif(N, M) is big like 3x1000 grid. The worst case is when we start from the middle of
+    the grid. Imagine how the processed points form a shape in the grid. It will be like a diamond and at some point it
+    will reach the longer edge of the grid. The possible shape at time t would be:
+        ......QXXXQ.........
+        ....QXXXXXQ........
+        ......QXXXQ.........
+    So in this specific example (Q: points in the queue, .: not processed, X: processed) the number of the items in the
+    queue is proportional to 3 because the smallest side limits the expanding. So the actual value will be min(N, M).
+    Example: Lets consider the below 3x4 grid. X denotes cells in the queue. The max space occupied by the queue in the
+    below example is 3 which min(N, M).
+
+        1 1 1 1
+        1 1 1 1
+        1 1 1 1
+
+        Step 1
+        0 X 1 1
+        X 1 1 1
+        1 1 1 1
+
+        Step 2
+        0 X 1 1
+        0 X 1 1
+        X 1 1 1
+
+        Step 3
+        0 0 X 1
+        0 X 1 1
+        X 1 1 1
+
+        Step 4
+        0 0 X 1
+        0 X 1 1
+        0 X 1 1
+
+
+
+        Step 6
+        0 0 0 X
+        0 0 X 1
+        0 X 1 1
+
+        Step 7
+        0 0 0 X
+        0 0 X 1
+        0 0 X 1
+
+        Step 8
+        0 0 0 X
+        0 0 0 X
+        0 0 X 1
+
+        Step 9
+        0 0 0 0
+        0 0 0 X
+        0 0 X 1
+
+        Step 10
+        0 0 0 0
+        0 0 0 X
+        0 0 0 X
+
+        Step 11
+        0 0 0 0
+        0 0 0 0
+        0 0 0 X
+
+        Step 12
+        0 0 0 0
+        0 0 0 0
+        0 0 0 0
     """
-    if not grid:
-        return 0
     n, m, res, visited = len(grid), len(grid[0]), 0, set()
     for i in range(n):
         for j in range(m):
