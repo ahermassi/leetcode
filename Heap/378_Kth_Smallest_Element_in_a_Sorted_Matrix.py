@@ -36,11 +36,11 @@ def kth_smallest_v1(matrix, k):
         to keep the smallest in the front. As we know, the smallest element in the matrix is at the top left corner,
         so no matter what our choice was (pushing first element of each row or column), the very first element in the
         heap will be always the absolute smallest.
-    Time complexity: O(k logN), First, we inserted N elements from each of the ‘N’ rows, which will take O(N). Then we
-    went through at most K elements in the matrix and removed/added one element in the heap in each step. As we can’t
-    have more than N elements in the heap in any condition, therefore, the overall time complexity of the above
+    Time complexity: O(N + k logN), First, we inserted N elements from each of the ‘N’ rows, which will take O(N).
+    Then we went through at most K elements in the matrix and removed/added one element in the heap in each step. As
+    we can’t have more than N elements in the heap in any condition, therefore, the overall time complexity of the above
     algorithm will be O(N + k logN)
-    Space complexity: O(N) for the heap
+    Space complexity: O(N), for the heap
     """
     heap = []
     for i, row in enumerate(matrix):  # Push the 1st element of each row (= 1st column) to the min heap
