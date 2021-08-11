@@ -86,6 +86,45 @@ def shortest_bridge_v2(grid):
     return 1
 
 
+def shortest_bridge_v3(grid):
+    """ We first paint one of the islands using DFS with color 2, so we can easily identify island #1 and island #2.
+        Then we start expanding the island painted with color 2 until we "bump" into the other island.
+        This approach is only different in the use of a different color to mark visited cells instead of 'visited' set.
+    Time complexity:
+    Space complexity:
+    """
+
+    def dfs(i, j):
+        if not 0 <= i < n or not 0 <= j < n or grid[i][j] != 1:
+            return
+        grid[i][j] = 2
+        queue.append((i, j, 0))
+        for x, y in (-1, 0), (1, 0), (0, -1), (0, 1):
+            dfs(i + x, j + y)
+
+    n = len(grid)
+    queue = deque()
+    first_island_found = False
+    for i in range(n):
+        if first_island_found:
+            break
+        for j in range(n):
+            if grid[i][j]:
+                dfs(i, j)
+                first_island_found = True
+                break
+    while queue:
+        x, y, distance = queue.popleft()
+        for a, b in (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1):
+            if 0 <= a < n and 0 <= b < n and grid[a][b] != 2:
+                if grid[a][b]:
+                    return distance
+                # grid[a][b] != 2 and grid[a][b] != 1 means grid[a][b] == 0
+                grid[a][b] = 2  # Mark visited
+                queue.append((a, b, distance + 1))
+    return 1
+
+
 class Test(unittest.TestCase):
     data = [([[0, 1], [1, 0]], 1), ([[0, 1, 0], [0, 0, 0], [0, 0, 1]], 2),
             ([[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1]], 1)]
@@ -94,6 +133,7 @@ class Test(unittest.TestCase):
         for test_a, result in self.data:
             self.assertEqual(result, shortest_bridge_v1(test_a))
             self.assertEqual(result, shortest_bridge_v2(test_a))
+            self.assertEqual(result, shortest_bridge_v3(test_a))
 
 
 if __name__ == '__main__':
