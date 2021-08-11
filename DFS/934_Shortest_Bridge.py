@@ -47,6 +47,45 @@ def shortest_bridge_v1(grid):
     return 1
 
 
+def shortest_bridge_v2(grid):
+    """ Same approach but we count the number of levels before finding the second island. The BFS goes level by level.
+    Time complexity: O(N^2)
+    Space complexity: O(N^2)
+    """
+
+    def dfs(i, j):
+        if not 0 <= i < n or not 0 <= j < n or not grid[i][j] or (i, j) in visited:
+            return
+        visited.add((i, j))
+        queue.append((i, j))  # Add all cells of first island into queue without any level
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            dfs(x, y)
+
+    n, queue, visited = len(grid), deque(), set()
+    first_island_found = False
+    for i in range(n):
+        if first_island_found:
+            break
+        for j in range(n):
+            if grid[i][j]:
+                dfs(i, j)
+                first_island_found = True
+                break
+    level = 0
+    while queue:
+        size = len(queue)
+        for _ in range(size):
+            x, y = queue.popleft()
+            for a, b in (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1):
+                if 0 <= a < n and 0 <= b < n and (a, b) not in visited:
+                    if grid[a][b]:
+                        return level
+                    visited.add((a, b))
+                    queue.append((a, b))
+        level += 1
+    return 1
+
+
 class Test(unittest.TestCase):
     data = [([[0, 1], [1, 0]], 1), ([[0, 1, 0], [0, 0, 0], [0, 0, 1]], 2),
             ([[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1]], 1)]
@@ -54,6 +93,7 @@ class Test(unittest.TestCase):
     def test_shortest_bridge(self):
         for test_a, result in self.data:
             self.assertEqual(result, shortest_bridge_v1(test_a))
+            self.assertEqual(result, shortest_bridge_v2(test_a))
 
 
 if __name__ == '__main__':
