@@ -7,8 +7,8 @@ from collections import deque
 import unittest2 as unittest
 
 
-def shortest_bridge(A):
-    """ Conceptually, our method is very straightforward: find the first island, then keep "growing" it by 1 until we
+def shortest_bridge_v1(grid):
+    """ Conceptually, our method is very straightforward: Find the first island, then keep "growing" it by 1 until we
         touch the second island. We can use a depth-first search to find the island and collect its cells in a queue at
         the same time, and then start a breadth-first search to "grow" the island and find number of bridges (levels)
         until we reach the second island.
@@ -17,35 +17,33 @@ def shortest_bridge(A):
     """
 
     def dfs(i, j):
-        if not 0 <= i < n or not 0 <= j < n or not A[i][j] or (i, j) in visited:
+        if not 0 <= i < n or not 0 <= j < n or not grid[i][j] or (i, j) in visited:
             return
         visited.add((i, j))
-        queue.append((i, j))
+        queue.append((i, j, 0))  # Add all cells of first island into queue as first level as they all can be the
+        # starting points of a later BFS
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
             dfs(x, y)
 
-    n, queue, visited = len(A), deque(), set()
+    n, queue, visited = len(grid), deque(), set()
     first_island_found = False
     for i in range(n):
+        if first_island_found:
+            break
         for j in range(n):
-            if A[i][j]:
+            if grid[i][j]:
                 dfs(i, j)
                 first_island_found = True
                 break
-        if first_island_found:
-            break
-    levels = 0
-    while queue:  # Count number of levels before finding the second island
-        size = len(queue)
-        for _ in range(size):
-            i, j = queue.popleft()
-            for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-                if 0 <= x < n and 0 <= y < n and (x, y) not in visited:
-                    if A[x][y]:  # A[x][y] == 1 and not previously visited: This is the second island!
-                        return levels
-                    visited.add((x, y))
-                    queue.append((x, y))
-        levels += 1
+    while queue:
+        x, y, distance = queue.popleft()
+        for a, b in (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1):
+            if 0 <= a < n and 0 <= b < n and (a, b) not in visited:
+                if grid[a][b]:  # grid[a][b] == 1 and not previously visited: This is the second island!
+                    return distance
+                # (a, b) not in visited and grid[a][b] != 1 means grid[a][b] == 0
+                visited.add((a, b))
+                queue.append((a, b, distance + 1))
     return 1
 
 
@@ -55,7 +53,7 @@ class Test(unittest.TestCase):
 
     def test_shortest_bridge(self):
         for test_a, result in self.data:
-            self.assertEqual(result, shortest_bridge(test_a))
+            self.assertEqual(result, shortest_bridge_v1(test_a))
 
 
 if __name__ == '__main__':
