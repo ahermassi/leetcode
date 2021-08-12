@@ -91,10 +91,10 @@ def find_order_v2(numCourses, prerequisites):
     with 0 in-degree
     """
     graph, indegree = defaultdict(list), [0] * numCourses
-    for src, dest in prerequisites:
-        graph[dest].append(src)  # Create graph, better seen as is_prerequisite_of graph: graph[dest] = src means dest
-        # is a prerequisite of src
-        indegree[src] += 1  # Recording the number of prerequisites each course 'src' has
+    for course, prereq in prerequisites:
+        graph[prereq].append(course)  # Create graph, better seen as is_prerequisite_of graph: graph[prepreq] = course
+        # means 'prereq' is a prerequisite of 'course'
+        indegree[course] += 1  # Recording the number of prerequisites each course has
     queue = deque(course for course in range(numCourses) if indegree[course] == 0)  # Iterate the in-degree list and
     # find the nodes that have 0 in-degree, which maps to 0 prerequisites. If none is found, then there must be a cycle
     # and a topological ordering is not possible.
