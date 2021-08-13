@@ -90,24 +90,27 @@ def shortest_path_binary_matrix_v2(grid):
 
 def shortest_path_binary_matrix_v3(grid):
     """ If we're allowed to modify the grid, we can securely set the visited cells as non-empty to avoid revisiting
-        without using a 'visited' set.
+        without using a 'visited' set. While usually for BFS, we'd need a 'visited' set to avoid infinite looping
+        around cycles, we won't need one for this approach because we're going to overwrite the input, and so only
+        unvisited cells will have a 0 in them. Exploring the cell's neighbors involves identifying all open cells
+        adjacent to the current cell that still have a 0 in them. For each of these cells, we write 1 into them.
     Time complexity: O(N)
     Space complexity: O(N)
     """
     if grid[0][0] or grid[-1][-1]:
         return -1
-    n, m = len(grid), len(grid[0])
+    n = len(grid)
+    directions = {(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)}
     queue = deque([(0, 0, 1)])
     while queue:
         i, j, distance = queue.popleft()
-        if i == n - 1 and j == m - 1:
+        if i == j == n - 1:
             return distance
-        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j - 1), (i - 1, j + 1), (i + 1, j - 1), \
-                    (i + 1, j + 1):
-            if not 0 <= x < n or not 0 <= y < m or grid[x][y]:
-                continue
-            queue.append((x, y, distance + 1))
-            grid[x][y] = 1  # Mark the cell visited
+        for x, y in directions:
+            a, b = i + x, j + y
+            if 0 <= a < n and 0 <= b < n and not grid[a][b] and not grid[a][b]:
+                queue.append((a, b, distance + 1))
+                grid[a][b] = 1  # Mark visited
     return -1
 
 
