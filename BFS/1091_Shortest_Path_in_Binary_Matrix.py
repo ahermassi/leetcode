@@ -1,10 +1,12 @@
 """ In an N by N square grid, each cell is either empty (0) or blocked (1).
 A clear path from top-left to bottom-right has length k if and only if it is composed of cells C_1, C_2, ..., C_k such
 that:
+
 Adjacent cells C_i and C_{i+1} are connected 8-directionally (ie., they are different and share an edge or corner)
 C_1 is at location (0, 0) (ie. has value grid[0][0])
 C_k is at location (N-1, N-1) (ie. has value grid[N-1][N-1])
 If C_i is located at (r, c), then grid[r][c] is empty (ie. grid[r][c] == 0).
+
 Return the length of the shortest such clear path from top-left to bottom-right.  If such a path does not exist,
 return -1. """
 
@@ -53,6 +55,40 @@ def shortest_path_binary_matrix_v1(grid):
 
 
 def shortest_path_binary_matrix_v2(grid):
+    """ BFS works by examining cells in order of distance from the starting point. In other words, all cells at a
+        distance of x are visited before any cells at a distance of (x + 1). Additionally, cells at a distance of x
+        can only enqueue other cells that are at a distance of (x + 1). Therefore, there are at most two unique
+        distances in the queue at any one time.
+        This implementation uses the same BFS property as the above one, but in a different way. At the start, there is
+        exactly 1 cell at a distance of 1. Once we have dequeued and processed that cell, we know all cells currently
+        in the queue must be of distance 2. We can check at this point how many of them there are and then dequeue and
+        process that number of cells. Now we know all of the cells in the queue are of distance 3. This argument
+        extends to the entire grid.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if grid[0][0] or grid[-1][-1]:
+        return -1
+    n = len(grid)
+    directions = {(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)}
+    queue, visited = deque([(0, 0)]), {(0, 0)}
+    distance = 1
+    while queue:
+        size = len(queue)
+        for _ in range(size):  # Process all nodes at distance 'distance' from the top-left cell
+            i, j = queue.popleft()
+            if i == j == n - 1:
+                return distance
+            for x, y in directions:
+                a, b = i + x, j + y
+                if 0 <= a < n and 0 <= b < n and not grid[a][b] and (a, b) not in visited:
+                    queue.append((a, b))
+                    visited.add((a, b))
+        distance += 1  # We'll now be processing all nodes at (distance + 1)
+    return -1
+
+
+def shortest_path_binary_matrix_v3(grid):
     """ If we're allowed to modify the grid, we can securely set the visited cells as non-empty to avoid revisiting
         without using a 'visited' set.
     Time complexity: O(N)
@@ -82,6 +118,7 @@ class Test(unittest.TestCase):
         for test_grid, result in self.data:
             self.assertEqual(result, shortest_path_binary_matrix_v1(test_grid))
             self.assertEqual(result, shortest_path_binary_matrix_v2(test_grid))
+            self.assertEqual(result, shortest_path_binary_matrix_v3(test_grid))
 
 
 if __name__ == '__main__':
