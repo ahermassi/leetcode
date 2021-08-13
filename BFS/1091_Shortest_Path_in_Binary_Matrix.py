@@ -53,6 +53,20 @@ def shortest_path_binary_matrix_v1(grid):
                 visited.add((a, b))
     return -1
 
+# Note: Why adding the cells to 'visited' set after being enqueued gives TLE ?
+# Before or right after we make a new pair to queue, you should add (x, y) to 'visited' right away. Otherwise, on
+# next round we might encounter several traversals to a same node.
+#
+# 0 : unvisited
+# 1 : blocks
+# 2 : current node in queue
+#
+# 021
+# 200
+# 022
+# In this case, we might access grid[1][1] from 4 different nodes, so we should set it as visited once put into the
+# queue.
+
 
 def shortest_path_binary_matrix_v2(grid):
     """ BFS works by examining cells in order of distance from the starting point. In other words, all cells at a
