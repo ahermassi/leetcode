@@ -41,6 +41,20 @@ def find_duplicates(nums):
         nums[index] *= -1
     return res
 
+# Other solutions include:
+
+# Sort and Compare Adjacent Elements:
+# After sorting the list of elements, all elements of equivalent value get placed together. Thus, when we sort the
+# array, equivalent elements form contiguous blocks.
+# Time complexity: O(N logN)
+# Space complexity: O(N)
+
+# Store Seen Elements in a Set / Map:
+# We store all elements that we've seen till now in a map / set. When we visit an element, we query the map / set to
+# figure out if we've seen this element before.
+# Time complexity: O(N)
+# Space complexity: O(N)
+
 
 class Test(unittest.TestCase):
     data = [([4, 3, 2, 7, 8, 2, 3, 1], [2, 3])]
