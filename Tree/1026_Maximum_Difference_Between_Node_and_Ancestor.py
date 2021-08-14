@@ -5,7 +5,9 @@ A node a is an ancestor of b if either: any child of a is equal to b or any chil
 
 
 def max_ancestor_diff_v1(root):
-    """ For each root of each subtree, find the minimum value and maximum value of its left and right subtrees.
+    """ Since the problem asks us the maximum difference, we only need to compare the ancestors with maximum value and
+        minimum value of their descendants.
+        For each root of each subtree, find the minimum value and maximum value of its left and right subtrees.
         The maximum difference between the subtree root and one of its descendants is the max of:
             - The current max calculated so far
             - The (absolute) difference between the root value and the smallest value amongst all its descendants
@@ -31,4 +33,29 @@ def max_ancestor_diff_v1(root):
 
     res = [float('-inf')]
     dfs(root)
+    return res[0]
+
+
+def max_ancestor_diff_v2(root):
+    """ For a given node, we only need the maximum value and the minimum value from the root to this node.
+        To achieve this, we can define a helper function to start recursion, which receives a current node and two
+        integers, the maximum and minimum values along the root to the current node. In the helper, we need to update
+        the maximum difference, the current maximum value, and the current minimum value seen so far.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def dfs(root, min_so_far, max_so_far):
+        if not root:
+            return
+        # min_so_far is the minimum over all node values, which are above our node, that is the minimum among parent,
+        # parent of parent, parent of parent of parent and so on
+        min_so_far = min(root.val, min_so_far)
+        max_so_far = max(root.val, max_so_far)
+        res[0] = max(res[0], max_so_far - min_so_far)
+        dfs(root.left, min_so_far, max_so_far)
+        dfs(root.right, min_so_far, max_so_far)
+
+    res = [float('-inf')]
+    dfs(root, root.val, root.val)
     return res[0]
