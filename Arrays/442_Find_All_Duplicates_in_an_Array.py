@@ -16,8 +16,9 @@ def find_duplicates(nums):
                are integers that lie in the range [0, n-1] which is precisely the set of valid indices for an array of
                length n.
         Iterate over the array, and for every element x in the array negate the value at index (abs(x) - 1).
-        The negation operation effectively marks the value abs(x) as seen/visited. If the number at position
-        (abs(x) - 1) is already negative, it means that abs(x) occurs twice.
+        The negation operation effectively marks the value abs(x) as seen/visited. If the value at position
+        (abs(x) - 1) is already negative, it means that abs(x) must have seen previously in the array. Therefore,
+        we add abs(x) to the result.
         Make sure to use the (abs(x) - 1) to select the index implied by x. That is because the position of x might
         have been marked negative in a previous iteration.
         Example: nums = [4, 3, 2, 7, 8, 2, 3, 1]
