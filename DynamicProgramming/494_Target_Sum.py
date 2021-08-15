@@ -12,7 +12,7 @@ def find_target_sum_ways_v1(nums, target):
         For this, we make use of a recursive function dfs(index, cur_sum), which returns the assignments leading to the
         sum 'target', starting from index 'index' onwards, provided the sum of elements up to the (index -1)th element
         is 'cur_sum'. This function appends a + sign and a - sign both to the element at the current index and calls
-        itself with the updated total as (cur_sum + nums[index]) and (cur_sum - nums[index]) respectively along with
+        itself with the updated cur_sum as (cur_sum + nums[index]) and (cur_sum - nums[index]) respectively along with
         the updated current index as (index + 1). Whenever we reach the end of the array, we compare the sum obtained
         with 'target'. If they are equal, we increment the count value to be returned.
         Thus, the function call dfs(0, 0) returns the required number of assignments.
@@ -32,27 +32,28 @@ def find_target_sum_ways_v1(nums, target):
     return res[0]
 
 
-def find_target_sum_ways_v2(nums, S):
+def find_target_sum_ways_v2(nums, target):
     """ It can be easily observed that in the last approach, a lot of redundant function calls could be made with the
-        same value of 'index' as the current index and the same value of 'total' as the current sum, since the same
+        same value of 'index' as the current index and the same value of 'cur_sum' as the current sum, since the same
         values could be obtained through multiple paths in the recursion tree. In order to remove this redundancy,
         we make use of memoization as well to store the results which have been calculated earlier.
-        Thus, for every call to dfs(index, total), we store the result obtained in memo[(index, total)]. By making use
-        of memoization, we can prune the search space to a good extent.
+        Thus, for every call to dfs(index, cur_sum), we store the result obtained in memo[(index, cur_sum)]. By making
+        use of memoization, we can prune the search space to a good extent.
     Time complexity: O(N * L), where L = (largest sum that can be created - smallest sum that can be created). For
     example, for input array [1, 2, 3], the largest sum that can be created from input is 1 + 2 + 3 = 6, and the
     smallest sum that can be created is -1 - 2 - 3 = -6, so L= 6- (-6) = 12
     Space complexity: O(N)
     """
 
-    def dfs(index, total):
+    def dfs(index, cur_sum):
         if index == n:
-            return 1 if total == S else 0
-        if (index, total) not in memo:
-            plus = dfs(index + 1, total + nums[index])
-            minus = dfs(index + 1, total - nums[index])
-            memo[(index, total)] = plus + minus
-        return memo[(index, total)]
+            return 1 if cur_sum == target else 0
+        if (index, cur_sum) in memo:
+            return memo[(index, cur_sum)]
+        plus = dfs(index + 1, cur_sum + nums[index])
+        minus = dfs(index + 1, cur_sum - nums[index])
+        memo[(index, cur_sum)] = plus + minus
+        return memo[(index, cur_sum)]
 
     n, memo = len(nums), {}
     return dfs(0, 0)
