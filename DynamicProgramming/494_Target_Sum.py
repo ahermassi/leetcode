@@ -102,7 +102,7 @@ def find_target_sum_ways_v3(nums, target):
     # 'target' using the first (n-1) elements, or the entire array
 
 
-def find_target_sum_ways_v4(nums, S):
+def find_target_sum_ways_v4(nums, target):
     """ If we look closely at the last solution, we can observe that for the evaluation of the current row of dp,
         only the values of the last row of dp are needed. Thus, we can save some space by using a 1D dp array instead
         of a 2D dp array. The only difference that needs to be made is that now the same dp array will be updated for
@@ -110,20 +110,21 @@ def find_target_sum_ways_v4(nums, S):
     Time complexity: O(N * L)
     Space complexity: O(L)
     """
-    n, s = len(nums), sum(nums)
-    if S > s or S < -s:
+    n, nums_sum = len(nums), sum(nums)
+    if nums_sum < target or -nums_sum > target:
         return 0
-    pre, cur = [0] * (2 * s + 1), [0] * (2 * s + 1)
-    pre[nums[0] + s] = 1
-    pre[-nums[0] + s] += 1
+    cur = [0] * (2 * nums_sum + 1)
+    cur[nums[0] + nums_sum] = 1
+    cur[-nums[0] + nums_sum] += 1
     for i in range(1, n):
-        for j in range(2 * s + 1):
+        next = [0] * (2 * nums_sum + 1)
+        for j in range(2 * nums_sum + 1):
             if j - nums[i] >= 0:
-                cur[j] += pre[j - nums[i]]
-            if j + nums[i] <= 2 * s:
-                cur[j] += pre[j + nums[i]]
-        pre, cur = cur, [0] * (2 * s + 1)
-    return pre[S + s]
+                next[j] += cur[j - nums[i]]
+            if j + nums[i] <= 2 * nums_sum:
+                next[j] += cur[j + nums[i]]
+        cur = next
+    return cur[target + nums_sum]
 
 
 class Test(unittest.TestCase):
