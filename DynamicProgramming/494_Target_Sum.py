@@ -5,31 +5,31 @@ Find out how many ways to assign symbols to make sum of integers equal to target
 import unittest2 as unittest
 
 
-def find_target_sum_ways_v1(nums, S):
+def find_target_sum_ways_v1(nums, target):
     """ Brute force. TLE
         The brute force approach is based on recursion. We need to try to put both the + and - symbols at every
-        location in the given nums array and find out the assignments which lead to the required result S.
-        For this, we make use of a recursive function dfs(index, total), which returns the assignments leading to the
-        sum S, starting from index 'index' onwards, provided the sum of elements upto the (index -1)th element is
-        'total'. This function appends a + sign and a - sign both to the element at the current index and calls itself
-        with the updated total as (total + nums[index]) and (total - nums[index]) respectively along with the updated
-        current index as (index + 1). Whenever we reach the end of the array, we compare the sum obtained with S. If
-        they are equal, we increment the count value to be returned.
+        location in the given nums array and find out the assignments which lead to the required result 'target'.
+        For this, we make use of a recursive function dfs(index, cur_sum), which returns the assignments leading to the
+        sum 'target', starting from index 'index' onwards, provided the sum of elements up to the (index -1)th element
+        is 'cur_sum'. This function appends a + sign and a - sign both to the element at the current index and calls
+        itself with the updated total as (cur_sum + nums[index]) and (cur_sum - nums[index]) respectively along with
+        the updated current index as (index + 1). Whenever we reach the end of the array, we compare the sum obtained
+        with 'target'. If they are equal, we increment the count value to be returned.
         Thus, the function call dfs(0, 0) returns the required number of assignments.
     Time complexity: O(2^N)
     Space complexity: O(N), the depth of recursion tree
     """
 
-    def dfs(index, total):
+    def dfs(index, cur_sum):
         if index == n:
-            values[0] += 1 if total == S else 0
+            res[0] += 1 if cur_sum == target else 0
             return
-        dfs(index + 1, total + nums[index])
-        dfs(index + 1, total - nums[index])
+        dfs(index + 1, cur_sum + nums[index])
+        dfs(index + 1, cur_sum - nums[index])
 
-    n, values = len(nums), [0]
+    n, res = len(nums), [0]
     dfs(0, 0)
-    return values[0]
+    return res[0]
 
 
 def find_target_sum_ways_v2(nums, S):
