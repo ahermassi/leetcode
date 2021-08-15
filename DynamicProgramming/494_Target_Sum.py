@@ -61,7 +61,7 @@ def find_target_sum_ways_v2(nums, target):
 # Nice read: https://leetcode.com/problems/target-sum/discuss/455024/DP-IS-EASY!-5-Steps-to-Think-Through-DP-Questions.
 
 
-def find_target_sum_ways_v3(nums, S):
+def find_target_sum_ways_v3(nums, target):
     """ Dynamic programming.
         The idea behind this approach is as follows. Suppose we can find out the number of times a particular sum, say
         sum_i, is possible up to a particular index, say i, in the given nums array, which is given by say count_i.
@@ -70,33 +70,36 @@ def find_target_sum_ways_v3(nums, S):
         This is a classic knapsack problem. In knapsack, we decide whether we choose an element or not. In this
         question, we decide whether we add an element or its negation.
         Let dp[i][j] be the number of ways for the first i elements to reach a sum j. We can easily observe that:
-            dp[i][j] = dp[i - 1][j - nums[i]] + dp[i - 1][j + nums[i]].
+
+            dp[i][j] = dp[i - 1][j - nums[i]] + dp[i - 1][j + nums[i]]
+
         Another part which is quite confusing is the return value. Notice that the dp's j range -sum --> 0 --> +sum,
-        where 'sum' is the sum of elements in the array. -sum and +sum are the lower bound and upper bound,
+        where 'sum' is the sum of all elements in the array. -sum and +sum are the lower bound and upper bound,
         respectively, of the sum of different assignments of - and + signs corresponding to all elements multiplied by
         -1 and +1, respectively. Therefore, to make j run starting from 0, we add an offset = sum(nums). This way, j is
         in the range [0, 2 * sum(nums)] instead of [-sum(nums), sum(nums)].
     Time complexity: O(N * L), where L = largest sum that can be created - smallest sum that can be created
     Space complexity: O(N * L)
     """
-    n, s = len(nums), sum(nums)
-    if S > s or S < -s:
+    n, nums_sum = len(nums), sum(nums)
+    if nums_sum < target or -nums_sum > target:
         return 0
-    dp = [[0] * (2 * s + 1) for _ in range(n)]  # The possible range of sums of different combinations is [0, 2*s + 1]
-    dp[0][nums[0] + s] = 1  # Before the offset, this is dp[0][nums[0]] = 1: There is only 1 way to get a sum of
+    # The possible range of sums of different combinations is [0, 2 * nums_sum]
+    dp = [[0] * (2 * nums_sum + 1) for _ in range(n)]
+    dp[0][nums[0] + nums_sum] = 1  # Without the offset, this is dp[0][nums[0]] = 1: There is only 1 way to get a sum of
     # nums[0] using only the 0th element of nums
-    dp[0][-nums[0] + s] += 1  # If nums[0] = S = 0, then we have 2 ways (+0 and -0) of getting the zero sum
+    dp[0][-nums[0] + nums_sum] += 1  # If nums[0] == 0, then we have 2 ways (+0 and -0) of getting the zero sum
     for i in range(1, n):
-        for j in range(2 * s + 1):
+        for j in range(2 * nums_sum + 1):
             plus = minus = 0
-            # If (j - nums[i]) or (j + nums[i]) is in correct range, we can use nums[i - 1] to generate next state
+            # If (j - nums[i]) or (j + nums[i]) is in correct range, we can use dp[i - 1] to generate next state
             if j - nums[i] >= 0:
                 minus = dp[i - 1][j - nums[i]]
-            if j + nums[i] <= 2 * s:
+            if j + nums[i] <= 2 * nums_sum:
                 plus = dp[i - 1][j + nums[i]]
             dp[i][j] = plus + minus
-    return dp[n - 1][S + s]  # Before the offset, this would be dp[n-1][S]: how many way to get S using the first
-    # (n-1) elements, or the entire array
+    return dp[n - 1][target + nums_sum]  # Without the offset, this would be dp[n-1][target]: How many way to get
+    # 'target' using the first (n-1) elements, or the entire array
 
 
 def find_target_sum_ways_v4(nums, S):
