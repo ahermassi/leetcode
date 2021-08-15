@@ -4,30 +4,41 @@ import unittest2 as unittest
 
 
 def find_max_length(nums):
-    """ The idea is inspired by 560- Sub array Sum Equals K.
-        Let's have a variable 'acc' initially set to 0 and traverse through nums. Every time we meet a 0, we decrease
-        'acc' by 1, and increase 'acc' by 1 when we meet 1. It's pretty easy to conclude that we have a contiguous
-        sub-array with equal number of 0 and 1 when 'acc' equals 0.
-        What if we have a sequence [0, 0, 0, 0, 1, 1]? The maximum length is 4, the count starting from 0 will equal
+    """ The idea is inspired from 560- Sub array Sum Equals K.
+        We make use of a 'count' variable, which is used to store the relative number of ones and zeros encountered so
+        far while traversing the array. The 'count' variable is incremented by one for every 1 encountered and the same
+        is decremented by one for every 0 encountered.
+        We start traversing the array from the beginning. If at any moment the 'count' becomes zero, it implies that
+        we've encountered an equal number of zeros and ones from the beginning till the current index of the array i.
+        Not only this, another point to be noted is that if we encounter the same 'count' twice while traversing the
+        array, it means that the number of zeros and ones are equal between the indices corresponding to the equal
+        'count' values. In other words, if we get the same sum value for two indices i and j, then all the elements
+        within the range [i,j) or (i,j] have been neutralized.
+        Thus, if we keep track of the indices corresponding to the same 'count' values that lie
+        farthest apart, we can determine the size of the largest sub-array with equal number of zeros and ones easily.
+        We use a hash map to store the entries in the form of (count, index). We make an entry for a 'count' in the
+        map whenever the 'count' is encountered first, and later on use the corresponding index to find the length of
+        the largest sub-array with equal number of zeros and ones when the same 'count' is encountered again.
+        Example:
+        What if we have a sequence [0, 0, 0, 0, 1, 1]? The maximum length is 4, the count starting from 0 will be equal
         -1, -2, -3, -4, -3, -2, and won't go back to 0 again. But wait, the longest sub-array with equal number of 0
         and 1 started and ended when count equals -2. We can easily understand that two points with the same count
         value indicates the sequence between these two points has equal number of 0 and 1.
-        To find the maximum length, we need a hash map to store the value of 'acc' (as the key) and its associated
-        index (as the value). We only need to save an 'acc' value and its index the first time, and when the same
-        'acc' values appear again, we use the new index subtracting the old index to calculate the length of sub-array.
     Time complexity: O(N)
     Space complexity: O(N)
     """
     prefix_sum = {0: -1}  # It means the sum is 0 initially, and because we haven't started looping, index = -1. This
     # initialization is necessary for the case when the whole array is a contiguous sub-array with equal 0s and 1s.
-    # Example: nums = [0, 1], when i = 1, acc = -1 + 1 = 0, the length is i - (-1) = 1- (-1) = 2, so {0: -1} is needed.
-    acc, res = 0, 0
+    # Example: nums = [0, 1], when i=1, count = -1 + 1 = 0, the length is i - (-1) = 1- (-1) = 2, so {0: -1} is needed.
+    # So {0: -1}  means that, before we loop the array, the sum is 0 initially and, because we haven't started the
+    # loop, the index = -1.
+    count, res = 0, 0
     for i, num in enumerate(nums):
-        acc += 1 if num else -1
-        if acc in prefix_sum:
-            res = max(res, i - prefix_sum[acc])
+        count += 1 if num else -1
+        if count in prefix_sum:
+            res = max(res, i - prefix_sum[count])
         else:
-            prefix_sum[acc] = i
+            prefix_sum[count] = i
     return res
 
 
