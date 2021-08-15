@@ -2,6 +2,7 @@
 For each integer, you should choose one from + and - as its new symbol.
 Find out how many ways to assign symbols to make sum of integers equal to target S. """
 
+from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -127,6 +128,23 @@ def find_target_sum_ways_v4(nums, target):
     return cur[target + nums_sum]
 
 
+def find_target_sum_ways_v5(nums, target):
+    """ We can use a dictionary to store all possible sums using all the numbers with +/- signs and return the number
+        of ways the target sum can be obtained. It is a special implementation of level-order BFS, where each element
+        in nums is one level.
+    Time complexity: O(2^N), since we are trying + and - for every element in the array
+    Space complexity: O(L), where L = largest sum that can be created - smallest sum that can be created
+    """
+    counter = {0: 1}  # At first, we have one way with sum = 0. Before we assign + or - to the first element, sum = 0.
+    for num in nums:
+        next_counter = defaultdict(int)
+        for sum, count in counter.items():
+            next_counter[sum + num] += count
+            next_counter[sum - num] += count
+        counter = next_counter
+    return counter[target]
+
+
 class Test(unittest.TestCase):
     data = [([1, 1, 1, 1, 1], 3, 5)]
 
@@ -136,6 +154,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, find_target_sum_ways_v2(test_nums, test_s))
             self.assertEqual(result, find_target_sum_ways_v3(test_nums, test_s))
             self.assertEqual(result, find_target_sum_ways_v4(test_nums, test_s))
+            self.assertEqual(result, find_target_sum_ways_v5(test_nums, test_s))
 
 
 if __name__ == '__main__':
