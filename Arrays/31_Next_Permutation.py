@@ -50,6 +50,13 @@ def next_permutation(nums):
             2- Find the smallest p[l] such that p[l] > p[k] (such an l must exist since p[k] < p[k+1])
             3- Swap p[l] and p[k] (note that the sequence after position k remains in decreasing order).
             4-  Reverse the sequence after position k.
+        Why do we have to walk from right to left? Because we want the least significant digit that is greater than the
+        current number.
+        Why do we have to find digits[j] and swap? We're trying to find a digit which is only 1 distance greater than
+        digits[i-1] so that this can become the new number and is 1 greater than the new dip.
+        Why do we have to reverse the suffix? We're trying to make the new number as small as possible. Because we know
+        that the sequence is increasing from right to left, we can reverse it to be an increasing sequence from left to
+        right.
     Time complexity: O(N)
     Space complexity: O(1)
     """
