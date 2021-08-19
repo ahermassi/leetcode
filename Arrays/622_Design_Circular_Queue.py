@@ -100,8 +100,11 @@ class ListNode:
 
 class MyCircularQueueV2:
     """ Linked list implementation.
-        Different than a fixed size Array, a linked list could be more memory efficient, since it does not pre-allocate
+        Different than a fixed-size array, a linked list could be more memory efficient, since it does not pre-allocate
         memory for unused capacity.
+        Note that implementing a circular queue using a linked list defeats the purpose of circular queues (space
+        reusability. It is hard to identify the circular property as it essentially produces the same behavior without
+        having to deal with the intricacies of the circularity.
     Time complexity: O(1), all of the methods in our circular data structure is of constant time complexity
     Space complexity: O(N)
     """
