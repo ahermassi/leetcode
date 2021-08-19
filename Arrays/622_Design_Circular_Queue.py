@@ -5,14 +5,32 @@ first position to make a circle. It is also called "Ring Buffer". """
 
 class MyCircularQueueV1:
     """ Array implementation.
-        To build a circular queue, we could form a virtual ring structure with the Array, via the manipulation of index.
+        To build a circular queue, we could form a virtual ring structure using an array, via the manipulation of index.
         Here we give a list of attributes and the thoughts behind each attribute.
             - queue: a fixed size array to hold the elements for the circular queue
-            - capacity: the capacity of the circular queue, i.e. the maximum number of elements that can be hold in
+            - capacity: the capacity of the circular queue, i.e. the maximum number of elements that can be held in
               the queue
             - size: the current length of the circular queue, i.e. the number of elements in the circular queue
             - front: an integer which indicates the current head element in the circular queue
-            - rear: an integer which indicates the current tail element in the circular queue
+            - tail: an integer which indicates the current tail element in the circular queue
+        On every enqueueing operation, we increment the tail pointer since the queue will get bigger, and store the
+        value.
+        On every dequeuing operation, we increment the front pointer since the queue will get smaller conceptually,
+        i.e. we narrow the gap between front and tail.
+        Given a fixed size array, any of the elements could be considered as a head in a queue. As long as we know the
+        size of the queue, we then can derive the following formula:
+
+            (tail - front) % capacity = (size − 1) % capacity
+
+        Both pointers will keep rotating in the queue.
+        Example: capacity = 5, size = 3, X: occupied, -: empty
+
+        0   1   2   3   4           0   1   2   3   4               0   1   2   3   4
+        X   X   X   -   -           -   X   X   X   -               X   -   -   X   X
+      front    tail                   front    tail                tail        front
+      (2-0) % 5 = (3-1) % 5         (3-1) % 5 = (3-1) % 5          (0-3) % 5 = 2 = (3-1) % 5
+
+
     Time complexity: O(1), all of the methods in our circular data structure is of constant time complexity
     Space complexity: O(N)
     """
@@ -25,7 +43,7 @@ class MyCircularQueueV1:
         self.capacity = k
         self.size = 0
         self.front = 0
-        self.rear = -1  # The first legal operation will always be enQueue() after which front = rear = 0.
+        self.tail = -1  # The first legal operation will always be enQueue() after which front = rear = 0.
         # If a deQueue() is performed right after that, rear = 0, front = 1
 
     def enQueue(self, value: int) -> bool:
@@ -34,8 +52,8 @@ class MyCircularQueueV1:
         """
         if self.isFull():
             return False
-        self.rear = (self.rear + 1) % self.capacity
-        self.queue[self.rear] = value
+        self.tail = (self.tail + 1) % self.capacity
+        self.queue[self.tail] = value
         self.size += 1
         return True
 
@@ -59,7 +77,7 @@ class MyCircularQueueV1:
         """
         Get the last item from the queue.
         """
-        return -1 if self.isEmpty() else self.queue[self.rear]
+        return -1 if self.isEmpty() else self.queue[self.tail]
 
     def isEmpty(self) -> bool:
         """
