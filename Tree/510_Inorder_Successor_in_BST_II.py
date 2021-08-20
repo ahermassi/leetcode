@@ -40,3 +40,20 @@ def inorder_successor_v1(node):
     # while node.parent and node.parent.val < node.val:
     #   node = node.parent
     return node.parent
+
+
+def inorder_successor_v2(node):
+    """ A slightly different way of writing the same algorithm.
+    Time complexity: O(logN) average case, O(N) worst case
+    Space complexity: O(1)
+    """
+    if node.right:
+        node = node.right
+        while node.left:
+            node = node.left
+        return node
+    while node.parent:
+        if node == node.parent.left:
+            return node.parent
+        node = node.parent
+    return None
