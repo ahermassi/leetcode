@@ -62,17 +62,17 @@ def exist_v1(board, word):
 
 
 def exist_v2(board, word):
-    """ DFS without altering the input board. Use a 'visited' set to store the visited cells. When we exhaust all
-        search possibilities, we backtrack and remove the cell from 'visited' set.
+    """ Backtracking without altering the input board. Use a 'visited' set to store the visited cells. When we exhaust
+        all search possibilities, we backtrack and remove the cell from 'visited' set.
         This (and the technique used in the following solution) resemble what we usually do in the backtracking
         problems where we have to try/enumerate all the possible paths. At every recursive call, we'd either:
             - Call f(path + new_val), or
             - path.append(new_val); f(path); path.pop()
-    Time complexity: O(N * M * (4^S))
-    Space complexity: O(S)
+    Time complexity: O(N * M * (4^L))
+    Space complexity: O(L)
     """
 
-    def search(i, j, index):
+    def dfs(i, j, index):
         if index == length:
             return True
         if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index] or (i, j) in visited:
@@ -80,15 +80,18 @@ def exist_v2(board, word):
         visited.add((i, j))  # Mark the cell as visited. At each step, we mark our choice before jumping into the next
         # step. At the end of each step, we would also revert our marking, so that we could have a clean slate to try
         # another direction.
-        found = search(i-1, j, index+1) or search(i+1, j, index+1) or search(i, j-1, index+1) or search(i, j+1, index+1)
+        for x, y in directions:
+            if dfs(i + x, j + y, index + 1):
+                return True
         visited.remove((i, j))  # Backtrack and remove the mark
-        return found
+        return False
 
     n, m, length = len(board), len(board[0]), len(word)
+    directions = {(-1, 0), (1, 0), (0, -1), (0, 1)}
     visited = set()
     for i in range(n):
         for j in range(m):
-            if search(i, j, 0):
+            if dfs(i, j, 0):
                 return True
     return False
 
