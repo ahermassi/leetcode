@@ -60,3 +60,29 @@ def multiply_v2(mat1, mat2):
                 for j in range(cols_b):
                     res[i][j] += mat1[i][k] * mat2[k][j]
     return res
+
+
+def multiply_v3(mat1, mat2):
+    """ A sparse matrix can be represented as a grouping of ((row index, col_index): value) pairs of the nonzero values
+        in the matrix.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+
+    def collect_non_zeros(mat):
+        n, m = len(mat), len(mat[0])
+        elements = dict()
+        for i in range(n):
+            for j in range(m):
+                if mat[i][j]:
+                    elements[(i, j)] = mat[i][j]
+        return elements
+
+    elements_a, elements_b = collect_non_zeros(mat1), collect_non_zeros(mat2)
+    rows_a, cols_b = len(mat1), len(mat2[0])
+    res = [[0] * cols_b for _ in range(rows_a)]
+    for (row_a, col_a), val_a in elements_a.items():
+        for (row_b, col_b), val_b in elements_b.items():
+            if col_a == row_b:
+                res[row_a][col_b] += val_a * val_b
+    return res
