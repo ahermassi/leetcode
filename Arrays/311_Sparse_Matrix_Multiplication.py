@@ -23,3 +23,40 @@ def multiply_v1(mat1, mat2):
             for k in range(cols_a):
                 res[i][j] += mat1[i][k] * mat2[k][j]
     return res
+
+
+def multiply_v2(mat1, mat2):
+    """ Optimized brute force.
+        The key part of this solution is that it does not calculate the final result at once, but it takes each value
+        from A and calculates and partial sum and accumulates it into the final spot.
+        If A[i][k] == 0, we skip the multiplication . This is achieved by moving the innermost loop to the middle so
+        that we can check whether A[i][k] == 0.
+        For each value A[i][k], if it is non-zero, it will be used at most cols_b times (cols_b = B[0].length ), which
+        can be illustrated as follows:
+        Generally for the following equation:
+        C[i][j] = A[i][0] * B[0][j] + A[i][1] * B [1][j] + A[i][2] * B[2][j] + ... A[i][k] * B[k][j]
+        j can be from 0 to cols_b, so if we write all of them down, it will look like the following:
+        For j from 0 to cols_b:
+
+            C[i][0] = A[i][0] * B[0][0] + A[i][1] * B[1][0] + A[i][2] * B[2][0] + ... A[i][k] * B[k][0]
+            C[i][1] = A[i][0] * B[0][1] + A[i][1] * B[1][1] + A[i][2] * B[2][1] + ... A[i][k] * B[k][0]
+            ...
+            C[i][cols_b] = A[i][0] * B[0][cols_b] + A[i][1] * B[1][cols_b] + A[i][2] * B[2][cols_b] + ... A[i][k] * B[k][cols_b]
+
+        As we can see from above, the same value A[i][k] from the first matrix  will be used at most cols_b times if
+        A[i][k] is non-zero. This solution is taking advantage of that.
+        For each value A[i][k] in matrix A, if it is not zero, we calculate A[i][k] * B[k][j] and accumulate it into
+        C[i][j]. The key observation is that C[i][j] by now is not the final value in the result matrix. C[i][j] is
+        only sum of some multiplication values.
+    Time complexity: O(N * M * L)
+    Space complexity: O(1)
+    """
+    rows_b, cols_b = len(mat2), len(mat2[0])
+    rows_a, cols_a, cols_b = len(mat1), len(mat1[0]), len(mat2[0])
+    res = [[0] * cols_b for _ in range(rows_a)]
+    for i in range(rows_a):
+        for k in range(rows_b):
+            if mat1[i][k]:
+                for j in range(cols_b):
+                    res[i][j] += mat1[i][k] * mat2[k][j]
+    return res
