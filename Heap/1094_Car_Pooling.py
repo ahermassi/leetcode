@@ -77,3 +77,25 @@ def car_pooling_v2(trips, capacity):
         if occupancy > capacity:
             return False
     return True
+
+
+def car_pooling_v3(trips, capacity):
+    """ Note that in the problem there is a interesting constraint:
+            0 <= trips[i][1] < trips[i][2] <= 1000
+        What comes to mind is Bucket Sort, which is a linear time sorting algorithm that requires some prior knowledge
+        about the range of data. We can use it instead of the normal sorting.
+        We initialize 1001 buckets and put the number of passengers changed in corresponding buckets. Finally, we scan
+        all stops and check if we ever exceed our vehicle capacity.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    counter = [0] * 1001
+    for passengers, start, end in trips:
+        counter[start] += passengers
+        counter[end] -= passengers
+    occupancy = 0
+    for passengers in counter:
+        occupancy += passengers
+        if occupancy > capacity:
+            return False
+    return True
