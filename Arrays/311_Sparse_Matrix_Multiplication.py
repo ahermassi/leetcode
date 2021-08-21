@@ -1,6 +1,8 @@
 """ Given two sparse matrices mat1 of size m x k and mat2 of size k x n, return the result of mat1 x mat2. You may
 assume that multiplication is always possible. """
 
+from collections import defaultdict
+
 
 def multiply_v1(mat1, mat2):
     """ Brute force.
@@ -85,4 +87,32 @@ def multiply_v3(mat1, mat2):
         for (row_b, col_b), val_b in elements_b.items():
             if col_a == row_b:
                 res[row_a][col_b] += val_a * val_b
+    return res
+
+
+def multiply_v4(mat1, mat2):
+    """ A sparse matrix can be represented as a sequence of rows, each of which is a sequence of (column index, value)
+        pairs of the nonzero values in the row. So let's create a non-zero map for B and do multiplication on A.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+
+    def collect_non_zeros(mat):
+        n, m = len(mat), len(mat[0])
+        elements = defaultdict(dict)
+        for i in range(n):
+            for j in range(m):
+                if mat[i][j]:
+                    elements[i][j] = mat[i][j]
+        return elements
+
+    elements_b = collect_non_zeros(mat2)
+    rows_a, cols_a = len(mat1), len(mat1[0])
+    rows_b, cols_b = len(mat2), len(mat2[0])
+    res = [[0] * cols_b for _ in range(rows_a)]
+    for i in range(rows_a):
+        for k in range(cols_a):
+            if mat1[i][k]:
+                for j, val in elements_b[k].items():  # In row k, iterate only over indexes that have non-zero values
+                    res[i][j] += val * mat1[i][k]
     return res
