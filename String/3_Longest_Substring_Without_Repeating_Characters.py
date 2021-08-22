@@ -5,46 +5,77 @@ import unittest2 as unittest
 
 def length_of_longest_substring(s):
     """ Reuse previous computation as we iterate through the string. Suppose we know the longest duplicate-free
-        substring ending at a given index. The longest duplicate-free substring ending at the next index is either:
-            1- The previous substring appended with the element at the next index, if that element does not appear in
-               the longest duplicate-free substring at the current index
-            2- The substring beginning at the most recent occurrence of the element at the next index + 1
+        substring ending at a given index right. The longest duplicate-free substring ending at index (right + 1) is either:
+            1- The previous substring appended with the element at index (right + 1), if that element does not appear in
+               the longest duplicate-free substring ending at index right
+            2- The substring beginning at the most recent occurrence of the element at index (right + 1) plus 1
         To perform this case analysis as we iterate, all we need is a hash table storing the most recent occurrence of
-        each element, and the longest duplicate-free substring ending at the current element.
+        each character, and the longest duplicate-free substring ending at the current index.
         The basic idea is to keep a hash map which stores the characters in string as keys and their indices as values,
-        and use two pointers which define the max substring. Move the right pointer 'i' to scan the string, and in the
-        meanwhile update the hash map. If the character is already in the hash map, then move the left pointer 'start'
-        to the right of the same character last found. The reason is that if s[i] has a duplicate in the range
-        [start, i) at index j, we can skip all the elements in the range [start, j] and let 'start' be equal to
-        (j + 1) directly.
-        Note that 'start' and i represent the left and right ends of the sliding window, respectively.
+        and use two pointers which define the max substring. Move the right pointer 'right' to scan the string, and in
+        the meanwhile update the hash map. If the current character is already in the hash map, then move the left
+        pointer 'left' to the right of the same character last found. The reason is that if s[right] has a duplicate in
+        the range [left, right) at index j, we can skip all the elements in the range [left, j] and let 'left' be equal
+        to (j + 1) directly. This is because we need to make sure our left pointer is at least past the index where we
+        last saw the current duplicate character, so we move 'left' to (map[right] + 1). We also need to ensure that
+        'left' always moves forward or just stays at its position.
         Example: s = 'fsfetwenwe'. When we process the element at index 2, the longest duplicate-free substring ending
         at index 1 is from 0 to 1. The hash table tells us that the element at index 2, namely f, appears in that
         substring, so we update the longest substring ending at index 2 to being from index 1 to 2.
         Indices 3-5 introduce fresh elements. Index 6 holds a repeated value, e, which appears within the longest
         substring ending at index 5; specifically, it appears at index 3. Therefore, the longest substring ending at
         index 6 starts at index 4.
+        Example:
+
+        index    0    1    2    3   4   5   6   7
+        string   a    c    b    d   b   a   c   d
+                 ^                  ^
+                 |                  |
+		        left               right
+
+		map = {a : 0, c : 1, b : 2, d: 3}
+		# case 1: map[b] = 2, current window  is s[0:4] ,
+		#         b is inside current window, map[b] = 2 > left = 0. Move left pointer to map[b] + 1 = 3
+		map = {a : 0, c : 1, b : 4, d: 3}
+
+        index    0    1    2    3   4   5   6   7
+        string   a    c    b    d   b   a   c   d
+						        ^   ^
+					            |   |
+				              left  right
+
+        index    0    1    2    3   4   5   6   7
+        string   a    c    b    d   b   a   c   d
+					            ^       ^
+					            |       |
+				              left    right
+		# case 2: map[a] = 0, which means 'a' is not in current window s[3:5] , since map[a] = 0 < left = 3
+		# We can keep moving right pointer.
+
     Time complexity : O(N)
     Space complexity: O(N), or O(1) if the set of characters considered is the English alphabet O(26)
     """
-    prev_occ_index, res, start = {}, 0, 0  # 'start' denotes the left end of the longest substring with no
-    # repeating characters seen so far
-    for i, c in enumerate(s):  # i is the right end of that string, or the right end of our sliding window
+    prev_occ_index, res, left = {}, 0, 0  # 'left' denotes the left end of the longest substring with no repeating
+    # characters seen so far
+    for right, c in enumerate(s):  # 'right' is the right end of that string, or the right end of our sliding window
         if c in prev_occ_index:
-            start = max(start, prev_occ_index[c] + 1)  # The variable 'start' is used to indicate the index of first
-            # character of this substring. If the repeated character's index is less than 'start' itself, this means
-            # the repeated character in the hash map is no longer available at this time and is already outside the
-            # window.
+            left = max(left, prev_occ_index[c] + 1)  # The variable 'left' is used to indicate the index of first
+            # character of this substring. If the duplicate character's index is less than 'left' itself, this means
+            # the duplicate character in the hash map is no longer available at this time and is already outside the
+            # current window.
             # Consider the input: s = 'tmsmfdut'
-            # When i = s.length()-1 = 7, start = 2 after we've encountered the first repeated 'm', so the current
-            # window is defined by start=2, i=7, substring='smfdut'
-            # If we update start = prev_occ_index['t'] + 1, then 'start' will be equal to 1 because the previous
+            # When right = s.length()-1 = 7, left = 2 after we've encountered the first repeated 'm', so the current
+            # window is defined by left=2, right=7, substring='smfdut'
+            # If we update left = prev_occ_index['t'] + 1, then 'left' will be equal to 1 because the previous
             # occurrence of 't' is at index 0, and this will give a wrong answer.
-            # For this reason, 'start' should not be set to (prev_occ_index[c] + 1) as this value is less than current
-            # value of start = 2, or in simple words (last_occurrence_index[c] + 1) is outside the window defined by
-            # start=2 and i=7.
-        res = max(res, i - start + 1)
-        prev_occ_index[c] = i
+            # For this reason, 'left' should not be set to (prev_occ_index[c] + 1) as this value is less than current
+            # value of left = 2, or in simple words (last_occurrence_index[c] + 1) is outside the window defined by
+            # left=2 and right=7.
+            # If we have a string like 'abba', when we encounter the second 'a', we want to mark the start of the
+            # duplicate-free string from index 2 (second occurrence of 'b') which is the last known index which holds
+            # uniqueness assumption, not from (map['a'] + 1) which is 1.
+        res = max(res, right - left + 1)
+        prev_occ_index[c] = right
     return res
 
 
