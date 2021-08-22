@@ -3,7 +3,7 @@
 import unittest2 as unittest
 
 
-def length_of_longest_substring(s):
+def length_of_longest_substring_v1(s):
     """ Reuse previous computation as we iterate through the string. Suppose we know the longest duplicate-free
         substring ending at a given index right. The longest duplicate-free substring ending at index (right + 1) is either:
             1- The previous substring appended with the element at index (right + 1), if that element does not appear in
@@ -79,12 +79,36 @@ def length_of_longest_substring(s):
     return res
 
 
+def length_of_longest_substring_v2(s):
+    """ Similar idea to previous solution. The only difference is that if the current character at 'right' pointer is
+        duplicate, we delete from the head of the window by moving 'left' pointer forward one step at a time until the
+        occurrence of the duplicate character is removed and we can put the character at 'right' index in the hash map.
+    Time complexity: O(N)
+    Space complexity: O(N), or O(1)
+    """
+    n = len(s)
+    last_occurrence, res, left, right = {}, 0, 0, 0
+    while right < n:
+        c = s[right]
+        if c in last_occurrence:
+            del last_occurrence[s[left]]
+            left += 1  # Notice that only 'left' moves forward. This is equivalent to fixing 'right' and running a
+            # while loop that keeps deleting characters at 'left' index until we get rid of the duplicate character
+            # at 'right'
+        else:
+            last_occurrence[c] = right
+            res = max(res, len(last_occurrence.keys()))
+            right += 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [('abcabcbb', 3), ('bbbbb', 1), ('pwwkew', 3)]
 
     def test_length_of_longest_substring(self):
         for test_string, result in self.data:
-            self.assertEqual(result, length_of_longest_substring(test_string))
+            self.assertEqual(result, length_of_longest_substring_v1(test_string))
+            self.assertEqual(result, length_of_longest_substring_v2(test_string))
 
 
 if __name__ == '__main__':
