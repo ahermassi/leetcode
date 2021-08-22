@@ -9,30 +9,30 @@ Return the minimum integer K such that she can eat all the bananas within H hour
 import unittest2 as unittest
 
 
-def min_eating_speed(piles, H):
-    """ Koko needs at len(piles) hours, as she cannot move onto a new pile even if she completes her current one within
-        the hour. This is why we have H >= len(piles) in the description. If H = len(piles), we get only one hour to
-        finish each pile. In this case, the rate will depend only on the size of the largest pile.
+def min_eating_speed(piles, h):
+    """ Koko needs at least len(piles) hours, as she cannot move onto a new pile even if she completes her current one
+        within the hour. This is why we have h >= len(piles) in the description. If h = len(piles), we get only one
+        hour to finish each pile. In this case, the rate will depend only on the size of the largest pile.
         For any list of pile sizes, eating at rate K = max(piles) will ensure that each pile takes only one hour, and
-        the total time taken will be len(piles) which is <= H according to the description. This makes max(piles) a
-        rate which is always able to finish.
+        the total time taken will be len(piles) which is <= h according to the description. This makes max(piles) a
+        rate at which Koko is always able to finish.
         Any answer that we report should fall in the closed interval [1, max(piles)].
-        The problem is basically asking us how much slower Koko can eat, and still finish the piles within H hours.
+        The problem is basically asking us how much slower Koko can eat and still finish the piles within h hours.
         To get the optimal answer, we should probably try to use as many of the hours available as possible.
-        Each hour, Koko chooses some pile of bananas, and eats K bananas from that pile. There is a limited range of
-        K's to enable her to eat all the bananas within H hours. We ought to reduce the searching space and to return
+        Each hour, Koko chooses some pile of bananas and eats K bananas from that pile. There is a limited range of
+        K's to enable her to eat all the bananas within h hours. We ought to reduce the searching space and to return
         the minimum valid K. Binary Search is born for that.
+        There is a limited value range of K: [lo, hi]. There is a K' value such that K (for any K >= K') can enable
+        Koko to eat all the bananas within h hours. We are asked to find K'.
     Time complexity: O(N logW), where N is the number of piles and W is the maximum size of a pile
     Space complexity: O(1)
     """
     left, right = 1, max(piles)
     while left < right:
-        mid, counter = (left + right) // 2, 0
+        mid, hours_needed = (left + right) // 2, 0
         for bananas in piles:
-            counter += bananas // mid
-            if bananas % mid:
-                counter += 1
-        if counter <= H:
+            hours_needed += bananas // mid if bananas % mid == 0 else (bananas // mid) + 1
+        if hours_needed <= h:
             right = mid
         else:
             left = mid + 1
