@@ -21,7 +21,7 @@ class Node(object):
         self.next = next
 
 
-def connect(root):
+def connect_v1(root):
     """ The algorithm is a BFS or level order traversal. We go through the tree level by level.
         Once we are done establishing the next pointers between the nodes, don't they kind of represent a linked list?
         After the next connections are established, all the nodes on a particular level actually form a linked list via
@@ -70,3 +70,27 @@ def connect(root):
             next_level_tail = next_level_head  # 'next_level_tail' moves back to the node from where it started
             next_level_head.next = None  # This line detaches next_level_head so that next_level_tail pointer can again
             # point it to the left node of next level which will be used then to set as 'cur' for the level after that
+
+
+def connect_v2(root):
+    """ Same algorithm but using an extra while loop to finish the wiring of complete child layer at each iteration of
+        the outer loop. The previous algorithm moves 'cur' to its next node but finishes the wiring of child level at
+        next iteration.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    next_level_head = next_level_tail = Node(0)
+    cur = root
+    while cur:
+        while cur:
+            if cur.left:
+                next_level_tail.next = cur.left
+                next_level_tail = next_level_tail.next
+            if cur.right:
+                next_level_tail.next = cur.right
+                next_level_tail = next_level_tail.next
+            cur = cur.next
+        cur = next_level_head.next
+        next_level_tail = next_level_head
+        next_level_head.next = None
+    return root
