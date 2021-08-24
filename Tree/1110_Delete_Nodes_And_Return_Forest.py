@@ -5,7 +5,7 @@ After deleting all nodes with a value in to_delete, we are left with a forest (a
 Return the roots of the trees in the remaining forest. You may return the result in any order. """
 
 
-def del_nodes(root, to_delete):
+def del_nodes_v1(root, to_delete):
     """ We need to keep the tree intact to traverse all the way down first. Then on the way back up, we check if the
         node's value is in the list of nodes to delete. If it is, we add the subtrees to the result and return None to
         the next level up. Otherwise, we return the current node. We then we use the returned values on the level up to
@@ -38,3 +38,27 @@ def del_nodes(root, to_delete):
         res.append(root)
     dfs(root)
     return res
+
+
+def del_nodes_v2(root, to_delete):
+    """ If a node is root (has no parent) and isn't deleted, when will we add it to the result.
+    Time complexity: O(N)
+    Space complexity: O(h)
+    """
+
+    def dfs(root, is_root):
+        # is_root: The node's parent is deleted. The node is the root node of the tree in the forest.
+        if not root:
+            return None
+        root_deleted = root.val in to_delete
+        if is_root and not root_deleted:
+            res.append(root)  # We only need to add the root node of every forest
+        root.left = dfs(root.left, root_deleted)
+        root.right = dfs(root.right, root_deleted)
+        return None if root_deleted else root
+
+    to_delete = set(to_delete)
+    res = []
+    dfs(root, True)
+    return res
+
