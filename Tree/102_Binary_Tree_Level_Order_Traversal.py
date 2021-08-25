@@ -17,11 +17,13 @@ class TreeNode(object):
 
 def level_order_v1(root):
     """ Let's keep nodes of each tree level in the queue structure.
-        Initiate queue with a root. While queue is not empty :
-            Compute how many elements should be on the current level : it's queue length
-            Pop out all these elements from the queue and add them into the current level
-            Push their child nodes into the queue for the next level
-    Time complexity: O(N) where N is the number of nodes
+        Initiate queue with a root. While queue is not empty:
+            - Start the current level by creating an empty list
+            - Compute how many elements should be on the current level : It's queue length
+            - Pop out all these elements from the queue and add them into the current level
+            - Push their child nodes into the queue for the next level
+            - Add the current level's list to the output
+    Time complexity: O(N), where N is the number of nodes
     Space complexity: O(N)
     """
     if not root:
