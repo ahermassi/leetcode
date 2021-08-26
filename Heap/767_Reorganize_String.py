@@ -54,10 +54,28 @@ def reorganize_string_v1(s):
 
 def reorganize_string_v2(S):
     """ The idea is inspired from counting sort.
-        Count letter appearance and store it in chars[i]
-        Find the letter with largest occurrence.
-        Put that letter into even indices (0, 2, 4, ...) of 'res' array
-        Alternately place the rest of letters
+            - Count letters appearance and store it in chars[i]
+            - Find the letter with the largest frequency
+            - Put that letter into even indices (0, 2, 4, ...) of the result array
+            - Alternately place the rest of letters
+        This solution is inspired from the counting sort. It starts by placing the most common character at the even
+        indices of the final string, and then alternately places the rest of characters in the remaining empty spots.
+        Whenever the end of list is reached and no more empty slots are available, we redirect the write index to the
+        first odd index which is 1, simply because we know that the first even indices (at least 0 and 2) are occupied
+        by the first common character.
+        Why do we only need to fill the character with highest frequency first? Because if we fill max frequency first
+        on alternate locations, then we are making sure that the overflow of maximum frequency letter will not take
+        place at the end of the result string.
+        We construct the resulting string in sequence: at position 0, 2, 4, ... and then 1, 3, 5, ... In this way, we
+        can make sure there is always a gap between the same letters.
+        In a pure greedy mode, we would actually sort by frequency (descending) and insert the letters in alternate
+        spots. However, in this case all we need is the letter with the max frequency. Once that letter is placed,
+        none of the other letters can have a frequency that would pose an issue in filling up the spaces.
+        Example: s = 'aaabbbcdd"'. We construct the string in this way:
+            a _ a _ a _ _ _ _ // fill in 'a' at positions 0, 2, 4
+            a b a _ a _ b _ b // fill in 'b' at positions 6, 8, 1
+            a b a c a _ b _ b // fill in 'c' at position 3
+            a b a c a d b d b // fill in 'd' at position 5, 7
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -81,7 +99,7 @@ def reorganize_string_v2(S):
         while chars[i]:
             if idx >= len(res):  # This check makes sure that after exhausting all the empty indices we go back to
                 # the beginning of array and start from the first ODD index since the first even indices are occupied
-                # by the most frequent character
+                # by the most frequent letter
                 idx = 1
             res[idx] = chr(i + ord('a'))
             chars[i] -= 1
