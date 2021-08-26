@@ -37,16 +37,16 @@ def reorganize_string_v1(s):
     counter, heap, res = Counter(s), [], []
     if any(count > (len(s) + 1) / 2 for count in counter.values()):
         return ''  # The task is only impossible if the frequency of any letter exceeds (N+1) / 2
-    for k, v in counter.items():  # Using negative values to create a max heap
-        heappush(heap, [-v, k])
+    for c, count in counter.items():  # Using negative values to create a max heap
+        heappush(heap, (-count, c))
     while len(heap) >= 2:
         count_a, a = heappop(heap)
         count_b, b = heappop(heap)
         res.extend([a, b])
         if count_a != -1:
-            heappush(heap, [count_a + 1, a])
+            heappush(heap, (count_a + 1, a))
         if count_b != -1:
-            heappush(heap, [count_b + 1, b])
+            heappush(heap, (count_b + 1, b))
     if heap:
         res.append(heap[0][1])
     return ''.join(res)
@@ -107,6 +107,39 @@ def reorganize_string_v2(S):
     return ''.join(res)
 
 
+def reorganize_string_v3(s):
+    """ Same idea of the first solution with few differences. Essentially, we want to store the previous popped item
+        and add it back alternately.
+        At each step, we choose the element with highest frequency (cur_count, cur_char) where 'cur_char' is the
+        element to append to result.
+        Now that 'cur_char' is chosen, we can't choose it again for the next loop. That's why we don't add 'cur_char'
+        with decremented value count immediately to the heap. Rather we store the letter and its frequency in
+        (prev_count, prev_char).
+        Before we update (prev_count, prev_char), we know that whatever (prev_count, prev_char) contains has become
+        eligible for next loop selection. so we add that back to the heap.
+        In essence:
+            - At each step, we make the currently popped letter ineligible for next loop by not adding it back to the
+              heap
+            - At each step, we make the previously polled letter eligible for next step by adding it back to the heap
+    Time complexity: O(N logA)
+    Space complexity: O(A)
+    """
+    counter, heap, res = Counter(s), [], []
+    if any(count > (len(s) + 1) / 2 for count in counter.values()):
+        return ''
+    for c, count in counter.items():
+        heappush(heap, (-count, c))
+    res = []
+    prev_count, prev_char = -1, ''
+    while heap:
+        cur_count, cur_char = heappop(heap)
+        res.append(cur_char)
+        if prev_count != -1:
+            heappush(heap, (prev_count + 1, prev_char))
+        prev_count, prev_char = cur_count, cur_char
+    return ''.join(res)
+
+
 class Test(unittest.TestCase):
     data = [('aab', 'aba'), ('aaab', '')]
 
@@ -114,6 +147,7 @@ class Test(unittest.TestCase):
         for test_string, result in self.data:
             self.assertEqual(result, reorganize_string_v1(test_string))
             self.assertEqual(result, reorganize_string_v2(test_string))
+            self.assertEqual(result, reorganize_string_v3(test_string))
 
 
 if __name__ == '__main__':
