@@ -2,8 +2,6 @@
 For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of
 every node never differ by more than 1. """
 
-import unittest2 as unittest
-
 # Definition for singly-linked list.
 
 
@@ -98,6 +96,11 @@ def sorted_list_to_bst_v3(head):
         the leftmost element in the in-order traversal has to be the head of our given linked list. Similarly, the next
         element in the in-order traversal will be the second element in the linked list and so on. This is made
         possible because the initial list given to us is sorted in ascending order.
+        Now that we have an idea about the relationship between the in-order traversal of a binary search tree and the
+        numbers being sorted in ascending order, let's get to the algorithm.
+        In order to build a height-balanced binary search tree, we need to ensure that roughly half of the total number
+        of nodes are on either side of the root, and the only way to know what half of the total number of nodes is
+        requires finding the total number of nodes first.
         Iterate over the linked list to find out its length.
         We will make use of two different pointer variables here to mark the beginning and the end of the list. Let's
         call them 'left' and 'right' with their initial values being 0 and (length - 1) respectively.
@@ -108,30 +111,36 @@ def sorted_list_to_bst_v3(head):
         BST, the head pointer in the linked list will point to the root node. So, we simply use the current value
         pointed to by head as the root node and progress the head node by once i.e. head = head.next.
         We recurse on the right hand side using (mid + 1, right) as the starting and ending points.
+        We also keep one more piece of information: 'head' as a global variable, which will help us have quick access
+        to the desired elements: On step i in in-order traversal, 'head' will point to the ith element of linked list.
+        More precisely, after we run in_order(start, end), 'head' points to the element at index (end + 1) in the
+        linked list. This is the invariant of the in_order() function.
+        Even though we won't be able to access the list nodes directly by index number, we can take advantage of the
+        in-order tree traversal to force our access to go in iterative order.
     Time complexity: O(N), since we still have to process each of the nodes in the linked list once and form
     corresponding BST nodes.
-    Space complexity: O(logN) since now the only extra space is used by the recursion stack and since we are building a
-    height balanced BST, the height is bounded by logN.
+    Space complexity: O(logN), since now the only extra space is used by the recursion stack and since we are
+    building a height-balanced BST, the height is bounded by logN.
     """
 
     def in_order(left, right):
         if left > right:
             return None
-        nonlocal head
         mid = (left + right) // 2
         left = in_order(left, mid - 1)  # First step of simulated in-order traversal. Recursively form the left half.
-        root = TreeNode(head.val)  # Once left half is traversed, process the current node
+        root = TreeNode(cur[0].val)  # Once left half is traversed, process the current node
         root.left = left
-        head = head.next  # Maintain the invariance mentioned in the algorithm
+        cur[0] = cur[0].next  # Maintain the invariance
         root.right = in_order(mid + 1, right)  # Recurse on the right hand side and form BST out of them
         return root
 
     if not head:
         return None
-    size, temp = 0, head
-    while temp:
+    size, cur = 0, head
+    while cur:
         size += 1
-        temp = temp.next
+        cur = cur.next
+    cur = [head]  # Avoid the use of a global 'head' variable
     return in_order(0, size - 1)
 
 
