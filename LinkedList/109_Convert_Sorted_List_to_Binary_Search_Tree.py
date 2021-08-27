@@ -144,6 +144,32 @@ def sorted_list_to_bst_v3(head):
     return in_order(0, size - 1)
 
 
+def sorted_list_to_bst_v4(head):
+    """ Same idea as the first solution, but without modifying the input linked list's structure. We use two pointers
+        'head' and 'tail' as delimiters to mark the boundaries of head and tail of the current sub linked list being
+        processed in each recursive call.
+    Time complexity: O(N logN)
+    Space complexity: O(logN)
+    """
+
+    def construct_tree(head, tail):  # Note that 'head' is inclusive and 'tail' is exclusive
+        if head == tail:
+            return None
+        slow, fast = head, head
+        while fast != tail and fast.next != tail:  # Similar to 'while fast and fast.next' when tail == None
+            slow, fast = slow.next, fast.next.next
+        root = TreeNode(slow.val)
+        root.left = construct_tree(head, slow)
+        root.right = construct_tree(slow.next, tail)
+        return root
+
+    if not head:
+        return None
+    if not head.next:
+        return TreeNode(head.val)
+    return construct_tree(head, None)
+
+
 
 
 
