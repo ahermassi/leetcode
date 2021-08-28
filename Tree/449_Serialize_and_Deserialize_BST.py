@@ -18,43 +18,46 @@ class TreeNode(object):
 class CodecPreorder:
     """ Let's use here the fact that BST could be constructed from pre-order or post-order traversal only.
         In-order traversal is not a unique identifier for the BST. For example, 1-2-3 in-order traversal could
-        correspond to at least 3 different trees: with the root equal to 1, with the root 2, and with the root 3.
-        By contrary, both pre-order and post-order traversals are unique identifiers of BST. That’s because from these
-        traversals one could restore the in-order one: in-order = sorted(post-order) = sorted(pre-order).
+        correspond to at least 3 different trees: With the root equal to 1, with the root 2, and with the root 3.
+        However, both pre-order and post-order traversals are unique identifiers of BST. That’s because from these
+        traversals we could restore the in-order: in-order = sorted(post-order) = sorted(pre-order).
 
         The encoded string needs to be as compact as possible. One of the ways a BST tree is different from a general
-        binary tree is its structure is wholly dependent on the order in which the values are inserted. A string
+        binary tree is that its structure is fully dependent on the order in which the values are inserted. A string
         created from a pre-order traversal of a BST will tell us the order in which the values were inserted into the
         tree. Since we just need the order the values were inserted, we do not need to account for null nodes in the
         string with '#' or 'null'. Hence, the final string contains only the values and separators, which makes it the
         most compact possible.
 
-        This class uses pre-order traversal for serialization. To deserialize, use a queue to recursively get root
+        This class uses pre-order traversal for serialization. To deserialize, we use a queue to recursively get root
         node, left subtree and right subtree. In this case, root will be always the first element in the queue.
-        Pre-order traversal of BST will output root node first, then left children, then right:
+        Pre-order traversal of BST will output root node first, then left children, then right children:
             root left1 left2 leftX right1 rightX
     Time complexity: O(N), both for serialization and deserialization
     Space complexity: O(N), since we store the entire tree
     """
 
     def serialize(self, root):
-        """ Encodes a tree to a single string. """
 
         def preorder(root):
-            if root:
-                values.append(root.val)
-                preorder(root.left)
-                preorder(root.right)
+            if not root:
+                return
+            values.append(root.val)
+            preorder(root.left)
+            preorder(root.right)
 
         values = []
         preorder(root)
-        return ' '.join([str(val) for val in values])
+        return '.'.join(map(str, values))
 
     def deserialize(self, data):
-        """ Decodes your encoded data to tree. """
 
         def build(lower, upper):
-            if queue and lower < queue[0] < upper:  # Verifying if first element in queue meets BST properties
+            if queue and lower < queue[0] < upper:  # Verifying if first element in queue meets BST properties.
+                # Only the values lower than the root can be added to the left child of the tree. This is done by
+                # creating a boundary such that if the value is greater than the  higher bound, we do not add it to
+                # left child. That way we do not have to store null values; return null when the range bound is out of
+                # lower or upper. It makes the string compact.
                 val = queue.popleft()
                 root = TreeNode(val)
                 root.left = build(lower, val)  # BST property for left child: less than parent value
@@ -63,8 +66,7 @@ class CodecPreorder:
 
         if not data:
             return None
-        values = [int(val) for val in data.split()]
-        queue = deque(values)
+        queue = deque(map(int, data.split('.')))
         return build(float('-inf'), float('inf'))  # Use lower and upper bounds to verify BST properties before each
         # attempt to create right/left child.
 
