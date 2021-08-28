@@ -85,3 +85,32 @@ def max_profit_v1(prices, fee):
         max_profit_hold_at_day[i] = max(max_profit_hold_at_day[i - 1],
                                         max_profit_sell_at_day[i - 1] - prices[i])
     return max_profit_sell_at_day[n - 1]
+
+
+def max_profit_v2(prices, fee):
+    """ We can use only 2 variables instead of two arrays to track the maximum profit of buying and selling actions.
+        On ith day:
+            - If we do not have a share, the profit is the same as previous day's profit. If we hold a share already,
+              we can always get more money when we sell at prices[i]. So profit = balance + prices[i] - fee when we
+              sell a share on ith day:
+
+                    max profit = max(profit, balance + prices[i] - fee) (do nothing or sell)
+
+            - If we already have a share, we cannot buy another one, the balance is the same as previous day's balance.
+              If we have no share, so we must have profit (may be 0) and we can use profit to buy a share at cost of
+              prices[i]. After buying a share, balance = profit - prices[i]:
+
+                    max balance = max(balance, profit - prices[i])  (do nothing or buy)
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    n = len(prices)
+    max_profit_if_sell_today = 0
+    max_profit_if_hold_today = -prices[0]
+    for i in range(1, n):
+        max_profit_if_sell_today = max(max_profit_if_sell_today,
+                                       max_profit_if_hold_today + prices[i] - fee)
+        max_profit_if_hold_today = max(max_profit_if_hold_today,
+                                       max_profit_if_sell_today - prices[i])
+    return max_profit_if_sell_today
