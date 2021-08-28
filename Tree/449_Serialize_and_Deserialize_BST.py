@@ -79,24 +79,23 @@ class CodecPostorder:
     """
 
     def serialize(self, root):
-        """ Encodes a tree to a single string. """
 
         def postorder(root):
-            if root:
-                postorder(root.left)
-                postorder(root.right)
-                values.append(root.val)
+            if not root:
+                return
+            postorder(root.left)
+            postorder(root.right)
+            values.append(root.val)
 
         values = []
         postorder(root)
-        return ' '.join([str(val) for val in values])
+        return '.'.join(map(str, values))
 
     def deserialize(self, data):
-        """ Decodes your encoded data to tree. """
 
         def build(lower, upper):
-            if values and lower < values[-1] < upper:
-                val = values.pop()
+            if nodes and lower < nodes[-1] < upper:
+                val = nodes.pop()
                 root = TreeNode(val)
                 root.right = build(val, upper)
                 root.left = build(lower, val)
@@ -104,7 +103,7 @@ class CodecPostorder:
 
         if not data:
             return None
-        values = [int(val) for val in data.split()]
+        nodes = list(map(int, data.split('.')))
         return build(float('-inf'), float('inf'))
 
 
