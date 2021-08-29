@@ -94,18 +94,24 @@ def can_partition_v3(nums):
 
 
 def can_partition_v4(nums):
-    """ This problem is essentially finding whether there are some numbers in a set which sum to a specific value. In
-        this problem, the value is sum/2.
+    """ This problem is essentially finding whether there are some numbers in a set sum to a specific value. In our
+        case, this value is sum(nums) / 2.
         Actually, this is a 0/1 knapsack problem. For each number, we can pick it or not. Let us assume that:
-            dp[i][j] = whether the specific sum j can be gotten from some of the first i numbers
-        If we can find such a series of numbers from 0..i whose sum is j, dp[i][j] is true, otherwise it is false.
+
+                dp[i][j] = whether sum j can be obtained from SOME of the first i numbers
+
+        If we can find such a series of numbers from 0 to i whose sum is j, dp[i][j] is true, otherwise it is false.
         Base case:
-            dp[0][0] = true (zero numbers consist of sum 0 is true)
+
+                dp[0][0] = true (zero numbers sum up to 0 is true)
+
         Transition function: For each number, if we don't pick it, dp[i][j] = dp[i-1][j], which means if some of the
         first (i - 1) elements has made it to j, dp[i][j] would also make it to j (we can just ignore nums[i]).
-        If we pick nums[i], dp[i][j] = dp[i-1][j-nums[i]], which means that j is composed of the current value nums[i]
-        and the remaining composed of other previous numbers. Thus, the transition function is:
-            dp[i][j] = dp[i-1][j] OR dp[i-1][j-nums[i]]
+        If we pick nums[i], dp[i][j] = dp[i-1][j-nums[i]], which means that j is the sum of the current value nums[i]
+        and the other remaining previous numbers. Thus, the transition function is:
+
+                dp[i][j] = dp[i-1][j] OR dp[i-1][j-nums[i]]
+
     Time complexity: O(N * sum/2)
     Space complexity: O(N * sum/2)
     """
@@ -113,16 +119,14 @@ def can_partition_v4(nums):
     if total % 2 == 1:
         return False
     target, n = total // 2, len(nums)
-    dp = [[False for _ in range(target + 1)] for _ in range(n)]
+    dp = [[False] * (target + 1) for _ in range(n)]
     dp[0][0] = True
     for i in range(1, n):
-        dp[i][0] = True
-    for i in range(1, n):
-        for j in range(1, target + 1):
-            if j < nums[i]:
-                dp[i][j] = dp[i - 1][j]
-            else:
+        for j in range(target + 1):
+            if j - nums[i] >= 0:
                 dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i]]
+            else:
+                dp[i][j] = dp[i - 1][j]
     return dp[n - 1][target]
 
 
@@ -136,7 +140,7 @@ def can_partition_v5(nums):
     if total % 2 == 1:
         return False
     target, n = total // 2, len(nums)
-    dp = [False for _ in range(target + 1)]
+    dp = [False] * (target + 1)
     dp[0] = True
     for i in range(1, n):
         for j in range(1, target + 1):
