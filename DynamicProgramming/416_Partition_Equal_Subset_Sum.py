@@ -133,6 +133,36 @@ def can_partition_v4(nums):
 def can_partition_v5(nums):
     """ We can optimize in space. We used a two dimensional array to solve the problem, but we can also use a one
         dimensional array of size (target+1).
+        Why iterate from 0 to (target + 1) in reverse order?
+        dp[i][j] only depends on the previous row, so we can optimize the space by only using 2 rows instead of the
+        matrix. Let's say array1 and array2. We can also see that the column indices of dp[i - 1][j - nums[i] and
+        dp[i - 1][j] are <= j. The conclusion we can draw is: The elements of the previous row whose column index
+        is > j (i.e. dp[i - 1][j + 1 : n - 1]) will not affect the update of dp[i][j] since we will not touch them:
+
+                			  j
+	            . . . . . . . . . . . .
+	            . . . . . . . . . . . .
+	            . . ? . . ? x x x x x x  We will not touch x for dp[i][j]
+            i	. . . . . # . . . . . .  # dp[i][j]
+	            . . . . . . . . . . . .
+	            . . . . . . . . . . . .
+	            . . . . . . . . . . . .
+	            . . . . . . . . . . . .
+	            . . . . . . . . . . . .
+
+        Thus, if we merge array1 and array2 into a single array array, if we update array backwards, all dependencies
+        are not touched!
+
+                (n represents new value, i.e. updated)
+	            . . ? . . ? n n n n n n n
+                        #
+
+        However, if we update forwards, dp[j - nums[i]] is updated overwritten, we cannot use it:
+
+                (n represents new value, i.e. updated)
+	            n n n n n ? . . . . . .  where another ? goes? Oops, it is overwritten, we lost it :(
+                        #
+
     Time complexity: O(N * sum/2)
     Space complexity: O(sum/2)
     """
@@ -142,10 +172,12 @@ def can_partition_v5(nums):
     target, n = total // 2, len(nums)
     dp = [False] * (target + 1)
     dp[0] = True
-    for i in range(1, n):
-        for j in range(1, target + 1):
-            if j >= nums[i]:
-                dp[j] = dp[j - 1] or dp[j - nums[i]]
+    for num in nums:
+        # If we go from left to right, dp[j - num] has been updated during the current iteration and the status from
+        # last iteration is lost
+        for j in reversed(range(target + 1)):
+            if j - num >= 0:
+                dp[j] = dp[j] or dp[j - num]
     return dp[target]
 
 
