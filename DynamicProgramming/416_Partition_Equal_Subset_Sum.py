@@ -35,6 +35,34 @@ def can_partition_v1(nums):
 
 
 def can_partition_v2(nums):
+    """ DFS + Memoization.
+        We have to find a subset in the array whose smu is equal to sum(nums) / 2. The brute force approach would be to
+        generate all the possible subsets of the array and return true if we find a subset with the required sum.
+    Time complexity: O(2^N), the recursive call takes the form of a binary tree where there are 2 possibilities for
+    every array element and the maximum depth of the tree could be N.
+    Space complexity: O(N), space be used by the recursion stack
+    """
+
+    def dfs(index, remaining):
+        if not remaining:
+            return True
+        if index == n:
+            return False
+        if (index, remaining) not in cache:
+            # Either take the current num or leave it
+            cache[(index, remaining)] = dfs(index + 1, remaining - nums[index]) or dfs(index + 1, remaining)
+            return cache[(index, remaining)]
+        return False
+
+    total = sum(nums)
+    if total % 2 == 1:
+        return False
+    target = total // 2
+    n, cache = len(nums), {}
+    return dfs(0, target)
+
+
+def can_partition_v3(nums):
     """ This problem is essentially finding whether there are some numbers in a set which sum to a specific value. In
         this problem, the value is sum/2.
         Actually, this is a 0/1 knapsack problem. For each number, we can pick it or not. Let us assume that:
@@ -67,7 +95,7 @@ def can_partition_v2(nums):
     return dp[n - 1][target]
 
 
-def can_partition_v3(nums):
+def can_partition_v4(nums):
     """ We can optimize in space. We used a two dimensional array to solve the problem, but we can also use a one
         dimensional array of size (target+1).
     Time complexity: O(N * sum/2)
@@ -94,6 +122,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, can_partition_v1(test_nums))
             self.assertEqual(result, can_partition_v2(test_nums))
             self.assertEqual(result, can_partition_v3(test_nums))
+            self.assertEqual(result, can_partition_v4(test_nums))
 
 
 if __name__ == '__main__':
