@@ -7,15 +7,21 @@ import unittest2 as unittest
 def can_partition_v1(nums):
     """ Brute force.
         Each number in the array can be picked or not picked to form the subset of array to have a target sum. Here we
-        can scan through the array, and store the sums of the subsets that include or not include the current number.
+        can scan through the array and store the sums of the subsets that include or not include the current number.
         We can use a set to store the sums to avoid duplicates.
+        Example: nums = [2, 8, 3, 1], target = 14 / 2 = 7, sums = {0}
+        num = 2, sums = {0, 0+2} = {0, 2}
+        num = 8, sums = {0, 2, 0+8, 2+8} = {0, 2} (0+8 and 2+8 were omitted as they exceed target)
+        num = 3, sums = {0, 2, 0+3, 2+3} = {0, 2, 3, 5}
+        nums = 1, sums = {0, 2, 3, 5, 0+1, 2+1, 3+1, 5+1} = {0, 2, 3, 5, 1, 4, 6}
+        --> target = 7 doesn't exist in sums, so the partitioning is not possible.
     Time complexity: O(N * sum/2)
     Space complexity: O(N * sum/2)
     """
     total = sum(nums)
     if total % 2 == 1:
         return False
-    target = total / 2
+    target = total // 2
     sums = {0}
     for num in nums:
         sums_with_num = []
