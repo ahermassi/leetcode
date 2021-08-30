@@ -35,26 +35,30 @@ def validate_stack_sequences_v2(pushed, popped):
         array as a stack.
         However, in cases like pushed = [1, 2, 3, 4, 5], popped = [4, 5, 3, 2, 1] , where i=3 and j=0 we have to remove
         pushed[3].
-        Removing from an array at index i which would take O(N) time, increasing our time complexity.
+        Removing from an array at index i takes O(N) time, increasing the time complexity.
         The solution is to use partition algorithm. We maintain 2 pointers :
-            i: pointer which represents the top of stack in pushed array
-            j: pointer which represents the current element to be processed in popped array
+            push_index: pointer which represents the top of stack in pushed array
+            pop_index: pointer which represents the current element to be processed in popped array
         We maintain the pushed array such that:
-            Anything in the range of 0 till i : valid stack elements
-            Anything in the range of current element val's index till n : To be pushed elements
-            Anything in the range of i till current element 'val' : Popped elements.
+            Anything in the range of 0 till 'push_index' : Valid stack elements
+            Anything in the range of current element val's index till n : Elements to be processed/pushed
+            Anything in the range of 'push_index' till current element 'val' : Popped elements.
         The idea is to overwrite the popped elements with new elements to be pushed in the subsequent iterations.
+        Instead of pushing the values to a separate stack array, we can just use 'push_index' pointer in pushed to be
+        the stack index and use pushed from [0, 'push_index'] to represent our stack. This way, instead of pushing to
+        an external stack array, we just overwrite the value of pushed representing the new top index of our stack
+        (pushed['push_index']) with the current pushed value (pushed[i]).
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    i, j, n = 0, 0, len(pushed)
+    push_index, pop_index, n = 0, 0, len(pushed)
     for val in pushed:
-        pushed[i] = val
-        while i >= 0 and pushed[i] == popped[j]:
-            i -= 1
-            j += 1
-        i += 1
-    return i == 0
+        pushed[push_index] = val
+        while push_index >= 0 and pushed[push_index] == popped[pop_index]:
+            push_index -= 1
+            pop_index += 1
+        push_index += 1
+    return push_index == 0
 
 
 class Test(unittest.TestCase):
