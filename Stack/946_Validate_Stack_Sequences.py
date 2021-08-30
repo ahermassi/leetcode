@@ -19,7 +19,7 @@ def validate_stack_sequences_v1(pushed, popped):
     stack = []
     for val in pushed:
         stack.append(val)
-        while stack and popped[i] == stack[-1]:
+        while stack and stack[-1] == popped[i]:
             stack.pop()
             i += 1
     return not stack
