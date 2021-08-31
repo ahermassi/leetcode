@@ -32,13 +32,13 @@ def rotated_digits_v1(n):
     return count
 
 
-def rotated_digits_v2(N):
-    """ Much simpler version.
-    Time complexity: O(N)
-    Space complexity: O(1)
+def rotated_digits_v2(n):
+    """ Same idea, simpler implementation but more space usage.
+    Time complexity: O(N * L)
+    Space complexity: O(L)
     """
     good = 0
-    for i in range(1, N + 1):
+    for i in range(1, n + 1):
         digits = str(i)
         if '3' in digits or '4' in digits or '7' in digits:
             continue
