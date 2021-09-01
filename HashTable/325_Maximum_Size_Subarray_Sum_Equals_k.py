@@ -4,7 +4,7 @@ return 0 instead. """
 import unittest2 as unittest
 
 
-def max_sub_array_len(nums, k):
+def max_sub_array_len_v1(nums, k):
     """ How many possible sub-arrays are there in an array of size n? There is 1 sub-array with length n, 2 sub-arrays
         with length (n - 1), 3 sub-arrays with length (n - 2) and so on. This means there are n + (n - 1) + (n - 2) +
         ... + 2 + 1 = n * (n + 1) / 2 possible sub-arrays. This question has bounds of n <= 2 * 10^5, which means
@@ -46,12 +46,32 @@ def max_sub_array_len(nums, k):
     return res
 
 
+def max_sub_array_len_v2(nums, k):
+    """ Same idea as the previous solution, but without using the (seemingly confusing) map initialization {0: -1}.
+        If cur_sum == k, that means the sum of the array up to this index i is equal to k. Update the longest sub-array
+        length to (i + 1).
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    prefix_sum, cur_sum, res = {}, 0, 0
+    for i, num in enumerate(nums):
+        cur_sum += num
+        if cur_sum == k:
+            res = i + 1
+        elif cur_sum - k in prefix_sum:
+            res = max(res, i - prefix_sum[cur_sum - k])
+        if cur_sum not in prefix_sum:
+            prefix_sum[cur_sum] = i
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([1, -1, 5, -2, 3], 3, 4), ([-2, -1, 2, 1], 1, 2)]
 
     def test_max_sub_array_len(self):
         for test_nums, test_k, result in self.data:
-            self.assertEqual(result, max_sub_array_len(test_nums, test_k))
+            self.assertEqual(result, max_sub_array_len_v1(test_nums, test_k))
+            self.assertEqual(result, max_sub_array_len_v2(test_nums, test_k))
 
 
 if __name__ == '__main__':
