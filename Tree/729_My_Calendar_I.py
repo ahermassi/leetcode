@@ -81,3 +81,34 @@ class MyCalendarV2(object):
             self.root = TreeNode(start, end)
             return True
         return self.insert(start, end, self.root)
+
+#############################################################
+
+
+class MyCalendarV3(object):
+    """ Iterative version of the previous solution.
+    Time complexity: O(N^2) worst-case, O(N logN) best-case
+    Space complexity: O(N)
+    """
+
+    def __init__(self):
+        self.root = None
+
+    def book(self, start, end):
+        if not self.root:
+            self.root = TreeNode(start, end)
+            return True
+        root = self.root
+        while root:
+            if end <= root.start:
+                if not root.left:
+                    root.left = TreeNode(start, end)
+                    return True
+                root = root.left
+            elif root.end <= start:
+                if not root.right:
+                    root.right = TreeNode(start, end)
+                    return True
+                root = root.right
+            else:
+                return False
