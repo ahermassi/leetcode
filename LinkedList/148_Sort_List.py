@@ -53,65 +53,73 @@ def sort_list_v1(head):
 
 
 def sort_list_v2(head):
-    """ This solution is bottom-up merge sort. It first merges pairs of adjacent arrays of 1 elements. Then merges pairs
-        of adjacent arrays of 2 elements. Next merges pairs of adjacent arrays of 4 elements... Until the whole array
-        is sorted.
-    http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/7-Sort/merge-sort5.html
+    """ The Top-Down Approach for merge sort uses O(logN) extra space due to recursive call stack. We can implement
+        merge sort with constant extra space using the Bottom-Up approach.
+        The Bottom-Up approach for merge sort starts by splitting the problem into the smallest sub-problems and
+        iteratively merges the result to solve the original problem.
+        First, the list is split into sub-lists of size 1 and merged iteratively in sorted order. The merged list is
+        solved similarly. The process continues until we sort the entire list.
+        Start with splitting the list into sub-lists of size 1. Each adjacent pair of sub-lists of size 1 is merged in
+        sorted order. After the first iteration, we get the sorted lists of size 2. A similar process is repeated for
+        a sublist of size 2. In this way, we iteratively split the list into sub-lists of size 1, 2, 4, 8.. and so on
+        until we reach N.
+        http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/7-Sort/merge-sort5.html
     Time complexity: O(N logN)
     Space complexity: O(1)
     """
 
-    # Merge two sorted lists, append the result to the node 'node', and return the tail of the two merged lists.
-    def merge(p1, p2, node):
+    # Merge two sorted lists, append the result to 'node', and return the tail of the two merged lists.
+    def merge(head1, head2, node):
         dummy = tail = ListNode(0)
-        while p1 and p2:
-            if p1.val <= p2.val:
-                tail.next = p1
-                p1 = p1.next
+        while head1 and head2:
+            if head1.val <= head2.val:
+                tail.next = head1
+                head1 = head1.next
             else:
-                tail.next = p2
-                p2 = p2.next
+                tail.next = head2
+                head2 = head2.next
             tail = tail.next
-        tail.next = p1 or p2
-        node.next = dummy.next
+        tail.next = head1 or head2
+        node.next = dummy.next  # This connects 'node' to the head of the two merged lists
         while tail.next:
-            tail = tail.next
+            tail = tail.next  # Advance 'tail' all the way to the end of the two merged lists
         return tail
 
-    # Split the linked list to two lists. The first list contains n nodes. Disconnect the two lists and return the
-    # head of second list.
-    def split(head, n):
-        for _ in range(n - 1):
-            if head:
-                head = head.next  # Move the head for a window of size n
-            else:
-                break
-        if not head:  # If head is null, then the head of the second list is null.
-            return None
-        second = head.next
-        head.next = None  # Disconnect the first and second lists
+    # Split the linked list to two sub-lists. The first list contains 'sublist_size' nodes. Disconnect the two
+    # sub-lists and return the head of second sublist.
+    def split(sublist_head, sublist_size):
+        i = 1
+        while i < sublist_size and sublist_head:
+            sublist_head = sublist_head.next  # Move the sublist head for a window of size 'sublist_size'
+            i += 1
+        second = sublist_head.next if sublist_head else None  # If head is null, then the head of the second sublist is
+        if head:
+            head.next = None  # Disconnect the first and second lists
         return second
 
     if not head or not head.next:
         return head
     dummy = ListNode(0)
     dummy.next = head
-    temp, length = head, 0
-    while temp:
-        length += 1
-        temp = temp.next
+    cur, size = head, 0
+    while cur:
+        size += 1
+        cur = cur.next
     step = 1  # At each step, merge every two consecutive lists of size 2^(step-1)
-    while step < length:
-        cur, tail = dummy.next, dummy  # With every iteration, 'cur' points to the head of the list. During the
-        # execution, 'tail' is the pointer whose next points to the 2 merged consecutive lists
+    while step < size:
+        tail = dummy
+        cur = dummy.next  # At the start of every iteration, 'cur' points to the head of the original list. During
+        # the iteration, 'tail' is the pointer whose preceding the 2 merged consecutive lists
         while cur:
-            left = cur
-            right = split(left, step)  # Remember that the return value of split() is the head of the second list
-            # after splitting the list at the node at index 'step'
-            cur = split(right, step)  # Now the second list whose head is 'right' has the same size as left list after
-            # splitting at index 'step' again. 'cur' points to the head of the rest of the list on which we'll apply
-            # the same procedure in the next iteration
-            tail = merge(left, right, tail)  # We connect 'tail' to the head of the two merged lists.
+            first_sublist_head = cur
+            second_sublist_head = split(first_sublist_head, step)  # Remember that the return value of split() is the
+            # head of the second list after splitting the list at the node at index 'step'
+            cur = split(second_sublist_head, step)  # After this call, the second sublist whose head is
+            # 'second_sublist_head' has the same size as the first sublist after splitting at index 'step' again.
+            # 'cur' points to the head of the rest of the list on which we'll apply the same procedure in the next
+            # iteration
+            tail = merge(first_sublist_head, second_sublist_head, tail)  # We connect 'tail' to the head of the two
+            # merged lists.
             # tail.next = head_of_merged_lists has the same effect as dummy.next = tail_of_merged_lists the first time
             # this statement is executed in every iteration. After that, 'tail' can move freely as dummy.next is taking
             # the stripe of the first two merged lists. merge() returns the tail of the two merged lists, to which
