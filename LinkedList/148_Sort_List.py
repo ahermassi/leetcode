@@ -11,27 +11,33 @@ class ListNode(object):
 
 
 def sort_list_v1(head):
-    """ This solution doesn't use constant space due to recursion. Top-down merge sort.
-        The idea behind this problem is easy : merge sort.
-        Recursively split the list into two halves, left and right, and then merge the two halves to get a sorted
-        sub list. Proceed until the entire list is sorted.
-        How to split a linked list into two separate linked lists? Use two pointers: walker and runner.
-    Time complexity: O(N logN)
-    Space complexity: O(logN)
+    """ The Top-Down approach for merge sort recursively splits the original list into sub-lists of equal sizes, sorts
+        each sublist independently, and eventually merges the sorted lists.
+        Recursively split the original list into two halves. The split continues until there is only one node in the
+        linked list (Divide phase). To split the list into two halves, we find the middle of the linked list using the
+        Fast and Slow pointer approach.
+        Recursively sort each sublist and combine it into a single sorted list. (Merge Phase)
+        The process continues until we get the original list in sorted order.
+    Time complexity: O(N logN), the recursion tree expands in form of a complete binary tree, splitting the list into
+    two halves recursively. The number of levels in a complete binary tree is given by logN. At each level, we merge N
+    nodes which takes O(N) time. For N=16, we perform merge operation on 16 nodes in each of the 4 levels. So the time
+    complexity for split and merge operation is O(N logN)
+    Space complexity: O(logN), we need additional space to store the recursive call stack. The maximum depth of the
+    recursion tree is logN.
     """
 
-    def merge(h1, h2):
-        dummy_head = tail = ListNode(0)
-        while h1 and h2:
-            if h1.val < h2.val:
-                tail.next = h1
-                h1 = h1.next
+    def merge(head1, head2):
+        head = tail = ListNode(0)
+        while head1 and head2:
+            if head1.val < head2.val:
+                tail.next = head1
+                head1 = head1.next
             else:
-                tail.next = h2
-                h2 = h2.next
+                tail.next = head2
+                head2 = head2.next
             tail = tail.next
-        tail.next = h1 or h2
-        return dummy_head.next
+        tail.next = head1 or head2
+        return head.next
 
     if not head or not head.next:  # This is the recursion base case: a single node list or empty list. When both
         # left and right halves are at this base case, it's easy to merge them
@@ -40,7 +46,7 @@ def sort_list_v1(head):
     while fast and fast.next:
         slow, fast = slow.next, fast.next.next
     left, right = head, slow.next
-    slow.next = None  # Don't forget to cut the link so left and right halves are no longer connected
+    slow.next = None  # Cut the link so left and right halves are no longer connected
     left = sort_list_v1(left)
     right = sort_list_v1(right)
     return merge(left, right)
