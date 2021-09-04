@@ -5,6 +5,8 @@ from heapq import heappush, heappop
 import unittest2 as unittest
 
 
+# Great explanation: https://www.youtube.com/watch?v=8MpoO2zA2l4
+
 def find_itinerary_v1(tickets):
     """ Hierholzer’s Algorithm.
 
