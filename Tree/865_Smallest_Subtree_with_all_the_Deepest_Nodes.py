@@ -5,6 +5,7 @@ Return the smallest subtree such that it contains all the deepest nodes in the o
 A node is called the deepest if it has the largest depth possible among any node in the entire tree.
 
 The subtree of a node is tree consisting of that node, plus the set of all descendants of that node. """
+
 from collections import deque
 
 
@@ -24,6 +25,11 @@ def subtree_with_all_deepest_v1(root):
         rooted at left child. If right_height > left_height, it means the smallest subtree with all deepest nodes must
         be rooted at right child.
         Which traversal allows us to traverse from bottom-up? Postorder! So we use it in the code.
+        To summarize:
+        If left subtree height is greater, then the result is whatever returned by the left as it has highest depth
+        elements. Similarly, if right subtree height is greater, then the result is whatever returned by the right as
+        it has highest depth elements. If heights of both left and right subtrees are equal, then the current node is
+        the lowest common ancestors of the deepest leaves.
     Time complexity: O(N), where N is the number of nodes in the tree
     Space complexity: O(N)
     """
