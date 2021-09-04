@@ -94,14 +94,14 @@ def find_itinerary_v1(tickets):
 
 
 def find_itinerary_v2(tickets):
-    """ Recursive version of the above algorithm using DFS.
+    """ Iterative version of the above algorithm using an explicit stack.
         Considering the passenger has to be physically in one place before moving to another airport, we are
         considering using up all tickets and choose lexicographically smaller solution if case of a tie. Thinking as
         that passenger, they choose their flight greedily as the lexicographical order. Once they arrive at an airport
         without departure flights with more tickets at hand, the passenger will push current ticket in a stack and look
         at whether it is possible to travel to other places from the airport on their way.
-    Time complexity: O(N logN)
-    Space complexity: O(N)
+    Time complexity: O(E logE)
+    Space complexity: O(|E| + |V|)
     """
 
     graph = defaultdict(list)
@@ -109,9 +109,9 @@ def find_itinerary_v2(tickets):
         heappush(graph[origin], dest)
     stack, res = ['JFK'], []
     while stack:
-        arrivals = graph[stack[-1]]
-        if arrivals:
-            stack.append(heappop(arrivals))  # While we visit the edge, we trim it off from the graph
+        destinations = graph[stack[-1]]
+        if destinations:
+            stack.append(heappop(destinations))  # While we visit the edge, we trim it off from the graph
         else:
             res.append(stack.pop())
     return res[::-1]
