@@ -88,3 +88,26 @@ def subtree_with_all_deepest_v2(root):
             queue.extend([kid for kid in (node.left, node.right) if kid])
     return lowest_common_ancestor(root, leftmost_node, rightmost_node)
 
+
+def subtree_with_all_deepest_v3(root):
+    """ Similar to the first solution, more straightforward, but unnecessarily recomputes the heights. It checks
+        whether the children of the current node have an equal height. If so, then the current node is the lowest
+        common ancestor of all deepest leaves. If not, we recall the function on the taller subtree.
+    Time complexity: O(N^2)
+    Space complexity: O(N)
+    """
+
+    def height(root):
+        if not root:
+            return 0
+        return 1 + max(height(root.left), height(root.right))
+
+    if not root:
+        return None
+    left_height, right_height = height(root.left), height(root.right)
+    if left_height == right_height:
+        return root
+    if left_height > right_height:
+        return subtree_with_all_deepest_v3(root.left)
+    return subtree_with_all_deepest_v3(root.right)
+
