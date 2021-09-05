@@ -56,3 +56,44 @@ def min_insertions_v1(s):
         else:
             left_unmatched[-1] = 1
     return left_parenthesis_added + right_parenthesis_added + sum(left_unmatched)
+
+
+def min_insertions_v2(s):
+    """ We keep 3 variables, 'left_parenthesis_added' and 'right_parenthesis_added' are 2 counters for manual additions
+        of left and right parenthesis, respectively. 'right_needed' for the number of closing parenthesis that we need.
+        We start iterating over the string elements one by one.
+
+        When we see a '(':
+        - For every open parenthesis, we need 2 closing parenthesis. Therefore, right_needed += 2.
+        - If we have an odd number of closed parenthesis, this means that we have one ')' for one of the '(', and now
+          we have another '('. Since any '(' must have a corresponding two consecutive ')', so we need to give a ')' to
+          the existing '(', and then process the new one. Therefore, right_parenthesis_added++ adds a new ')' and
+          right_needed-- means the existing lonely ')' is paired and not needed now.
+
+        When we see a ')':
+            - If right_needed is 0, it means we encountered a lone ')'. We can manually add a '(' and then say that we
+              encountered '()'.
+            - Otherwise, we reduce the number of required closed parenthesis.
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    left_parenthesis_added = right_parenthesis_added = right_needed = 0
+    for c in s:
+        if c == '(':
+            right_needed += 2  # Current open parenthesis needs two closing parenthesis
+            if right_needed % 2 == 1:
+                # Previous sequence of close was invalid, i.e. '..()(...' , so we add one ')' to make it valid
+                right_parenthesis_added += 1
+                right_needed -= 1
+            elif right_needed == 0:
+                left_parenthesis_added += 1
+                right_needed += 1
+            else:
+                right_needed -= 1
+            # Alternatively (after the first if)
+            # else:
+            #     right_needed -= 1
+            #     if right_needed < 0:
+            #         left_parenthesis_added += 1
+            #         right_needed += 2
+    return left_parenthesis_added + right_parenthesis_added + right_needed
