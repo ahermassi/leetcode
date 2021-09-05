@@ -97,3 +97,23 @@ def min_insertions_v2(s):
             #         left_parenthesis_added += 1
             #         right_needed += 2
     return left_parenthesis_added + right_parenthesis_added + right_needed
+
+
+def min_insertions_v3(s):
+    """ Go through the string replacing '))' with '}'. This allows for easy differentiation between ')' '))' when later
+        processing the string. After that, the algorithm is similar to 921- Minimum Add to Make Parentheses Valid.
+    Time complexity: O(N)
+    Space complexity: O(N), since we create a new string
+    """
+    s = s.replace('))', '}')
+    left_unmatched = right_unmatched = 0
+    for c in s:
+        if c == '(':
+            left_unmatched += 1
+        elif left_unmatched > 0:
+            left_unmatched -= 1
+            right_unmatched += 1 if c == ')' else 0
+        else:  # c is a right parenthesis ')' or a pair of '))' (i.e. '}') and there isn't an open '(' to balance it out
+            right_unmatched += 2 if c == ')' else 1
+    return left_unmatched * 2 + right_unmatched
+
