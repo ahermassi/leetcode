@@ -3,6 +3,8 @@ the input string valid.
 
 Return all the possible results. You may return the answer in any order. """
 
+from collections import deque
+
 
 def remove_invalid_parentheses_v1(s):
     """ Since we don't know which of the brackets can possibly be removed, we try out all the options!
@@ -204,3 +206,65 @@ def remove_invalid_parentheses_v2(s):
                 unmatched_left -= 1
     dfs(0, 0, unmatched_left, unmatched_right, '')
     return list(res.keys())
+
+
+def remove_invalid_parentheses_v3(s):
+    """ We are required to return the minimum number of invalid parentheses to remove. Let's model the problem as a
+        graph:
+            node: String obtained by removing parenthesis (The start node is `s`)
+            edge (from u to v): Remove a parentheses from u
+        As a result, the problem becomes to get the shortest distance from s to a valid node (assuming at level l) in
+        the first place, then get all valid nodes at level l.
+        BFS guarantees shortest path. Since the problem asks to remove minimum parenthesis, it is natural to think of
+        BFS.
+
+        The idea is straightforward: With the input string s, we generate all possible states by removing one '(' or
+        ')' and check if they are valid; if we find valid strings at the current level, we add them to the final result
+        list and we are done. Otherwise, we add them to a queue and carry on to the next level.
+
+        The one crucial observation is that once we find a valid expression, it means we have found the minimum
+        removals since we are using BFS. Therefore, there is no need to search further. We just check all the valid
+        expressions  at that level. If we were using DFS, we would need to keep track of the minimum removals.
+    Time complexity: O(2^N), on the first level there's only one string which is the input string s, let's say of
+    length n. To check whether it's valid, we need O(n) time. On the second level, we remove one '(' or ')' from the
+    first level, so there are C(n, n-1) new strings, each of them has (n - 1) characters, and for each string we need
+    to check whether it's valid or not, thus the total time complexity on this level is (n-1) x C(n, n-1). Come to the
+    third level, total time complexity is (n-2) x C(n, n-2), so on and so forth. Finally we have this formula:
+    T(n) = n x C(n, n) + (n-1) x C(n, n-1) + ... + 1 x C(n, 1) = n x 2^(n-1)
+    Space complexity: O(N)
+    """
+
+    def is_valid(s):
+        balance = 0
+        for c in s:
+            if c == '(':
+                balance += 1
+            elif c == ')':
+                balance -= 1
+            if balance < 0:
+                return False
+        return balance == 0
+
+    queue = deque([s])
+    visited, res = set(), []
+    valid_expression_found = False
+    while queue:
+        expression = queue.popleft()
+        if is_valid(expression):
+            res.append(expression)
+            valid_expression_found = True
+        if valid_expression_found:  # This ensures once we've found a valid parentheses pattern, we don't do any
+            # further BFS using items pending in the queue since any further BFS would only yield strings of smaller
+            # length. However, the items already in queue need to be processed since there could be other solutions of
+            # the same length. Once we have a string of length k that is valid, all those strings in the next level
+            # which have a length of (k - 1) are definitely not valid (we need to remove a pair to make it valid again).
+            continue
+        n = len(expression)
+        for i in range(n):
+            if expression[i] not in '()':
+                continue
+            sub_expression = expression[:i] + expression[i + 1:]
+            if sub_expression not in visited:
+                queue.append(sub_expression)
+                visited.add(sub_expression)
+    return res
