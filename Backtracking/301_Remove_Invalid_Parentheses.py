@@ -90,3 +90,117 @@ def remove_invalid_parentheses_v1(s):
     min_removals = [float('inf')]
     dfs(0, 0, '')
     return res if res else [""]
+
+
+def remove_invalid_parentheses_v2(s):
+    """ Although the previous solution does get accepted, it is very inefficient because we try removing each and every
+        possible parentheses from the expression and in the end we check two things:
+            - Whether the expression is valid or not
+            - Whether the total number of removed parentheses removed in the current recursion is less than the global
+              minimum till now or not.
+        We cannot determine which of the parentheses are misplaced because, as the problem statement puts across, we
+        can remove multiple combinations of parentheses and end up with a valid expression. This means there can be
+        multiple valid expressions from a single invalid expression and we have to find all of them.
+
+        The one thing all these valid expressions have in common is that they will all be of the same length i.e. as
+        compared to the original expression, all of these expressions will have the same number of characters removed.
+
+        What if we could determine this count? What if in addition to determining this count of characters to be
+        removed, we could also determine the number of left parentheses and number of right parentheses to be removed
+        from the original expression to get any valid expression? This would cut down the computations immensely and
+        the runtime would plummet as a result. The reason for this is, if we knew how many left and right parentheses
+        are to be removed from the original expression to get a valid expression, we would cut down on so many unwanted
+        recursive calls.
+
+        Imagine the original expression to be 1000 characters long with only 3 misplaced '(' parentheses and
+        2 misplaced ')' parentheses. In the previous solution, we would end up trying to remove each one of left and
+        right parentheses and try to reach a valid expression in the end whereas we should only be trying out
+        removing 3 '(' brackets and 2 ')' brackets. This is the exact number of '(' and ')' that have to be removed to
+        get a valid expression. No more, no less.
+
+        Let us look at how we can find out the number of misplaced left and right parentheses in a given expression
+        first and then we will slightly modify our original algorithm to incorporate these counts as well.
+
+        We process the expression one bracket at a time starting from the left.
+
+        Suppose we encounter an opening bracket i.e. '(', it may or may not lead to an invalid expression because there CAN be a matching ending bracket
+        somewhere in the remaining part of the expression. Here, we simply increment the counter keeping track of left
+        parentheses till now. unmatched_left += 1
+
+        If we encounter a closing bracket, this has two meanings: Either there was no matching opening bracket for
+        this closing bracket and in that case we have an invalid expression. This is the case when unmatched_left == 0
+        i.e. when there are no unmatched left brackets available. In such case, we increment another counter say
+        unmatched_right += 1 to represent misplaced right parentheses. Or, we had some unmatched opening bracket
+        available to match this closing bracket. This is the case when unmatched_left > 0. In this case, we simply
+        decrement the left counter we had i.e. unmatched_left -= 1
+
+        Continue processing the string until all parentheses have been processed. In the end, the values of
+        'unmatched_left' and 'unmatched_right' would tell us the number of unmatched '(' and ')' parentheses,
+        respectively.
+
+        Now that we have these two values available that tell us the total number of left and right parentheses that
+        have to be removed to make the invalid expression valid, we will modify our original algorithm to avoid
+        unwanted recursions.
+
+        The overall algorithm remains exactly the same as before. The changes that we will incorporate are:
+        'left_removals_remaining' is the number of left parentheses that remain to be removed.
+        'right_removals_remaining' represents the number of right parentheses that remain to be removed.
+        Overall, for the final expression to be valid, left_removals_remaining == 0 and right_removals_remaining == 0.
+
+        When we decide to not consider a parenthesis i.e. delete a parenthesis, be it a left or a right parentheses,
+        we have to consider their corresponding remaining counts as well. This means that we can only discard a left
+        parentheses if left_removals_remaining > 0 and similarly for the right one we will check for
+        right_removals_remaining > 0.
+
+        There are no changes to checks for considering a parenthesis. Only the conditions change for discarding a
+        parenthesis.
+
+        The condition for an expression being valid in the base case would now become left_removals_remaining == 0 and
+        right_removals_remaining == 0. Note that we don't have to check if balance == 0 anymore because in the case of
+        a valid expression, we would have removed all the misplaced or invalid parenthesis by the time the recursion
+        ends.
+
+        The most important thing here is that we have completely gotten rid of checking if the number of parentheses
+        removed is lesser than the current minimum. The reason for this is that we always remove the same number of
+        parentheses as defined by (left_removals_remaining + right_removals_remaining) at the start of recursion.
+    Time complexity:  O(2^N), the optimization that we have performed is simply a better form of pruning. Pruning here
+    is something that will vary from one test case to another. In the worst case, we can have something like '((((((((('
+    and the unmatched_left = len(s) and in such a case we can discard all of the characters because all are misplaced.
+    So, in the worst case we still have 2 options per parenthesis and that gives us a complexity of O(2^N).
+    Space complexity: O(N), we have to go to a maximum recursion depth of N before hitting the base case
+    """
+
+    def dfs(index, balance, left_removals_remaining, right_removals_remaining, path):
+        if index == n:
+            if left_removals_remaining == right_removals_remaining == 0:
+                res[path] = 1  # This is how we avoid duplicates without using a set
+                return
+            return
+        c = s[index]
+        if c not in '()':
+            dfs(index + 1, balance, left_removals_remaining, right_removals_remaining, path + c)
+        elif c == '(':
+            dfs(index + 1, balance + 1, left_removals_remaining, right_removals_remaining, path + c)
+            if left_removals_remaining > 0:  # We don't recurse if the remaining count for the parenthesis is 0
+                dfs(index + 1, balance, left_removals_remaining - 1, right_removals_remaining, path)
+        else:
+            if balance > 0:  # If the current parenthesis is a closing bracket, we consider it only if we have more
+                # number of opening brackets, i.e. balance > 0
+                dfs(index + 1, balance - 1, left_removals_remaining, right_removals_remaining, path + c)
+            if right_removals_remaining > 0:  # We don't recurse if the remaining count for the parenthesis is 0
+                dfs(index + 1, balance, left_removals_remaining, right_removals_remaining - 1, path)
+
+    n, res = len(s), {}
+    unmatched_left = unmatched_right = 0
+    # First, we find out the number of misplaced left and right parentheses
+    for c in s:
+        if c == '(':
+            unmatched_left += 1
+        elif c == ')':
+            if not unmatched_left:  # If we don't have a matching left, then this is a misplaced right, record it.
+                unmatched_right += 1
+            else:
+                # Decrement count of left parentheses because we have found a right which CAN be a matching for a left
+                unmatched_left -= 1
+    dfs(0, 0, unmatched_left, unmatched_right, '')
+    return list(res.keys())
