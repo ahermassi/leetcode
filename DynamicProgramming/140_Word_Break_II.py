@@ -34,28 +34,28 @@ def word_break_v1(s, word_dict):
         As the main body of the function, we run an iteration over all the words of the dictionary. If the
         corresponding word happens to match a prefix in the string, we then invoke recursively the function on the
         suffix (rest of string).
-        At the end of the iteration, we keep the results in the hash map named memo with each valid substring as its
-        key and the list of words that compose the prefix of as the value. For instance, for the substring 'dogo', its
-        corresponding entry in the hash map would be memo['dogo'] = ['do', 'go'].
+        (Optional) At the end of the iteration, we keep the results in the hash map named memo with each valid
+        substring as its key and the list of words that compose the prefix of as the value. For instance, for the
+        substring 'dogo', its corresponding entry in the hash map would be memo['dogo'] = ['do', 'go'].
         Finally, as the result, we return the entry of memo with the input string as the key.
+    Time complexity: O(len(wordDict) ^ len(s / minWordLenInDict)), because there're len(wordDict) possibilities for
+    each cut
+    Space complexity: O(N)
     """
 
-    def dfs(s):  # dfs(s) returns a list containing all sentences derived from s
-        if not s:
+    def dfs(index):  # dfs(index) returns a list of all sentences derived from the substring starting at 'index'
+        if index == n:
             return ['']
-        if s not in memo:
-            res = []
-            for word in word_dict:
-                if s.startswith(word):
-                    rest_of_string = dfs(s[len(word):])  # Move forward to break the suffix into words
-                    for subs in rest_of_string:
-                        res.append(word + ' ' + subs if subs else word)  # Account for subs = '' when suffix is empty
-            memo[s] = res
+        res = []
+        for word in word_dict:
+            if s[index:].startswith(word):
+                rest = dfs(index + len(word))  # Move forward to break the suffix into words
+                for subs in rest:
+                    res.append(word + (' ' + subs if subs else ''))  # Account for subs = '' when suffix is empty
+        return res
 
-        return memo[s]
-
-    memo = {}  # Map a string to its corresponding words break
-    return dfs(s)
+    n = len(s)
+    return dfs(0)
 
 
 def word_break_v2(s, word_dict):
