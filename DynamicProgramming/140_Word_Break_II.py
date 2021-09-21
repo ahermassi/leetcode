@@ -64,25 +64,28 @@ def word_break_v2(s, word_dict):
         The logic is still the same, but we run an iteration over all the prefixes of the input string instead of words
         of the dictionary. If the corresponding prefix happens to match a word in the dictionary, we then invoke
         recursively the function on the suffix.
+    Time complexity: O(2^N), consider the input "aaaaaa", with wordDict = ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaa"].
+    Every possible partition is a valid sentence, and there are 2^N-1 such partitions. Given an array of length N,
+    there are (N + 1) ways/intervals to partition it into two parts. Each interval has two choices - split or not. In
+    the worse case, we will have to check all possibilities, which becomes O(2^(N+1)) ~= O(2^N).
+    Space complexity: O(N)
     """
 
-    def dfs(s):
-        if not s:
+    def dfs(index):
+        if index == n:
             return ['']
-        if s not in memo:
-            n, res = len(s), []
-            for i in range(n + 1):  # When i=n (last iteration), prefix=s[:n] which matches the entire string s
-                prefix, suffix = s[:i], s[i:]
-                if prefix in word_dict:
-                    rest_of_string = dfs(suffix)
-                    for subs in rest_of_string:
-                        res.append(prefix + ' ' + subs if subs else prefix)
-            memo[s] = res
-        return memo[s]
+        res = []
+        for i in range(index, n + 1):  # When i=n (last iteration), prefix=s[:n] which matches the entire string s
+            prefix, suffix = s[index:i], s[i:]
+            if prefix in word_dict:
+                rest = dfs(i)
+                for subs in rest:
+                    res.append(prefix + (' ' + subs if subs else ''))
+        return res
 
     word_dict = set(word_dict)
-    memo = {}
-    return dfs(s)
+    n = len(s)
+    return dfs(0)
 
 
 def word_break_v3(s, word_dict):
