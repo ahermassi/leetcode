@@ -118,7 +118,7 @@ def word_break_v4(s, word_dict):
     """ Bottom-up dynamic programming.
         Following the same definition in the top-down approach, given an input string s = 'catsanddog', we define the
         results of breaking it into words with the function F(s).
-        For any word (denoted as w) in the dictionary, if it matches with a suffix of the input string, we then can
+        For any word (denoted as w) in the dictionary, if it matches with a SUFFIX of the input string, we then can
         divide the string into two parts: the prefix and the word, i.e. s = prefix + w.
         Consequently, the solution for the input string can be represented as follows:
             ∀ w ∈ dict, s = prefix + w ⟹ {F(prefix) + w} ∈⊆F(s)
@@ -126,7 +126,9 @@ def word_break_v4(s, word_dict):
         We start from an empty prefix (i.e. the bottom case), to progressively extend the solutions to a larger prefix.
         Eventually, the extended prefix would grow to be the original string.
         We define the dp array as follows:
+
             dp[i] = solutions for the corresponding prefix s[:i], or first i characters of s
+
         The desired result would be the last element in the array, i.e. dp[len(s)], which corresponds to the results
         for the entire string.
         We ad an additional check at the beginning of the algorithm to see if the input string contains some characters
@@ -160,6 +162,8 @@ class Test(unittest.TestCase):
         for test_string, test_word_dict, result in self.data:
             self.assertEqual(result, word_break_v1(test_string, test_word_dict))
             self.assertEqual(result, word_break_v2(test_string, test_word_dict))
+            self.assertEqual(result, word_break_v3(test_string, test_word_dict))
+            self.assertEqual(result, word_break_v4(test_string, test_word_dict))
 
 
 if __name__ == '__main__':
