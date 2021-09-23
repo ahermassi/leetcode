@@ -6,7 +6,7 @@ from collections import defaultdict, deque
 import unittest2 as unittest
 
 
-def alien_order(words):
+def alien_order_v1(words):
     """ Kahn's algorithm for topological sorting.
 
         A few things to keep in mind:
@@ -95,12 +95,87 @@ def alien_order(words):
     # there was a cycle and so no valid ordering. Return '' as per the problem description.
 
 
+def alien_order_v2(words):
+    """ Another approach is to use a depth-first search. We still need to extract relations and then generate an
+        adjacency list in the same way as before, but this time we don't need the out-degree map.
+
+        One issue we need to be careful of is cycles. In directed graphs, we often detect cycles by using graph
+        coloring. All nodes start as white, and then once they're first visited they become grey, and then once all
+        their outgoing nodes have been fully explored, they become black. We know there is a cycle if we enter a node
+        that is currently grey. It works because all nodes that are currently on the stack are grey. Nodes are changed
+        to black when they are removed from the stack.
+
+        The way DFS would work is that we would consider all possible paths stemming from A before finishing up the
+        recursion for A and moving onto other nodes. All the nodes in the paths stemming from the node A would have A
+        as an ancestor. The way this fits in our problem is, all the characters in the paths stemming from character
+        A would have A as a 'prerequisite'.
+
+        For each of the nodes in our graph, we will run a depth-first search in case that node was not already visited
+        in some other node's DFS traversal.
+
+        Suppose we are executing the depth-first search for a node N. We will recursively traverse all of the neighbors
+        of node N which have not been processed before. Once the processing of all the neighbors is done, we will add
+        the node N to the result list.
+
+        visited[node] == -1: The node is encountered again while its children are being examined. This indicates a
+        cycle.
+        visited[node] == 1: The node's children have been examined in an earlier call and no cycle was detected.
+        Move on.
+
+        Another way to think about it is the last few in the order must be those which are not prerequisites of other
+        characters. Thinking of it recursively means if one node has unvisited children nodes, we should visit them
+        first before we put this node down in the final order list. This sounds like the post-order of a DFS.
+
+        An important thing to note about topologically sorted order is that there won't be just one ordering of nodes
+        (characters). There can be multiple.
+
+    Time complexity: O(|V| + |E|), where V is the number of vertices and E is the number of edges. Essentially we
+    iterate through each node and each vertex in the graph once and only once.
+    Space complexity: O(|V| + |E|), we use the adjacency list to represent our graph initially. The space occupied is
+    defined by the number of edges because for each node as the key, we have all its adjacent nodes in the form of a
+    list as the value.
+    """
+
+    def dfs(node):
+        if visited[node] == -1:  # Don't recurse further if we found a cycle already
+            return False
+        if visited[node] == 1:
+            return True
+        visited[node] = -1  # Start the recursion
+        for neighbor in graph[node]:
+            if not dfs(neighbor):
+                return False
+        res.append(node)
+        visited[node] = 1
+        return True
+
+    graph = defaultdict(list)
+    n = len(words)
+    for i in range(n - 1):
+        cur, nxt = words[i], words[i + 1]
+        j = 0
+        while j < min(len(cur), len(nxt)) and cur[j] == nxt[j]:
+            j += 1
+        if j == len(nxt) and j < len(cur):
+            return ''
+        if j < min(len(cur), len(nxt)) and cur[j] not in graph[nxt[j]]:
+            graph[nxt[j]].append(cur[j])  # Create graph, better seen as is_prerequisite_of graph:
+            # graph[char1] = char2 means 'char1' is a prerequisite of 'char2' and precedes it in the alien alphabet
+    visited = {c: 0 for word in words for c in word}
+    res = []
+    for c in visited:
+        if not dfs(c):  # If a cycle exists, no topological ordering is possible
+            return ''
+    return ''.join(res)
+
+
 class Test(unittest.TestCase):
     data = [(['wrt', 'wrf', 'er', 'ett', 'rftt'], 'wertf'), (['z', 'x'], 'zx'), (['z', 'x', 'z'], '')]
 
     def test_alien_order(self):
         for test_words, result in self.data:
-            self.assertEqual(result, alien_order(test_words))
+            self.assertEqual(result, alien_order_v1(test_words))
+            self.assertEqual(result, alien_order_v2(test_words))
 
 
 if __name__ == '__main__':
