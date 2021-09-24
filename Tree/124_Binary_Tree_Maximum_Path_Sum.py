@@ -12,10 +12,28 @@ def max_path_sum(root):
             - If both are positive, only the biggest one is added so that we don't include both children during the
               rest of the tree exploration
             - Leaves return their own values and we recursively work our way upwards
+
         A global maximum sum variable 'res' is maintained so that every path can be individually checked while updating
-        nodes.
-        The key is to always choose the maximum cumulative sum path while updating the global maximum value from the
-        leaves upwards.
+        nodes. The key is to always choose the maximum cumulative sum path while updating the global maximum value
+        from the leaves upwards.
+
+        Why do we return max(root.val + left, root.val + right)? If the current node is at level 2 and we want to go
+        one level up, say level 1, we can NOT keep both the left paths and right paths. We just gotta choose one path
+        out of these two. When we're looking at left and right branches of a node, we only care about gains we can
+        make. This means if the sum of all the nodes on either of the branches of a particular node is less than 0,
+        that branch is not worth exploring at all.
+
+        It is important to understand the difference between looking for the maximum path INVOLVING the current node in
+        process and what we return for the node which starts the recursion stack. When going back up the recursion
+        stack, we cannot just return the max value. We can only form a path involving the parent node as the root
+        with EITHER of the the root's branches. Therefore, we have to choose the max gain between the again from left
+        branch and the gain from right branch.
+
+        Each node actually has two roles when it comes to dfs(node) function. When processing the final result 'res',
+        the node is treated as the highest/pivot point of a path. When calculating its return value, it is only PART
+        OF a path (left or right part), and this return value will be used to calculate path sum of other paths with
+        some other nodes when the result bubbles up in the recursion stack.
+
         Now consider the following example:
             10
            /  \
@@ -43,9 +61,7 @@ def max_path_sum(root):
            /  \
           10  30
 
-        Why do we return max(root.val + left, root.val + right)? If the current node is at level 2 and we want to go
-        one level up, say level 1, we can NOT keep both the left paths and right paths. We just gotta choose one path
-        out of these two.
+
     Time complexity: O(N)
     Space complexity: O(h)
     """
