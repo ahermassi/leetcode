@@ -86,6 +86,33 @@ def vertical_traversal_v1(root):
 
 
 def vertical_traversal_v2(root):
+    """ BFS implementation of the previous algorithm.
+    Time complexity: O(N logN)
+    Space complexity: at any given moment the queue contains no more than two levels of nodes in the tree. The maximal
+    number of nodes at one level is N/2 which is the number of the leaf nodes in a balanced binary tree. As a result,
+    the space needed for the queue would be O(N/2 * 2) = O(N)
+    """
+    queue = deque([(root, 0, 0)])
+    positions = []
+    while queue:
+        node, row, col = queue.popleft()
+        if not node:
+            continue
+        positions.append((col, row, node.val))
+        queue.append((node.left, row + 1, col - 1))
+        queue.append((node.right, row + 1, col + 1))
+    positions.sort()
+    res = []
+    prev_col = float('-inf')
+    for col, row, val in positions:
+        if col > prev_col:
+            prev_col = col
+            res.append([])
+        res[-1].append(val)
+    return res
+
+
+def vertical_traversal_v3(root):
     """ Same as previous solution but keeping node's position and value in a hash map indexed by x coordinate.
     Time complexity: O(N * logN)
     Space complexity: O(N)
