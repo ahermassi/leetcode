@@ -113,24 +113,51 @@ def vertical_traversal_v2(root):
 
 
 def vertical_traversal_v3(root):
-    """ Same as previous solution but keeping node's position and value in a hash map indexed by x coordinate.
-    Time complexity: O(N * logN)
+    """ As we can see in the above approaches, the overall time complexity is dominated by the sorting operation on
+        the list of coordinates. In order to further optimize the solution, we can try to do something with the sorting.
+
+        It would be hard, if not impossible, to eliminate the sorting operation, since we still need a means to resolve
+        the draw situation when two nodes share the same <column, row> index. One might argue that we could use the
+        heap data structure to maintain the list of coordinates. The elements in the heap data structure are ordered
+        automatically, and this does eliminate the sorting operation. However, to maintain the elements in order, each
+        insertion operation in heap would take O(logN) time complexity. In other words, we can consider the heap data
+        structure as another form of sorting, which amortizes the cost of sorting operating over each insertion.
+
+        That being said, one thing that we can do is reduce the scope of sorting by partitioning the list of
+        coordinates into subgroups based on the column index. Although we would still need to sort the subgroups
+        respectively, it would be faster to sort a series of subgroups than sorting them all together in a single
+        group. Here is a not-so-rigid proof:
+
+        Suppose that we have a list of N elements. It would then take O(N logN) time to sort this list. Next, we divide
+        the list into k sub-lists equally. Each list would contain N/k elements. Similarly, it would take O(N/k logN/k)
+        time to sort each sublist. In total, to sort all the k sub-lists, it would take O(k * N/k logN/k)=O(N logN/k),
+        which is less than the time complexity of sorting the original list (i.e. O(N logN)).
+
+        More importantly, another rationale to partition the list into column-based groups is that this is also the
+        format of results that are asked in the problem.
+
+        We traverse the input tree by either BFS or DFS. During the traversal, we populate the hash map. Meanwhile, we
+        could also note down the minimal and maximal column index during the traversal (not done in this DFS
+        implementation). The minimal and maximal column index defines the range of column index. With this range, we
+        could iterate through columns in order without the need for sorting.
+
+        Once we populate the above hash map, we then sort the values in each entry of the map, i.e. we sort each group
+        of coordinates led by the column index.
+
+    Time complexity: O(N logN/k), where k is the width of the tree i.e. the number of columns in the result
     Space complexity: O(N)
     """
+
+    def dfs(root, row, col):
+        if not root:
+            return
+        positions[col].append((row, root.val))
+        dfs(root.left, row + 1, col - 1)
+        dfs(root.right, row + 1, col + 1)
+
     positions, res = defaultdict(list), []
-    queue = deque([(root, 0, 0)])
-    min_x = max_x = 0
-    while queue:
-        node, x, y = queue.popleft()
-        positions[x].append((y, node.val))
-        if x < min_x:
-            min_x = x
-        elif x > max_x:
-            max_x = x
-        if node.left:
-            queue.append((node.left, x - 1, y - 1))
-        if node.right:
-            queue.append((node.right, x + 1, y - 1))
-    for i in range(min_x, max_x + 1):
-        res.append(val for y, val in sorted(positions[i], key=lambda element: (-element[0], element[1])))
+    dfs(root, 0, 0)
+    for col in sorted(positions.keys()):
+        values = positions[col]
+        res.append([val for row, val in sorted(values)])  # sort first by 'row', then by 'value', in ascending order
     return res
