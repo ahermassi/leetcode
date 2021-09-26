@@ -88,9 +88,9 @@ def vertical_traversal_v1(root):
 def vertical_traversal_v2(root):
     """ BFS implementation of the previous algorithm.
     Time complexity: O(N logN)
-    Space complexity: at any given moment the queue contains no more than two levels of nodes in the tree. The maximal
-    number of nodes at one level is N/2 which is the number of the leaf nodes in a balanced binary tree. As a result,
-    the space needed for the queue would be O(N/2 * 2) = O(N)
+    Space complexity: O(N),  at any given moment the queue contains no more than two levels of nodes in the tree.
+    The maximal number of nodes at one level is N/2 which is the number of the leaf nodes in a balanced binary tree.
+    As a result, the space needed for the queue would be O(N/2 * 2) = O(N)
     """
     queue = deque([(root, 0, 0)])
     positions = []
@@ -161,3 +161,30 @@ def vertical_traversal_v3(root):
         values = positions[col]
         res.append([val for row, val in sorted(values)])  # sort first by 'row', then by 'value', in ascending order
     return res
+
+
+def vertical_traversal_v4(root):
+    """ BFS implementation of the previous algorithm.
+    Time complexity: O(N logN/k)
+    Space complexity: O(N)
+    """
+    positions, res = defaultdict(list), []
+    queue = deque([(root, 0, 0)])
+    min_col = max_col = 0
+    while queue:
+        node, row, col = queue.popleft()
+        if not node:
+            continue
+        positions[col].append((row, node.val))
+        if col < min_col:
+            min_col = col
+        elif col > max_col:
+            max_col = col
+        queue.append((node.left, row + 1, col - 1))
+        queue.append((node.right, row + 1, col + 1))
+    for col in range(min_col, max_col + 1):
+        values = positions[col]
+        res.append([val for row, val in sorted(values)])
+    return res
+
+
