@@ -9,6 +9,11 @@ import unittest2 as unittest
 def trap_v1(height):
     """ For each element in the array, we find the maximum level of water it can trap after the rain, which is equal to
         the minimum of maximum height of bars on both the sides minus its own height.
+        ith bar can trap water if and only if there exists a higher bar to the left and a higher bar to the right of it.
+        To calculate how much amount water the ith bar can trap, we need to look at the maximum height of the left bar
+        and the maximum height of the right bar, then the water level that can be formed at ith bar is:
+            water_level = min(max_left[i], max_right[i])
+        If water_level >= height[i] then ith bar can trap (water_level - height[i]) amount of water.
     Time complexity: O(N^2), for each element of array we iterate the left and right parts
     Space complexity: O(1)
     """
@@ -31,8 +36,8 @@ def trap_v1(height):
 def trap_v2(height):
     """ In the previous solution, we iterate over the left and right parts again and again just to find the highest bar
         size up to current index. However, this could be pre-computed and stored.
-        Find maximum height of bar from the left end up to an index i in the 'left_max' map.
-        Find maximum height of bar from the right end up to an index i in the array 'right_max' map.
+        Find maximum height of bar from the left end up to an index i in the 'left_max' array.
+        Find maximum height of bar from the right end up to an index i in the array 'right_max' array.
         Therefore, at each index i, the water that can be trapped is:
             min(left_max[i], right_max[i]) − height[i]
     Time complexity: O(N)
@@ -41,14 +46,15 @@ def trap_v2(height):
     if not height:
         return 0
     n, res = len(height), 0
-    left_max, right_max = {0: height[0]}, {n-1: height[-1]}
+    left_max, right_max = [0] * n, [0] * n
+    left_max[0], right_max[-1] = height[0], height[-1]
     for i in range(1, n):
         left_max[i] = max(left_max[i-1], height[i])
     for i in reversed(range(n-1)):
         right_max[i] = max(right_max[i+1], height[i])
-    for i, h in enumerate(height):
+    for i, cur_height in enumerate(height):
         max_left, max_right = left_max[i], right_max[i]
-        res += min(max_left, max_right) - h
+        res += min(max_left, max_right) - cur_height
     return res
 
 
