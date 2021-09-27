@@ -13,16 +13,16 @@ def trap_v1(height):
     Space complexity: O(1)
     """
     n, res = len(height), 0
-    for i, h in enumerate(height):
+    for i, cur_height in enumerate(height):
         left = right = i
-        max_left = max_right = h
+        max_left = max_right = cur_height
         while left >= 0:
             max_left = max(max_left, height[left])
             left -= 1
         while right < n:
             max_right = max(max_right, height[right])
             right += 1
-        res += min(max_left, max_right) - h
+        res += min(max_left, max_right) - cur_height
     return res
 
 # Great explanation for this solution: https://www.youtube.com/watch?v=VZpJxINSvfs
