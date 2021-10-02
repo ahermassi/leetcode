@@ -13,7 +13,7 @@ The total travel distance is the sum of the distances between the houses of the 
 
 The distance is calculated using Manhattan Distance, where distance(p1, p2) = |p2.x - p1.x| + |p2.y - p1.y|. """
 
-from collections import deque
+from collections import deque, defaultdict
 
 
 def shortest_distance_v1(grid):
@@ -40,7 +40,7 @@ def shortest_distance_v1(grid):
 
     Time complexity: O(N^2 * M^2)
     Space complexity: O(N * M), we use an extra hash set to track the visited cells, and the queue will store each
-    matrix element at most once during each BFS call
+    matrix element at most once during each BFS
     """
     n, m = len(grid), len(grid[0])
     res = float('inf')
@@ -74,4 +74,60 @@ def shortest_distance_v1(grid):
                     for x, y in visited:
                         if not grid[x][y]:
                             grid[x][y] = 2
+    return res if res != float('inf') else -1
+
+
+def shortest_distance_v2(grid):
+    """ BFS from Houses to Empty Land.
+
+        In the previous approach, to get the minimum distance we started a BFS from each empty land (cell value equal
+        to 0) to all the houses (cell value equal to 1), but another way to look at the problem is starting from a
+        house and finding all reachable empty lands. If we can reach a house from an empty land, then we can also
+        traverse the other way (i.e., reach empty land from a house).
+
+        Previously, we were calculating the total minimum distance sum of one empty cell in one BFS traversal, hence
+        we were only returning the distance sum from the BFS for each cell. But if we start BFS from a house instead
+        of an empty cell, we will be generating partial distance (i.e., distance from only one house to the current
+        empty cell and not the sum distance from all the houses to this empty cell), hence we need some extra space
+        to store the sum of the partial distances from each house cell.
+
+        We will need to store 2 values at each cell position of empty cells: total distance sum from all houses to
+        this empty land AND number of houses that can reach this empty land.
+
+        For each empty cell we reach, increase the cell's sum of distances distances[(i,j)] by the steps taken to
+        reach the cell. We also increment the cell's house counter reachable_houses[(i,j)] by 1.
+
+        After traversing all houses, get the minimum distance from all empty cells which have reachable_houses[(i,j)]
+        equal to 'number_of_houses'.
+
+    Time complexity: O(N^2 * M^2)
+    Space complexity: O(N * M), we use an extra hash set to track the visited cells and two hash maps to store distance
+    sum along with the house counter for each empty cell, and the queue will store each matrix element at most once
+    during each BFS
+    """
+    n, m = len(grid), len(grid[0])
+    res = float('inf')
+    number_of_houses = 0
+    distances = defaultdict(int)
+    reachable_houses = defaultdict(int)
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == 1:
+                number_of_houses += 1
+                queue = deque([(i, j, 0)])
+                visited = set()
+                while queue:
+                    row, col, cur_distance = queue.popleft()
+                    for x, y in (row-1, col), (row+1, col), (row, col-1), (row, col+1):
+                        if 0 <= x < n and 0 <= y < m and (x, y) not in visited and not grid[x][y]:
+                            # If we reached an empty cell, then add the distance and increment the count of houses
+                            # reached at this cell
+                            reachable_houses[(x, y)] += 1
+                            distances[(x, y)] += cur_distance + 1
+                            queue.append((x, y, cur_distance + 1))
+                            visited.add((x, y))
+    for land in distances:
+        # Check all empty lands with houses count equal to total houses
+        if grid[land] == 0 and reachable_houses[land] == number_of_houses:
+            res = min(res, distances[land])
     return res if res != float('inf') else -1
