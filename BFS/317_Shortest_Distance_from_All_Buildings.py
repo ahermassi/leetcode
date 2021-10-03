@@ -131,3 +131,48 @@ def shortest_distance_v2(grid):
         if grid[land] == 0 and reachable_houses[land] == number_of_houses:
             res = min(res, distances[land])
     return res if res != float('inf') else -1
+
+
+def shortest_distance_v3(grid):
+    """ BFS from Houses to Empty Land With Pruning.
+
+        A powerful pruning is that during the BFS we use 'other_houses_reached' variable to count how many houses we
+        reached starting from (and including) the current house. If other_houses_reached < number_of_houses then we
+        know not all houses are connected and we can return immediately.
+
+    Time complexity: O(N^2 * M^2)
+    Space complexity: O(N * M)
+    """
+    n, m = len(grid), len(grid[0])
+    res = float('inf')
+    number_of_houses = 0
+    distances = defaultdict(int)
+    reachable_houses = defaultdict(int)
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == 1:
+                number_of_houses += 1
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == 1:
+                queue = deque([(i, j, 0)])
+                visited = set()
+                other_houses_reached = 1  # Include the current house that started the BFS
+                while queue:
+                    row, col, distance = queue.popleft()
+                    for x, y in (row-1, col), (row+1, col), (row, col-1), (row, col+1):
+                        if 0 <= x < n and 0 <= y < m and (x, y) not in visited:
+                            if not grid[x][y]:
+                                reachable_houses[(x, y)] += 1
+                                distances[(x, y)] += distance + 1
+                                queue.append((row + x, col + y, distance + 1))
+                                visited.add((row + x, col + y))
+                            elif grid[row + x][col + y] == 1:
+                                other_houses_reached += 1
+                if other_houses_reached < number_of_houses:
+                    return -1
+    for land in distances:
+        if reachable_houses[land] == number_of_houses:
+            res = min(res, distances[land])
+    return res if res != float('inf') else -1
+
