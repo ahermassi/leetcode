@@ -44,3 +44,29 @@ def is_valid_palindrome_v1(s, k):
 
     n = len(s)
     return can_construct_palindrome(0, n - 1, k)
+
+
+def is_valid_palindrome_v2(s, k):
+    """ Top-Down Dynamic Programming.
+        Same previous algorithm but with memoization.
+    Time complexity: O(N^2)
+    Space complexity: O(N)
+    """
+
+    def can_construct_palindrome(left, right, removals):
+        if left >= right:
+            return True
+        if (left, right, removals) not in memo:
+            if s[left] == s[right]:
+                res = can_construct_palindrome(left + 1, right - 1, removals)
+            elif removals == 0:
+                res = False
+            else:
+                res = can_construct_palindrome(left + 1, right, removals - 1) or \
+                      can_construct_palindrome(left, right - 1, removals - 1)
+            memo[(left, right, removals)] = res
+        return memo[(left, right, removals)]
+
+    n = len(s)
+    memo = {}
+    return can_construct_palindrome(0, n - 1, k)
