@@ -89,3 +89,30 @@ def is_valid_palindrome_v3(s, k):
 
     return number_of_removals_to_make_palindrome(0, len(s) - 1) <= k
 
+
+def is_valid_palindrome_v4(s, k):
+    """ Bottom-Up Dynamic Programming.
+
+        The problem is equivalent to finding any palindromic sub-sequence of length at least (N - K), where N is the
+        length of the string. Similar to 516- Longest Palindromic Subsequence.
+
+        Example: One of the longest palindromic sub-sequences of string 'pqrstrp' is 'prsrp'. Characters not
+        contributing to the longest palindromic sub-sequence of the string should be removed in order to make the
+        string palindrome. So by removing 'q' and 's' (or 't') from 'pqrstrp', the string will be transformed into a
+        palindrome.
+    Time complexity: O(N^2)
+    Space complexity: O(N^2)
+    """
+    n = len(s)
+    dp = [[0] * n for _ in range(n)]
+    for i in range(n):
+        dp[i][i] = 1
+    for i in reversed(range(n)):  # dp[i][j] depends on dp[i+1][j-1], this is the reason i goes from (n - 1) to 0. In
+        # other words, the result of substrings of length L depends on those of length (L - 1)
+        for j in range(i + 1, n):
+            if s[i] == s[j]:
+                dp[i][j] = dp[i + 1][j - 1] + 2
+            else:
+                dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])
+    return n - dp[0][n - 1] <= k
+
