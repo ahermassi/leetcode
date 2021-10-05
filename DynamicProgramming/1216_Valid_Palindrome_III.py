@@ -70,3 +70,22 @@ def is_valid_palindrome_v2(s, k):
     n = len(s)
     memo = {}
     return can_construct_palindrome(0, n - 1, k)
+
+
+def is_valid_palindrome_v3(s, k):
+    """ A different brute force approach. We use a function that, given left and right ends of a substring, returns
+        the minimum number of characters that need to be deleted in order to make the substring a palindrome.
+    """
+
+    def number_of_removals_to_make_palindrome(left, right):
+        if left == right:
+            return 0
+        if right - left == 1:
+            return 0 if s[left] == s[right] else 1
+        if s[left] == s[right]:
+            return number_of_removals_to_make_palindrome(left + 1, right - 1)
+        return 1 + min(number_of_removals_to_make_palindrome(left + 1, right),
+                       number_of_removals_to_make_palindrome(left, right - 1))
+
+    return number_of_removals_to_make_palindrome(0, len(s) - 1) <= k
+
