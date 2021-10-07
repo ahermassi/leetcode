@@ -42,22 +42,24 @@ def merge_k_lists_v2(lists):
         the first value of the tuple, the heap uses the second value as the tie breaker. But since the second value is
         an object of ListNode, which has no definition of comparision, we get an error. We can define the tuple instead
         as (node.val, index, node), where 'index' keeps track of the node's index. This way the second value in the
-        tuple is always unique which will break ties.
+        tuple is always unique which will break ties. With 3 tuples as described above, it is not possible to have the
+        same values for both the (node.val, index) values of the tuple, thus never needing to compare using the
+        ListNode object.
     Time complexity: O(N logK)
     Space complexity: O(K)
     """
-    dummy = tail = ListNode(0)
+    dummy_head = dummy_tail = ListNode(0)
     heap = []
     for i, head in enumerate(lists):
         if head:
             heappush(heap, (head.val, i, head))
     while heap:
-        _, i, node = heappop(heap)
-        tail.next = node
-        tail = tail.next
+        _, index, node = heappop(heap)
+        dummy_tail.next = node
         if node.next:
-            heappush(heap, (node.next.val, i, node.next))  # Recycling tie-breaker i guarantees uniqueness
-    return dummy.next
+            heappush(heap, (node.next.val, index, node.next))  # Recycling tie-breaker 'index' guarantees uniqueness
+        dummy_tail = dummy_tail.next
+    return dummy_head.next
 
 
 def merge_k_lists_v3(lists):
