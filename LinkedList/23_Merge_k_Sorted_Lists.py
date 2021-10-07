@@ -63,7 +63,7 @@ def merge_k_lists_v2(lists):
 
 
 def merge_k_lists_v3(lists):
-    """ Use recursive merge sort.
+    """ Recursive merge sort.
     Time complexity: O(N logK), where N is the total number of nodes and K is the number of lists. Recursion depth is
     logK, and in each level we need to merge N nodes. The time complexity for each level is O(N) (e.g. if we have 4
     lists with 10, 20, 30, 40 nodes, to merge list 1 and list 2 we need 30x operations while to merge list 3 and 4 we
@@ -71,26 +71,27 @@ def merge_k_lists_v3(lists):
     Space complexity: O(logK)
     """
 
-    def partition(left, right):
+    def merge(left, right):
+        # This function returns the head of the merged lists[left:right+1]
         if left == right:
             return lists[left]
         if left > right:
             return None
         mid = (left + right) // 2
-        left, right = partition(left, mid), partition(mid + 1, right)
-        return merge(left, right)
+        left, right = merge(left, mid), merge(mid + 1, right)
+        return merge_two_lists(left, right)
 
-    def merge(list1, list2):
-        dummy = tail = ListNode(0)
+    def merge_two_lists(list1, list2):
+        dummy_head = dummy_tail = ListNode(0)
         while list1 and list2:
             if list1.val < list2.val:
-                tail.next = list1
+                dummy_tail.next = list1
                 list1 = list1.next
             else:
-                tail.next = list2
+                dummy_tail.next = list2
                 list2 = list2.next
-            tail = tail.next
-        tail.next = list1 or list2
-        return dummy.next
+            dummy_tail = dummy_tail.next
+        dummy_tail.next = list1 or list2
+        return dummy_head.next
 
-    return partition(0, len(lists) - 1)
+    return merge(0, len(lists) - 1)
