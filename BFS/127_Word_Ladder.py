@@ -3,6 +3,7 @@ sequence from begin_word to end_word, such that:
 Only one letter can be changed at a time.
 Each transformed word must exist in the word list. Note that begin_word is not a transformed word. """
 
+import string
 from collections import deque, defaultdict
 import unittest2 as unittest
 
@@ -115,6 +116,30 @@ def ladder_length_v1(begin_word, end_word, word_list):
 
 
 def ladder_length_v2(begin_word, end_word, word_list):
+    """ Same unidirectional BFS approach. However, instead of pre-processing the list of words to build the graph's
+        adjacency list, we do it on the fly while processing the intermediate words in the queue. With a current word
+        at hand, we try all the possible on-letter modifications of that word. If a modification results in an
+        intermediate word that exists in the input list of words, we add it to the queue AND remove it from word_list.
+        The shortest path will be the first one to delete 'end_word' from the dictionary. BFS will give the shortest
+        path by the way it proceeds.
+    """
+    word_list = set(word_list)
+    queue = deque([(begin_word, 1)])
+    while queue:
+        word, distance = queue.popleft()
+        if word == end_word:
+            return distance
+        n = len(word)
+        for i in range(n):
+            for c in string.ascii_lowercase:
+                intermediate_word = word[:i] + c + word[i + 1:]
+                if intermediate_word in word_list:
+                    queue.append((intermediate_word, distance + 1))
+                    word_list.remove(intermediate_word)
+    return 0
+
+
+def ladder_length_v3(begin_word, end_word, word_list):
     """ Bidirectional BFS.
         We can considerably cut down the search space of the standard breadth first search algorithm if we launch two
         simultaneous BFS. One from the begin_word and one from the end_word. We progress one node at a time from both
