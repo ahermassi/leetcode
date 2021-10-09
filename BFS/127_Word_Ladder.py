@@ -201,6 +201,37 @@ def ladder_length_v3(begin_word, end_word, word_list):
     return 0
 
 
+def ladder_length_v4(begin_word, end_word, word_list):
+    """ Bidirectional BFS.
+        Instead of extracting one word from each queue at each iteration, we process all the words in one of the
+        queues at each iteration. At the end of the iteration, we swap queues if one is smaller than the other.
+        In the below implementation, 'begin_queue' always holds the elements of the smallest queue.
+    """
+    word_list = set(word_list)
+    if end_word not in word_list:
+        return 0
+    begin_queue = {begin_word}
+    end_queue = {end_word}
+    distance = 1
+    while begin_queue:
+        next_begin_queue = set()
+        for word in begin_queue:
+            n = len(word)
+            for i in range(n):
+                for c in string.ascii_lowercase:
+                    intermediate_word = word[:i] + c + word[i + 1:]
+                    if intermediate_word in end_queue:
+                        return distance + 1
+                    if intermediate_word in word_list:
+                        next_begin_queue.add(intermediate_word)
+                        word_list.remove(intermediate_word)
+        begin_queue = next_begin_queue
+        if len(end_queue) < len(begin_queue):
+            begin_queue, end_queue = end_queue, begin_queue
+        distance += 1
+    return 0
+
+
 class Test(unittest.TestCase):
     data = [('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog'], 5),
             ('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log'], 0)]
