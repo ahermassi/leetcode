@@ -77,7 +77,10 @@ class CodecV1:
 
 
 class CodecV2:
-    """ We can also use a BFS traversal to serialize/deserialize the tree, similar to how Leetcode does it. """
+    """ We can also use a BFS traversal to serialize/deserialize the tree, similar to how Leetcode does it.
+        We use 'X' to represent null values. When deserializing the string, we assign left and right child for each
+        non-null node, and add the non-null children to the queue, waiting to be processed later.
+    """
 
     def serialize(self, root):
         """Encodes a tree to a single string.
