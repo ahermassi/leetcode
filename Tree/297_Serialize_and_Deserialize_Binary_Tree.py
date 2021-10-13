@@ -21,14 +21,22 @@ class TreeNode(object):
 
 
 class CodecV1:
-    """ The idea is simple: print the tree in pre-order traversal and use 'X' to denote null node and separate nodes
+    """ DFS is more adapted for our needs, since the linkage among the adjacent nodes is naturally encoded in the
+        order, which is rather helpful for the later task of deserialization.
+
+        The idea is simple: print the tree in pre-order traversal, use 'X' to denote null nodes, and separate nodes
         with ','. For deserialization, we use a queue to store the pre-order traversal, and since we have 'X' as null
         node, we know exactly where to end building subtrees.
+
         The intuition for the deserialization is the recognition that the first node in the pre-order sequence is the
         root, and the sequence for the root's left subtree appears before all the nodes in the root's right subtree.
         It is not easy to see where the left subtree sequence ends. However, if we solve the problem recursively, we
         can assume that the routine correctly computes the left subtree, which will also tell us where the right
         subtree begins.
+
+        Note that serialization contains information about the node values as well as the information about the tree
+        structure. 'None' or 'X' appears for each leaf to mark the absence of left and right child node, this is how
+        we save the tree structure during the serialization.
     """
 
     def serialize(self, root):
@@ -36,11 +44,18 @@ class CodecV1:
         Time complexity: O(N), we visit each node exactly once
         Space complexity: O(N), we keep the entire tree
         """
-        if not root:
-            return 'X'
-        left = self.serialize(root.left)
-        right = self.serialize(root.right)
-        return ','.join([str(root.val), left, right])
+
+        def pre_order(root):
+            if not root:
+                values.append('X')
+            else:
+                values.append(str(root.val))
+                pre_order(root.left)
+                pre_order(root.right)
+
+        values = []
+        pre_order(root)
+        return ','.join(values)
 
     def deserialize(self, data):
         """Decodes your encoded data to tree.
@@ -48,19 +63,17 @@ class CodecV1:
         Space complexity: O(N)
         """
 
-        def buildTree(queue):
-            if not queue:
-                return None
+        def build_tree(queue):
             value = queue.popleft()
             if value == 'X':
                 return None
             root = TreeNode(value)
-            root.left = buildTree(queue)
-            root.right = buildTree(queue)
+            root.left = build_tree(queue)
+            root.right = build_tree(queue)
             return root
 
         queue = deque(data.split(','))
-        return buildTree(queue)
+        return build_tree(queue)
 
 
 class CodecV2:
