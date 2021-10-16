@@ -93,3 +93,29 @@ def min_total_distance_v2(grid):
         distance += abs(y - y_median)
     return distance
 
+
+def min_total_distance_v3(grid):
+    """ Notice that we can collect both the row and column coordinates in sorted order at the cost of an extra
+        iteration.
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, m = len(grid), len(grid[0])
+    rows, cols = [], []
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == 1:
+                rows.append(i)
+    for j in range(m):
+        for i in range(n):
+            if grid[i][j] == 1:
+                cols.append(j)
+    x_median = rows[len(rows) // 2]
+    y_median = cols[len(cols) // 2]
+    distance = 0
+    for x in rows:
+        distance += abs(x - x_median)
+    for y in cols:
+        distance += abs(y - y_median)
+    return distance
+
