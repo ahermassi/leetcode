@@ -39,3 +39,57 @@ def min_total_distance_v1(grid):
                         queue.append((a, b, distance + 1))
             res = min(res, total_distance)
     return res if res != float('inf') else 1
+
+
+def min_total_distance_v2(grid):
+    """ Finding the best meeting point in a 2D grid seems difficult. Let us take a step back and solve the 1D case
+        which is much simpler. Notice that the Manhattan distance is the sum of two independent variables. Therefore,
+        once we solve the 1D case, we can solve the 2D case as two independent 1D problems.
+
+        Suppose we have N people living on a straight street and they want to find somewhere to meet. The total
+        distance is:
+            Σ |x_i - m|
+            i
+        where x_i is the location of each house and m is the meeting point. To minimize this problem, take the
+        derivative of this equation. Each term will give:
+            1,  if x_i > m
+            -1, if x_i < m
+
+        To reach the minimum, the derivative must be 0. To make the derivative 0, the number of 1s and -1s must be
+        equal.
+        If n is even, then m must be located between the middle two locations (any location between them will give
+        the minimum, not necessarily the median).
+        If n is odd, then m must be located on the middle one house. That's the median.
+
+        Then we can discuss the 2D case. Let's write down the equation directly:
+            Σ |x_i - m| + |y_i - n|
+            i
+        So this time, we have two variables, m and n. To find the minimum, we need to take the partial derivatives
+        for the equation, and each partial derivative (or we can say, each dimension) will give the same result as the
+        1D case.
+
+        We simply find the list of x and y coordinates where we have a house. Then we individually sort them to find
+        the median element in each list. This is the best meeting point (x_median, y_median).
+        To find the total walking distance, simply add abs(x_median - x) and abs(y_median - y) to the final result,
+        where (x, y) are the coordinates of each of the houses.
+
+    Time complexity: O(N * M * log(N * M)), in the worst-case where all elements in the grid are 1s, then both 'rows'
+    and 'cols' would be arrays of size N * M; sorting the arrays takes O(N * M * log(N * M))
+    Space complexity: O(N * M)
+    """
+    n, m = len(grid), len(grid[0])
+    rows, cols = [], []
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == 1:
+                rows.append(i)
+                cols.append(j)
+    x_median = rows[len(rows) // 2]  # We do not need to sort the rows indices as we collected them in sorted order
+    y_median = sorted(cols)[len(cols) // 2]
+    distance = 0
+    for x in rows:
+        distance += abs(x - x_median)
+    for y in cols:
+        distance += abs(y - y_median)
+    return distance
+
