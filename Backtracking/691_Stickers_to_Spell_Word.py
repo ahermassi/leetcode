@@ -39,7 +39,7 @@ def min_stickers_v1(stickers, target):
             res[0] = min(res[0], stickers_used)
             return
         c = target[index]
-        if chars_used[c] >= counter[c]:
+        if chars_used[c] >= counter[c]:  # I've had enough occurrences of 'c' to construct 'target'
             dfs(index + 1, stickers_used, chars_used)
         elif stickers_used + 1 < res[0]:
             for sticker in stickers:
@@ -58,3 +58,53 @@ def min_stickers_v1(stickers, target):
     counter = Counter(target)
     dfs(0, 0, defaultdict(int))
     return res[0]
+
+
+def min_stickers_v2(stickers, target):
+    """ Top-Down Dynamic Programming.
+
+        There are potentially a lot of overlapping sub-problems, but meanwhile we don't exactly know what those
+        sub-problems are. DP with memoization works pretty well in such cases.
+
+        The workflow is like backtracking, but with memoization. We use a substring of 'target' as the key for the
+        DP array. Let dp[s] be the minimum stickers required to construct string s (-1 if impossible). Therefore:
+
+            dp[''] = 0
+            dp[s] = 1 + min({dp[reduced_s] for all stickers}), where reduced_s is a new string obtained after a
+            certain sticker is applied
+
+        This is similar to 322- Coin Change where dp(sum) = 1 + min(dp(sum - c_i) for all coins c_i).
+        Reducing the substring of 'target' by applying the sticker is equivalent to subtracting the coin.
+
+        If 'target' can be spelled out by a group of stickers, at least one of them has to contain character target[0].
+        So we explicitly require next sticker to contain target[0], which significantly reduces the search space.
+        If this sticker didn't contain the first character but contains the character after it and is unique, it will
+        be picked in the future anyway (when next character becomes the first character). So we won't miss it due to
+        this optimization.
+
+    Time complexity:
+    Space complexity:
+    """
+
+    def dfs(target):
+        if target in memo:
+            return memo[target]
+        target_chars = Counter(target)
+        res = float('inf')
+        for sticker in stickers:  # Try every sticker
+            if target[0] not in sticker:
+                continue
+            target_after_applying_sticker = target
+            for c, count_in_sticker in sticker.items():  # Every sticker has the format {c1: count1, c2: count2,...}
+                if c in target_chars:  # Apply the sticker on every character of 'target'
+                    target_after_applying_sticker = target_after_applying_sticker.replace(c, '', count_in_sticker)
+            # Find how many stickers are needed to build the rest of 'target' after this sticker was applied
+            rest_of_target = dfs(target_after_applying_sticker)
+            if rest_of_target != -1:
+                res = min(res, 1 + rest_of_target)  # +1 to account for the current sticker
+        memo[target] = res if res != float('inf') else -1
+        return memo[target]
+
+    stickers = [Counter(sticker) for sticker in stickers]
+    memo = {'': 0}
+    return dfs(target)
