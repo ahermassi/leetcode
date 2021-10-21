@@ -26,9 +26,9 @@ def number_to_words_v1(num):
             res = less_than_20[num // 100] + ' Hundred ' + decompose(num % 100)
         return res.rstrip()
 
-    less_than_20 = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven",
-                    "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
-    tens = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
+    less_than_20 = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven',
+                    'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen']
+    tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']
     thousands = ['', ' Thousand', ' Million', ' Billion']
     if not num:
         return 'Zero'
@@ -41,3 +41,33 @@ def number_to_words_v1(num):
         group += 1
     # We need to reverse 'words' because we're processing the groups of 3-digit integers from right to left
     return ' '.join(words[::-1]).rstrip()
+
+
+def number_to_words_v2(num):
+    """ We can also convert the number to English words without splitting it into chunks of 3 digits.
+    Time complexity: O(log10 N), intuitively the output is proportional to the number of digits in the input
+    Space complexity: O(1)
+    """
+
+    def decompose(num):
+        if num < 20:
+            res = less_than_20[num]
+        elif num < 100:
+            res = tens[num // 10] + ' ' + decompose(num % 10)
+        elif num < THOUSAND:
+            res = less_than_20[num // 100] + ' Hundred ' + decompose(num % 100)
+        elif num < MILLION:
+            res = decompose(num // THOUSAND) + ' Thousand ' + decompose(num % THOUSAND)
+        elif num < BILLION:
+            res = decompose(num // MILLION) + ' Million ' + decompose(num % MILLION)
+        else:
+            res = decompose(num // BILLION) + ' Billion ' + decompose(num % BILLION)
+        return res.rstrip()
+
+    less_than_20 = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven',
+                    'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen']
+    tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']
+    THOUSAND, MILLION, BILLION = 1000, 1000000, 1000000000
+    if not num:
+        return 'Zero'
+    return decompose(num)
