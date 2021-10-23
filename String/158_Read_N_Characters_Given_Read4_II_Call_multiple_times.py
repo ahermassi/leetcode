@@ -14,7 +14,7 @@ def read4(buf):
     return 0  # Dummy return value
 
 
-class Solution(object):
+class SolutionV1(object):
     """ The idea is to create an internal buffer 'internal_buf' and every time we we call read(n), we read from
         'internal_buf' first until all characters are consumed. To do this, we need 2 more variables 'int_buf_counter'
         and 'int_buf_pointer', which track the actual size of 'internal_buf' and the index of next character to read
@@ -61,4 +61,37 @@ class Solution(object):
                 self.int_buf_pointer = 0
                 if self.int_buf_counter == 0:  # If no more characters we can read, break.
                     break
+        return write_index
+
+
+class SolutionV2(object):
+    """ Same algorithm re-written differently. We don't need to reset 'int_buf_pointer' to 0 in the end. Instead, we
+    check whether int_buf_pointer == int_buf_counter in the beginning, which can be more intuitive.
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+
+    def __init__(self):
+        self.internal_buf = [''] * 4  # Stores bytes read when we call read4
+        self.int_buf_pointer = 0  # Points to the next reading position in internal_buf. It is always < 4.
+        self.int_buf_counter = 0  # Counts number of characters copied from internal_buf to the buffer in read(buf, n)
+
+    def read(self, buf, n):
+        write_index = 0
+        while write_index < n:
+            # Refill the internal buffer if all its chars have been read and 'transferred' to buf
+            if self.int_buf_pointer == self.int_buf_counter:
+                self.int_buf_counter = read4(self.internal_buf)
+                # Reset int_buf_pointer. This means all chars that were read into internal_buf are at standby and
+                # waiting to be copied/transferred to buf
+                self.int_buf_pointer = 0
+                if self.int_buf_counter == 0:  # If no more characters we can read, break.
+                    break
+            # Only if int_buf_pointer did not reach the end of internal_buf we can copy bytes from internal_buf to
+            # final buffer buf. Using read4 we could have read more than n bytes in the previous call, in which case
+            # we need to first continue reading from internal_buf.
+            buf[write_index] = self.internal_buf[self.int_buf_pointer]
+            self.int_buf_pointer += 1
+            write_index += 1
         return write_index
