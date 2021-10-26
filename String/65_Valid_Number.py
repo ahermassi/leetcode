@@ -116,3 +116,8 @@ def is_number(s):
         else:
             return False
     return seen_digit  # Making sure there is at least a digit in s and/or at least a digit followed an exponent
+
+
+# There is a second solution that uses Deterministic Finite Automaton. If interested, look here:
+# https://leetcode.com/problems/valid-number/discuss/23728/A-simple-solution-in-Python-based-on-DFA
+# https://leetcode.com/problems/valid-number/discuss/360781/Python-with-state-machine-36ms
