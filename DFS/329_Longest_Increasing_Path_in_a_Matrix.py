@@ -122,6 +122,30 @@ def longest_increasing_path_v2(matrix):
     return length
 
 
+def longest_increasing_path_v3(matrix):
+    """ Topological Sort. Instead of counting the number of 'onion layers', for every node pushed into the queue we
+        add the path length till that node. We keep track of the longest path seen so far in 'res' variable.
+    """
+    n, m = len(matrix), len(matrix[0])
+    outdegree = [[0] * m for _ in range(n)]
+    for i in range(n):
+        for j in range(m):
+            for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+                if 0 <= x < n and 0 <= y < m and matrix[x][y] > matrix[i][j]:
+                    outdegree[i][j] += 1
+    queue = deque([(i, j, 1) for i in range(n) for j in range(m) if outdegree[i][j] == 0])
+    res = 0
+    while queue:
+        i, j, path_length = queue.popleft()
+        res = max(res, path_length)
+        for (x, y) in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            if 0 <= x < n and 0 <= y < m and matrix[x][y] < matrix[i][j]:
+                outdegree[x][y] -= 1
+                if outdegree[x][y] == 0:
+                    queue.append((x, y, path_length + 1))
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([[9, 9, 4], [6, 6, 8], [2, 1, 1]], 4), ([[3, 4, 5], [3, 2, 6], [2, 2, 1]], 4)]
 
