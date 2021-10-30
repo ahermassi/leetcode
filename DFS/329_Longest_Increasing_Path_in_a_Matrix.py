@@ -8,19 +8,34 @@ import unittest2 as unittest
 
 def longest_increasing_path_v1(matrix):
     """ DFS can find the longest increasing path starting from any cell. We can do this for all the cells.
+
         Each cell can be seen as a vertex in a graph G. If two adjacent cells have values a < b, i.e. increasing then
         we have a directed edge (a, b). The problem then becomes:
-            Search the longest path in the directed graph G
+
+                            Search the longest path in the directed graph G
+
         Naively, we can use DFS or BFS to visit all the cells connected starting from a root. We update the maximum
         length of the path during search and find the answer when it finished.
-        Cache the results for the recursion so that any sub-problem will be calculated only once.
+
+        It is apparent that the naive brute force approach has:
+
+            - Overlapping sub-problems: Once we calculate the optimal answer for a cell, we most probably have
+              also recurred for its adjacent cells and calculated the optimal answers for them as well. There's no
+              need to repeat the same calculations again.
+            - Optimal substructure: The solutions of bigger problems can be calculated from optimal solutions of
+              its sub-problems. So, if there's a longest path (optimal solution) for a given cell starting at that
+              cell, all the cells in its path must also have optimal paths as well starting at those cells respectively.
+
+        Therefore, we cache the results for the recursion so that any sub-problem will be calculated only once.
 
         Usually, in DFS or BFS, we can employ a set 'visited' to prevent the cells from duplicate visits. We don't need
-        it here because the path is increasing, so we will never visit a node with smaller value.
-        The key observation is that the sequence is strictly increasing, so it can not have loops. So we have the
-        following:
-            longest(i,j) = longest increasing path from (i,j) to (k,l) + longest(k,l)
+        it here because the path is increasing, so we will never visit a node with smaller value. The key observation
+        is that the sequence is strictly increasing, so it cannot have loops. So we have the following:
+
+                        longest(i,j) = longest increasing path from (i,j) to (k,l) + longest(k,l)
+
         Where longest(i,j) is longest increasing path starting from (i,j).
+
     Time complexity: O(N * M), each vertex/cell will be calculated once and only once, and each edge will be visited
     once and only once, the total time complexity is then O(V + E). V is the total number of vertices and E is the
     total number of edges. In our problem, O(V) = O(N * M), O(E) = O(4V) = O(N * M)
@@ -29,15 +44,13 @@ def longest_increasing_path_v1(matrix):
 
     def dfs(i, j):
         if (i, j) not in memo:
-            res = 0
+            longest_path_from_neighbors = 0
             for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
                 if 0 <= x < n and 0 <= y < m and matrix[x][y] > matrix[i][j]:
-                    res = max(res, dfs(x, y))
-            memo[(i, j)] = res + 1  # Count oneself
+                    longest_path_from_neighbors = max(longest_path_from_neighbors, dfs(x, y))
+            memo[(i, j)] = longest_path_from_neighbors + 1  # Count itself
         return memo[(i, j)]
 
-    if not matrix:
-        return 0
     n, m, res = len(matrix), len(matrix[0]), 0
     memo = {}
     for i in range(n):
