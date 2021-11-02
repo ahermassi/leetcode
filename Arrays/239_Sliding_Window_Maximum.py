@@ -8,7 +8,7 @@ from collections import deque
 import unittest2 as unittest
 
 
-def max_sliding_window(nums, k):
+def max_sliding_window_v1(nums, k):
     """ Monotonic Decreasing Queue.
 
         Monotonic queue is like a regular queue with one key distinction in the enqueue operation: Before we push a new
@@ -109,12 +109,33 @@ def max_sliding_window(nums, k):
     return res
 
 
+def max_sliding_window_v2(nums, k):
+    """ Similar to previous solution, but we store indices instead of actual elements in the queue. This is because we
+        need the index to know if an element is outside the boundaries of the window and we can always get the value
+        using the index from the array.
+    Time complexity: O(N)
+    Space complexity: O(k)
+    """
+    queue = deque()
+    res = []
+    for i, num in enumerate(nums):
+        if queue and queue[0] < i - k + 1:
+            queue.popleft()
+        while queue and nums[queue[-1]] < num:
+            queue.pop()
+        queue.append(i)
+        if i >= k - 1:
+            res.append(nums[queue[0]])
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([1, 3, -1, -3, 5, 3, 6, 7], 3, [3, 3, 5, 5, 6, 7])]
 
     def test_max_sliding_window(self):
         for test_nums, test_k, result in self.data:
-            self.assertEqual(result, max_sliding_window(test_nums, test_k))
+            self.assertEqual(result, max_sliding_window_v1(test_nums, test_k))
+            self.assertEqual(result, max_sliding_window_v2(test_nums, test_k))
 
 
 if __name__ == '__main__':
