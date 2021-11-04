@@ -67,3 +67,38 @@ def swim_in_water_v1(grid):
             if 0 <= x < n and 0 <= y < m and (x, y) not in visited:
                 heappush(heap, (grid[x][y], x, y))
                 visited.add((x, y))
+
+
+def swim_in_water_v2(grid):
+    """ Whether the swim is possible is a monotone function with respect to time, so we can binary-search this
+        function for the correct time: the smallest t for which the swim is possible.
+
+        Say we guess that the correct time is t. To check whether it is possible, we perform a simple depth-first
+        search where we can only walk in squares that are at most t.
+
+    Time complexity: O(N^2 logN), depth-first search O(N^2) and we make up to O(logN) of them
+    Space complexity: O(N^2), the maximum size of the stack
+    """
+
+    def reachable_with_water_level(level, i, j, visited):
+        if not 0 <= i < n or not 0 <= j < n or (i, j) in visited or grid[i][j] > level:
+            # If current square elevation > level, then wait till time for that elevation
+            return False
+        if (i, j) == (n - 1, n - 1):
+            return True
+        visited.add((i, j))
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            if reachable_with_water_level(level, x, y, visited):
+                return True
+        return False
+
+    n = len(grid)
+    left, right = 0, n * n - 1
+    while left < right:
+        mid = (left + right) // 2
+        if reachable_with_water_level(mid, 0, 0, set()):
+            # We are able to reach bottom-right cell with min_max_time=mid => Try lower to minimize it
+            right = mid
+        else:  # We fail to reach the bottom-right cell min_max_time=mid => Try higher
+            left = mid + 1
+    return left
