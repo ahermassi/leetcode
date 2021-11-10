@@ -5,7 +5,7 @@ Note: You are not allowed to use any built-in function which evaluates strings a
 eval(). """
 
 
-def calculate(s):
+def calculate_v1(s):
     """ This question qualifies really well for a stack question. Since the expression might have parenthesis, we can
         use a stack to find the value for each sub-expression within a parenthesis. Essentially, we need to delay
         processing the main expression until we are done evaluating the interim sub-expressions within parenthesis,
@@ -86,6 +86,36 @@ def calculate(s):
             ongoing_sum += stack.pop()
             num = 0  # Reset the operand
     ongoing_sum += num * last_sign
+    return ongoing_sum
+
+
+def calculate_v2(s):
+    """ A slightly different implementation.
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    n, ongoing_sum = len(s), 0
+    num, last_sign = 0, 0
+    stack = []
+    i = 0
+    while i < n:
+        c = s[i]
+        if c.isdigit():
+            num = int(c)
+            # Accumulate the operand in the same iteration
+            while i + 1 < n and s[i + 1].isdigit():
+                num = num * 10 + int(s[i + 1])
+                i += 1
+            ongoing_sum += num * last_sign
+        elif c in '+-':
+            last_sign = 1 if c == '+' else -1
+        elif c == '(':
+            stack.append(ongoing_sum)
+            stack.append(last_sign)
+            ongoing_sum, last_sign = 0, 1
+        elif c == ')':
+            ongoing_sum = ongoing_sum * stack.pop() + stack.pop()
+        i += 1
     return ongoing_sum
 
 
