@@ -10,10 +10,10 @@ from beginWord to endWord, or an empty list if no such sequence exists. Each seq
 the words [beginWord, s1, s2, ..., sk]. """
 
 import string
-from collections import deque
+from collections import deque, defaultdict
 
 
-def findLadders(begin_word, end_word, word_list):
+def findLadders_v1(begin_word, end_word, word_list):
     """ This problem is an extension of the problem 127- Word Ladder, where we only need to find the minimum number of
         words in the transformation from beginWord to endWord. Here, we need to find all the transformations that exist
         between beginWord and endWord that are the minimum length. We can use BFS to find the minimum number of words
@@ -88,3 +88,89 @@ def findLadders(begin_word, end_word, word_list):
         for word in visited:
             word_list.discard(word)
     return res
+
+
+def findLadders_v2(begin_word, end_word, word_list):
+    """ BFS + DFS.
+
+        The basic idea is to:
+        Use BFS to find the shortest distance between start and end, storing node's next level neighbors in a hash map.
+        Use DFS to output the shortest transformation paths.
+
+        We need to build a search tree during BFS and backtrack along that tree to restore all shortest paths.
+        We can't stop BFS once we found a transformed word is equal to end word but we should instead finish searching
+        in the current BFS layer since there could be more than one shortest path.
+
+        We still need to rule out all nodes that we have searched previously. This helps avoid add edges connecting to
+        strings from the previous level (e.g avoid any back-track path). Meanwhile, if two nodes have the same child
+        node, we need to add that child node to both node's children/neighbors list as we need to backtrack all valid
+        paths. So unlike a regular BFS, we can't use a "visited" set but more like an "explored" set. Otherwise,
+        e.g. neighbors: {x->z, y->z}, z won't be added to y's children list if x is visited first and z is already seen
+        in x's search.
+
+        Example:
+        neighbors =   {
+                'hit': ['hot'],
+                'hot': ['dot', 'lot'],
+                'dot': ['dog'],
+                'lot': ['log'],
+                'log': ['cog'],
+                'dog': ['cog']
+                }
+
+
+        1. build_paths_from(hit) -> [hit] + build_paths_from(hot) -> [hit, hot, dot, dog, cog], [hit, hot, lot, log, cog]
+
+            2. build_paths_from(hot) -> [hot] + build_paths_from(dot), [hot] + build_paths_from(lot) -> [hot, dot, dog, cog], [hot, lot, log, cog]
+
+                3. build_paths_from(dot) -> [dot] + build_paths_from(dog) -> [dot, dog, cog]
+
+                    4. build_paths_from(dog) -> [dog] + build_paths_from(cog) -> [dog, cog]
+
+                        5. build_paths_from(cog) -> [cog]
+
+                3. build_paths_from(lot) -> [lot, log, cog]
+
+                    4. build_paths_from(log) -> [log, cog]
+
+                        5. build_paths_from(cog) -> [cog]
+
+    Time complexity:
+    Space complexity:
+    """
+
+    def build_paths_from(word):
+        if word == end_word:
+            return [[word]]
+        res = []
+        for neighbor in neighbors[word]:
+            rest = build_paths_from(neighbor)
+            for lst in rest:
+                # Add 'word' in front of all of its children nodes’ paths
+                res.append([word] + lst)
+        return res
+
+    word_list = set(word_list)
+    queue, next_queue = {begin_word}, set()
+    neighbors = defaultdict(list)
+    end_word_found = False
+    while queue:
+        word_list -= set(queue)  # Discard words in current level so that they won't be used again
+        for word in queue:
+            n = len(word)
+            for i in range(n):
+                for c in string.ascii_lowercase:
+                    intermediate_word = word[:i] + c + word[i + 1:]
+                    if intermediate_word in word_list:
+                        neighbors[word].append(intermediate_word)
+                        if intermediate_word == end_word:
+                            end_word_found = True
+                        else:
+                            next_queue.add(intermediate_word)
+        # After this level (let's say L(n-1)) we are reaching end. So even if we are reaching end from some other level
+        # (let's say L(n)), then distance from L(n) will be grater than L(n-1) because L(n) is further down, as we are
+        # doing a level-by-level exploration.
+        if end_word_found:
+            break
+        queue, next_queue = next_queue, set()
+    return build_paths_from(begin_word)
