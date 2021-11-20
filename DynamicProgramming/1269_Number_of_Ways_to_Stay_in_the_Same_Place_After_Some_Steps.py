@@ -62,3 +62,28 @@ def num_ways_v2(steps, arr_len):
             if index > 0:
                 dp[step][index] += dp[step - 1][index - 1]
     return dp[steps][0] % (10 ** 9 + 7)
+
+
+def num_ways_v3(steps, arr_len):
+    """ Unfortunately, the previous solution TLEs.
+
+        Notice that we can only go right as far as many steps we have. For example, for 500 steps, we can only go as
+        far as the 500th position, doesn't matter if the arrLen is 99999999. So the array size can be larger than the
+        number of steps. We can ignore array elements greater than (steps / 2), as we won't able to go back to the
+        first element from there. If we travel 50 steps forward, we need 50 steps to go back to the first element.
+        So, if we have 100 total steps, we can ignore elements 51 and later.
+
+    Time complexity: O(steps * min(arr_len, steps))
+    Space complexity: O(steps * min(arr_len, steps))
+    """
+    arr_len = min(arr_len, steps // 2 + 1)
+    dp = [[0] * arr_len for _ in range(steps + 1)]
+    dp[0][0] = 1
+    for step in range(1, steps + 1):
+        for index in range(arr_len):
+            dp[step][index] = dp[step - 1][index]
+            if index < arr_len - 1:
+                dp[step][index] += dp[step - 1][index + 1]
+            if index > 0:
+                dp[step][index] += dp[step - 1][index - 1]
+    return dp[steps][0] % (10 ** 9 + 7)
