@@ -87,3 +87,29 @@ def num_ways_v3(steps, arr_len):
             if index > 0:
                 dp[step][index] += dp[step - 1][index - 1]
     return dp[steps][0] % (10 ** 9 + 7)
+
+
+def num_ways_v4(steps, arr_len):
+    """ Bottom-Up Dynamic Programming with space compression.
+
+    Time complexity: O(steps * min(arr_len, steps))
+    Space complexity: O(min(arr_len, steps)) if true recycling of arrays is used, but if implemented like below we'll
+    be still allocating (steps + 1) times new array, making the space complexity O(steps * min(arr_len, steps))
+    """
+    arr_len = min(arr_len, steps // 2 + 1)
+    prev_dp = [0] * arr_len
+    prev_dp[0] = 1
+    for step in range(1, steps + 1):
+        cur_dp = [0] * arr_len
+        for index in range(arr_len):
+            cur_dp[index] = prev_dp[index]
+            if index < arr_len - 1:
+                cur_dp[index] += prev_dp[index + 1]
+            if index > 0:
+                cur_dp[index] += prev_dp[index - 1]
+        # We could also create prev_dp and cur_dp before the loop and swap prev_dp and cur_dp after each loop.
+        # This is true recycling.
+        # prev_dp, cur_dp = cur_dp, pre_dp
+        prev_dp = cur_dp
+    return prev_dp[0] % (10 ** 9 + 7)
+
