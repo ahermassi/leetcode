@@ -29,4 +29,36 @@ def num_ways_v1(steps, arr_len):
         return res
 
     memo = {}
-    return dfs(0, steps) % (pow(10, 9) + 7)
+    return dfs(0, steps) % (10 ** 9 + 7)
+
+
+def num_ways_v2(steps, arr_len):
+    """ Bottom-Up Dynamic Programming.
+
+        Let dp[step][index] be the number of ways to stay at index 'index' after exactly 'step' steps. From this state
+        we can either:
+
+        Stay. Then we consume one step and stay at the same position => dp[step - 1][index]
+        Go right. Then we consume one step and go right              => dp[step - 1][index + 1]
+        Go left. Then we consume one step and go left                => dp[step - 1][index - 1]
+
+        Then our state can be calculated as:
+
+                dp[step][index] = dp[step-1][index] + dp[step-1][index+1] + dp[step-1][index-1]
+
+        The base case is when we want to stay at index 0 with exactly 0 steps to move. There is only 1 way which is to
+        stay.
+
+    Time complexity: O(steps * arr_len)
+    Space complexity: O(steps * arr_len)
+    """
+    dp = [[0] * arr_len for _ in range(steps + 1)]
+    dp[0][0] = 1
+    for step in range(1, steps + 1):
+        for index in range(arr_len):
+            dp[step][index] = dp[step - 1][index]
+            if index < arr_len - 1:
+                dp[step][index] += dp[step - 1][index + 1]
+            if index > 0:
+                dp[step][index] += dp[step - 1][index - 1]
+    return dp[steps][0] % (10 ** 9 + 7)
