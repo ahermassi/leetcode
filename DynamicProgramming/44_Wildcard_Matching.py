@@ -56,3 +56,74 @@ def is_match_v1(s, p):
     n, m = len(s), len(p)
     memo = {}
     return dfs(0, 0)
+
+
+def is_match_v2(s, p):
+    """ Bottom-Up Dynamic Programming.
+
+        The idea would be to reduce the problem to simpler sub-problems. For example, there is a string 'adcebdk' and
+        a pattern '*a*b?k', and we want to compute if there is a match for them. We could notice that it seems to be
+        more simple for short strings and patterns and so it would be logical to relate a match dp[p_len][s_len] with
+        the lengths p_len and s_len of input pattern and string, respectively.
+
+        Let's go further and introduce:
+
+                dp[i][j] = whether the substring from index 0 to i-1 of the original string s matches with the
+                subpattern from index 0 to j-1 of the original pattern p. In other words, whether the first i
+                characters of s match with the first j character of the pattern p
+
+        It turns out that we could compute dp[i][j] knowing a match without the last characters, i.e. dp[i-1][j-1].
+
+        Initialize dp[0][0] = True. This is because if the length of the pattern and matching string is 0 then they
+        are equal or they are a match.
+
+        We fill the first row of dp which tells us if the matching string length is zero, then up to which index the
+        pattern matches the empty string. We know that it is only possible if the pattern character at that point is
+        '*', and if anything else comes other than a '*' then we break.
+
+        If the last characters are the same or pattern character is '?', then:
+                                dp[i][j] = dp[i-1][j-1]
+
+        If the pattern is '*', then we can either use it to match the current character and in that case it would be
+        equal to dp[i-1][j], and if we match the empty string with '*' then it is equal to dp[i][j-1]:
+                                dp[i][j] = dp[i-1][j] or dp[i][j-1]
+
+        Why dp[i][j] = dp[i-1][j] or dp[i][j-1] ? The idea is:
+
+        If dp[i-1][j] == True --> s(0-->i-2) matches with p(0-->j-1). Now p[j-1] == '*', so at the end of s we can
+        add another or more k chars to match '*', making dp[i][j] or even dp[i+k][j] True.
+
+        If dp[i][j-1] == True --> s(0-->i-1) matches with p(0-->j-2). Now p[j-1] == '*', so add this to p, and '*' can
+        match none in s. We don't need to add anything to s, we can see now dp[i][j] = True.
+
+        Is dp[i - 1][j] True? If yes, it means the current subpattern p[0...j-1] we have matches the substring
+        s[0... i-2]. Then will p[0...j-1] match with s[0... i-1]? The answer is yes, because '*" can match any sequence
+        of characters, so it's able to match one more character s[i - 1].
+
+        Is dp[i][j - 1] True? If yes, it means the current substring s[0...i-1] matches with the subpattern p[0...j-2].
+        Therefore, if we add one more '* 'into the subpattern, it will also match as '*' can match empty sequence.
+
+        Example: s = 'xxx', p = 'xx*'
+        For i=2, j=2:
+        dp[1][2] means we use '*' to match s[2], can we match the remaining sequence in s if we reuse '*' in p?
+        dp[2][1] means if we don't use '*' to match any characters at all, our s[2] would have to match p[1];
+        i.e. the characters before '*' in p would have to match characters in s so far, meaning dp[i][j-1].
+
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, m = len(s), len(p)
+    dp = [[False] * (m + 1) for _ in range(n + 1)]
+    dp[0][0] = True
+    for j in range(1, m + 1):
+        if p[j - 1] != '*':
+            break
+        dp[0][j] = True
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if p[j - 1] == s[i - 1] or p[j - 1] == '?':
+                dp[i][j] = dp[i - 1][j - 1]
+            elif p[j - 1] == '*':
+                dp[i][j] = dp[i-1][j] or dp[i][j-1]
+    return dp[n][m]
+
