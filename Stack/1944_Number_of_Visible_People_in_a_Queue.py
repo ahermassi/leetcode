@@ -37,3 +37,37 @@ def can_see_persons_count_v1(heights):
             res[stack[-1]] += 1
         stack.append(i)
     return res
+
+
+def can_see_persons_count_v2(heights):
+    """ Similar to the previous approach, but we process the input array going backwards.
+
+        We use a monotonic stack which stores heights in increasing order.
+        For each person, we remove all smaller heights from the stack, increasing number of people this person can see.
+        If there is a larger height in the stack, we can see one more person.
+        Finally, we push the current person's height to the stack.
+
+        So we traverse from right to left, with a stack maintained such that at each person, we pop out all the people
+        who have heights less than the current person. All these popped out people will be visible to the current
+        person, so count the people we have popped out. If the stack is non-empty, then we can also see the person
+        who's currently at the top of the stack because everyone between them had shorter height. The thing to realize
+        is that there won't be any other person visible. Because right now, we just popped out all the people who are
+        gonna be masked by the current person in the future. Similarly, every person we didn't pop out and comes to the
+        right would be masked by some person.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    n = len(heights)
+    res, stack = [0] * n, []
+    for i in reversed(range(n)):
+        height = heights[i]
+        while stack and stack[-1] <= height:
+            stack.pop()  # ith person will obscure the shorter people on the right side. Remove shorter people on the
+            # right side because they can't be seen anymore.
+            res[i] += 1  # ith person can see those shorter people
+        if stack:
+            # If stack is not empty then ith person can see one more person which is taller than him
+            res[i] += 1
+        stack.append(height)
+    return res
