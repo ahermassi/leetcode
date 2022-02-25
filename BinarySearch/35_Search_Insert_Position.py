@@ -11,14 +11,17 @@ def search_insert(nums, target):
     Space complexity: O(1)
     """
     left, right = 0, len(nums) - 1
-    while left <= right:
+    while left <= right:  # Invariant: the desired index is between [left, right+1]
         mid = (left + right) // 2
-        if nums[mid] == target:
-            return mid
-        elif nums[mid] > target:
+        if nums[mid] > target:
             right = mid - 1
         else:
             left = mid + 1
+    # (1) At this point, left > right. That is, left >= right+1.
+    # (2) From the invariant, we know that the index is between [left, right+1], so left <= right+1. Following from (1),
+    # now we know that left == right+1.
+    # (3) Following from (2), the index is between [left, right+1] = [left, left], which means that left is the desired
+    # index Therefore, we return left as the answer.
     return left
 
 
