@@ -7,9 +7,13 @@ import unittest2 as unittest
 
 
 def max_stock_profit_v1(prices):
-    """ We can maintain two variables - min_price and max_profit. While iterating over the array, we consider to sell
-        on day i what would be the best profit against its current minimum buying price while updating minimum buying
-        price.
+    """ If we plot the stock prices on a graph, we can clearly see that the points of interest are the peaks and
+        valleys in the given graph. For every stock, we need to calculate the difference between that stock price and
+        the minimum of all the values before that element, and update the maximum profit so far.
+        We can maintain two variables - min_price and max_profit, corresponding to the smallest valley and maximum
+        profit (maximum difference between selling price and min price) obtained so far, respectively.
+        While iterating over the array, we consider selling on day i what would be the best profit against its current
+        minimum buying price while updating minimum buying price.
         Example:
         prices = [5, 6, 2, 4, 8, 9, 5, 1, 5]
         Now we will traverse the array from left to right. So in the given array 5 is the stock we bought.
@@ -50,8 +54,8 @@ def max_stock_profit_v1(prices):
     """
     max_profit, min_price = 0, float('inf')
     for price in prices:
-        min_price = min(price, min_price)  # This is the min price so far
-        profit = price - min_price  # This is the best possible profit if stock is sold now at this current price
+        min_price = min(price, min_price)  # This is the min buying price so far
+        profit = price - min_price  # This is the best possible profit if stock is sold now at this current selling price
         max_profit = max(profit, max_profit)
     return max_profit
 
