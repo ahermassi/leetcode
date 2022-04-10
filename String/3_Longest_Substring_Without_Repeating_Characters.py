@@ -55,10 +55,11 @@ def length_of_longest_substring_v1(s):
     Time complexity : O(N)
     Space complexity: O(N), or O(1) if the set of characters considered is the English alphabet O(26)
     """
-    prev_occ_index, res, left = {}, 0, 0  # 'left' denotes the left end of the longest substring with no repeating
-    # characters seen so far
+    prev_occ_index = {}
+    res = left = 0  # 'left' denotes the left end of the longest substring with no repeating characters seen so far
     for right, c in enumerate(s):  # 'right' is the right end of that string, or the right end of our sliding window
-        if c in prev_occ_index:
+        if c in prev_occ_index: # If c is a duplicate character
+            # Slide the window past the last recorded occurrence of the duplicate character
             left = max(left, prev_occ_index[c] + 1)  # The variable 'left' is used to indicate the index of first
             # character of this substring. If the duplicate character's index is less than 'left' itself, this means
             # the duplicate character in the hash map is no longer available at this time and is already outside the
@@ -80,25 +81,25 @@ def length_of_longest_substring_v1(s):
 
 
 def length_of_longest_substring_v2(s):
-    """ Similar idea to previous solution. The only difference is that if the current character at 'right' pointer is
-        duplicate, we delete from the head of the window by moving 'left' pointer forward one step at a time until the
-        occurrence of the duplicate character is removed and we can put the character at 'right' index in the hash map.
+    """ Similar idea to previous solution but uses a hash set to keep track of the characters processed so far (window).
+        The only difference is that as long as the current character at 'right' pointer is duplicate, we delete from
+        the head of the window by moving 'left' pointer forward one step at a time until the occurrence of the
+        duplicate character is removed, then we can add the character at 'right' index to the hash set.
     Time complexity: O(N)
     Space complexity: O(N), or O(1)
     """
     n = len(s)
-    last_occurrence, res, left, right = {}, 0, 0, 0
+    prev_chars = set()  # A hash set is used to represent the current sliding window
+    res = left = right = 0
     while right < n:
         c = s[right]
-        if c in last_occurrence:
-            del last_occurrence[s[left]]
-            left += 1  # Notice that only 'left' moves forward. This is equivalent to fixing 'right' and running a
-            # while loop that keeps deleting characters at 'left' index until we get rid of the duplicate character
-            # at 'right'
-        else:
-            last_occurrence[c] = right
-            res = max(res, len(last_occurrence.keys()))
-            right += 1
+        while c in prev_chars:
+            prev_chars.remove(s[left])
+            left += 1  # Notice that only 'left' moves forward. This is running a while loop that keeps deleting
+            # characters at 'left' index until we get rid of the duplicate character at 'right'
+        prev_chars.add(c)
+        res = max(res, right - left + 1)
+        right += 1
     return res
 
 
