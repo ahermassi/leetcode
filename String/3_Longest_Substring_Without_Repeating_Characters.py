@@ -56,9 +56,11 @@ def length_of_longest_substring_v1(s):
     Space complexity: O(N), or O(1) if the set of characters considered is the English alphabet O(26)
     """
     prev_occ_index = {}
-    res = left = 0  # 'left' denotes the left end of the longest substring with no repeating characters seen so far
-    for right, c in enumerate(s):  # 'right' is the right end of that string, or the right end of our sliding window
-        if c in prev_occ_index: # If c is a duplicate character
+    n, res = len(s), 0
+    left = right = 0  # 'left' denotes the left end of the longest substring with no repeating characters seen so far
+    while right < n:  # 'right' is the right end of that string, or the right end of our sliding window
+        c = s[right]
+        if c in prev_occ_index:  # If c is a duplicate character
             # Slide the window past the last recorded occurrence of the duplicate character
             left = max(left, prev_occ_index[c] + 1)  # The variable 'left' is used to indicate the index of first
             # character of this substring. If the duplicate character's index is less than 'left' itself, this means
@@ -77,6 +79,7 @@ def length_of_longest_substring_v1(s):
             # uniqueness assumption, not from (map['a'] + 1) which is 1.
         res = max(res, right - left + 1)
         prev_occ_index[c] = right
+        right += 1
     return res
 
 
