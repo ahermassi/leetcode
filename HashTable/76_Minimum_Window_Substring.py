@@ -1,11 +1,11 @@
 """ Given a string S and a string T, find the minimum window in S which will contain all the characters in T in
 complexity O(n). """
 
-from collections import Counter
+from collections import Counter, defaultdict
 import unittest2 as unittest
 
 
-def min_window(s, t):
+def min_window_v1(s, t):
     """ Similar to 438- Find All Anagrams in a String.
 
         We can use a simple sliding window approach to solve this problem. Let us call a window desirable if it has all
@@ -80,12 +80,51 @@ def min_window(s, t):
     return s[min_left:min_left + min_length] if min_length != float('inf') else ''
 
 
+def min_window_v2(s, t):
+    """ If the previous algorithm looks confusing, we can also use a second hash map to represent the current
+        sliding window.
+
+    Time complexity: O(N+ M)
+    Space complexity: O(N + M)
+    """
+    n = len(s)
+    counter = Counter(t)
+    window = defaultdict(int)  # Keeps a count of all the unique characters in the current window
+    # 'matches' is used to keep track of how many UNIQUE characters in t are present in the current window
+    # in its desired frequency. e.g. if t = "AABC" then the window must have two A's, one B and one C.
+    # Thus 'matches'' would be equal to 3 when all these conditions are met. 'needed' is the number of UNIQUE
+    # characters in t which need to be present in the desired window
+    matches, needed = 0, len(counter)
+    res = ''
+    min_len = float('inf')
+    left = right = 0
+    while right < n:
+        cur_char = s[right]
+        window[cur_char] += 1
+        if window[cur_char] == counter[cur_char]:
+            # If the frequency of the current character added equals the desired count in t, then increment the
+            # matches count by 1
+            matches += 1
+        # Try and contract the window till the point where it ceases to be desirable
+        while matches == needed:
+            cur_length = right - left + 1
+            if cur_length < min_len:  # Save the smallest window until now
+                min_len, res = cur_length, s[left:right + 1]
+            window[s[left]] -= 1
+            if s[left] in counter and window[s[left]] < counter[s[left]]:
+                matches -= 1
+            left += 1
+        right += 1
+    return res
+
+
 class Test(unittest.TestCase):
     data = [('ADOBECODEBANC', 'ABC', 'BANC')]
 
     def test_min_window(self):
         for test_s, test_t, result in self.data:
-            self.assertEqual(result, min_window(test_s, test_t))
+            self.assertEqual(result, min_window_v1(test_s, test_t))
+            self.assertEqual(result, min_window_v2(test_s, test_t))
 
 
 if __name__ == '__main__':
