@@ -1,6 +1,6 @@
 """ Given two strings s1 and s2, write a function to return true if s2 contains the permutation of s1. In other words,
 one of the first string's permutations is the substring of the second string. """
-
+import string
 from collections import Counter, defaultdict
 import unittest2 as unittest
 
@@ -35,6 +35,51 @@ def check_inclusion_v1(s1, s2):
         if window[s2[i - n]] == 0:
             del window[s2[i - n]]
         if window == s1_chars:
+            return True
+    return False
+
+
+def check_inclusion_v2(s1, s2):
+    """ The previous approach can be optimized. Instead of comparing all the elements of the hashmaps for every
+        updated map corresponding to every window of s2 considered, we keep track of the number of characters
+        which were already matching in the previous window and update just the count of matching characters when
+        we slide the current window.
+        We maintain a 'matches' variable which stores the number of characters that have the same occurrence frequency
+        in s1 and the current window in s2. When we slide the window, if the deduction of the leftmost character and the
+        addition of the new character leads to a new frequency match for any of the characters, we increment 'matches'
+        by 1. Otherwise, we keep 'matches' intact. However, if a character whose frequency was the same earlier
+        (prior to addition or removal) is added, it now leads to a frequency mismatch which is taken into account by
+        decrementing 'matches'. If, after sliding the window 'matches' evaluates to 26, it means all the characters
+        match in frequency totally. So, we return a True in that case immediately.
+    Time complexity: O(N + M)
+    Space complexity: O(1)
+    """
+    n, m = len(s1), len(s2)
+    s1_counter, s2_counter = Counter(s1), Counter(s2[:n])
+    matches = 0
+    for c in string.ascii_lowercase:
+        if s1_counter[c] == s2_counter[c]:
+            matches += 1
+    if matches == 26:
+        return True
+    for i in range(n, m):
+        cur_char, prev_char = s2[i], s2[i-n]
+
+        s2_counter[cur_char] += 1  # Expand the window
+        if s1_counter[cur_char] == s2_counter[cur_char]:
+            matches += 1
+        # If the addition of the current character disrupts an earlier match
+        elif s1_counter[cur_char] == s2_counter[cur_char] - 1:
+            matches -= 1
+
+        s2_counter[prev_char] -= 1  # Shrink the window
+        if s1_counter[prev_char] == s2_counter[prev_char]:
+            matches += 1
+        # If the removal of the current character disrupts an earlier match
+        elif s1_counter[prev_char] == s2_counter[prev_char] + 1:
+            matches -= 1
+
+        if matches == 26:
             return True
     return False
 
@@ -84,6 +129,7 @@ class Test(unittest.TestCase):
     def test_check_inclusion(self):
         for test_s1, test_s2, result in self.data:
             self.assertEqual(result, check_inclusion_v1(test_s1, test_s2))
+            self.assertEqual(result, check_inclusion_v2(test_s1, test_s2))
             self.assertEqual(result, check_inclusion_v3(test_s1, test_s2))
 
 
