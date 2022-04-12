@@ -10,7 +10,7 @@ def check_inclusion_v1(s1, s2):
         same frequency. We can consider every possible substring in the long string s2 of the same length as that of s1
         and check the frequency of occurrence of the characters appearing in the two. If the frequencies of every
         letter match exactly, then only s1's permutation can be a substring of s2.
-        We make use of a hash map 'chars' which stores the frequency of occurrence of all the characters in the short
+        We make use of a hash map 'counter' which stores the frequency of occurrence of all the characters in the short
         string s1. We consider every possible substring of s2 of the same length as that of s1, find its corresponding
         frequency map as well. But instead of generating the hash map afresh for every window considered in s2,
         we just need to maintain a sliding window with length of s1, move from beginning to the end of s2.
@@ -26,15 +26,15 @@ def check_inclusion_v1(s1, s2):
     if len(s1) > len(s2):
         return False
     n, m = len(s1), len(s2)
-    s1_chars, window = Counter(s1), Counter(s2[:n])
-    if window == s1_chars:
+    counter, window = Counter(s1), Counter(s2[:n])
+    if window == counter:
         return True
     for i in range(n, m):
         window[s2[i]] += 1
         window[s2[i - n]] -= 1
         if window[s2[i - n]] == 0:
             del window[s2[i - n]]
-        if window == s1_chars:
+        if window == counter:
             return True
     return False
 
@@ -86,38 +86,38 @@ def check_inclusion_v2(s1, s2):
 
 def check_inclusion_v3(s1, s2):
     """ Same solution as 438- Find All Anagrams in a String. No hash map comparison is involved.
-        Find the frequency of characters in the string s1 using 'chars' hash map, two variables 'left' and 'right' to
-        represent the left and right boundaries of the sliding window, and a variable 'need' to represent the number
-        of characters in the string s1 that need to be matched.
+        Find the frequency of characters in the string s1 using 'counter' hash map, two variables 'left' and 'right' to
+        represent the left and right boundaries of the sliding window, and a variable 'matches' to represent the number
+        of characters in the string s1 that we matched in the sliding window so far.
         If the character on the right boundary is already in the hash table, indicating that the character appears in
-        s1, then 'need' is decremented by 1, and then the entry of the current character in the hash table is also
-        decremented by 1 anyways. If 'need' is reduced to 0 at any time, it means that the characters in s1 are
+        s1, then 'need' is incremented by 1, and then the entry of the current character in the hash table is also
+        decremented by 1 anyway. If 'need' is equal to s2's length at any time, it means that the characters in s1 are
         matched in the current window, so we return true.
         If the window size (right - left + 1) is equal to the length of s1, it means that the leftmost character should
         be removed from the window. If after removal (corresponding entry in the frequency map is incremented by 1)
         the count of the left character is greater than 0, it means that the character exists in s1. Why ?
         Well, because each character is decremented by 1 above, and if it is not a character in s1, then the character's
         frequency in the hash table should be 0, and it will be -1 after decrementing by 1, so that we know whether
-        the character exists in s1. So if the leftmost character we removed exists in s1, 'need' is incremented by 1.
+        the character exists in s1. So if the leftmost character we removed exists in s1, 'need' is decremented by 1.
     Time complexity: O(N + M)
     Space complexity: O(1)
     """
     n, m = len(s1), len(s2)
-    chars = Counter(s1)
-    left, right, need, res = 0, 0, len(s1), []
+    counter = Counter(s1)
+    left, right, matches = 0, 0, 0
     while right < m:
         cur_char = s2[right]
-        if chars[cur_char] > 0:  # The current character is in s1
-            need -= 1  # One less character is needed
-        chars[cur_char] -= 1  # Decrement the count of current character anyway, so when it is not part of s1 it gets
+        if counter[cur_char] > 0:  # The current character is in s1
+            matches += 1  # One more character is matched
+        counter[cur_char] -= 1  # Decrement the count of current character anyway, so when it is not part of s1 it gets
         # a negative entry in the map
-        if need == 0:
+        if matches == n:
             return True
         if right - left + 1 == n:  # Current window size is equal to s1's length
-            chars[s2[left]] += 1  # Discard the leftmost character
-            if chars[s2[left]] > 0:  # If the discarded character was part of s1, then it would have an entry equal to
+            counter[s2[left]] += 1  # Discard the leftmost character
+            if counter[s2[left]] > 0:  # If the discarded character was part of s1, then it would have an entry equal to
                 # 0 at least, and if it's the case it would be > 0 after being incremented
-                need += 1
+                matches -= 1
             left += 1
         right += 1
     return False
