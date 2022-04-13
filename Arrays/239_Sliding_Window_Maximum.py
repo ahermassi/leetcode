@@ -21,6 +21,9 @@ def max_sliding_window_v1(nums, k):
         our window since arr[right] is always going to be larger during the time arr[left] is in the window.
         Therefore, arr[left] can never be the maximum and can be safely discarded.
 
+        It is implicitly ensured that the front of the queue will have the largest element of the sliding window because
+        any elements smaller than it would have already been dropped when it entered the queue.
+
         We scan the array and keep 'promising' elements in the queue. At each index i, we keep 'promising' elements,
         which are potentially max elements in window [i-k+1,i] or any subsequent window. This means:
 
@@ -125,7 +128,7 @@ def max_sliding_window_v2(nums, k):
     queue = deque()
     res = []
     for i, num in enumerate(nums):
-        if queue and queue[0] < i - k + 1:
+        if queue and queue[0] == i - k:
             queue.popleft()
         while queue and nums[queue[-1]] < num:
             queue.pop()
