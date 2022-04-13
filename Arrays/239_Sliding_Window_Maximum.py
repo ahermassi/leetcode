@@ -15,15 +15,21 @@ def max_sliding_window_v1(nums, k):
         element onto the queue, we first check if adding it breaks the monotonic condition. If it does, then we pop
         the tail elements off the queue until pushing the new element no longer breaks the monotonic condition.
 
+        Intuition: A question we can ask ourselves is "do we need to keep all the window elements in our state?"
+        An important observation is for two elements arr[left] and arr[right], where left < right, arr[left] leaves the
+        window earlier as we slide. If arr[right] is larger than arr[left], then there is no point keeping arr[left] in
+        our window since arr[right] is always going to be larger during the time arr[left] is in the window.
+        Therefore, arr[left] can never be the maximum and can be safely discarded.
+
         We scan the array and keep 'promising' elements in the queue. At each index i, we keep 'promising' elements,
         which are potentially max elements in window [i-k+1,i] or any subsequent window. This means:
 
-            - If an element in the queue is outside of (i - k + 1), we discard it. We just need to poll
+            - If an element in the queue is outside (i - k + 1), we discard it. We just need to poll
               from the head as we are using a deque and elements are ordered as the sequence in the array.
             - Now only those elements within nums[i-k+1,i] are in the queue. We then discard elements smaller
-              than nums[i] from the tail. This is because if nums[x] < nums[i] and x < i, then nums[x] has no
-              chance to be the max in nums[i-k+1,i], or any other subsequent window: nums[i] would always be
-              a better candidate.
+              than nums[i] from the tail. This is because if j < i and nums[j] < nums[i], then nums[j] has no
+              chance of being the max in nums[i-k+1,i] or any other subsequent window: nums[i] would always be
+              a BETTER CANDIDATE.
             - As a result, elements in the queue are ordered in both sequence in array and their value.
               At each step, the head of the deque is the max element of the window.
 
@@ -36,21 +42,21 @@ def max_sliding_window_v1(nums, k):
         the largest in the current window.
 
         At each index i:
-            - Pop (from the front) the element at index (i - k) if it's still in the queue (it falls outside the window)
-            - Pop (from the end) the smaller elements (they'll be useless)
+            - Pop (from the front/right) the element at index (i-k) if it's still in the queue (falls outside the window)
+            - Pop (from the end/left) the smaller elements (they'll be useless)
             - Append the current element
             - If our window has reached size k (i >= k-1), append the current window maximum to the output (queue front)
-        The elements in the queue are from the current window and are decreasing. Then the first queue element is the
+        The elements in the queue are from the current window and are decreasing. Then the first queue element is
         the largest window value.
 
         More formally:
-        Let D be the deque which maintains a pair (i, ai). An important property of D that we will maintain is that
+        Let D be the deque which maintains a pair (i, a_i). An important property of D that we will maintain is that
         elements in D will always be in sorted order (invariant). We will first start with an empty D, and will insert
-        ai and remove elements from D accordingly as we iterate from the left to the right of array.
-        Suppose that we are now at index i and considering to add ai. Notice that when ai is added, all elements in
-        (j, aj) in D such that aj is smaller than ai can never be a maximum value as we go forward, hence they can be
+        a_i and remove elements from D accordingly as we iterate from the left to the right of array.
+        Suppose that we are now at index i and considering adding a_i. Notice that when a_i is added, all elements
+        (j, a_j) in D such that a_j is smaller than a_i can never be a maximum value as we go forward, hence they can be
         removed from D. Furthermore, if the element (i-k-1, a(i−k−1)) is in D (which will be located at the front of D
-        if it exists), we remove that element as well. Lastly, we append ai at the back of D. Then we will have the
+        if it exists), we remove that element as well. Lastly, we append a_i at the back of D. Then we will have the
         maximum as the top element in D when we reach index i. Since each element will enter and leave D only once,
         we have a total of O(N) operations.
 
