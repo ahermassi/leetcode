@@ -80,12 +80,34 @@ def max_stock_profit_v2(prices):
         find a contiguous sub-array giving maximum profit. If the difference falls below 0, reset it to zero. By
         resetting max_cur to 0, it essentially means that we have found a point i where prices[i] is lower than the
         time we bought at and that we should then try to buy at point i to see if we can achieve a bigger gain.
+
         We are basically applying Kadane's algorithm to the difference array of prices to find the maximum sub-array
         sum.
+
         Example:
         prices = [7, 1, 5, 3, 6, 4] --> prices_difference = [0, -6, 4, -2, 3, -2]
         At each step i, we update cur_max: cur_max = max(0, cur_max + prices_difference[i]), such as:
         prices_difference[i] = prices[i] - prices[i-1]
+
+        A more clear explanation on why sum of subarray works:
+
+        Suppose we have original array is prices = [a0, a1, a2, a3, a4, a5, a6]
+        What we are given here (or we calculate ourselves) is: prices_difference = [b0, b1, b2, b3, b4, b5, b6]
+        where b[i] = 0, when i == 0; b[i] = a[i] - a[i - 1], when i > 0
+        Suppose if a2 and a6 are the points that give us the max difference (a2 < a6). Then in prices_difference array,
+        we need to find the sum of sub array from b3 to b6:
+
+        b3 = a3 - a2
+        b4 = a4 - a3
+        b5 = a5 - a4
+        b6 = a6 - a5
+
+        Adding all these, all the middle terms will cancel out except two i.e.
+
+        a6 - a2 = b3 + b4 + b5 + b6
+
+        (a6 - a2) is the required solution. So we need to find the largest sub array sum to get the most profit
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
