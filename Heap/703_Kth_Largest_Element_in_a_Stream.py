@@ -7,45 +7,34 @@ largest element in the stream. """
 import unittest2 as unittest
 from heapq import heappush, heappop
 
+# Video explanation: https://www.youtube.com/watch?v=hOjcdrqMoQ8
+
 
 class KthLargest(object):
 
     """ Create a min heap (priority queue), keep it only having the k largest elements by popping off small elements.
-        With only k elements, the smallest item (heap[0]) will always be the kth largest.
-        If a new value is bigger than the smallest, it should be added into the heap.
-        If it's bigger than the smallest (that is already the kth largest), it will certainly be within the k largest
-        of the stream.
+        With only k largest elements, the smallest item (heap[0]) will always be the kth largest.
     """
 
     def __init__(self, k, nums):
-        """ We can build a min heap that contains only k largest elements.
-        Time complexity: O(N logK), where N is the length of nums, we push N items into a heap of size k
-        Space complexity: O(k)
+        """ Build a min heap from the initial stream.
+        Time complexity: O(N logN), where N is the length of nums
+        Space complexity: O(N)
         """
-        self.k = k
         self.heap = []
+        self.k = k
         for num in nums:
             heappush(self.heap, num)
-            if len(self.heap) > k:
-                heappop(self.heap)
 
     def add(self, val):
-        """ Compare the new element val with min to decide if we should pop min and insert val.
+        """ Push the new value into the heap and make sure the heap's size doesn't exceed k.
         Time complexity: O(logK)
         Space complexity: O(1)
         """
-        heap, k = self.heap, self.k
-        if len(heap) < k:
-            heappush(heap, val)
-        elif val > heap[0]:  # Pop smallest element (kth largest) and replace it with val, making val kth largest
-            heappop(heap)
-            heappush(heap, val)
-        return heap[0]  # Because the heap contains the k largest elements, the one at index 0 is the kth largest
-        # Similarly:
-        # heappush(heap, val)
-        # if len(heap) > k:
-        #     heappop(heap)
-        # return heap[0]
+        heappush(self.heap, val)
+        while len(self.heap) > self.k:
+            heappop(self.heap)
+        return self.heap[0]  # Because the heap contains the k largest elements, the one at index 0 is the kth largest
 
 
 class Test(unittest.TestCase):
