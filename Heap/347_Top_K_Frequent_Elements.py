@@ -9,20 +9,20 @@ import unittest2 as unittest
 
 
 def top_k_frequent_v1(nums, k):
-    """ Build a frequency hash map. The next step is to build a heap and maintain a size of k.
+    """ Build a frequency hash map. The next step is to build a min heap and maintain a size of k.
     Time complexity: The complexity of building the hash map is O(N). The time complexity of adding an element in a
     heap is O(logK) (binary tree of K elements) and we do it N times, that means O(N logK). Hence the overall
     complexity of the algorithm is O(N + N logK) = O(N logK).
     Space complexity: O(N), to store the hash map
     """
     counter, heap, res = Counter(nums), [], []
-    for key, value in counter.items():
-        heappush(heap, (value, key))
+    for num, count in counter.items():
+        heappush(heap, (count, num))
         if len(heap) > k:
+            # Popping from the heap discards the smallest element. Done (N-k) times leaves us with
+            # the k largest elements
             heappop(heap)
-    while heap:
-        res.append(heappop(heap)[1])
-    return res
+    return [val[1] for val in heap]
 
 
 def top_k_frequent_v2(nums, k):
