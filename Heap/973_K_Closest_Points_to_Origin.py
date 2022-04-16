@@ -7,14 +7,22 @@ from random import randint
 
 
 def k_closest_v1(points, K):
-    """ We maintain a max-heap with size K. Then for each point, we add it to the heap. Once the size of the heap is
+    """ While we must iterate over all elements in the points array, we only need to keep track of the K closest points
+        encountered so far. We could therefore choose to store them in a separate data structure. In order to keep this
+        data structure capped at K elements, we will need to keep track of the point that is the farthest away from the
+        origin and thus the next point to be removed when a closer point is found.
+
+        We maintain a max-heap with size K. Then for each point, we add it to the heap. Once the size of the heap is
         greater than K, we are supposed to extract one from the max heap to ensure the size of the heap is always K.
         Thus, the max heap is always maintaining top K smallest elements from the first one to current one. Once the
         size of the heap is over its maximum capacity, it will exclude the maximum element in it, since it can not be
-        the proper candidate anymore.
+        the proper candidate anymore. At the end of iteration, we would only be left with K smallest elements
+        (since we popped off larger distanced elements whenever number of elements in heap exceeded K).
         Since Python's standard heap is a min heap, push negative values to make it a max heap.
-    Time complexity: O(N * logK): inserting an item to a heap of size k takes O(logK) time, and we do this for each item
-    in points. So runtime is O(N * logK) where N is the length of points.
+        Note that another way to use heap would be to construct a min-heap and pop the min elements k times.
+
+    Time complexity: O(N logK): inserting an item to a heap of size K takes O(logK) time, and we do this for each item
+    in points. So runtime is O(N logK) where N is the length of points.
     Space complexity: O(K) for the heap
     """
     heap = []
