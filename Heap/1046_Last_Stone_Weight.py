@@ -31,7 +31,10 @@ def last_stone_weight_v2(stones):
     """ For this kind of maximum-maintenance, we use a max heap. Multiply all numbers going into the heap by -1, and
         then multiply them by -1 to restore them when they come out. While there is more than one stone left, remove
         the two largest, smash them together, and insert the result back into the heap if it is non-zero.
-    Time complexity: O(N logN)
+    Time complexity: O(N logN), converting an array into a Heap takes O(N) time (it isn't actually sorting; it's putting
+    them into an order that allows us to get the maximums, each in O(logN) time). The main loop iterates up to
+    (N - 1) times. and is doing up to three O(logN) operation each time; two removes, and an optional add.This means
+    that we're doing N⋅O(logN)=O(N logN) operations.
     Space complexity: O(N)
     """
     heap = []
