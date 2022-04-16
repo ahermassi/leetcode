@@ -12,21 +12,25 @@ import unittest2 as unittest
 
 def least_interval_v1(tasks, n):
     """ The main idea is to schedule the most frequent tasks as frequently as possible. The reason for this is that
-        if we run the most frequent task first, we have a better chance of not running into the idle state. So ideally
-        the CPU needs to be idle as little as possible.
-        Begin with scheduling the most frequent task. Then cool-off for n, and in that cool-off period schedule tasks
-        in order of frequency, or if no tasks are available, then be idle.
+         if we run the most frequent task first, we have a better chance of not running into the idle state. So ideally
+         the CPU needs to be idle as little as possible.
+
+        Begin with scheduling the most frequent task. Then cool-off for n, and in that cooldown period schedule tasks
+         in order of frequency, or if no tasks are available, then be idle.
         The trick is that Python does not have a max heap queue, so we must make every number's negative value when we
         add it into the heap.
-        We start by picking the largest task from the heap for current execution and increment the 'work_time' as well.
-        We also decrement its pending number of instances, and if any more instances of the current task are pending,
-        we store them in a temporary 'temp' list to be added later on back into the heap. We keep on doing so, till a
-        cycle of cooling time has been finished. After every such cycle, we add the generated 'temp' list back to the
-        heap for considering the most critical task again. If either the heap or the temporary heap list becomes empty
-        during an iteration, it means there are no more tasks to schedule and we break early.
-        We keep on doing so till the heap becomes totally empty.
-        You can see the idle state as a filler when the number of distinct tasks is less than the cycle length.
-    Time complexity: O(n * logN) ~= O(n * log(26)) ~= O(n), where N is the number of tasks and n is the cool-off period
+
+         We start by picking the largest task from the heap for current execution and increment the 'cur_cycle_work' as
+         well. We also decrement its pending number of instances, and if any more instances of the current task are
+         pending, we store them in a temporary 'temp' list to be added later on back into the heap. We keep on doing so,
+         till a cycle of cooling time has been finished. After every such cycle, we add the generated 'temp' list back
+         to the heap for considering the most critical task again. If either the heap or the temporary heap list becomes
+         empty during an iteration, it means there are no more tasks to schedule, and we break early.
+         We keep on doing so till the heap becomes totally empty.
+
+        You can see the idle state as a filler when the number of remaining distinct tasks is less than the cycle length.
+
+    Time complexity: O(n * logN) ~= O(n * log(26)) ~= O(n), where N is the number of tasks and n is the cooldown period
     Space complexity: O(1), there will not be more than O(26) (tasks are capital letters A to Z)
     """
     counter, heap = Counter(tasks), []
@@ -36,18 +40,25 @@ def least_interval_v1(tasks, n):
     work_time = 0
     while heap:
         temp = []
+        cur_cycle_work = 0
         for _ in range(cycle):
-            work_time += 1
+            # Increment 'cur_cycle_work' in all cases. If a task is pending in the heap, it's going to be
+            # actual work time. Otherwise, it's idle time.
+            cur_cycle_work += 1
             if heap:
                 instances = -heappop(heap)
-                if instances != 1:
+                if instances > 1:
                     temp.append(instances - 1)
-            if not heap and not temp:  # Check if we're out of tasks
+            # Check if we're out of tasks. If at any point the heap is empty (no more tasks to extract) and 'temp'
+            # list is empty (no more tasks to put back in the heap), we break out of the current cycle because CPU
+            # can't be idle after finishing the execution of the entire set of tasks.
+            if not heap and not temp:
                 break
-        # Because we transferred all of the items from the heap to temp, we're transferring them back to know if we
+        # Because we transferred all the items from the heap to 'temp', we're transferring them back to know if we
         # should continue
         for instance in temp:
             heappush(heap, -instance)
+        work_time += cur_cycle_work
     return work_time
 
 
