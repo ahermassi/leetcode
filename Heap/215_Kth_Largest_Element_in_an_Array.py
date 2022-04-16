@@ -30,30 +30,34 @@ def find_kth_largest_v2(nums, k):
 
 
 def find_kth_largest_v3(nums, k):
-    """ Quick select.
-        This approach is basically the same as for quick sort. For simplicity, notice that kth largest element is
-        the same as (N - k)th smallest element (when indexing is 0-based), hence we could implement kth smallest
-        algorithm for this problem.
+    """ QuickSelect.
+        This approach is basically the same as for QuickSort. For simplicity, notice that the kth largest element is
+        the same as (N - k + 1)th smallest element, i.e. the element at index (N - k), hence we could implement
+        kth smallest algorithm for this problem.
+
         First, we choose a pivot and define its position in sorted array in a linear time. This could be done with
         the help of partition algorithm. As an output, we have an array where pivot is at its perfect position in the
         ascending sorted array, all elements on the left of the pivot are smaller than pivot, and all elements on the
         right of the pivot are larger than or equal to pivot.
+
         If the pivot's rank is smaller than the rank we want to find, we are sure all elements before pivot actually
         have even smaller rank, we search the target at the part after pivot.
+
         If the pivot's rank is larger than the rank we want to find, we search the target at the left part before pivot.
-        If that would be a quicksort algorithm, we would proceed recursively to use quicksort for the both parts that
-        would result in O(N logN) time complexity. Here there is no need to deal with both parts since now we know in
-        which part to search for (N - k)th smallest element, and that reduces average time complexity to O(N).
-        Unlike a quick sort, we only need to focus on one subarray in a quick select.
+        If that would have been a QuickSort algorithm, we would heve proceeded recursively to use quicksort for the
+        both parts that would result in O(N logN) time complexity. Here there is no need to deal with both parts since
+        now we know in which part to search for (N - k)th smallest element, and that reduces average time complexity
+        to O(N). Unlike a QuickSort, we only need to focus on one subarray in a QuickSelect.
+
     Time complexity: O(N), on average each partition operation splits the remaining input into two equal parts. We can
     disregard one of those parts, because we know the solution is not in that part. Thus, the size of the remaining
-    input progresses like this: n, n / 2, n / 4, n / 8, ... This is equal to 2n, because 1 + 1/2 + 1/4 + 1/8 ... = 2
-    and each term is multiplied by n
+    input progresses like this: N, N/2, N/4, N/8, ... This is equal to 2N, because 1 + 1/2 + 1/4 + 1/8 ... = 2
+    and each term is multiplied by N
     Space complexity: O(1)
     """
 
     def partition(left, right):
-        """ This is the same partitioning routine of quick sort. """
+        """ This is the same partitioning routine of QuickSort. """
         random_index = randint(left, right)  # Select a random pivot index between left and right, so that even when
         # the worst case input would be provided the algorithm wouldn't be affected
         pivot = nums[random_index]
