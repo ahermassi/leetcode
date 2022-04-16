@@ -15,8 +15,9 @@ def find_kth_largest_v1(nums, k):
 
 
 def find_kth_largest_v2(nums, k):
-    """ Build a min heap that stores the K largest values. The algorithm iterates over the whole input and maintains
-        the size of the heap equal to K.
+    """ Build a min heap and add all elements from the array into this heap one by one keeping the size
+    of the heap always less than or equal to k. That would result in a heap containing k largest elements
+    of the array. The head of this heap is the answer, i.e. the kth largest element of the array.
     Time complexity: O(N logK), for heap construction
     Space complexity: O(k), to store heap elements
     """
