@@ -64,60 +64,93 @@ def least_interval_v1(tasks, n):
 
 def least_interval_v2(tasks, n):
     """ The key is to find out how many idles we need, and only the most frequent characters can create idles.
+
         Let's first look at how to arrange them. It's not hard to figure out that we can do a 'greedy arrangement':
         always arrange tasks with most frequency first.
+
         E.g. we have the following tasks : 3 A, 2 B, 1 C, and we have n = 2. According to what we have above, we
         should first arrange A, and then B and C. Imagine there are 'slots' and we need to arrange tasks by putting
         them into these 'slots'. A should be put into slots 0, 3, 6 since we need to have at least n = 2 other tasks
         between two As. After A is placed, it looks like this:
+
             A ? ? A ? ? A
         where '?' is empty slots
+
         Now we can use the same method to arrange B and C. The finished schedule should look like this:
+
             A B C A B # A
         where '#' is idle
+
         Now we have a way to arrange tasks. But the problem only asks for the number of CPU intervals, so we don't need
         to actually arrange them. Instead, we only need to get the total idles we need and the answer to problem is:
+
             number of idles + number of tasks
+
         Same example: 3 A, 2 B, 1 C, n = 2. After arranging A, we have:
             A ? ? A ? ? A
+
         We can see that A separated the slots into (count(A) - 1) = 2 parts, where each part has length n. With the
         fact that A is the task with most frequency, it should need more idles than any other tasks. In this case, if
         we can get how many idles we need to arrange A, we will also get the number of idles needed to arrange all
         tasks. Calculating this is not hard. We first get the number of parts separated by A:
+
             part_count = count(A) - 1
+
         Then we can find the number of empty slots:
+
             empty_slots = part_count * n
+
         We can also get how many tasks we have to put into those slots:
+
             remaining_tasks = tasks.length - count(A)
+
         Now if we have empty_slots > remaining_tasks it means we don't have enough tasks available to fill all empty
         slots, we must fill them with idles.
-        What if we have more than n tasks with most frequency and we got empty_slots negative?
-        Like 3A, 3B, 3C, 3D, 3E, n = 2. In this case seems like we can't put all B C s inside slots since we only
+
+        What if we have more than n tasks with most frequency, and we got empty_slots negative?
+        Like 3A, 3B, 3C, 3D, 3E, n = 2. In this case it seems like we can't put all B C s inside slots since we only
         have n = 2.
-         Well n is actually the "minimum" length of each part required for arranging A. We can always make the length
-         of part longer. E.g. 3A, 3B, 3C, 3D, 2E, n = 2. We can always first arrange A, B, C, D as:
+
+        Well n is actually the "minimum" length of each part required for arranging A. We can always make the length
+        of part longer. E.g. 3A, 3B, 3C, 3D, 2E, n = 2. We can always first arrange A, B, C, D as:
+
             A B C D | A B C D | A B C D
+
         In this case we have already met the "minimum" length requirement for each part (n = 2).
         empty_slots < 0 means we have already got enough tasks to fill in each part to make arranged tasks valid.
+
         The problem actually requires us to make the "distance" between two same tasks up to at least n. Thus,
         if empty_slots is negative, it means that we even have remaining tasks to make the "distance" between same
         tasks longer than n. That is, no idle is needed.
-        Thus we have:
+
+        Thus, we have:
+
             idles = max(0, empty_slots - remaining_tasks)
+
         Almost done. One special case: what if there is more than one task with max frequency ?
         OK, let's look at another example: 3 A, 3 B, 2 C, 1 D, n = 3
         Similarly we arrange A first:
+
             A ? ? ? A ? ? ? A
+
         Now it's time to arrange B. We find that we have to arrange B like this:
+
             A B ? ? A B ? ? A B
+
         We need to put every B right after each A. Let's look at this in another way: Think of sequence 'A B' as a
         special task 'X', then we get:
+
             X ? ? X ? ? X
+
         Comparing to what we have after arranging A:
+
             A ? ? ? A ? ? ? A
-        The only changes are the length of each parts (from 3 to 2) and available tasks:
+
+        The only changes are the length of each part (from 3 to 2) and available tasks:
+
             empty_slots = part_count * (n - number of tasks with same max frequency + 1)
             remaining_tasks = tasks.length - max frequency * number of tasks with same max frequency
+
     Time complexity: O(n)
     Space complexity: O(1)
     """
