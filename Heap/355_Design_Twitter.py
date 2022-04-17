@@ -12,11 +12,11 @@ Tweets must be ordered from most recent to least recent.
 void follow(int follower_id, int followee_id) The user with ID follower_id started following the user with ID followee_id.
 void unfollow(int follower_id, int followee_id) The user with ID follower_id started unfollowing the user with ID followee_id.
  """
-from collections import defaultdict
+from collections import defaultdict, deque
 from heapq import heappush, heappop
 
 
-class Twitter:
+class TwitterV1:
     """  Use a hash map to track the tweets for each user. When we need to generate news feed, merge the
         news feeds for all the followees in a min heap of size 10 which will allow us to retrieve the 10 most
         recent tweets.
@@ -42,6 +42,50 @@ class Twitter:
                 heappush(heap, (timestamp, tweet_id))  # O(log10) ~= O(1)
                 if len(heap) > 10:
                     heappop(heap)
+        while heap:
+            res.append(heappop(heap)[1])
+        return res[::-1]
+
+    def follow(self, follower_id, followee_id):
+        """ Time complexity: O(1) """
+        self.followers[follower_id].add(followee_id)
+
+    def unfollow(self, follower_id, followee_id):
+        """ Time complexity: O(1) """
+        if followee_id in self.followers[follower_id]:
+            self.followers[follower_id].remove(followee_id)
+
+
+class TwitterV2:
+    """ There is no need to store more than 10 tweets for each user because the function getNewsFeed() is already
+        bounded by that constraint. Therefore, we can use a deque to save the 10 most recent tweets per user.
+        Every new tweet is appended to the end of the queue, and when the deque's size exceeds 10 we pop
+        the least recent tweet from the front.
+    """
+
+    def __init__(self):
+        self.followers = defaultdict(set)
+        self.tweets = defaultdict(deque)
+        self.timestamp = 1
+
+    def postTweet(self, user_id, tweet_id):
+        """ Time complexity: O(1) """
+        self.tweets[user_id].appendleft((self.timestamp, tweet_id))
+        if len(self.tweets[user_id]) > 10:
+            self.tweets[user_id].pop()
+        self.timestamp += 1
+
+    def getNewsFeed(self, user_id):
+        """ Time complexity: O(#followees) """
+        followees = self.followers[user_id]
+        followees.add(user_id)
+        heap = []
+        for followee in followees:
+            for timestamp, tweet_id in self.tweets[followee]:
+                heappush(heap, (timestamp, tweet_id))
+                if len(heap) > 10:
+                    heappop(heap)
+        res = []
         while heap:
             res.append(heappop(heap)[1])
         return res[::-1]
