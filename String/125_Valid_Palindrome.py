@@ -5,10 +5,25 @@ import unittest2 as unittest
 
 
 def is_palindrome(s):
-    """ Good old two pointers technique.
-        We use two indices to traverse the string, one forwards, the other backwards, skipping non alphanumeric
+    """ Good ol' two pointers technique.
+
+        If we take any ordinary string and concatenate its reverse to it, we'll get a palindrome. This leads to an
+        interesting insight about the converse: every palindrome half is reverse of the other half.
+
+        Simply speaking, if we were to start in the middle of a palindrome and traverse outwards, we'd encounter the
+        same characters, in the exact same order, in both halves!
+
+        Since the input string contains characters that we need to ignore in our palindromic check, it becomes tedious
+        to figure out the real middle point of our palindromic input.
+
+        Instead of going outwards from the middle, we could just go inwards towards the middle!
+        So, if we start traversing inwards, from both ends of the input string, we can expect to see the same
+        characters, in the same order.
+
+        We use two indices to traverse the string, one forwards, the other backwards, skipping non-alphanumeric
         characters, performing case-insensitive comparison on the alphanumeric characters. We return False as soon as
         there is a mismatch. If the indices cross, we have verified that the string is a palindrome.
+
     Time complexity: O(N), where N is the length of s
     Space complexity: O(1)
     """
