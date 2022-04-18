@@ -96,6 +96,36 @@ def three_sum_v2(nums):
     return res
 
 
+def three_sum_v3(nums):
+    """ What if we cannot modify the input array, and we want to avoid copying it due to memory constraints?
+
+        We can adapt the hashset approach above to work for an unsorted array. We can put a combination of
+        three values into a hashset to avoid duplicates. Values in a combination should be ordered (e.g. ascending).
+        Otherwise, we can have results with the same values in the different positions.
+
+        We also use another hashset 'duplicates' to skip duplicates in the outer loop.
+
+    Time complexity: O(N^2)
+    Space complexity: O(N)
+    """
+    n, res = len(nums), set()
+    duplicates = set()
+    for i in range(n - 2):
+        if nums[i] in duplicates:
+            continue
+        a = nums[i]
+        duplicates.add(a)
+        # The rest is regular Two Sum that searches for two numbers whose sum equals (-a)
+        seen = set()
+        for j in range(i + 1, n):
+            b = nums[j]
+            c = - (a + b)
+            if c in seen:
+                res.add(tuple(sorted([a, b, c])))
+            seen.add(b)
+    return map(list, res)
+
+
 class Test(unittest.TestCase):
     data = [([-1, 0, 1, 2, -1, -4], [[-1, -1, 2], [-1, 0, 1]])]
 
@@ -103,6 +133,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, three_sum_v1(test_array))
             self.assertEqual(result, three_sum_v2(test_array))
+            self.assertEqual(result, three_sum_v3(test_array))
 
 
 if __name__ == '__main__':
