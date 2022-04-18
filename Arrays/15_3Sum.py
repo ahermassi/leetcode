@@ -10,19 +10,25 @@ def three_sum(nums):
     """ We will follow the same two pointers pattern as in other similar sum problems. It requires the array to be
         sorted, so we'll do that first. To make sure the result contains unique triplets, we need to skip duplicate
         values. It is easy to do because repeating values are next to each other in a sorted array.
+
         To find the combinations of 3 numbers, we iterate over the array with the first pointer. The other two pointers
         are initially set to the first and the last element respectively. We compare the sum of the three elements to
         0. If it is smaller, we increment the lower pointer. Otherwise, we decrement the higher pointer. Thus, the sum
         always moves towards 0, and we "prune" pairs that would move it further away. Again, this works only if the
         array is sorted.
+
         We do not need to consider i after nums[i] > 0, since sum of 3 positives will be always greater than zero. [1]
+
         If the number is the same as the number before, then it is equivalent to repeating the previous calculation. [2]
+
         Now we calculate the total:
             If the total is less than zero, we need it to be larger, so we move the left pointer
             If the total is greater than zero, we need it to be smaller, so we move the right pointer
             If the total is zero, bingo! [5]
-            We need to move the left and right pointers to the next different numbers, so we do not get repeating result
+
+            We need to move the left and right pointers to the next different numbers, so we do not get duplicate results
             [3], [4]
+
     Time complexity: O(N logN + (N^2)) ~= O(N^2)
     Space complexity: O(N), for the sort
     """
