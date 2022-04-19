@@ -9,18 +9,24 @@ import unittest2 as unittest
 def trap_v1(height):
     """ For each element in the array, we find the maximum level of water it can trap after the rain, which is equal to
         the minimum of maximum height of bars on both the sides minus its own height.
-        ith bar can trap water if and only if there exists a higher bar to the left and a higher bar to the right of it.
-        To calculate how much amount water the ith bar can trap, we need to look at the maximum height of the left bar
-        and the maximum height of the right bar, then the water level that can be formed at ith bar is:
-            water_level = min(max_left[i], max_right[i])
-        If water_level >= height[i] then ith bar can trap (water_level - height[i]) amount of water.
+
+        The ith bar can trap water if and only if there exists a higher bar to the left and a higher bar to the right
+        of it. To calculate how much amount of water the ith bar can trap, we need to look at the maximum height
+        of the left bar and the maximum height of the right bar, then the water level that can be formed at ith bar is:
+
+                water_level = min(max_left[i], max_right[i])
+
+        If water_level >= height[i] then ith bar can trap:
+
+                amount of water = water_level - height[i]
+
     Time complexity: O(N^2), for each element of array we iterate the left and right parts
     Space complexity: O(1)
     """
     n, res = len(height), 0
     for i, cur_height in enumerate(height):
         left = right = i
-        max_left = max_right = cur_height
+        max_left = max_right = 0
         while left >= 0:
             max_left = max(max_left, height[left])
             left -= 1
