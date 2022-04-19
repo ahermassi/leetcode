@@ -42,15 +42,17 @@ def trap_v1(height):
 def trap_v2(height):
     """ In the previous solution, we iterate over the left and right parts again and again just to find the highest bar
         size up to current index. However, this could be pre-computed and stored.
+
         Find maximum height of bar from the left end up to an index i in the 'left_max' array.
         Find maximum height of bar from the right end up to an index i in the array 'right_max' array.
+
         Therefore, at each index i, the water that can be trapped is:
-            min(left_max[i], right_max[i]) − height[i]
+
+                amount of water =min(left_max[i], right_max[i]) − height[i]
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    if not height:
-        return 0
     n, res = len(height), 0
     left_max, right_max = [0] * n, [0] * n
     left_max[0], right_max[-1] = height[0], height[-1]
