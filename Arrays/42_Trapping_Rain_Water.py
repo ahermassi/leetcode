@@ -65,26 +65,42 @@ def trap_v2(height):
         res += min(max_left, max_right) - cur_height
     return res
 
+# Video explanation: https://youtu.be/ZI2z5pq0TqA?t=660
+
 
 def trap_v3(height):
     """ Instead of computing the left and right parts separately, we may think of some way to do it in one iteration.
-        Notice that as long as left_max[i] < right_max[i], the water trapped depends upon 'left_max', and similar is
-        the case when right_max[i] < left_max[i]. So, we can say that if there is a larger bar at one end (say right),
-        we are assured that the water trapped would be dependant on height of (left) bar in current direction (from
-        left to right). As soon as we find out that the bar at other end (right) is smaller, we start iterating in
-        opposite direction (from right to left). We must maintain 'left_max' and 'right_max' during the iteration, but
-        now we can do it in one iteration using 2 pointers, switching between the two.
+
+        Notice that as long as left_max[i] < right_max[i], the water trapped depends upon 'left_max' ONLY, and similar
+        is the case when right_max[i] < left_max[i]. So, we can say that if there is a larger bar at one end (say right),
+        we are assured that the water trapped would be dependent on height of (left) bar in current direction (from
+        left to right).
+
+        As soon as we find out that the bar at other end (right) is smaller, we start iterating in
+        opposite direction (from right to left).
+
+        We must maintain 'left_max' and 'right_max' during the iteration, but now we can do it in one iteration
+        using 2 pointers, switching between the two.
+
         If 'left_max' is smaller, use left bar as current container rim.
         If 'right_max' is smaller, use right bar as current container rim.
+
         In other words:
-        We calculate the stored water at each index. At the start of every iteration, we update the current maximum
-        height from left side (that is from height[:left]) and the maximum height from right side (from height[right:]).
-        If left_max < right_max, then at least (left_max- height[left]) water can definitely be stored no matter what
-        exists between [left, right] since we know there is a barrier at the right side (left_max < right_max).
+
+        We calculate the stored water at each index 'left' and 'right'. At the start of every iteration, we update
+        the current maximum height from left side (that is from height[:left+1]) and the maximum height from right side
+        (from height[right:]).
+
+        If left_max < right_max, then AT LEAST (left_max- height[left]) water can definitely be stored no matter what
+        exists between [left, right] since we know there is a barrier on the right side (left_max < right_max).
         On the other hand, we cannot store more water than (left_max - height[left]) at index 'left' since the left
         barrier is of height 'left_max'. So, we know the water that can be stored at index 'left' is exactly
-        (left_max - height[left]). The same logic applies to the case when right_max < left_max. At each loop we can
-        make 'left' and 'right' one step closer.
+        (left_max - height[left]).
+        The same logic applies to the case when right_max < left_max.
+
+        At each iteration we can make 'left' and 'right' one step closer. The key point is that any bars between
+        left_max and right_max bars will NOT influence how much water can the current position trap.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -94,9 +110,10 @@ def trap_v3(height):
     while left < right:
         left_max = max(left_max, height[left])
         right_max = max(right_max, height[right])
+        # How much can the current position trap depends on the shorter bar
         if left_max < right_max:
             res += left_max - height[left]  # We know that we can fill the current point with water up to the previous
-            # left maximum as any more will overflow
+            # left maximum as any more than that limit will overflow
             left += 1
         else:
             res += right_max - height[right]
