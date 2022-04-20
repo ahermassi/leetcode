@@ -12,13 +12,18 @@ class MinStackV1(object):
     """ An important invariant of a Stack is that when a new number, which we'll call x, is placed on a Stack, the
         numbers below it will not change for as long as number x remains on the Stack. So, whenever number x is the top
         of the Stack, the minimum will always be the same, as it's simply the minimum out of x and all the numbers
-        below it. Therefore, in addition to putting a number on an underlying Stack inside our MinStack, we could also
+        below it.
+
+        Therefore, in addition to putting a number on an underlying Stack inside our MinStack, we could also
         put its corresponding minimum value alongside it.
+
         Therefore, when we put a new number on the underlying Stack, we need to decide whether the minimum at that
         point is the new number itself, or whether it's the minimum before. It makes sense that it would always be the
         smallest of these two values.
+
         The idea is to store tuples (value, min_value_till_now) in the stack. This makes getMin() an O(1) operation.
-    Time complexity: O(N), for all operations, where N is the total number of operations performed
+
+    Time complexity: O(1)
     Space complexity: O(N), worst case is that all the operations are push
     """
 
@@ -26,6 +31,7 @@ class MinStackV1(object):
         self.stack = []
 
     def push(self, x):
+        # Each node stores the min value AT OR BELOW it
         if not self.stack:
             self.stack.append((x, x))
         else:
@@ -38,7 +44,7 @@ class MinStackV1(object):
         return self.stack[-1][0]
 
     def getMin(self):
-        return self.stack[-1][1] if self.stack else None
+        return self.stack[-1][1]
 
 
 class MinStackV2:
