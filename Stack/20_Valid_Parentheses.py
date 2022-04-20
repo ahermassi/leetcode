@@ -11,17 +11,23 @@ import unittest2 as unittest
 def is_valid_v1(s):
     """ An interesting property about a valid parenthesis expression is that a sub-expression of a valid expression
         should also be a valid expression. (Not every sub-expression)
+
         What if whenever we encounter a matching pair of parenthesis in the expression, we simply remove it from the
         expression? If it is a valid expression, we would be left with an empty string in the end.
+
         The stack data structure can come in handy here in representing this recursive structure of the problem. We
         can't really process this from the inside out because we don't have an idea about the overall structure. But,
-        the stack can help us process this recursively i.e. from outside to inwards.
+        the stack can help us process this recursively i.e. from outside inwards.
+
         If we encounter an opening bracket, we simply push it onto the stack. This means we will process it later, let
         us simply move onto the sub-expression ahead.
+
         If we encounter a closing bracket, then we check the element on top of the stack. If the element at the top of
         the stack is an opening bracket of the same type, then we pop it off the stack and continue processing. Else,
         this implies an invalid expression.
+
         In the end, if we are left with a stack still having elements, then this implies an invalid expression.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
