@@ -6,22 +6,28 @@ import unittest2 as unittest
 
 def eval_rpn(tokens):
     """ Pretty straightforward stack solution.
+
         When we see a digit, we push it to the stack.
         When we see an operator, we perform 2 pops, apply the operation between the 2 values (first popped item goes on
-        left of the sign, 2nd popped item goes on the right of the sign), and then push the result back onto the stack
+        left of the sign, 2nd popped item goes on the right of the sign), and then push the result back onto the stack,
         so we can work with it as we continue.
-    Time complexity: O(N)
+
+    Time complexity: O(N), we push to and remove each element from stack only once
     Space complexity: O(N)
     """
-    operators = {'+': lambda x, y: x + y, '-': lambda x, y: x - y,
-                 '*': lambda x, y: x * y, '/': lambda x, y: int(x / y)}
+    operations = {
+        '+': lambda x, y: x + y,
+        '-': lambda x, y: x - y,
+        '*': lambda x, y: x * y,
+        '/': lambda x, y: int(x / y)
+    }
     stack = []
     for token in tokens:
-        if token not in operators:
+        if token not in operations:
             stack.append(int(token))
         else:
             a, b = stack.pop(), stack.pop()
-            stack.append(operators[token](b, a))
+            stack.append(operations[token](b, a))
     return stack.pop()
 
 
