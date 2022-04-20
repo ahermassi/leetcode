@@ -103,8 +103,10 @@ class MinStackV3:
         equal to the current minimum. One downside of this solution is that if the same number is pushed repeatedly
         onto MinStack, and that number also happens to be the current minimum, there'll be a lot of needless repetition
         on the min_stack.
+
         An improvement is to put pairs onto the min_stack. The first value of the pair would be the same as before, and
         the second value would be how many times that minimum was repeated.
+
     Time complexity: O(1)
     Space complexity: O(N)
     """
@@ -123,8 +125,7 @@ class MinStackV3:
             self.min_stack[-1][1] += 1
 
     def pop(self) -> None:
-        val = self.stack.pop()
-        if val == self.min_stack[-1][0]:
+        if self.stack.pop() == self.min_stack[-1][0]:
             self.min_stack[-1][1] -= 1
             if self.min_stack[-1][1] == 0:
                 self.min_stack.pop()
