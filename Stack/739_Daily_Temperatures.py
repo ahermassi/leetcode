@@ -5,18 +5,43 @@ Note: The length of temperatures will be in the range [1, 30000]. Each temperatu
 
 import unittest2 as unittest
 
+# Video explanation: https://www.youtube.com/watch?v=cTBiBSnjO3c
+
 
 def daily_temperatures_v1(temperatures):
     """ The logic is similar to 503- Next Greater Element II.
-        We use a stack to store the indices to which we have not found answers yet. The stack is monotonous as we keep
-        the indices of a decreasing sub-sequence.
-        We iterate over the temperatures array from left to right. We push the index i of an element to the stack if it
-        is less than the element on the top of the stack. Whenever we encounter a temperature x = temperatures[i]
-        greater than temperatures[stack[-1] (don't forget that the stack stores indices not values), we pop all indices
-        that correspond to temperatures less than x, and for each popped index j, its result is (i - j).
+
+        A monotonic stack is simply a stack where the elements are always in sorted order. How does this help us?
+
+        We can use a monotonic decreasing stack to hold temperatures. Monotonic decreasing means that the stack will
+        always be sorted in descending order. Because the problem is asking for the number of days, instead of storing
+        the temperatures themselves, we should store the indices of the days, and use temperatures[i] to find the
+        temperature of the ith day.
+
+        Monotonic stacks are a good option when a problem involves comparing the size of numeric elements, with their
+        order being relevant.
+
+        On each day, there are two possibilities. If the current day's temperature is not warmer than the temperature on
+        the top of the stack, we can just push the current day onto the stack - since it is not as warm (equal or smaller).
+        This will maintain the sorted property.
+
+        If the current day's temperature is warmer than the temperature on top of the stack, this is significant.
+        It means that the current day is the FIRST day with a warmer temperature than the day associated with the
+        temperature on top of the stack. When we find a warmer temperature, the number of days is the difference
+        between the current index and the index on the top of the stack. We can declare an answer array before
+        iterating through the input and populate answer as we go along.
+
+        When we find a warmer temperature, we can't stop after checking only one element at the top. Using the
+        example temperatures = [75, 71, 69, 72], once we arrive at the last day our stack looks like stack = [0, 1, 2].
+        For clarity, here's what the stack looks like with each temperature associated with the day:
+        stack = [(0, 75), (1, 71), (2, 69)]. 72 (the current temperature) is greater than 69, but it is also greater than
+         71. To make sure we don't miss any days, we should pop from the stack until the top of the stack is no longer
+         colder than the current temperature. Once that is the case, we can push the current day onto the stack.
+
     Time complexity: O(N), a specific index can only be pushed once (as i) and can only be popped once (as j). The
     total number of times the body of the while loop executes cannot be greater than N
-    Space complexity: O(N)
+    Space complexity: O(N), if the input was non-increasing, then no element would ever be popped from the stack,
+    and the stack would grow to a size of N elements at the end.
     """
     stack, res = [], [0] * len(temperatures)
     for i, temperature in enumerate(temperatures):
