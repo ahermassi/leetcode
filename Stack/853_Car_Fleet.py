@@ -17,7 +17,7 @@ Return the number of car fleets that will arrive at the destination. """
 # Video explanation: https://www.youtube.com/watch?v=H5w6doOXz10
 
 
-def car_fleet(target, position, speed):
+def car_fleet_v1(target, position, speed):
     """ How can we know if a car can catch up with the car in front of it? If we calculate the time each car needs
         to reach the target without any blockers, then the car that has shorter time can catch up with other cars ahead
         of it.
@@ -39,6 +39,9 @@ def car_fleet(target, position, speed):
         So the idea is: If a car located further away from target arrives at target with less time compared to cars
         closer to target, they will bump into a group.
 
+        Why process the cars in the reverse order of their positions? Since the car farther away is the closest to the
+        target, therefore, it will definitely lead a fleet since no car behind it can pass it.
+
     Time complexity: O(N logN)
     Space complexity: O(N)
     """
@@ -54,3 +57,36 @@ def car_fleet(target, position, speed):
             fleet += 1
             slowest_car_time = time_to_target
     return fleet
+
+
+def car_fleet_v2(target, position, speed):
+    """  Similar to previous solution but using a stack to track the fleets of cars.
+
+        Since the first vehicle will always lead a fleet, starting from the second vehicle, compare each vehicle's
+        ideal arrival time with the arrival time of the fleet in front of it, i.e., stack[-1]. If its ideal arrival time
+        is earlier, it will join the fleet in front of it. Otherwise, it will lead a new fleet, and we append its arrival
+        time into the stack.
+
+        Finally, the stack contains the arrival times of the fleets and the length of stack will be the number of
+        distinct arrival times, i.e., the number of fleets.
+
+        This problem fits the pattern of what we can call "allocating resources to overlapping events".
+        In this kind of problems, it's usually the case that we have to sort the items with respect to some feature and
+        process them one at a time while constantly checking the previous items by popping from a stack.
+        Many greedy problems require sorting and processing things in order while checking if the current item
+        overlaps/dissolves into its predecessor (the previous item).
+
+    Time complexity: O(N logN)
+    Space complexity: O(N)
+    """
+    n = len(position)
+    positions_and_speeds = sorted(zip(position, speed))
+    stack = []
+    for i in reversed(range(n)):
+        position, speed = positions_and_speeds[i]
+        time_to_target = (target - position) / speed
+        if not stack or time_to_target > stack[-1]:
+            stack.append(time_to_target)
+        # If curr time_to_target is = previous time_to_target, then the current car joins the previous fleet and
+        # gets dissolved into it (aka we don't need to do anything)
+    return len(stack)
