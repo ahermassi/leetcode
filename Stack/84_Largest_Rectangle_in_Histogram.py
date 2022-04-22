@@ -4,9 +4,28 @@ area of largest rectangle in the histogram. """
 import unittest2 as unittest
 
 
+def largest_rectangle_area_v1(heights):
+    """  Brute Force. TLE.
+
+        We can simply start off by considering every possible pair of bars and finding the area of the rectangle formed
+        between them using the height of the shortest bar lying between them as the height and the spacing between them
+        as the width of the rectangle. We can thus, find the required rectangle with the maximum area.
+
+    Time complexity: O(N^2)
+    Space complexity: O(1)
+    """
+    n, res = len(heights), 0
+    for i in range(n):
+        min_height = heights[i]
+        for j in range(i, n):
+            min_height = min(min_height, heights[j])
+            res = max(res, min_height * (j - i + 1))
+    return res
+
+
 # Video explanation (set speed to 1.25x lol): https://www.youtube.com/watch?v=RVIh0snn4Qc
 
-def largest_rectangle_area(heights):
+def largest_rectangle_area_v2(heights):
     """ Firstly, we need to take into account the fact that the height of the rectangle formed between any two bars
         will always be limited by the height of the shortest bar lying between them.
         For any bar i, the maximum rectangle is of width (r-l-1), where r is the first coordinate of the bar to the
