@@ -60,12 +60,28 @@ def is_valid_sudoku_v1(board):
 
     return is_valid_rows() and is_valid_cols() and is_valid_squares()
 
+# Video explanation: https://www.youtube.com/watch?v=TjFXEUCMqI8
+
 
 def is_valid_sudoku_v2(board):
-    """ Actually, all this could be done in just one iteration.
-        We could use box_index = (row / 3) * 3 + col / 3 where / is an integer division, 'row' is a row number, and
-        'col' is a column number.
-        Move along the board. Check for each cell value if it was seen in the current row / column / box.
+    """ We can create a hash set for each row. For board[i][j], we check if the number already exists in the hash set
+        corresponding to ith row. If it does, this row contains a duplicate value, therefore the sudoku is not valid.
+        Otherwise, we will proceed to check the next position until we finish scanning the whole sudoku board.
+        The same logic can be applied to each column.
+
+        The tricky part is when we check the validity of each box. The question is, given row index i and column index j,
+        how to assign the position to one of the 9 boxes correctly? The first observation is that, in each column,
+        rows 0, 1, and 2 belong to the same box, as do rows 3, 4, and 5, and rows 6, 7, and 8.
+
+        What do they have in common? Every group of three belonging to the same box has the same outcome when we perform
+        integer division by 3. Therefore, we can use i/3 to ensure that the rows are grouped as expected and use j/3 to
+        ensure that the columns are grouped correctly. Then, (i/3, j/3) can uniquely mark each box, and we can directly
+        use the tuple as the hash key if we want to create a hash set for each box.
+
+        Alternatively, we can use the numbers 0 through 8 to represent these boxes, where (i/3) * 3 + (j/3) is used
+        to calculate a number in the range from 0 to 8. i.e. the square located at (i, j) belongs to the box
+        (i/3) * 3 + (j/3).
+
     Time complexity: O(1)
     Space complexity: O(1)
     """
