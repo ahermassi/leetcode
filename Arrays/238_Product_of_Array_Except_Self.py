@@ -33,23 +33,24 @@ def product_except_self_v1(nums):
 # the purpose of space complexity analysis.)
 
 def product_except_self_v2(nums):
-    """ This approach is essentially an extension of the approach above. The only change in this approach is that we
-        don't explicitly build the 'right' array from before. Instead, we simply use a variable 'prod' to keep track
-        of the running product of elements to the right and we keep updating the answer array by doing
-        left[i] = left[i] * prod
+    """ This approach is essentially an extension of the approach above. The only change in this solution is that we
+        don't explicitly build the 'right_prod' array as before. Instead, we simply use a variable 'cur_right_prod' to
+        keep track of the running product of elements to the right, and we keep updating the answer array by doing
+        left_prod[i] = left_prod[i] * cur_right_prod
+
     Time complexity: O(N), where N is the number of elements in the input array
     Space complexity: O(1), since we don't use any additional array for our computations
     """
     n = len(nums)
-    left = [0] * n
-    left[0] = 1
+    left_prod = [0] * n
+    left_prod[0] = 1
     for i in range(1, n):
-        left[i] = left[i - 1] * nums[i - 1]
-    prod = 1
+        left_prod[i] = left_prod[i - 1] * nums[i - 1]
+    cur_right_prod = 1  # For the element at index (n - 1), there are no elements to the right, so cur_right_prod is 1
     for i in reversed(range(n)):
-        left[i] *= prod
-        prod *= nums[i]
-    return left
+        left_prod[i] *= cur_right_prod
+        cur_right_prod *= nums[i]
+    return left_prod
 
 
 class Test(unittest.TestCase):
