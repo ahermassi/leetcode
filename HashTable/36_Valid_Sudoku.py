@@ -12,13 +12,27 @@ def is_valid_sudoku_v1(board):
             1- There is no rows with duplicates
             2- There is no columns with duplicates
             3- There is no sub-boxes with duplicates
+
+        In order to check 9 rows, 9 columns, and 9 boxes, we need to distinguish each of these entities. It is
+         comparatively intuitive to check for duplicates in each row and column, given the row index i and column
+         index j.
+
     Time complexity: O(1), as the number of iterations is known in advance (9 X 9 board)
     Space complexity: O(1)
     """
 
-    def is_valid(lst):
-        for l in lst:
-            if not is_valid_unit(l):
+    def is_valid_rows():
+        for row in board:
+            if not is_valid_unit(row):
+                return False
+        return True
+
+    def is_valid_cols():
+        for col in zip(*board):
+            # >>> a = [[1,2,3],[4,5,6],[7,8,9]]
+            # >>> list(zip(*a))
+            # [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
+            if not is_valid_unit(col):
                 return False
         return True
 
@@ -44,9 +58,7 @@ def is_valid_sudoku_v1(board):
                     return False
         return True
 
-    rows = [row for row in board]
-    cols = [col for col in zip(*board)]
-    return is_valid(rows) and is_valid(cols) and is_valid_squares()
+    return is_valid_rows() and is_valid_cols() and is_valid_squares()
 
 
 def is_valid_sudoku_v2(board):
