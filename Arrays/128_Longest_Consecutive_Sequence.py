@@ -77,13 +77,16 @@ def longest_consecutive_v2(nums):
 
 def longest_consecutive_v3(nums):
     """ Keep track of the sequence length and store that in the boundary points of the sequence.
+
         Whenever a new element 'num' is encountered, do two things:
+
             1- See if (num - 1) and (num + 1) exist in the map, and if so, it means there is an existing sequence next
-               to 'num'. Variables 'left' and 'right' will be the length of those two sequences, while 0 means there is
-               no sequence and 'num' will be the boundary point later. Store (left + right + 1) as the associated value
-               to key 'num' into the map.
+               to 'num' (preceding and/or following it). Variables 'left' and 'right' will be the length of those two
+               sequences, while 0 means there is no sequence and 'num' will be the boundary point later.
+               Store (left + right + 1) as the associated value to key 'num' into the map.
             2- Use 'left' and 'right' to locate the other end of the sequences to the left and right of 'num',
                respectively, and replace the value with the new length.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -92,7 +95,7 @@ def longest_consecutive_v3(nums):
         if num not in part_of_sequence_length:
             left = part_of_sequence_length.get(num - 1, 0)
             right = part_of_sequence_length.get(num + 1, 0)
-            length = left + right + 1
+            length = left + right + 1  # Length of the sequence 'num' is part of
             part_of_sequence_length[num] = length
             res = max(res, length)
             # Extend the length to the boundary(s) of the sequence. Will do nothing if 'num' has no neighbors
