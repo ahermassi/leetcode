@@ -37,12 +37,12 @@ def reverse_list_v2(head):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    curr, prev = head, None
-    while curr:
-        temp = curr.next
-        curr.next = prev
-        prev = curr
-        curr = temp
+    cur, prev = head, None
+    while cur:
+        nxt = cur.next
+        cur.next = prev
+        prev = cur
+        cur = nxt
     return prev
 
 
