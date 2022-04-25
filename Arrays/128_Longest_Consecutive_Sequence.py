@@ -48,6 +48,34 @@ def longest_consecutive_v1(nums):
 
 
 def longest_consecutive_v2(nums):
+    """ Similar to the previous approach.
+
+        We need to find the longest consecutive sequence in linear time. We can do this if we insert all the elements
+        of nums into a hashset. Once we have inserted all the elements, we can just iterate over the hashset to find
+        the longest consecutive sequence involving the current element (let's call it num) under iteration.
+
+        This can simply be done by iterating over elements that immediately preceded or follow num as long as we keep
+        finding them in the set. Each time we will also delete those elements from set to ensure we only visit them once.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    s = set(nums)
+    res = 0
+    for num in nums:
+        prev_num = num - 1
+        while prev_num in s:
+            s.remove(prev_num)
+            prev_num -= 1
+        next_num = num + 1
+        while next_num in s:
+            s.remove(next_num)
+            next_num += 1
+        res = max(res, next_num - prev_num - 1)
+    return res
+
+
+def longest_consecutive_v3(nums):
     """ Keep track of the sequence length and store that in the boundary points of the sequence.
         Whenever a new element 'num' is encountered, do two things:
             1- See if (num - 1) and (num + 1) exist in the map, and if so, it means there is an existing sequence next
@@ -80,6 +108,7 @@ class Test(unittest.TestCase):
         for test_nums, result in self.data:
             self.assertEqual(result, longest_consecutive_v1(test_nums))
             self.assertEqual(result, longest_consecutive_v2(test_nums))
+            self.assertEqual(result, longest_consecutive_v3(test_nums))
 
 
 if __name__ == '__main__':
