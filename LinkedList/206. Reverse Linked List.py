@@ -49,20 +49,29 @@ def reverse_list_v2(head):
 def reverse_list_v3(head):
     """ Recursive approach. Traverse the list recursively until the tail is reached. From there, reverse each two
         consecutive nodes and return the new head.
+
+        The recursive version is slightly trickier and the key is to work backwards.
         Assume that the rest of the list had already been reversed, now how do we reverse the front part? Let's assume
-        the list is: n1 → … → nk-1 → nk → nk+1 → … → nm → Ø
-        Assume from node nk+1 to nm had been reversed and we are at node nk.
+        the list is:
+
+        n1 → … → nk-1 → nk → nk+1 → … → nm → Ø
+        Assume from node nk+1 to nm had been reversed, and we are at node nk:
+
         n1 → … → nk-1 → nk → nk+1 ← … ← nm
-        We want nk+1’s next node to point to nk. So, nk.next.next = nk;
+
+        We want nk+1’s next node to point to nk. So: nk.next.next = nk
+        Be very careful that n1's next must point to Ø. If we forget this, the linked list will have a cycle in it.
+
     Time complexity: O(N)
     Space complexity: O(N), the recursion could go up to N levels deep
     """
     if not head or not head.next:  # If tail is reached, return it to become the new head
         return head
-    p = reverse_list_v2(head.next)  # When the tail is reached, p points to the tail, which is the new list's head
+    reversed_rest = reverse_list_v2(head.next)  # When the tail is reached, 'reversed_rest' points to the tail,
+    # which is the new list's head
     head.next.next = head
     head.next = None
-    return p  # Return that new head
+    return reversed_rest  # Return the new head
 
 
 class Test(unittest.TestCase):
