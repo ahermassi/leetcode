@@ -15,6 +15,8 @@ class ListNode:
         self.next = None
 
 
+# Video explanation: https://www.youtube.com/watch?v=GfRQvf7MB3k
+
 def merge_two_lists_v1(l1, l2):
     """ We create a dummy head, and a tail indicating last node in this growing List.
 
@@ -68,13 +70,21 @@ def merge_two_lists_v1(l1, l2):
 
 def merge_two_lists_v2(l1, l2):
     """ We can recursively define the result of a merge operation on two lists as the following:
+
             list1[0] + merge(list1[1:], list2)  if  list1[0] <= list2[0]
             list2[0] + merge(list1, list2[1:])  otherwise
+
         Namely, the smaller of the two lists' heads plus the result of a merge on the rest of the elements.
+
+        We model the above recurrence directly, first accounting for edge cases. Specifically, if either of l1 or l2 is
+        initially null, there is no merge to perform, so we simply return the non-null list. Otherwise, we determine
+        which of l1 and l2 has a smaller head value, and recursively set the next value for that head to the next merge
+        result. Given that both lists are null-terminated, the recursion will eventually terminate.
+
     Time complexity: O(N + M), there will be exactly one call to merge_two_lists per element in each list. Therefore,
-    the time complexity is linear in the combined size of the lists.
-    Space complexity: O(N + M), The first call to merge_two_lists does not return until the ends of both l1 and l2 have
-    been reached, so N + M stack frames consume O(N + M) space
+    the time complexity is linear to the combined size of the lists.
+    Space complexity: O(N + M), the first call to merge_two_lists does not return until the ends of both l1 and l2 have
+    been reached, so (N + M) stack frames consume O(N + M) space
     """
     if not l1 or not l2:
         return l1 or l2
