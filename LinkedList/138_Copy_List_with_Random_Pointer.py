@@ -13,24 +13,26 @@ class Node(object):
 
 
 def copy_random_list_v1(head):
-    """ We perform two passes over the linked list.
-        1st pass: We map the original node to its clone.
+    """ We perform two passes over the linked list:
+
+        1st pass: We map the original nodes to their clones.
         2nd pass: Give all clones their next and random pointer assignments. Our hash map lets us reach an original
         node's clone in O(1) time.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    copies, cur = {None: None}, head
+    clones, cur = {None: None}, head
     while cur:
-        copies[cur] = Node(cur.val)
+        clones[cur] = Node(cur.val)
         cur = cur.next
     cur = head
     while cur:
-        copies[cur].next = copies[cur.next]  # Set next of current node's clone to the clone of current node's next
-        copies[cur].random = copies[cur.random]  # Set random pointer of current node's clone to the clone of current
+        clones[cur].next = clones[cur.next]  # Set next of current node's clone to the clone of current node's next
+        clones[cur].random = clones[cur.random]  # Set random pointer of current node's clone to the clone of current
         # node's random pointer
         cur = cur.next
-    return copies[head]
+    return clones[head]
 
 
 def copy_random_list_v2(head):
