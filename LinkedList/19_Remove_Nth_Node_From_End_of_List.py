@@ -129,28 +129,6 @@ def remove_nth_from_end_v3(head, n):
     return head
 
 
-def remove_nth_from_end_v4(head, n):
-    """ Recursive solution.
-        Recursively advance through the list until the tail is reached. At this point, start moving backwards and keep
-        count of number of steps. (n-1)th step lands on the node that needs to be deleted.
-    Time complexity: O(N), where N is list length
-    Space complexity: O(N)
-    """
-
-    def remove(node):
-        if not head:
-            return 0, None
-        i, node.next = remove(node.next)
-        # If I'm (n-1)th node from end, my previous node's (my caller) next pointer should point to my next node
-        if i == n - 1:
-            return i + 1, node.next
-        return i + 1, node
-        # Equivalent to:
-        # return i + 1, (head, head.next)[i == n - 1]
-
-    return remove(head)[1]
-
-
 class Test(unittest.TestCase):
     head = ListNode(1)
     head.next = ListNode(2)
