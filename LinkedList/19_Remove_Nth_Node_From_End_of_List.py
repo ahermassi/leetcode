@@ -52,14 +52,14 @@ def remove_nth_from_end_v2(head, n):
         dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
         ^                                                 ^
        slow                                            fast
-        |<--        gap of n nodes       -->|
+        |<--      gap of n+1 nodes    -->|
 
         => Now traverse till fast reaches end
 
         dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
                                                            ^                                        ^
                                                          slow                                     fast
-                                                           |<--   gap of n nodes   -->|
+                                                           |<-- gap of n+1 nodes-->|
 
         'slow' is at (n+1)th node from end.
         So just delete nth node from end by assigning slow -> next as slow -> next -> next.
@@ -80,8 +80,35 @@ def remove_nth_from_end_v2(head, n):
 
 def remove_nth_from_end_v3(head, n):
     """ One-pass without using a dummy head node.
-        Instead of creating a new head node we can also check if 'fast' is null after we iterate n steps and simply
-        remove the head.
+
+        To do that, we can simply stagger our two pointers by n nodes by giving the first pointer (fast) a head start
+        before starting the second pointer (slow). Doing this will cause slow to reach the nth node from the end at the
+        same time that fast reaches the end.
+
+        This will unfortunately cause a problem when n is the same as the length of the list, which would make the
+        first node the target node, and thus make it impossible to find the node before the target node. If that's the
+        case, however, we can just return head.next without needing to stitch together the two sides of the target node.
+
+        Since we will need access to the node before the target node in order to remove the target node, we can use
+        fast.next == null as our exit condition, rather than fast == null, so that we stop one node earlier.
+
+        Otherwise, once we successfully find the node before the target, we can then stitch it together with the node
+        after the target, and then return head.
+
+        For eg. let the list be 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9, and n = 4.
+
+        1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
+        ^                               ^
+       slow                          fast
+        |<-- gap of n nodes -->|
+
+        => Now traverse till fast reaches end
+
+        1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
+                                          ^                               ^
+                                        slow                          fast
+                                       |<-- gap of n nodes -->|
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
