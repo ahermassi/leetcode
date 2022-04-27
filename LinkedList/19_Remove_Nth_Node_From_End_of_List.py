@@ -12,8 +12,10 @@ class ListNode(object):
 
 def remove_nth_from_end_v1(head, n):
     """ Two-pass approach.
+
         We notice that the problem could be simply reduced to another one : Remove the (L - n + 1)th node from the
         beginning in the list , where L is the list length. This problem is easy to solve once we found list length L.
+
     Time complexity: O(N), where N is list length
     Space complexity: O(1)
     """
@@ -21,7 +23,7 @@ def remove_nth_from_end_v1(head, n):
     while cur:
         length += 1
         cur = cur.next
-    if n == length:  # This is for the case of n == length of list, which means removing head of list
+    if n == length:  # This is for the case of n is equal to the length of list, which means removing head of list
         return head.next
     cur = head
     for _ in range(length - n - 1):
