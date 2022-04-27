@@ -34,28 +34,36 @@ def remove_nth_from_end_v1(head, n):
 
 def remove_nth_from_end_v2(head, n):
     """ One-pass approach.
+
+        First we will add an auxiliary "dummy" node, which points to the list head. The "dummy" node is used to simplify
+        some corner cases such as a list with only one node, or removing the head of the list.
+
         The above algorithm could be optimized to one pass. We use two pointers to traverse the list. The first
-        pointer is advanced by (n+1) steps from the head of the list. Now, both pointers are separated by exactly n
-        nodes apart. We maintain this constant gap by advancing both pointers in tandem. When the first pointer
+        pointer is advanced by (n+1) steps from the dummy head of the list. Now, both pointers are separated by exactly
+         n nodes apart.
+
+         We maintain this constant gap by advancing both pointers in tandem. When the first pointer
         reaches the tail, the second pointer is at the (n + 1)th last node, just the right spot for it to be able to
-        skip the next node.. We relink the next pointer of the node referenced by the second pointer to point to the
+        skip the next node. We relink the next pointer of the node referenced by the second pointer to point to the
         node's next next node.
-        We use an auxiliary dummy node, which points to the list head. The dummy node is used to simplify some corner
-        cases such as a list with only one node, or removing the head of the list.
+
         For eg. let the list be 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9, and n = 4.
 
-        1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
-        ^slow               ^fast
-        |<--gap of n nodes-->|
+        dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
+        ^                                                 ^
+       slow                                            fast
+        |<--        gap of n nodes       -->|
 
         => Now traverse till fast reaches end
 
-        2. 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
-                                ^slow               ^fast
-                                |<--gap of n nodes-->|
+        dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
+                                                           ^                                        ^
+                                                         slow                                     fast
+                                                           |<--   gap of n nodes   -->|
 
         'slow' is at (n+1)th node from end.
         So just delete nth node from end by assigning slow -> next as slow -> next -> next.
+
     Time complexity: O(N), where N is list length
     Space complexity: O(1)
     """
@@ -64,7 +72,7 @@ def remove_nth_from_end_v2(head, n):
     slow = fast = dummy
     for _ in range(n + 1):
         fast = fast.next
-    while fast:
+    while fast:  # Move fast to the end, maintaining the gap
         slow, fast = slow.next, fast.next
     slow.next = slow.next.next
     return dummy.next
