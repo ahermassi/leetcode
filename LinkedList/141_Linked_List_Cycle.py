@@ -61,17 +61,19 @@ def has_cycle_v1(head):
 
 def has_cycle_v2(head):
     """ We go through each node one by one and record each node's reference in a hash set. If the current node is null,
-        we have reached the end of the list and it must not be cyclic. If current node’s reference is in the hash set,
-        then return true.
+        we have reached the end of the list, and it must not be cyclic. If current node’s reference is in the hash set,
+        then a cycle must exist.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    nodes = set()
-    while head:
-        if head in nodes:
+    seen_nodes = set()
+    cur = head
+    while cur:
+        if cur in seen_nodes:
             return True
-        nodes.add(head)
-        head = head.next
+        seen_nodes.add(cur)
+        cur = cur.next
     return False
 
 
