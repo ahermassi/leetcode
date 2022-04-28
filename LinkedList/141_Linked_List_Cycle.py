@@ -11,18 +11,42 @@ class ListNode(object):
         self.next = None
 
 
+# Video explanation: https://www.youtube.com/watch?v=gBTe7lFR3vc
+
 def has_cycle_v1(head):
     """ Floyd's cycle detection algorithm, or 'the tortoise and the hare' algorithm.
+
         Consider two pointers at different speed - a slow pointer and a fast pointer. The slow pointer moves one step
         at a time while the fast pointer moves two steps at a time. If there is no cycle in the list, the fast pointer
-        will eventually reach the end and we can return false in this case.
+        will eventually reach the end, and we can return false in this case.
+
         Now consider a cyclic list and imagine the slow and fast pointers are two runners racing around a circle track.
-        The fast runner will eventually meet the slow runner. Why? Consider this case (we name it case A) - The fast
-        runner is just one step behind the slow runner. In the next iteration, they both increment one and two steps
-        respectively and meet each other.
+        The fast runner will eventually meet the slow runner. Why? Consider this case- The fast runner is just one step
+        behind the slow runner. In the next iteration, they both increment one and two steps respectively and meet each
+        other.
+
         How about other cases? For example, we have not considered cases where the fast runner is two or three steps
         behind the slow runner yet. This is simple, because in the next or next's next iteration, this case will be
-        reduced to case A mentioned above.
+        reduced to the case mentioned above.
+
+        Why does it work?
+
+        Walker goes 1 step at a time, and runner goes 2 steps at a time. If we think walker is still, then runner goes 1
+        step at a time. So, there is eventually a time when runner catches walker.
+
+        If there is a cycle then there will be a time when walker will enter the cycle for the first time. At that
+        moment, runner will already be present in the cycle (because he was fast and ahead).
+        Now if the runner is also on the same node as walker, problem solved.
+        Otherwise, if both runner and walker are on different nodes on cycle, then relative velocity of runner with
+        respect to walker is one node per iteration (because walker moves one step then runner moves two steps and
+        therefore relative velocity is 2 - 1 = 1). It can we viewed as if runner is closing in on walker. So that means
+        runner will surely catch the walker.
+
+        Every step of the while loop decreases the number of nodes between the walker and runner by one. Once the runner
+        is directly behind the walker (no nodes in between), then the next step of the loop makes them meet. The only
+        way for the runner to "skip" the walker is if they were on the same node, but the loop would've ended if that
+        occurred.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
