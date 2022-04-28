@@ -32,7 +32,7 @@ def add_two_numbers_v1(l1, l2):
     while l1 or l2:
         s = (l1.val if l1 else 0) + (l2.val if l2 else 0) + carry
         tail.next = ListNode(s % 10)
-        tail, carry = tail.next, carry // 10
+        tail, carry = tail.next, s // 10
         l1 = l1.next if l1 else None
         l2 = l2.next if l2 else None
     if carry:
@@ -41,16 +41,18 @@ def add_two_numbers_v1(l1, l2):
 
 
 def add_two_numbers_v2(l1, l2):
-    """ A more fancy way of writing the solution.
+    """ A more fancy way of writing the solution. We can get rid of the check at the end of the while loop by making it
+        part of the loop.
+
     Time complexity: O(max(N, M)), where N and M are the length of l1 and l2 respectively
     Space complexity: O(1)
     """
     dummy = tail = ListNode(0)
     carry = 0
     while l1 or l2 or carry:
-        carry += (l1.val if l1 else 0) + (l2.val if l2 else 0)
-        tail.next = ListNode(carry % 10)
-        tail, carry = tail.next, carry // 10
+        s = (l1.val if l1 else 0) + (l2.val if l2 else 0) + carry
+        tail.next = ListNode(s % 10)
+        tail, carry = tail.next, s // 10
         l1 = l1.next if l1 else None
         l2 = l2.next if l2 else None
     return dummy.next
@@ -65,7 +67,7 @@ class Test(unittest.TestCase):
     l2.next.next = ListNode(4)
 
     def test_add_two_numbers(self):
-        l = add_two_numbers_v1(self.l1, self.l2)
+        l = add_two_numbers_v2(self.l1, self.l2)
         self.assertEqual(7, l.val)
         self.assertEqual(0, l.next.val)
         self.assertEqual(8, l.next.next.val)
