@@ -15,8 +15,15 @@ class ListNode(object):
 def add_two_numbers_v1(l1, l2):
     """ Keep track of the carry using a variable and simulate digits-by-digits sum starting from the head of list,
         which contains the least-significant digit.
+
+        Just like how we would sum two numbers on a piece of paper, we begin by summing the least-significant digits,
+        which is the head of l1l1 and l2l2. Since each digit is in the range of 0…9, summing two digits may "overflow".
+        For example 5 + 7 = 125+7=12. In this case, we set the current digit to 2 and bring over the carry = 1 to the
+        next iteration.
+
         Note that we use a dummy head to simplify the code. Without a dummy head, we would have to write extra
         conditional statements to initialize the head's value.
+
     Time complexity: O(max(N, M)), where N and M are the length of l1 and l2 respectively
     Space complexity: O(1)
     """
