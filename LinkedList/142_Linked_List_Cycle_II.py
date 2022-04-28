@@ -34,43 +34,69 @@ def detect_cycle_v1(head):
 
 
 def detect_cycle_v2(head):
-    """ Floyd's hare and tortoise algorithm is separated into two distinct phases. In the first phase, it determines
+    """ Floyd's Tortoise and Hare
+
+        What happens when a fast runner (a hare) races a slow runner (a tortoise) on a circular track? At some point,
+        the fast runner will catch up to the slow runner from behind.
+
+        Floyd's hare and tortoise algorithm is separated into two distinct phases. In the first phase, it determines
         whether a cycle is present in the list. If no cycle is present, it returns null immediately, as it is
         impossible to find the entrance to a non-existent cycle. Otherwise, it uses the located "intersection node" to
         find the entrance to the cycle.
-        Assume: the distance from head to the start of the loop is L1,
-                the distance from the start of the loop to the point fast and slow meet is L2,
-                the distance from the point fast and slow meet to the start of the loop is L3
+
+        Here, we initialize two pointers - the fast hare and the slow tortoise. Then, until hare can no longer advance,
+        we advance tortoise once and hare twice. If, after advancing them, hare and tortoise point to the same node,
+        we stop at that node. Otherwise, we continue. If the while loop terminates without meeting at a node, then the
+        list is acyclic, and we return null.
+
+        Given that previous phase finds an intersection node, now we proceed to find the node that is the entrance to
+        the cycle. To do so, we initialize one more pointer 'entry' which points to the head of the list, and tortoise
+        will still point to the intersection. Then, we advance each of them by 1 until they meet; the node where they
+        meet is the entrance to the cycle, so we return it.
+
+        Why does it work?
+
+        Assume: L1 is the distance from head to the start of the cycle
+                      L2 is the distance from the start of the cycle to the point fast and slow meet
+                      L3 is the distance from the point fast and slow meet to the start of the cycle
+                      C = L2 + L3 is the circumference of the cycle
+
         What is the distance fast moved?
-            L1 + L2 + k * (L3 + L2)
+            L1 + L2 + k * (L3 + L2) = L1 + L2 + kC
+        Where k is the number of times the fast pointer traveled around the cycle before meeting the slow pointer
+
         What is the distance slow moved?
-            L1 + L2
+            L1 + L2 + mC
+
         And their relationship?
-            Using the fact that hare moves twice as quickly as tortoise: L1 + L2 + k * (L3 + L2) = 2(L1 + L2)
-        --> L1 + L2 = k * (L2 + L3)
-        L1 = L3
-        Hence, to find the entrance to the cycle, we have two pointers traverse at the same speed -- one from the front
-        of the list, and the other from the point of intersection.
-        More generally:
-        Distance slow moved: L1 + L2
-        Distance fast moved: L1 + L2 + nC, where C is the length of the cycle
-        --> L1 + L2 + nC = 2(L1 + L2)
-        --> L1 + L2 = nC
-        --> L1 = nC - L2
-        --> L1 = nC - (C - L3), since C = L2 + L3
-        --> L1 = L3 + (n-1)C
+            Using the fact that hare moves twice as quickly as tortoise:
+            L1 + L2 + kC  = 2 (L1 + L2 + mC) = 2 (L1 + L2) + 2mC
+            --> kC = L1 + L2 + 2mC
+            --> L1 = (k-2m)C - L2
+            Since C = L2 + L3 , .i.e. L2 = C - L3
+            --> L1 = (k - 2m)C - C + L3 = L3 + (k - 2m - 1)C
+
+        Therefore:
+            L1 = L3 + multiples of cycle circumference
+
         It can be concluded that the distance between the head location and entry location is equal to the distance
         between the meeting location and the entry location along the direction of forward movement and a multiple of C
         loop traversals.
+
+        Hence, to find the entrance to the cycle, we have two pointers traverse at the same speed -- one from the front
+        of the list, and the other from the point of intersection.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    slow, fast, entry = head, head, head
+    slow, fast = head, head
     while fast and fast.next:
         slow, fast = slow.next, fast.next.next
         if slow == fast:
+            # To find the entrance to the cycle, we have two pointers traverse at the same speed -- one from the
+            # front of the list, and the other from the point of intersection.
+            entry = head
             while entry != slow:
-                entry = entry.next
-                slow = slow.next
+                entry, slow = entry.next, slow.next
             return slow
     return None
