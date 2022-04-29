@@ -17,25 +17,41 @@ class Node:
         # Otherwise, for each remove operation we would need to scan the entire Map
         self.val = val
         self.next = None
-        self.pre = None
+        self.prev = None
 
 
 class LRUCacheV1(object):
     """ The problem can be solved with a hash map that keeps track of the keys and its values in the doubly-linked list.
         That results in O(1) time for put and get operations and allows to remove the first added node in O(1) time as
         well.
+
         One advantage of doubly-linked list is that the node can remove itself without other reference. In addition, it
         takes constant time to add and remove nodes from the head or tail.
-        In a singly-linked list, we would also need a reference to the node before the one we wanted to remove.
+
+        In a singly-linked list, we would also need a reference to the node before the one we want to remove.
         Therefore, if we were using a singly-linked list, we wouldn't be able to remove nodes we retrieved from the
-        hash map in O(1) time because we don't have a reference to the one before it. By using a doubly-linked list,
-        we can retrieve nodes from the hash map in O(1) and then remove the node itself from the list in O(1),
-        giving the entire operation an O(1) running time.
-        One particularity about the doubly linked list implemented here is that there are dummy head and dummy tail to
+        hash map in O(1) time because we don't have a reference to the one before them. By using a doubly-linked list,
+        we can retrieve node from the hash map in O(1) and then remove the node itself from the list in O(1), giving
+        the entire operation an O(1) running time.
+
+        One particularity about the doubly-linked list implemented here is that there are dummy head and dummy tail to
         mark the boundary, so that we don't need to check the null node during the update.
+
         Rules:
-            1- Always add new node BEFORE the dummy tail: this is the most recently used
-            2- As a result of the previous rule, the LRU node is always the one right AFTER the dummy head
+            1- Always add new node AFTER the dummy head: this is the most recently used
+            2- As a result of the previous rule, the LRU node is always the one right BEFORE the dummy tail
+
+        put :
+            - If the key is already in the cache, we remove the key node and re-insert it after the head with the
+               new value.
+            - If the key is not in cache, we insert the new key node after the head. If the cache becomes full, we
+               delete the node before the tail to make room for the new node.
+
+        get:
+            - Remove the node
+            - Re-insert the node after the head
+            - Return the value of the node
+
     Time complexity: O(1)
     Space complexity: O(N)
     """
@@ -52,40 +68,42 @@ class LRUCacheV1(object):
         self.head = Node(0, 0)
         self.tail = Node(0, 0)
         self.head.next = self.tail
-        self.tail.pre = self.head
+        self.tail.prev = self.head
 
     def get(self, key):
         if key not in self.nodes:
             return -1
         node = self.nodes[key]
-        self.remove(node)  # The node is now most recently accessed, so remove it ..
-        self.add(node)  # and place it right before the dummy tail
+        self.remove(key)  # The node is now most recently accessed, so remove it ..
+        self.add(key, node.val)  # and place it right before the dummy tail
         return node.val
 
     def put(self, key, value):
         if key in self.nodes:  # If the key already exists, then this is essentially an update
-            self.remove(self.nodes[key])  # The node is now most recently accessed, so remove it
-        node = Node(key, value)
-        self.add(node)
-        if self.size > self.capacity:  # If max capacity reached, delete the LRU node: the one after the dummy head
+            self.remove(key)  # The node is now most recently accessed, so remove it
+        self.add(key, value)
+        if self.size > self.capacity:
             lru = self.head.next
             self.remove(lru)
 
-    def remove(self, node):
-        node.pre.next = node.next
-        node.next.pre = node.pre
-        del self.nodes[node.key]
+    def remove(self, key):
+        node = self.nodes[key]
+        node.prev.next = node.next
+        node.next.prev = node.prev
+        del self.nodes[key]
         self.size -= 1
 
-    def add(self, node):
-        tail = self.tail
-        pre = tail.pre
-        pre.next = node
-        node.pre = pre
-        tail.pre = node
-        node.next = tail
-        self.nodes[node.key] = node
+    def add(self, key, value):
+        node = Node(key, value)
+        node.next = self.head.next
+        node.prev = self.head
+        node.next.prev = node
+        self.head.next = node
+        self.nodes[key] = node
         self.size += 1
+        if self.size > self.capacity:  # If max capacity reached, delete the LRU node: the one before the dummy tail
+            lru = self.tail.prev
+            self.remove(lru.key)
 
 
 class LRUCacheV2(object):
