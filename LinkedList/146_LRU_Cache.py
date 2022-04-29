@@ -108,26 +108,33 @@ class LRUCacheV1(object):
 
 class LRUCacheV2(object):
     """ We're asked to implement the structure which provides the following operations in O(1) time:
+
             Get the key / Check if the key exists
             Put the key
             Delete the first added key
+
         The first two operations in O(1) time are provided by the standard hash map, and the last one by linked list.
+
         We can maintain a separate queue of keys. In the hash table, we store for each key a reference to its location
         in the queue. Each time an item is looked up and is found in the hash table, it is moved to the front of the
         queue. (This requires us to use a linked list implementation of the queue, so that items in the middle of the
         queue can be moved to the head). When the length of the queue exceeds the capacity, when a new element is added
         to the cache, the item at the tail of the queue is deleted from the cache, i.e., from the queue and the hash
         table.
-        There is a structure called ordered dictionary which combines behind the scenes both hash map and linked list.
+
+        There is a structure called Ordered Dictionary which combines behind the scenes both hash map and linked list.
         In Python, this structure is called OrderedDict.
+
         Things to keep in mind:
-        - Putting: Whenever we are putting a key-value pair in, we have to check whether the key already exists.
-            - If it exists, we get that key-value pair, update the value and put that pair at the the end of the cache.
+
+        - put: Whenever we are putting a key-value pair in, we have to check whether the key already exists.
+            - If it exists, we get that key-value pair, update the value and put that pair at the end of the cache.
             - If the key does not exist, we check whether the cache size is already at limit.
                 - If the cache size is at limit, pop the key-value pair at the beginning of the cache and push the
                   new key-value pair at the end of the cache.
-                - If the cache is still under size limit, simply push the new key-value pair at the end of the cache.
-        - Getting: Whenever we are getting the value of the key, check whether the key exists in the cache.
+                - If the cache is still below size limit, simply push the new key-value pair at the end of the cache.
+
+        - get: Whenever we are getting the value of the key, check whether the key exists in the cache.
             - If it exists, put that key-value pair at the end of the cache and return the value.
             - If it does not exist, return -1.
     """
@@ -151,7 +158,7 @@ class LRUCacheV2(object):
             self.nodes.pop(key)
         elif self.size == self.capacity:  # Max capacity reached
             self.nodes.popitem(last=False)  # The popitem() method for ordered dictionaries returns and removes a
-            # (key, value) pair. The pairs are returned in LIFO order if last=true and FIFO order if last=false.
+            # (key, value) pair. The pairs are returned in a LIFO order if last=true and FIFO order if last=false.
             # Here, last=False means the first element in (least recently used) will be popped.
         self.nodes[key] = value
         self.size += 1
