@@ -84,24 +84,74 @@ def find_duplicate_v3(nums):
             return val
         nums[val] = -nums[val]
 
+# Video explanation: https://www.youtube.com/watch?v=wjYnzkAhcNk
+
 
 def find_duplicate_v4(nums):
-    """ Floyd's Tortoise and Hare (Cycle Detection).
-        Because each number in nums is between 1 and n, it will necessarily point to an index that exists. Therefore,
-        the list can be traversed infinitely, which implies that there is a cycle. Additionally, because 0 cannot
-        appear as a value in nums, nums[0] cannot be part of the cycle because there is no value in nums that can take
-        to 0. Therefore, traversing the array in this manner from nums[0] is equivalent to traversing a cyclic linked
-        list. nums[a] = b can be seen as a.next = b
+    """ Floyd's Tortoise and Hare (Cycle Detection)
+
+        The idea is to reduce the problem to 142- Linked List Cycle II:
+
+                Given a linked list, return the node where the cycle begins.
+
+        First, where does the cycle come from? Let's use the function f(x) = nums[x] to construct the sequence:
+        x, nums[x], nums[nums[x]], nums[nums[nums[x]]], ....
+        Each new element in the sequence is an element in nums at an index equal to the value of the previous element.
+
+        If we start from x = 0, such a sequence will produce a linked list with a cycle. The cycle appears because nums
+        contains duplicates. The duplicate node is a cycle entrance.
+
+        Now the problem is to find the entrance of the cycle.
+
+        Floyd's algorithm consists of two phases and uses two pointers, usually called tortoise and hare.
+
+        In phase 1, hare = nums[nums[hare]] is twice as fast as tortoise = nums[tortoise]. Since the hare goes fast,
+        it would be the first to enter the cycle and run around the cycle. At some point, the tortoise enters the cycle
+        as well, and since it's moving slower the hare catches up to the tortoise at some intersection point.
+        Note that the intersection point is not the cycle entrance in the general case.
+
+        In phase 2, we give the tortoise a second chance by slowing down the hare, so that it now moves at the speed of
+        tortoise: tortoise = nums[tortoise], hare = nums[hare]. The tortoise is back at the starting position, and the
+        hare starts from the intersection point.
+        The tortoise and the (slowed down) hare will meet at the entrance of the cycle. Full proof is at
+        142- Linked List Cycle II.
+
+        The intuition here is that:
+
+        Because each number in nums is in the range [1, n] and nums has (n + 1) numbers which means indices are in the
+        range [0, n], then each number will necessarily point to an index that exists. Therefore, the list can be
+        traversed infinitely, which implies that there is a cycle. Why? By contradiction. If we cannot reach a cycle,
+        that is to say, we always meet a new index, and then meet a new index, but there is only a finite number of
+        indices. So, we will reach a cycle.
+
+        Additionally, because 0 cannot appear as a value in nums, nums[0] cannot be part of the cycle because there is
+        no value in nums that can take BACK to 0. Therefore, traversing the array in this manner from nums[0] is
+        equivalent to traversing a cyclic linked list: nums[a] = b can be seen as a.next = b
+
+        As there is always a duplicate number in nums, nums[i] will always be a valid index in nums.
+        This guarantees that at least one cycle will exist. If there was not a duplicate in nums then nums[i] would
+        eventually equate to an out-of-range index. nums[0] is not reachable from any nums[i] which means that if
+        another cycle exists other than the one containing the duplicate number, it will not contain nums[0].
+        All of this means that if we begin at nums[0] we will eventually enter the cycle containing the duplicate number.
+
+        If there is no duplicate in the array, we can map each index to each number in this array. In other words, we
+        can have a mapping function f(index) = number.
+        For example, let's assume nums = [2,1,3], then the mapping function is 0->2, 1->1, 2->3: 3 numbers in the
+        range [1, 3].
+        If we start from index = 0, we can get a value according to this mapping function, and then we use this value
+        as a new index and, again, we can get the other new value according to this new index. We repeat this process
+        until the index exceeds the array. Actually, by doing so, we can get a sequence. Using the above example again,
+        the sequence we get is 0->2->3. Because index=3 exceeds the array's size, the sequence terminates!
+
+        However, if there is duplicate in the array, the mapping function is many-to-one.
+        For example, let's assume nums = [2,1,3,1] (4 numbers in the range [1, 3]), then the mapping function is
+        0->2, {1,3}->1, 2->3. Then the sequence we get definitely has a cycle: 0->2->3->1->1->1->1->1->........
+        The starting point of this cycle is the duplicate number.
+
         Note: We need second loop because in first loop both pointers might end up at the same index and hence we will
         get a number which might not be a duplicate. The first loop just gives us the intersection of the indices,
         while the second loop returns the index of the duplicate number.
-        According to Floyd's algorithm, in the first step if a cycle does exist and we advance the tortoise one node
-        each unit of time but the hare two nodes each unit of time, then they will eventually meet. This is what the
-        first while loop does. The first while loop finds their meeting point.
-        Second step, take tortoise or hare to the start point of the list (i.e. let one of the animals be 0) and keep
-        the other one staying at the meeting point. Now, advance both of the animals one node each unit of time. The
-        meeting point is the starting point of the cycle. This is what the second while loop does. The second while
-        loop finds their meeting point.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -110,7 +160,7 @@ def find_duplicate_v4(nums):
         tortoise, hare = nums[tortoise], nums[nums[hare]]
         if tortoise == hare:
             break
-    # Find the entrance to the cycle.
+    # Find the entrance to the cycle
     tortoise = nums[0]  # tortoise = 0 is also correct
     while tortoise != hare:
         tortoise, hare = nums[tortoise], nums[hare]
