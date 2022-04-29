@@ -3,9 +3,19 @@ least one duplicate number must exist. Assume that there is only one duplicate n
 
 import unittest2 as unittest
 
+# Proving that at least one duplicate must exist in nums is an application of the pigeonhole principle. Here,
+# each number in nums is a "pigeon" and each distinct number that can appear in nums is a "pigeonhole." Because there
+# are n+1 numbers and n distinct possible numbers, the pigeonhole principle implies that if you were to put each of
+# the n +  pigeons into nn pigeonholes, at least one of the pigeonholes would have 2 or more pigeons.
+
 
 def find_duplicate_v1(nums):
-    """ If the numbers are sorted, then any duplicate numbers will be adjacent in the sorted array.
+    """ In an unsorted array, duplicate elements may be scattered across the array. However, in a sorted array,
+        duplicate numbers will be next to each other.
+
+        This approach modifies individual elements and does not use constant space, and hence does not meet the problem
+        constraints. However, it utilizes a fundamental concept that can help solve similar problems.
+
     Time complexity: O(N logN)
     Space complexity: O(N)
     """
