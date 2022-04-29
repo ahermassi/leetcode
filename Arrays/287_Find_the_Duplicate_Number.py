@@ -27,7 +27,13 @@ def find_duplicate_v1(nums):
 
 
 def find_duplicate_v2(nums):
-    """ If we store each element in a set as we iterate over the array, we can simply check each element as we iterate.
+    """ As we traverse the array, we need a way to "remember" values that we've seen. If we come across a number that
+        we've seen before, we've found the duplicate. An efficient way to record the seen values is by adding each
+        number to a set as we iterate over the nums array.
+
+        This approach does not use constant space, and hence does not meet the problem constraints. However, it utilizes
+        a fundamental concept that can help solve similar problems.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
