@@ -10,15 +10,24 @@ class ListNode:
         self.val = x
         self.next = None
 
+# Video explanation: https://www.youtube.com/watch?v=ptYUCjfNhJY
+
 
 def merge_k_lists_v1(lists):
     """ Compare every k nodes (head of every linked list) and get the node with the smallest value. We then extend the
-        final sorted linked list with the selected nodes. Optimize the comparison process using a priority queue to
-        find the next element to add. To make the implementation simple we define the __lt__ method of the ListNode
-        class to make ListNode objects comparable. Note that simply using the tuple trick and pushing (node.val, node)
-        to the priority queue will not work because the lists can have equal values.
-    Time complexity: O(N logK), the comparison cost will be reduced to O(logK) for every pop and insertion into the
-    priority queue and there are N nodes in the final linked list
+        final sorted linked list with the selected nodes.
+
+        Optimize the comparison process using a priority queue to find the next element to add. To make the
+        implementation simpler, we define the __lt__ method of the ListNode class to make ListNode objects comparable.
+
+        Note that simply using the tuple trick pushing (node.val, node) to the priority queue will not work because the
+        lists can have equal values.
+
+        Algorithm invariant: The priority queue holds a single node from each list at a time which has the smallest
+        value. Since the lists are sorted, simply advancing to the next of each popped node maintains this property.
+
+    Time complexity: O(N logK), where N is the total number of nodes across the lists. The comparison cost will be
+    reduced to O(logK) for every pop and insertion into the priority queue
     Space complexity: O(K), for the heap
     """
     ListNode.__lt__ = lambda self, other: self.val < other.val
@@ -27,11 +36,11 @@ def merge_k_lists_v1(lists):
     for head in lists:
         if head:
             heappush(heap, head)
-    while heap:
-        node = heappop(heap)
+    while heap:  # While some nodes remain in the queue, so O(N)
+        node = heappop(heap)  # O(logK)
         dummy_tail.next = node
         if node.next:
-            heappush(heap, node.next)
+            heappush(heap, node.next)  # O(logK)
         dummy_tail = dummy_tail.next
     return dummy_head.next
 
