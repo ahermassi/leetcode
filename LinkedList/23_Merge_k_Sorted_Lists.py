@@ -47,13 +47,16 @@ def merge_k_lists_v1(lists):
 
 def merge_k_lists_v2(lists):
     """ Instead of augmenting the ListNode class with __lt__,  we simply add a tie-breaker in our heap elements
-        (tuples). This assures that the heap will never compare two variables of type ListNode. When there is a tie in
-        the first value of the tuple, the heap uses the second value as the tie breaker. But since the second value is
-        an object of ListNode, which has no definition of comparision, we get an error. We can define the tuple instead
-        as (node.val, index, node), where 'index' keeps track of the node's index. This way the second value in the
-        tuple is always unique which will break ties. With 3 tuples as described above, it is not possible to have the
-        same values for both the (node.val, index) values of the tuple, thus never needing to compare using the
-        ListNode object.
+        (tuples). This assures that the heap will never compare two variables of type ListNode.
+
+        When there is a tie in the first value of the tuple, the heap uses the second value as the tie-breaker.
+        But since the second value is an object of ListNode, which has no definition of comparison, we get an error.
+
+        We can define the tuple instead as (node.val, list_index, node), where 'list_index' keeps track of the node's
+        list index. This way, the second value in the tuple is always unique which will break ties. With 3 tuples as
+        described above, it is not possible to have the same values for both the (node.val, list_index) values of the
+        tuple, thus never needing to compare using the ListNode object.
+
     Time complexity: O(N logK)
     Space complexity: O(K)
     """
@@ -63,10 +66,11 @@ def merge_k_lists_v2(lists):
         if head:
             heappush(heap, (head.val, i, head))
     while heap:
-        _, index, node = heappop(heap)
+        _, list_index, node = heappop(heap)
         dummy_tail.next = node
         if node.next:
-            heappush(heap, (node.next.val, index, node.next))  # Recycling tie-breaker 'index' guarantees uniqueness
+            # Recycling tie-breaker 'list_index' guarantees uniqueness
+            heappush(heap, (node.next.val, list_index, node.next))
         dummy_tail = dummy_tail.next
     return dummy_head.next
 
