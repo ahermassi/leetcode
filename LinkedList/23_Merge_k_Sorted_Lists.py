@@ -1,5 +1,6 @@
 """ Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity. """
 
+from collections import deque
 from heapq import heappush, heappop
 
 # Definition for singly-linked list.
@@ -125,3 +126,31 @@ def merge_k_lists_v3(lists):
         return dummy_head.next
 
     return merge(0, len(lists) - 1)
+
+
+def merge_k_lists_v4(lists):
+    """  We can convert the merge of K lists into the merge of 2 lists (K-1) times with the help of a queue.
+
+    Time complexity: O(N * K), where N is the total number of nodes across the lists
+    Space complexity: O(N), for the queue
+    """
+
+    def merge_two_lists(list1, list2):
+        dummy_head = dummy_tail = ListNode(0)
+        while list1 and list2:
+            if list1.val < list2.val:
+                dummy_tail.next = list1
+                list1 = list1.next
+            else:
+                dummy_tail.next = list2
+                list2 = list2.next
+            dummy_tail = dummy_tail.next
+        dummy_tail.next = list1 or list2
+        return dummy_head.next
+
+    if not lists:
+        return None
+    queue = deque(lists)
+    while len(queue) > 1:
+        queue.append(merge_two_lists(queue.popleft(), queue.popleft()))
+    return queue.popleft()
