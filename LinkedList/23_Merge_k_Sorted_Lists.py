@@ -77,10 +77,27 @@ def merge_k_lists_v2(lists):
 
 def merge_k_lists_v3(lists):
     """ Recursive merge sort.
+
     Time complexity: O(N logK), where N is the total number of nodes and K is the number of lists. Recursion depth is
     logK, and in each level we need to merge N nodes. The time complexity for each level is O(N) (e.g. if we have 4
     lists with 10, 20, 30, 40 nodes, to merge list 1 and list 2 we need 30x operations while to merge list 3 and 4 we
     need 70x operations, and 100x in total)
+            sort   l1, l2, l3, l4
+                   /              \
+      sort l1, l2            sort l3, l4
+               |    |             |    |
+        sort l1 sort l2   sort l3   sort l4
+               \    /            \     /
+        merge(l1, l2)    merge(l3, l4)
+                    \             /
+                merge(l1, l2, l3, l4)
+    Sort stage: We call sort 1 + 2 + 4 (+ ...) times; Time complexity is O(N).
+    Merge stage: K =4 (four lists), and merge recursion tree has two levels (i.e. log(4)). In merge(l1, l2) and
+    merge(l3, l4), we go over every single element in all four lists. In the final step merge(l1, l2, l3, l4), we still
+    go over every single element in the two merged lists, which is still every single element of all four lists. So for
+    each level of the merge states recursion tree, time complexity is O(N). Moreover, we have total of logK levels of
+    merge recursion tree. Therefore, total Time Complexity: Sort stage (O(N)) + Merge stage (O(N logK)) = O(N + NlogK)
+    = O(N logK).
     Space complexity: O(logK)
     """
 
