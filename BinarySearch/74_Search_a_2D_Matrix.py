@@ -7,7 +7,7 @@ import unittest2 as unittest
 
 # Video explanation: https://www.youtube.com/watch?v=FOa55B9Ikfg
 
-def search_matrix(matrix, target):
+def search_matrix_v1(matrix, target):
     """ We notice that the input matrix n x m could be considered as a sorted array of length n x m.
 
         Sorted array is a perfect candidate for the binary search because the element index in this virtual array could
@@ -38,6 +38,40 @@ def search_matrix(matrix, target):
             right = mid - 1
     return False
 
+# Video explanation: https://www.youtube.com/watch?v=Ber2pi2C0j0
+
+
+def search_matrix_v2(matrix, target):
+    """ We can also perform two binary searches. The first binary search helps us locate the row that could contain
+        the target value. The second is a regular binary search on that row to check if the target value exists.
+
+    Time complexity: O(log(n) + log(m))
+    Space complexity: O(1)
+    """
+    n, m = len(matrix), len(matrix[0])
+    top_row, bottom_row = 0, n - 1
+    while top_row <= bottom_row:
+        mid_row = (top_row + bottom_row) // 2
+        if target < matrix[mid_row][0]:
+            bottom_row = mid_row - 1
+        elif target > matrix[mid_row][-1]:
+            top_row = mid_row + 1
+        else:
+            break
+    if top_row > bottom_row:
+        return False
+    search_row = (top_row + bottom_row) // 2
+    left, right = 0, m - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if matrix[search_row][mid] == target:
+            return True
+        if matrix[search_row][mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return False
+
 
 class Test(unittest.TestCase):
     data = [([
@@ -54,7 +88,8 @@ class Test(unittest.TestCase):
 
     def test_search_matrix(self):
         for test_matrix, test_target, result in self.data:
-            self.assertEqual(result, search_matrix(test_matrix, test_target))
+            self.assertEqual(result, search_matrix_v1(test_matrix, test_target))
+            self.assertEqual(result, search_matrix_v2(test_matrix, test_target))
 
 
 if __name__ == '__main__':
