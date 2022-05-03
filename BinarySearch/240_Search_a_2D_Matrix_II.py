@@ -8,20 +8,26 @@ import unittest2 as unittest
 def search_matrix_v1(matrix, target):
     """ We can partition a sorted two-dimensional matrix into four sorted sub matrices, two of which might contain
         target and two of which definitely do not.
+
         Base Case:
             For a sorted two-dimensional array, there are two ways to determine in constant time whether an arbitrary
-            element target can appear in it. First, if the array has zero area, it contains no elements and therefore
+            target element can appear in it. First, if the array has zero area, it contains no elements and therefore
             cannot contain target. Second, if target is smaller than the array's smallest element (found in the
             top-left corner) or larger than the array's largest element (found in the bottom-right corner), then it
             definitely is not present.
+
         Recursive Case:
             If the base case conditions have not been met, then the array has positive area and target could
-            potentially be present. Therefore, we seek along the matrix's middle column for an index row such that
-            matrix[row-1][mid] < target < matrix[row][mid] (obviously, if we find target during this process, we
-            immediately return true). The existing matrix can be partitioned into four sub matrices around this index;
-            the top-left and bottom-right sub matrices cannot contain target (via the argument outlined in Base Case
-            section), so we can prune them from the search space. Additionally, the bottom-left and top-right
-            sub matrices are sorted two-dimensional matrices, so we can recursively apply this algorithm on them.
+            potentially be present. Therefore, we seek along the matrix's MIDDLE column for an index row such that:
+
+                matrix[row-1][mid] < target < matrix[row][mid]
+
+            (obviously, if we find target during this process, we immediately return true).
+            The existing matrix can be partitioned into four sub matrices around this index; the top-left and
+            bottom-right sub matrices cannot contain target (via the argument outlined in the Base Case), so we can
+            prune them from the search space. Additionally, the bottom-left and top-right sub matrices are sorted
+            two-dimensional matrices, so we can recursively apply this algorithm on them.
+
     Time complexity: O(N logN)
     Space complexity: O(logN), use of recursion means that we will use memory proportional to the height of its
     recursion tree. Because this approach discards half of matrix on each level of recursion (and makes two recursive
