@@ -57,20 +57,41 @@ def search_matrix_v1(matrix, target):
 # Watch: https://youtu.be/FOa55B9Ikfg?t=945
 
 def search_matrix_v2(matrix, target):
-    """ If we stand on the bottom-left (or top-right) corner of the matrix and look diagonally, it's kind of like a
+    """ In any search problem, the basic motive is to reduce the decision space progressively. The more aggressively
+        the search space is pruned, the more efficient the algorithm.
+
+        If we stand on the bottom-left (or top-right) corner of the matrix and look diagonally, it's kind of like a
         BST. We can go through this matrix to find the target like how we traverse the BST.
+
         Because the rows and columns of the matrix are sorted (from left-to-right and top-to-bottom, respectively), we
         can prune O(M) or O(N) elements when looking at any particular value.
+
         First, we initialize a (row, col) pointer to the bottom-left of the matrix. Then, until we find target and
-        return True (or the pointer points to a (row, col) that lies outside of the dimensions of the matrix), we do the
-        following: if the currently-pointed-to value is larger than target, we can move one row up. Otherwise, if the
+        return True (or the pointer points to a (row, col) that lies outside the dimensions of the matrix), we do the
+        following:
+
+        If the currently-pointed-to value is larger than target, we can move one row up. Otherwise, if the
         currently-pointed-to value is smaller than target, we can move one column right. It is not too tricky to see
         why doing this will never prune the correct answer; because the rows are sorted from left-to-right, we know
         that every value to the right of the current value is larger. Therefore, if the current value is already larger
         than target, we know that every value to its right will also be too large. A very similar argument can be made
         for the columns, so this manner of search will always find target in the matrix (if it is present).
+
+        To reduce decision space means to eliminate certain portion completely from search in the future. Here, due to
+        the property of rows and columns being sorted, we can verify that we can use the given properties to reduce the
+        search space only if we begin at bottom-left corner or top-right corner. This is because at only those two
+        starting positions, we would be able to exercise decisions to reduce our decision/search space in both
+        directions, i.e.:
+
+            - If we start at bottom-left corner, we can go right to get elements in increasing order and up to get
+               elements in decreasing order.
+            - If we start at top-right corner, we can go left to get elements in decreasing order and down to get
+               elements in increasing order.
+
+        We can't have both choices if we start at top-left or bottom-right corners.
+
     Time complexity: O(N + M), the key to the time complexity analysis is noticing that, on every iteration (during
-    which we do not return True) either 'row' or 'col' is decremented/incremented exactly once. Because 'row' can only
+    which we do not return True), either 'row' or 'col' is decremented/incremented exactly once. Because 'row' can only
     be decremented N times and col can only be incremented M times before causing the while loop to terminate, the loop
     cannot run for more than (N + M) iterations.
     Space complexity: O(1)
