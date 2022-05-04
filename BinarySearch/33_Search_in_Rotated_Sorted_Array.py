@@ -9,7 +9,7 @@ import unittest2 as unittest
 # Video explanation: https://www.youtube.com/watch?v=U8XENwh8Oy8
 
 
-def search(nums, target):
+def search_v1(nums, target):
     """ We have an ascending array, which is rotated at some pivot. Let's call the rotation the Inflection Point. (IP)
         One characteristic the inflection point holds is:
                 arr[IP] > arr[IP + 1] and arr[IP] > arr[IP - 1]
@@ -74,6 +74,40 @@ def search(nums, target):
     return -1
 
 
+def search_v2(nums, target):
+    """ This is the exact same solution. However, it looks like when the range inclusion checks are more explicit the
+        intuition is much clearer.
+    Time complexity: O(logN)
+    Space complexity: O(1)
+    """
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[left] <= nums[mid]:
+            # target is greater than mid element, and we know that the subarray from left to mid is
+            # sorted/non-rotated, so go right because a smaller value can't exist to the left
+            # OR
+            # target is smaller than leftmost element, and we know that the subarray from left to mid is
+            # sorted/non-rotated in INCREASING ORDER, so go right because a smaller value can't exist to the left
+            if target > nums[mid] or target < nums[left]:
+                left = mid + 1
+            else:
+                right = mid - 1
+        else:
+            # target is smaller than mid element, and we know that the subarray from mid to right is
+            # sorted/non-rotated, so go left because a smaller value can't exist to the right
+            # OR
+            # target is greater than rightmost element, and we know that the subarray from mid to right is
+            # sorted/non-rotated in INCREASING ORDER, so go left because a larger value can't exist to the right
+            if target < nums[mid] or target > nums[right]:
+                right = mid - 1
+            else:
+                left = mid + 1
+    return -1
+
+
 class Test(unittest.TestCase):
     data = [
         ([4, 5, 6, 7, 0, 1, 2], 0, 4),
@@ -82,7 +116,8 @@ class Test(unittest.TestCase):
 
     def test_search(self):
         for test_array, test_target, result in self.data:
-            self.assertEqual(result, search(test_array, test_target))
+            self.assertEqual(result, search_v1(test_array, test_target))
+            self.assertEqual(result, search_v2(test_array, test_target))
 
 
 if __name__ == '__main__':
