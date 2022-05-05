@@ -85,26 +85,21 @@ class TimeMapV3(object):
     """ This solution uses bisect() to search in the ordered list of timestamps. """
 
     def __init__(self):
-        """
-        Initialize your data structure here.
-        """
-        self.data = defaultdict(list)
+        self.store = defaultdict(list)
 
     def set(self, key, value, timestamp):
-        self.data[key].append((timestamp, value))  # Note how timestamp comes before value as it is the basis of search
+        self.store[key].append((timestamp, value))
 
     def get(self, key, timestamp):
-        """ Use binary search to find the insertion index of the timestamps.
+        """ Use bisect() to find the insertion index of the timestamps.
         Time complexity: O(logN)
         Space complexity: O(1)
         """
-        if key not in self.data:
+        if key not in self.store or timestamp < self.store[0][0]:
             return ''
-        values = self.data[key]
-        if timestamp < values[0][0]:
-            return ''
+        values = self.store[key]
         if timestamp >= values[-1][0]:  # This optimization results in 30 - 60ms less in execution time
-            return self.data[key][-1][1]
+            return self.store[key][-1][1]
         idx = bisect.bisect(values, (timestamp, chr(127)))  # chr(127) is the char #127 in ASCII table. It is larger
         # than all the commonly used characters. It is helpful because, in tuple comparison, Python will compare
         # element by element, and in case of equal timestamps it returns the index after the last found tuple.
@@ -116,9 +111,6 @@ class TimeMapV3(object):
         # returns the index just after the last tuple, which is a requirement of the problem.
         # In this example, bisect will return index 2, so we need to return values[index-1][1].
         return values[idx - 1][1]
-
-
-
 
 
 class Test(unittest.TestCase):
