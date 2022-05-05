@@ -6,34 +6,35 @@ import unittest2 as unittest
 
 
 class TimeMapV1(object):
+    """ Use the fact that the timestamps for all TimeMap.set() operations are strictly increasing. """
 
     def __init__(self):
-        """ Initialize your data structure here. """
-        self.data = defaultdict(list)
+        self.store = defaultdict(list)
 
     def set(self, key, value, timestamp):
-        self.data[key].append((value, timestamp))
+        self.store[key].append((value, timestamp))
 
     def get(self, key, timestamp):
-        """ Use the fact that the timestamps for all TimeMap.set operations are strictly increasing.
+        """
         Time complexity: O(N)
         Space complexity: O(1)
         """
-        ans = ''
-        if timestamp < self.data[key][0][1]:  # If the timestamp we're looking for is smaller than the first timestamp
+        res = ''
+        if timestamp < self.store[key][0][1]:  # If the timestamp we're looking for is smaller than the first timestamp
             # inserted, then it's not possible to find a valid value.
             return ''
-        if timestamp >= self.data[key][-1][1]:  # If the timestamp we're looking for is greater than or equal to  the
-            # last time inserted, then return the value associated with that timestamp since the timestamps are saved
-            # in increased order.
-            return self.data[key][-1][0]
-        for value in self.data[key]:
-            if value[1] <= timestamp:
-                ans = value[0]
+        if timestamp >= self.store[key][-1][1]:  # If the timestamp we're looking for is greater than or equal to  the
+            # last timestamp inserted, then return the value associated with that timestamp since the timestamps are
+            # in increasing order.
+            return self.store[key][-1][0]
+        # Search for the largest timestamp less than or equal to 'timestamp'
+        for value, ts in self.store[key]:
+            if ts <= timestamp:
+                res = ts
             else:  # Break when we reach a timestamp greater than the one we're looking for since all the following
                 # are also greater (timestamps are in increasing order)
                 break
-        return ans
+        return res
 
 
 class TimeMapV2(object):
