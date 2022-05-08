@@ -93,3 +93,26 @@ def insert_v2(intervals, new_interval):
     # no interval overlaps with newInterval, [start, end] is the same as newInterval
     res.extend(intervals[i:])  # Add all the rest
     return res
+
+
+def insert_v3(intervals, new_interval):
+    """ We can combine the loops of the previous solution into one single for loop. Same logic, though.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    n, res = len(intervals), []
+    start, end = new_interval
+    for i, interval in enumerate(intervals):
+        if interval[1] < start:
+            res.append(interval)
+        elif interval[0] > end:
+            res.append([start, end])
+            return res + intervals[i:]
+        else:
+            start = min(start, interval[0])
+            end = max(end, interval[1])
+    # If we reach this statement, newInterval overlapped with a bunch of other intervals but there was no interval X
+    # that started after the end of the merged intervals (X > end)
+    res.append([start, end])
+    return res
