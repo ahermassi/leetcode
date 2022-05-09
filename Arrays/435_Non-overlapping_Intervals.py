@@ -58,6 +58,44 @@ def erase_overlap_intervals_v1(intervals):
 
 
 def erase_overlap_intervals_v2(intervals):
+    """ The previous approach was based on choosing intervals greedily based on the starting points. But in this
+         approach, we go for choosing points greedily based on the end points.
+
+         For this, firstly we sort the given intervals based on the end points. Then, we traverse over the sorted
+         intervals. While traversing, we can encounter 2 possibilities:
+
+            - The two intervals currently considered are non-overlapping: In this case, we need not remove any interval,
+               and for the next iteration the current interval becomes the previous interval.
+
+            - The two intervals currently considered are overlapping and the starting point of the current interval falls
+               before the ending point of the previous interval: In this case, it is obvious that the current interval
+               completely subsumes the previous interval (current interval starts before previous interval and ends
+               after it, since intervals are sorted by end points). Hence, it is advantageous to remove the current
+               interval so that we can get more range available to accommodate future intervals. Thus, previous
+               interval remains unchanged and the current interval is removed.
+
+        Intuition: If we choose the interval that ends early, we'll have more space left to accommodate more intervals.
+        If we have two overlapping intervals A and B, we can only keep one. The question is, which one should we keep?
+        Obviously, we want to keep the one that ends earlier. This way, we have higher chance of putting other intervals
+        after it. So, we decided to sort by end time.
+
+    Time complexity: O(N logN)
+    Space complexity: O(N)
+    """
+    intervals.sort(key=lambda interval: interval[1])
+    removed = 0
+    prev_interval_end = float('-inf')
+    for start, end in intervals:
+        if start < prev_interval_end:
+            removed += 1
+            # We don't update prev_interval_end, because 'end' is greater than prev_interval_end (intervals are
+            # sorted by end time)
+        else:
+            prev_interval_end = end
+    return removed
+
+
+def erase_overlap_intervals_v3(intervals):
     """ Dynamic programming. TLE.
         Let dp[i] be the maximum number of valid intervals that can be included in the final list if only the intervals
         up to and including the ith interval are considered. To find dp[i+1], we can't consider the value of dp[i-1]
@@ -91,6 +129,7 @@ class Test(unittest.TestCase):
         for test_intervals, result in self.data:
             self.assertEqual(result, erase_overlap_intervals_v1(test_intervals))
             self.assertEqual(result, erase_overlap_intervals_v2(test_intervals))
+            self.assertEqual(result, erase_overlap_intervals_v3(test_intervals))
 
 
 if __name__ == '__main__':
