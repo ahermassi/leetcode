@@ -5,15 +5,17 @@ import unittest2 as unittest
 
 
 def can_attend_meetings(intervals):
-    """ The idea is to sort the meetings by starting time. Then, go through the meetings one by one and make sure that
-        each meeting ends before the next one starts.
+    """ The idea is to sort the meetings by starting time. Then, go through the meetings one by one. Two meetings
+         overlap if one of them starts while the other is still taking place.
+
     Time complexity: O(N logN)
     Space complexity: O(N) for Timsort
     """
     intervals.sort()
     n = len(intervals)
-    for i in range(n - 1):
-        if intervals[i][-1] > intervals[i + 1][0]:
+    for i in range(1, n):
+        cur_meeting, prev_meeting = intervals[i], intervals[i-1]
+        if cur_meeting[0] < prev_meeting[1]:
             return False
     return True
 
