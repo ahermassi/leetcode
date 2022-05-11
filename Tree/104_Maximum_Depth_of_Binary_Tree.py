@@ -76,19 +76,23 @@ def max_depth_v2(root):
 
 def max_depth_v3(root):
     """ BFS.
+
+        We could also convert the recursion into iteration using a queue and perform a level traversal.
+
     Time complexity: O(N)
-    Space complexity: O(logN) best case, O(N) worst case
+    Space complexity: O(N), since in the worst case the queue will contain all nodes in one level of the binary tree.
+    For a full binary tree, the leaf level has ⌈N/2⌉= O(N) leaves.
     """
     if not root:
         return 0
-    res, queue = 0, deque([root])
+    level, queue = 0, deque([root])
     while queue:  # At every iteration, queue holds the nodes of one level of the tree: there is no need to track depth
-        res += 1
+        level += 1
         n = len(queue)
         for _ in range(n):
             node = queue.popleft()
-            queue.extend([kid for kid in (node.left, node.right) if kid])
-    return res
+            queue.extend([child for child in (node.left, node.right) if child])
+    return level
 
 
 class Test(unittest.TestCase):
