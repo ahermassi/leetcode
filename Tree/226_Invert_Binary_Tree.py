@@ -48,8 +48,10 @@ def invert_tree_v1(root):
 
 def invert_tree_v2(root):
     """ Iterative approach, in a manner similar to DFS.
+
         As long as the stack is not empty, remove the next node from the stack, swap its children, and add the children
         to the stack. Eventually, the stack will be empty and all the children swapped.
+
     Time complexity: O(N)
     Space complexity: O(N), since in the worst case the stack will contain all nodes in one level of the binary tree
     """
