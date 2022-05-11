@@ -20,13 +20,24 @@ class TreeNode(object):
         self.left = None
         self.right = None
 
+# Video explanation: https://www.youtube.com/watch?v=hTM3phVI6YQ
+
 
 def max_depth_v1(root):
     """ Recursive DFS.
+
+        By definition, the maximum depth of a binary tree is the maximum number of steps to reach a leaf node from the
+        root node. From the definition, an intuitive idea would be to traverse the tree and record the maximum depth
+        during the traversal.
+
+        Let's have faith in recursion and assume that we are already given the maximum depth of root's left and right
+        subtrees by recursion. So, to fnd the maximum depth of the binary tree, we will have to take out the maximum out
+        of the left and right subtrees' depths and add 1 to that to consider the root's level.
+
     Time complexity: O(N), where N is the number of nodes
     Space complexity: in the worst case, the tree is completely unbalanced, e.g. each node has only left child node,
     the recursive call would occur N times (the height of the tree), therefore the storage to keep the call stack
-    would be O(N). But in the best case (the tree is completely balanced), the height of the tree would be log(N).
+    would be O(N). But in the best case (the tree is completely balanced), the height of the tree would be logN.
     Therefore, the space complexity in this case would be O(logN).
     """
     if not root:
