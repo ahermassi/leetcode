@@ -30,19 +30,19 @@ class TreeNode(object):
 
 
 def invert_tree_v1(root):
-    """ Recursive approach.
-        The inverse of an empty tree is the empty tree. The inverse of a tree with root r, and subtrees right and left,
-        is a tree with root r, whose right subtree is the inverse of left, and whose left subtree is the inverse of
+    """ The inverse of an empty tree is the empty tree. The inverse of a tree with root r, and subtrees right and left,
+         is a tree with root r, whose right subtree is the inverse of left, and whose left subtree is the inverse of
         right.
+
     Time complexity: O(N), we cannot do better since at the very least we have to visit each node to invert it
     Space complexity: O(N), because of recursion, O(h) function calls will be placed on the stack in the worst case,
     where h is the height of the tree
     """
     if not root:
         return None
-    root.left, root.right = root.right, root.left
-    invert_tree_v1(root.left)
-    invert_tree_v1(root.right)
+    left, right = invert_tree_v1(root.right), invert_tree_v1(root.left)
+    root.left = left
+    root.right = right
     return root
 
 
