@@ -49,9 +49,18 @@ def max_depth_v1(root):
 
 def max_depth_v2(root):
     """ Iterative DFS using a stack.
+
+        We could also convert the above recursion into iteration, with the help of the stack data structure. Similar to
+        the behavior of the function call stack, the stack data structure follows the pattern of LIFO
+        (Last-In-First-Out), i.e. the last element that is added to a stack would come out first.
+
+        The idea is to keep the next nodes to visit in a stack. Due to the LIFO behavior of the stack, we would get the
+        order of visit same as the one in recursion.
+
         We start from a stack which contains the root node and the corresponding depth which is 1. Then we proceed to
-        the iterations: pop the current node out of the stack and push the child nodes. The depth is updated at each
+        the iterations: pop the current node out of the stack and push the child nodes. The depth is incremented at each
         step.
+
     Time complexity: O(N)
     Space complexity: O(logN) best case, O(N) worst case
     """
@@ -60,10 +69,8 @@ def max_depth_v2(root):
     res, stack = 0, [(root, 1)]
     while stack:
         node, depth = stack.pop()
-        if not node.left and not node.right:
-            res = max(res, depth)
-        else:
-            stack.extend([(kid, depth + 1) for kid in (node.left, node.right) if kid])
+        res = max(res, depth)
+        stack.extend([(child, depth + 1) for child in (node.left, node.right) if child])
     return res
 
 
