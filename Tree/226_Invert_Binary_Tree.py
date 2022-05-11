@@ -67,8 +67,14 @@ def invert_tree_v2(root):
 
 def invert_tree_v3(root):
     """ Iterative approach, in a manner similar to BFS, using a deque.
+
+        The idea is that we need to swap the left and right child of all nodes in the tree. So we create a queue to
+        store nodes whose left and right child have not been swapped yet. Initially, only the root is in the queue.
         As long as the queue is not empty, remove the next node from the queue, swap its children, and add the children
-        to the left of the queue. Eventually, the queue will be empty and all the children swapped.
+        to the queue. Null nodes are not added to the queue.
+
+        Eventually, the queue will be empty and all the children swapped, and we return the original root.
+
     Time complexity: O(N)
     Space complexity: O(N), since in the worst case the queue will contain all nodes in one level of the binary tree.
     For a full binary tree, the leaf level has ⌈N/2⌉= O(N) leaves.
