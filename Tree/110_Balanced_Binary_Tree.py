@@ -93,6 +93,33 @@ def is_balanced_v2(root):
     return check_balanced(root)[1]
 
 
+def is_balanced_v3(root):
+    """ Notice that the height of a tree is always >= 0, and we do not care about the height when the subtree is already
+         confirmed imbalanced. So we can use -1 to represent imbalanced.
+
+         When the subtree of the current node (inclusive) is balanced, the function height() returns a non-negative
+         value as the height. According to the left height and right height of the two children, the parent node could
+         check if the subtree is balanced, and decides its return value.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    def height(root):
+        if not root:
+            return 0
+        left_height = height(root.left)
+        if left_height == -1:
+            return -1
+        right_height = height(root.right)
+        if right_height == -1:
+            return -1
+        if abs(left_height - right_height) > 1:
+            return -1
+        return max(left_height, right_height) + 1
+
+    return height(root) != -1
+
+
 class Test(unittest.TestCase):
     root1 = TreeNode(3)
     root1.left = TreeNode(9)
@@ -110,6 +137,7 @@ class Test(unittest.TestCase):
     def test_is_balanced(self):
         self.assertTrue(is_balanced_v1(self.root1))
         self.assertFalse(is_balanced_v2(self.root2))
+        self.assertFalse(is_balanced_v3(self.root2))
 
 
 if __name__ == '__main__':
