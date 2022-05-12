@@ -16,14 +16,16 @@ class TreeNode(object):
 
 
 def is_balanced_v1(root):
-    """ Top-down approach.
-        Check whether the tree is balanced strictly according to the definition of balanced binary tree: the difference
-        between the heights of the two sub trees is not greater than 1, and both the left sub tree and right sub tree
-        are also balanced.
-    Time complexity: O(N^2), for the current node root, calling height() for its left and right children actually has
+    """ "Top-Down" DFS.
+
+        Check whether the tree is height-balanced strictly according to the definition: The difference between the
+        heights of the two subtrees is not greater than 1, and both the left subtree and right subtree
+        are also height-balanced. Therefore, we can compare the two child subtrees' heights then recurse on each one.
+
+    Time complexity: O(N^2), for the current root node, calling height() for its left and right children actually has
     to access all of its children, thus the complexity is O(N). We do this for each node in the tree, so the overall
     complexity is O(N logN) because there are logN levels, but in the worst case of skewed tree the complexity is O(N^2)
-    Space complexity: O(N) in the worst case
+    Space complexity: O(N), in the worst case
     """
 
     def height(root):
@@ -34,6 +36,7 @@ def is_balanced_v1(root):
     if not root:
         return True
     left_height, right_height = height(root.left), height(root.right)
+    # Check if subtrees have height within 1. If they do, check if the subtrees are balanced.
     if abs(left_height - right_height) > 1:
         return False
     return is_balanced_v1(root.left) and is_balanced_v1(root.right)
