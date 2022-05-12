@@ -42,43 +42,55 @@ def is_balanced_v1(root):
     return is_balanced_v1(root.left) and is_balanced_v1(root.right)
 
 
+# Video explanations:
+# https://www.youtube.com/watch?v=LU4fGD-fgJQ
+# https://www.youtube.com/watch?v=QfJsau0ItOY
+
+
 def is_balanced_v2(root):
-    """ Bottom up approach using DFS. We return the height of the current node in DFS recursion. When the subtree of
-        the current node (inclusive) is balanced, the function height() returns a non-negative value as the height.
-        Otherwise -1 is returned. According to the left height and right height of the two children, the parent node
-        could check if the subtree is balanced, and decides its return value.
-        In other words:
+    """ "Bottom-Up" DFS.
+
+        In the previous approach, we perform redundant calculations when computing height. In each call to height(), we
+        require that the subtree's heights also be computed. Therefore, when working top-down we will compute the height
+        of a subtree once for every parent.
+
+        We can remove the redundancy by first recursing on the children of the current node and then using their
+        computed heights to determine whether the current node is balanced. This bottom-up approach is a reverse of the
+        logic of the top-down approach since we first check if the child subtrees are balanced before comparing their
+        heights.
+
         Check if the child subtrees are balanced. If they are, use their heights to determine if the current subtree is
         balanced as well as to calculate the current subtree's height.
+
+        The key difference between the two approaches is that this second optimized approach refuses to do any
+        processing/work until the left child recursion and right child recursion are done. The key here is that this
+        allows us to reuse old results and do everything only once. This is called bottom-up strictly because we need
+        to get answers from nodes at height n-1 beforehand, in order to get answers at height n. The first approach will
+        make nodes do the processing/work FIRST, and then make its left and right children go through the same exact
+        burden. Nothing is reused, a lot of work is repeated. This is a problematic ordering given the nature of this
+        problem, where results at the lower levels of the tree will definitely prove to be useful to get results at
+        higher levels of the tree.
+
+        Instead of saying top-down and bottom-up, it would be better to just call it one-pass or multiple-pass.
+
     Time complexity: O(N) in the worst case of a skewed tree, each node in the tree only need to be accessed once
-    Space complexity: O(N) in the worst case
+    Space complexity: O(N), in the worst case
     """
-    def height(root):
+
+    def check_balanced(root):
+        # First member of the return value indicates if tree is balanced, and if balanced the
+        # second member of the return value is the height of the subtree rooted at 'root'
         if not root:
-            return 0
-        left_height = height(root.left)
-        right_height = height(root.right)
-        if abs(left_height - right_height) > 1 or left_height == -1 or right_height == -1:
-            return -1
-        return 1 + max(left_height, right_height)
+            return 0, True
+        left_height, left_balanced = check_balanced(root.left)
+        if not left_balanced:
+            return 0, False
+        right_height, right_balanced = check_balanced(root.right)
+        if not right_balanced:
+            return 0, False
+        return max(left_height, right_height) + 1, abs(left_height - right_height) <= 1
 
-    return height(root) != -1
-
-
-def is_balanced_v3(root):
-    """ Exact same logic of second solution, but the code is more self-explanatory. """
-
-    def helper(root):
-        if not root:
-            return True, 0  # First value of the return value indicates if tree is balanced, and if balanced the
-            # second value of the return value is the height of tree
-        left_height, left_balanced = helper(root.left)
-        right_height, right_balanced = helper(root.right)
-        height = 1 + max(left_height, right_height)
-        balanced = abs(left_height - right_height) <= 1 and left_balanced and right_balanced
-        return height, balanced
-
-    return helper(root)[1]
+    return check_balanced(root)[1]
 
 
 class Test(unittest.TestCase):
@@ -98,7 +110,6 @@ class Test(unittest.TestCase):
     def test_is_balanced(self):
         self.assertTrue(is_balanced_v1(self.root1))
         self.assertFalse(is_balanced_v2(self.root2))
-        self.assertFalse(is_balanced_v3(self.root2))
 
 
 if __name__ == '__main__':
