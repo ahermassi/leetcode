@@ -5,8 +5,11 @@ from collections import deque
 
 
 def is_same_tree_v1(p, q):
-    """ The simplest strategy here is to use recursion. Check if p and q nodes are not None, and their values are equal.
-        If all checks are OK, do the same for the child nodes recursively.
+    """ The simplest strategy here is to use recursion.
+
+         Check if p and q nodes are not None, and their values are equal. If all checks are OK, do the same for the
+         child nodes recursively.
+
     Time complexity: O(N), where N is a number of nodes in the tree, since we visit each node exactly once
     Space complexity: O(logN), in the best case of completely balanced tree and O(N) in the worst case of completely
     unbalanced tree, to keep a recursion stack
