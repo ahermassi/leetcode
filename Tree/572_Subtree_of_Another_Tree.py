@@ -17,6 +17,36 @@ class TreeNode(object):
 
 
 def is_subtree_v1(root, sub_root):
+    """ Recursive DFS.
+
+            1- Start with a node of tree 'root' (lets call this root-node)
+            2- Compare the trees forming with root root-node and root 'sub_root'
+            3- If the trees match (100- Same Tree logic) then return true
+            4- Otherwise, go to step 1 and check for root.left || root.right
+
+    Time complexity: O(N * M), where N and M is the number of nodes in root and sub_root, respectively. In worst case
+    (skewed tree) the traversal takes O(N * M)
+    Space complexity: O(N), the depth of the recursion tree can go up to N. Recursion stack space is dictated by the
+    height of 'root'. Even if 'sub_root' is the bigger tree, 'root' has no clue and will keep checking till its max
+    depth.
+    """
+
+    def is_identical(s, t):  # Dumb comprehensive comparison off all nodes of s and t
+        if not s and not t:
+            return True
+        if not s or not t or s.val != t.val:
+            return False
+        return is_identical(s.left, t.left) and is_identical(s.right, t.right)
+
+    if not root:
+        return False
+    if is_identical(root, sub_root):  # If root and sub_root are equal right off the bat, we're done!
+        return True
+    # Check if we can find sub_root to the left or right of root
+    return is_subtree_v1(root.left, sub_root) or is_subtree_v1(root.right, sub_root)
+
+
+def is_subtree_v2(root, sub_root):
     """ We do a BFS traversal of the first tree 'root'.
 
          At each node whose value is identical to the second tree  'sub_root' root value, we perform a recursive check
@@ -42,31 +72,6 @@ def is_subtree_v1(root, sub_root):
             return True
         queue.extend([kid for kid in (node.left, node.right) if kid])
     return False
-
-
-def is_subtree_v2(s, t):
-    """ Same as above but recursively.
-            1- Start with a node of tree s (lets call this s-node)
-            2- Compare the trees forming with root s-node and root t
-            3- If the trees match(Leetcode 100- Same Tree logic) then return true
-            4- Otherwise, go to step 1 and check for s.left || s.right
-    Time complexity: O(N * M) where N is the number of s nodes and M is the number of t nodes. In worst case (skewed
-    tree) the traversal takes O(N * M)
-    Space complexity: O(N), the depth of the recursion tree can go up to N
-    """
-
-    def is_identical(s, t):  # Dumb comprehensive comparison off all nodes of s and t
-        if not s and not t:
-            return True
-        if not s or not t or s.val != t.val:
-            return False
-        return is_identical(s.left, t.left) and is_identical(s.right, t.right)
-
-    if not s:
-        return False
-    if is_identical(s, t):  # If s and t are equal right off the bat, we're done !
-        return True
-    return is_subtree_v2(s.left, t) or is_subtree_v2(s.right, t)  # Check if we can find t to the left or right of s
 
 
 def is_subtree_v3(s, t):
