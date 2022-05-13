@@ -74,18 +74,38 @@ def is_subtree_v2(root, sub_root):
     return False
 
 
-def is_subtree_v3(s, t):
-    """ Convert the tree into string representation, then just check whether substring exists in target string.
-    Time complexity: O(N * M)
-    Space complexity: O(N), the depth of the recursion tree in convert() function
+def is_subtree_v3(root, sub_root):
+    """ Merkle hashing.
+
+        For each node in both trees, we can create node.tag, a hash representing the subtree rooted at that node.
+        This hash is formed using the concatenation of the node's value, the merkle of the left child, and the merkle of
+        the right child.
+
+        Then, two trees are identical if and only if the merkle hash of their roots are equal. From there, finding the
+        answer is straightforward: We simply check if any node in 'root' has node.tag == sub_root.tag.
+
+    Time complexity: O(N + M)
+    Space complexity: O(N + M), the depth of the recursion tree in tag_tree() function
     """
 
-    def convert(root):
-        if not root:
-            return '$'
-        return '^' + str(root.val) + '#' + convert(root.left) + convert(root.right)
+    def tag_tree(root):
+        if not root:  # We include the hash of null nodes to uniquely identify the tree with its pre-order traversal
+            return '#'
+        tag = ''.join(['#', str(root.val), '#', tag_tree(root.left), tag_tree(root.right)])  # Without '#' separator,
+        # [31, 1, 2] and [3, 11,2] would have the same tag
+        root.tag = tag
+        return tag
 
-    return convert(t) in convert(s)
+    def dfs(root):
+        if not root:
+            return False
+        if root.tag == sub_root.tag:
+            return True
+        return dfs(root.left) or dfs(root.right)
+
+    tag_tree(root)
+    tag_tree(sub_root)
+    return dfs(root)
 
 
 class Test(unittest.TestCase):
