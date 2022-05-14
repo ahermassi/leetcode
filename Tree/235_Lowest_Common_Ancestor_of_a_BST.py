@@ -60,14 +60,16 @@ def lowest_common_ancestor_v1(root, p, q):
 
 def lowest_common_ancestor_v2(root, p, q):
     """ Recursive approach.
-    Time complexity: O(N), in the worst case we might be visiting all the nodes of the BST.
+
+    Time complexity: O(N), in the worst case when all nodes have only one child (skewed tree) and p and q are near the
+    bottom. O(logN) for a balanced BST
     Space complexity: O(N) in the worst case (skewed tree), O(logN) in the case of a balanced BST
     """
     if p.val < root.val and q.val < root.val:
         return lowest_common_ancestor_v2(root.left, p, q)
     if p.val > root.val and q.val > root.val:
         return lowest_common_ancestor_v2(root.right, p, q)
-    return root  # We have found the split point, i.e. the LCA node.
+    return root  # We have found the split point, i.e. the LCA node
 
 
 class Test(unittest.TestCase):
