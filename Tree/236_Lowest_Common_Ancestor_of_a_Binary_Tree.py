@@ -16,32 +16,38 @@ class TreeNode(object):
 
 
 def lowest_common_ancestor_v1(root, p, q):
-    """ If we have parent pointers for each node we can traverse back from p and q to get their ancestors. The first
-        common node we get during this traversal would be the LCA node. We can save the parent pointers in a dictionary
-        as we traverse the tree.
-        Once we have found both p and q, we get all the ancestors for p using the parent dictionary and add to a set
-        called 'p_ancestor'. Similarly, we traverse through ancestors for node q. If the ancestor is present in the
-        ancestors set for p, this means this is the first ancestor common between p and q (while traversing UPWARDS)
-        and hence this is the LCA node.
+    """ If we have parent pointers for each node, we can traverse back from p and q to get their ancestors. The first
+        common node we get during this traversal would be the LCA node.
+
+        We can save the parent pointers in a dictionary as we traverse the tree. Once we have found both p and q, we
+        get all the ancestors of p using the parent dictionary and add to a set called 'p_ancestor'.
+
+        Similarly, we traverse through the ancestors of node q. If the ancestor is present in the ancestors set for p,
+        this means this is the first ancestor common between p and q (while traversing UPWARDS) and hence this is the
+        LCA node.
+
         Note that this algorithm can benefit from the optimization implemented in 236- Lowest Common Ancestor with
         Parent Pointers.
+
     Time complexity: O(N), in the worst case we might be visiting all the nodes of the binary tree
     Space complexity: O(N), in the worst case space utilized by the stack, the parent pointer dictionary and the
     ancestor set, would be N each, since the height of a skewed binary tree could be N
     """
-    parent, stack = {}, [(root, None)]
+    parent= {}
+    stack = [(root, None)]
     # The following loop is nothing but the iterative version of the recursive annotate(node, par) method with a slight
     # change: We keep storing the parent pointers in a dictionary until we find p and q both. No need to annotate the
     # entire tree.
     while p not in parent or q not in parent:
         node, par = stack.pop()
         parent[node] = par
-        stack.extend([(kid, node) for kid in (node.left, node.right) if kid])
-    p_ancestor = set()
+        stack.extend([(child, node) for child in (node.left, node.right) if child])
+    p_ancestors = set()
     while p:
-        p_ancestor.add(p)
+        p_ancestors.add(p)
         p = parent[p]
-    while q not in p_ancestor:
+    # The first ancestor of q which appears in p's ancestor set is their lowest common ancestor
+    while q not in p_ancestors:
         q = parent[q]
     return q
 
