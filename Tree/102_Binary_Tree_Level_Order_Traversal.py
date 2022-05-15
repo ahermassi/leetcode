@@ -16,26 +16,29 @@ class TreeNode(object):
 
 
 def level_order_v1(root):
-    """ Let's keep nodes of each tree level in the queue structure.
-        Initiate queue with a root. While queue is not empty:
+    """ Let's keep nodes of each tree level in the queue structure. The zero level contains only one node root.
+         While queue is not empty:
+
             - Start the current level by creating an empty list
-            - Compute how many elements should be on the current level : It's queue length
+            - Compute how many elements should be on the current level : It's queue's size
             - Pop out all these elements from the queue and add them into the current level
             - Push their child nodes into the queue for the next level
             - Add the current level's list to the output
     Time complexity: O(N), where N is the number of nodes
-    Space complexity: O(N)
+    Space complexity: O(N), in the worst case scenario, we have a completely balanced tree. In such case, the maximum
+    space consumption will occur at the last level (at the leaves) where we have N/2 nodes in the queue
     """
     if not root:
         return None
-    res, queue = [], deque([root])
+    res = []
+    queue = deque([root])
     while queue:
-        n, level = len(queue), []
+        n, cur_level = len(queue), []
         for _ in range(n):
             node = queue.popleft()
-            level.append(node.val)
+            cur_level.append(node.val)
             queue.extend([kid for kid in (node.left, node.right) if kid])
-        res.append(level)
+        res.append(cur_level)
     return res
 
 
