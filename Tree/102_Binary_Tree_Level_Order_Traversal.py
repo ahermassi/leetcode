@@ -43,9 +43,19 @@ def level_order_v1(root):
 
 
 def level_order_v2(root):
-    """ Recursive solution which resembles the pre-order traversal. The dfs function uses the current node's level as
-        an index of the output list. With each call to node's left/right child, increment the level as we go deeper in
-        the tree.
+    """ The simplest way to solve the problem is to use a recursion.
+
+         Let's first ensure that the tree is not empty, and then call recursively the function dfs(node, level), which
+         takes the current node and its level/depth as the arguments.
+         This function does the following :
+
+            - The output list here is called 'res'', and hence the current level is just a length of this list,
+               len(res). The dfs function uses the current node's level as an index of the output list
+
+            - Append the node value to the last list in levels
+
+            - Process recursively child nodes if they are not None
+
     Time complexity: O(N)
     Space complexity: O(N), in the worst case of a skewed tree, O(logN) average
     """
@@ -53,7 +63,7 @@ def level_order_v2(root):
     def dfs(root, level):
         if not root:
             return
-        if level == len(res):  # Add a new level
+        if level == len(res):  # Start a new level
             res.append([])
         res[level].append(root.val)
         dfs(root.left, level + 1)
