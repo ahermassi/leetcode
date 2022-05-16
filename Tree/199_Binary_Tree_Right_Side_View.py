@@ -104,17 +104,20 @@ def right_side_view_v4(root):
     """ Do a reverse pre-order traversal where the right child is always visited after the root is processed. The idea
         is that this order guarantees that the FIRST node to be seen at each level is the one that is visible from the
         right side view. We use the level as index of the result list.
+
         We will push one element at each level. So, the size of the res array will actually be equal to the number of
-        levels we have already stored the result. If the level of some element is more than the size of res array,
+        levels we have already stored the result. If the level of some element is equal to the size of result list,
         that means this will be a new level for which we have not pushed anything in the res array. So, we will push
-        this element in the res array.
+        this element in the result list.
+
     Time complexity: O(N)
     Space complexity: O(N) worst case, O(logN) average case
     """
     def dfs(root, depth):
         if not root:
             return
-        if depth == len(res):  # Make sure the first element of that level will be added to the result list
+        if depth == len(res):  # When we meet this depth for the first time, let's add the first node as the
+            # rightmost node
             res.append(root.val)
         dfs(root.right, depth + 1)
         dfs(root.left, depth + 1)
