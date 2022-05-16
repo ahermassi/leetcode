@@ -3,6 +3,18 @@ a value greater than X.
 
 Return the number of good nodes in the binary tree. """
 
+# Definition for a binary tree node.
+
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+from collections import deque
+
 # Video explanation: https://www.youtube.com/watch?v=7cp5imvDzl4
 
 
@@ -86,4 +98,26 @@ def good_nodes_v3(root):
             res += 1
             cur_path_max = node.val
         stack.extend([(child, cur_path_max) for child in (node.left, node.right) if child])
+    return res
+
+
+def good_nodes_v4(root):
+    """ As stated in the previous approach, the order in which we perform DFS does not matter, because the extra state
+         we pass along on each iteration will be correct regardless of traversal order. For this same reason, BFS and
+         DFS are both valid approaches.
+
+        The algorithm is identical to the iterative DFS approach, except we are using a queue instead of a stack.
+
+    Time complexity: O(N)
+    Space complexity: O(N), the worst case scenario for space with BFS is when the tree is full. In this scenario, the
+    final level contains N/2 nodes, and the queue will hold all the nodes in the final level at some point.
+    """
+    queue = deque([(root, root.val)])
+    res = 0
+    while queue:
+        node, cur_path_max = queue.popleft()
+        if node.val >= cur_path_max:
+            res += 1
+            cur_path_max = node.val
+        queue.extend([(child, cur_path_max) for child in (node.left, node.right) if child])
     return res
