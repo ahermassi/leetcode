@@ -13,7 +13,21 @@ class TreeNode(object):
 
 
 def right_side_view_v1(root):
-    """ Queue version. Perform a BFS on the tree with the right side being always in the front.
+    """ The problem asks to return a list of last elements from all levels, so it's the natural to implement BFS here.
+
+        Perform a BFS on the tree with the right side being always in the back.
+        While the queue is not empty:
+
+            - Write down the length of the current level
+
+            - Iterate over i from 0 to level_length - 1:
+
+            - Pop the current node from the queue
+
+            - If i == level_length - 1, then it's the last node in the current level, so push it to result list.
+
+            - Add first left and then right child node into the queue.
+
     Time complexity: O(N)
     Space complexity: O(D), where D is a tree diameter. Let's use the last level to estimate the queue size. This level
     could contain up to N/2 tree nodes in the case of complete binary tree.
@@ -22,10 +36,11 @@ def right_side_view_v1(root):
         return None
     res, queue = [], deque([root])
     while queue:
-        res.append(queue[-1].val)
         n = len(queue)
-        for _ in range(n):
+        for i in range(n):
             node = queue.popleft()
+            if i == n - 1:
+                res.append(node.val)
             queue.extend([kid for kid in (node.left, node.right) if kid])
     return res
 
