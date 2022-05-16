@@ -85,12 +85,17 @@ def is_valid_bst_v4(root):
     """ All the previous approaches explore the left subtree first. Therefore, even if the BST property does not hold
         at a node which is close to the root (e.g., the key stored at the right child is less than the key stored at
         the root), their time complexity is still O(N).
+
         We can search for violations of the BST property in a BFS manner, thereby reducing the time complexity when the
         property is violated at a node whose depth is small.
+
         Specifically, we use a queue, where each queue entry contains a node, as well as an upper and a lower bound on
         the keys stored at the subtree rooted at that node. The queue is initialized to the root, with lower bound -∞
-        and upper bound +∞. We iteratively check the constraint on each node. If it violates the constraint we stop:
-        The BST property has been violated. Otherwise, we add its children along with the corresponding constraint.
+        and upper bound +∞.
+
+        We iteratively check the constraint on each node. If it violates the constraint we stop: The BST property has
+        been violated. Otherwise, we add its children along with the corresponding constraint.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
