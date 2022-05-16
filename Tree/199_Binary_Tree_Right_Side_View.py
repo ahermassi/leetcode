@@ -46,9 +46,12 @@ def right_side_view_v1(root):
 
 
 def right_side_view_v2(root):
-    """ BFS using 2 queues, ne for the current level, and one for the next. The idea is to pop the nodes one by one
+    """ BFS using 2 queues.
+
+        Let's use two queues, one for the current level, and one for the next. The idea is to pop the nodes one by one
         from the current level and push their children into the next level queue. Each time the current queue is empty,
-        we have the right side element in hands.
+        we have the right side element in hand.
+
     Time complexity: O(N)
     Space complexity: O(D)
     """
@@ -57,10 +60,11 @@ def right_side_view_v2(root):
     res, cur_level = [], deque([root])
     while cur_level:
         next_level = deque()
+        node = None
         while cur_level:
             node = cur_level.popleft()
             next_level.extend([kid for kid in (node.left, node.right) if kid])
-        res.append(node.val)
+        res.append(node.val)  # The current level is finished. Its last element is the rightmost node.
         cur_level = next_level
     return res
 
