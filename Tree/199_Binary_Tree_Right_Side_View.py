@@ -72,10 +72,13 @@ def right_side_view_v2(root):
 def right_side_view_v3(root):
     """ Another approach is to push all the nodes in one queue and to use a sentinel node to separate the levels.
         Typically, we could use null as a sentinel.
+
         The first step is to initiate the first level: root + null as a sentinel. Once it's done, continue to pop the
-        nodes one by one from the left and push their children to the right. Stop each time the current node is null
-        because it means we hit the end of the current level. Each stop is a time to update a right side view list and
-        to push null in the queue to mark the end of the next level.
+        nodes one by one from the left and push their children to the right.
+
+        Stop each time the current node is null because it means we hit the end of the current level. Each stop is a
+        time to update a right side view list and to push null in the queue to mark the end of the next level.
+
     Time complexity: O(N)
     Space complexity: O(D)
     """
