@@ -65,6 +65,23 @@ def is_valid_bst_v2(root):
 
 
 def is_valid_bst_v3(root):
+    """ The previous solution might fail when the smallest node has the value Integer.MIN_VALUE or the largest node has
+         the value Integer.MAX_VALUE. We can instead pass two null nodes to mark the two boundaries.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    def validate(root, lower, upper):
+        if not root:
+            return True
+        if (lower and root.val <= lower.val) or (upper and root.val >= upper.val):
+            return False
+        return validate(root.left, lower, root) and validate(root.right, root, upper)
+
+    return validate(root, None, None)
+
+
+def is_valid_bst_v4(root):
     """ All the previous approaches explore the left subtree first. Therefore, even if the BST property does not hold
         at a node which is close to the root (e.g., the key stored at the right child is less than the key stored at
         the root), their time complexity is still O(N).
