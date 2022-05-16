@@ -6,7 +6,7 @@ Return the number of good nodes in the binary tree. """
 # Video explanation: https://www.youtube.com/watch?v=7cp5imvDzl4
 
 
-def good_nodes(root):
+def good_nodes_v1(root):
     """ In this first approach, we'll be using recursion. A powerful idea for any tree or graph problem involving
          BFS/DFS is that instead of just adding nodes to the stack or queue, we can store extra data to represent state.
 
@@ -40,3 +40,22 @@ def good_nodes(root):
     res = [0]
     dfs(root, root.val)
     return res[0]
+
+
+def good_nodes_v2(root):
+    """ We can also make every dfs() call return the number of good nodes in the subtree rooted at that node.
+         This eliminates the need for a global count variable.
+
+    Time complexity: O(N)
+    Space complexity: O(N) worst case of skewed tree, O(logN) best case of balanced tree
+    """
+
+    def dfs(root, cur_path_max):
+        if not root:
+            return 0
+        good = 1 if root.val >= cur_path_max else 0
+        cur_path_max = max(cur_path_max, root.val)
+        good += dfs(root.left, cur_path_max) + dfs(root.right, cur_path_max)
+        return good
+
+    return dfs(root, root.val)
