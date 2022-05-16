@@ -8,7 +8,7 @@ Return the number of good nodes in the binary tree. """
 
 def good_nodes_v1(root):
     """ In this first approach, we'll be using recursion. A powerful idea for any tree or graph problem involving
-         BFS/DFS is that instead of just adding nodes to the stack or queue, we can store extra data to represent state.
+         BFS/DFS is that instead of just adding nodes to the stack or stack, we can store extra data to represent state.
 
          For this problem, we're concerned about the greatest value seen, so instead of the recursive function only
          taking nodes as an input, such as dfs(node), let's also have each call take an integer as well, like
@@ -59,3 +59,31 @@ def good_nodes_v2(root):
         return good
 
     return dfs(root, root.val)
+
+
+def good_nodes_v3(root):
+    """ DFS can also be implemented iteratively. You may be thinking at this point: What kind of DFS should we use,
+         preorder, postorder, or inorder? The answer is that, for this problem, it doesn't matter. For each node, there
+         is only one path from the root to that node, so regardless of the order of our traversal, the integer we use to
+         track the greatest value will always be the largest value between the current node and the root.
+
+         The algorithm works the same as in the previous approach, but we will be using our own stack instead of
+         recursion. We can implement the tracking integer by pairing the nodes with the integer when we push elements
+         onto the stack.
+
+         At each node, first check if node.val is greater than or equal to cur_path_max. If it is, then increment the
+         result. Next, push the children onto the stack, along with the greater value between cur_path_max and node.val.
+
+    Time complexity: O(N)
+    Space complexity: O(N), in the worst case scenario, where every right child has 2 children and every left child has
+    no children (or vice-versa), the stack will contain N/2 nodes at max depth
+    """
+    stack = [(root, root.val)]
+    res = 0
+    while stack:
+        node, cur_path_max = stack.pop()
+        if node.val >= cur_path_max:
+            res += 1
+            cur_path_max = node.val
+        stack.extend([(child, cur_path_max) for child in (node.left, node.right) if child])
+    return res
