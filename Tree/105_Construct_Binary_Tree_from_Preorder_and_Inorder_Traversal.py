@@ -30,49 +30,50 @@ class TreeNode(object):
 
 
 def build_tree_v1(preorder, inorder):
-    """ Looking at pre-order traversal, the first value (node 1) must be the root. Then, we find the index of root
-        within in-order traversal, and split into two sub problems.
-        Example: pre-order = [3, 9, 20, 15, 7], in-order = [9, 3, 15, 20, 7]
+    """ The two key observations are:
+
+            - Preorder traversal follows Root -> Left -> Right, therefore, given the preorder array preorder, we have
+               easy access to the root which is preorder[0].
+
+            - Inorder traversal follows Left -> Root -> Right, therefore if we know the position of Root in the inorder
+               list, we can recursively split the entire array into two subtrees.
+
+        Now the idea should be clear enough. We will design a recursive function that will set the first element of
+        preorder as the root, and then construct the entire tree. To find the left and right subtrees, it will look for
+        the index of root in inorder list, so that everything on the left should be the left subtree, and everything on
+        the right should be the right subtree. Both subtrees can be constructed by making another recursive call.
+
+        It is worth noting that we should build a hashmap to record the relation of value -> index for inorder, so that
+        we can find the position of root in constant time.
+
+        The reason we are given two types of binary tree traversals is because it is not possible to construct binary
+        tree from a single traversal.
+
+        Example: preorder = [3, 9, 20, 15, 7], inorder = [9, 3, 15, 20, 7]
                 3 is root, [9] is the left subtree, [15, 20, 7] is the right subtree, and so on (recursively)
-    Time complexity: O(N^2), since index lookup in in-order list takes O(N)
-    Space complexity: O(N)
-    """
 
-    def get_tree(inorder):
-        if not inorder:
-            return None
-        root = TreeNode(preorder.popleft())
-        index = inorder.index(root.val)
-        root.left = get_tree(inorder[:index])
-        root.right = get_tree(inorder[index + 1:])
-        return root
-
-    preorder = deque(preorder)  # Speed up a bit by making pre-order a queue (cheap left pops as opposed to list.pop(0))
-    return get_tree(inorder)
-
-
-def build_tree_v2(preorder, inorder):
-    """ We can improve the previous solution by mapping values to indices of in-order list. This way, we can look up
-        the index of root in in-order in constant time.
-    Time complexity: O(N)
+    Time complexity: O(N), the recursive helper method has a cost of O(1) for each call and is called once for each of
+    the N nodes, giving a total of O(N)
     Space complexity: O(N) for hash map, O(N) worst case / O(logN) average case for call stack
     """
 
-    def get_tree(inorder_start, inorder_end):
-        if inorder_start > inorder_end:
+    def build_tree(left, right):
+        # These boundaries are only used to check if the subtree is empty
+        if not left > right:
             return None
         root = TreeNode(preorder.popleft())
         index = indices[root.val]
-        root.left = get_tree(inorder_start, index - 1)
-        root.right = get_tree(index + 1, inorder_end)
+        # Build left and right subtrees excluding 'index' element because it's the root
+        root.left = build_tree(left, index - 1)
+        root.right = build_tree(index + 1, right)
         return root
 
-    preorder = deque(preorder)
-    indices = {v: i for i, v in enumerate(inorder)}
-    return get_tree(0, len(inorder) - 1)  # These boundaries are only used to check if the subtree is empty
+    preorder = deque(preorder)  # Speed up a bit by making preorder a queue (cheap left pops as opposed to list.pop(0))
+    indices = {val: i for i, val in enumerate(inorder)}
+    return build_tree(0, len(inorder) - 1)
 
 
-def build_tree_v3(preorder, inorder):
+def build_tree_v2(preorder, inorder):
     """ Iterative, stack based solution. """
     if not preorder:
         return None
