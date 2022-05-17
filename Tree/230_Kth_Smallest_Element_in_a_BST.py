@@ -11,24 +11,37 @@ class TreeNode(object):
         self.left = None
         self.right = None
 
+# Video explanation: https://www.youtube.com/watch?v=5LUXSvjmGCw
+
 
 def kth_smallest_v1(root, k):
-    """ Iterative approach using stack (in-order). There is no need to build the entire in-order traversal, and we can
-        stop after the kth element.
+    """ Iterative in-order. This way we could speed up the solution because there is no need to build the entire
+         inorder traversal, and we can stop once we meet the kth element.
+
+         The idea is that we're maintaining a stack of nodes to visit as well as our current active node. Because we're
+         doing an in-order traversal of a BST we always want to visit the leftmost child first since we know that is the
+         lowest value (between left, root, right). We want to go left as many times as we can since we want to find the
+         smallest value we haven't looked at yet. Only when we reach a node with no left do we evaluate it. (Here, the
+         code sets cur = None and requires us the pop the non-empty node off the stack).
+
+        After we've visited that node without a left, we check to see if it has a right by setting our active node to
+        its right. From there, we restart our iteration checking if the right node has any left children adding nodes to
+        visit later to the stack.
+
     Time complexity: O(N + k) in the worst case of a skewed BST, since before starting to pop out we have to go down to
     a leaf. O(logN + k) in the best case of a balanced BST.
-    Space complexity: O(logN) average case, O(N) worst case
+    Space complexity: O(logN) average case, O(N) worst case, to keep the stack
     """
-    stack = []
-    while stack or root:
-        while root:
-            stack.append(root)
-            root = root.left
+    stack, cur = [], root
+    while stack or cur:
+        while cur:
+            stack.append(cur)
+            cur = cur.left
         node = stack.pop()
         k -= 1
         if not k:
             return node.val
-        root = node.right
+        cur = node.right
 
 
 def kth_smallest_v2(root, k):
