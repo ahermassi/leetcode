@@ -69,7 +69,8 @@ def kth_smallest_v2(root, k):
 
 def kth_smallest_v3(root, k):
     pass
-    # This is implemented in 230- Kth Element in In-order Traversal
+    # This is implemented in 230- Kth Element in In-order Traversal and
+    # https://leetcode.com/problems/kth-smallest-element-in-a-bst/discuss/63659/What-if-you-could-modify-the-BST-node's-structure
     # Follow-up question: What if the BST is modified (insert/delete operations) often, and we need to find the kth
     # smallest frequently? How would you optimize the kthSmallest routine?
     # The idea is to maintain rank of each node. Since we need K-th smallest element, we can maintain number of
