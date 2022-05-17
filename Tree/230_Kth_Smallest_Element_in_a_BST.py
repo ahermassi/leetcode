@@ -70,14 +70,14 @@ def kth_smallest_v2(root, k):
 def kth_smallest_v3(root, k):
     pass
     # This is implemented in 230- Kth Element in In-order Traversal
-    # Follow-up question: What if the BST is modified (insert/delete operations) often and you need to find the kth
+    # Follow-up question: What if the BST is modified (insert/delete operations) often, and we need to find the kth
     # smallest frequently? How would you optimize the kthSmallest routine?
     # The idea is to maintain rank of each node. Since we need K-th smallest element, we can maintain number of
     # elements of left subtree in every node.
     # Assume that the root is having N nodes in its left subtree:
-    # If K = N + 1, root is K-th node.
-    # If K < N, we will continue our search (recursion) for the Kth smallest element in the left subtree of root.
-    # If K > N + 1, we continue our search in the right subtree for the (K – N – 1)-th smallest element.
+    # If K = N + 1, i.e. N = K - 1, root is K-th node.
+    # If N > K - 1, we will continue our search (recursion) for the Kth smallest element in the left subtree of root.
+    # If N < K - 1, we continue our search in the right subtree for the (K – N – 1)th smallest element.
     # Note that we need the count of elements in left subtree only.
 
 
