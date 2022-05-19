@@ -18,18 +18,19 @@ class TreeNode(object):
         self.right = None
 
 # Great explanation: https://www.youtube.com/watch?v=suj1ro8TIVY
+# Another one: https://www.youtube.com/watch?v=u4JAi2JJhI8
 
 
 class CodecV1:
     """ DFS is more adapted for our needs, since the linkage among the adjacent nodes is naturally encoded in the
         order, which is rather helpful for the later task of deserialization.
 
-        The idea is simple: print the tree in pre-order traversal, use 'X' to denote null nodes, and separate nodes
-        with ','. For deserialization, we use a queue to store the pre-order traversal, and since we have 'X' as null
+        The idea is simple: print the tree in preorder traversal, use 'X' to denote null nodes, and separate nodes
+        with ','. For deserialization, we use a queue to store the preorder traversal, and since we have 'X' as null
         node, we know exactly where to end building subtrees.
 
-        The intuition for the deserialization is the recognition that the first node in the pre-order sequence is the
-        root, and the sequence for the root's left subtree appears before all the nodes in the root's right subtree.
+        The intuition for the deserialization is the recognition that the first node in the preorder sequence is the
+        root, and the sequence for the root's left subtree appears BEFORE all the nodes in the root's right subtree.
         It is not easy to see where the left subtree sequence ends. However, if we solve the problem recursively, we
         can assume that the routine correctly computes the left subtree, which will also tell us where the right
         subtree begins.
@@ -48,10 +49,10 @@ class CodecV1:
         def pre_order(root):
             if not root:
                 values.append('X')
-            else:
-                values.append(str(root.val))
-                pre_order(root.left)
-                pre_order(root.right)
+                return
+            values.append(str(root.val))
+            pre_order(root.left)
+            pre_order(root.right)
 
         values = []
         pre_order(root)
