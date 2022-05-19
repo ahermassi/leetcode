@@ -12,7 +12,7 @@ class TrieNode:
         self.end_of_word = False
 
 
-class Trie(object):
+class TrieV1(object):
     """ Do yourself a favor and checkout this article: https://leetcode.com/articles/implement-trie-prefix-tree/
     Time complexity:
         insert(word): O(k), where k is the length of word
@@ -54,8 +54,38 @@ class Trie(object):
         return True
 
 
+class TrieV2:
+    """ The Trie itself can be used as a root node without the need of creating a TrieNode. """
+
+    def __init__(self):
+        self.children = defaultdict(TrieV2)
+        self.end_of_word = False
+
+    def insert(self, word):
+        root = self
+        for c in word:
+            root = root.children[c]
+        root.end_of_word = True
+
+    def search(self, word):
+        root = self
+        for c in word:
+            if c not in root.children:
+                return False
+            root = root.children[c]
+        return root.end_of_word
+
+    def startsWith(self, prefix):
+        root = self
+        for c in prefix:
+            if c not in root.children:
+                return False
+            root = root.children[c]
+        return True
+
+
 class Test(unittest.TestCase):
-    trie = Trie()
+    trie = TrieV1()
     trie.insert("apple")
     search1 = trie.search("apple")
     search2 = trie.search("app")
