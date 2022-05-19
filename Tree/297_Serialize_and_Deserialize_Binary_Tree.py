@@ -117,3 +117,47 @@ class CodecV2:
             queue.extend(child for child in (node.left, node.right) if child)
         return root
 
+
+class CodecV3:
+    """ Same BFS approach, but during deserialization we use a read pointer/index to process the elements in the data
+         list without turning it into a queue.
+    """
+
+    def serialize(self, root):
+        """Encodes a tree to a single string.
+        Time complexity: O(N)
+        Space complexity: O(N)
+        """
+        values = []
+        queue = deque([root])
+        while queue:
+            node = queue.popleft()
+            if not node:
+                values.append('X')
+            else:
+                values.append(node.val)
+                queue.extend(child for child in (node.left, node.right))
+        return ','.join(map(str, values))
+
+    def deserialize(self, data):
+        """Decodes your encoded data to tree.
+        Time complexity: O(N)
+        Space complexity: O(N)
+        """
+        if data[0] == 'X':
+            return None
+        data = data.split(',')
+        root = TreeNode(data[0])
+        queue = deque([root])
+        index = 1
+        while queue:
+            node = queue.popleft()
+            if data[index] != 'X':
+                node.left = TreeNode(data[index])
+            index += 1
+            if data[index] != 'X':
+                node.right = TreeNode(data[index])
+            index += 1
+            queue.extend(child for child in (node.left, node.right) if child)
+        return root
+
