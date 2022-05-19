@@ -88,17 +88,16 @@ class CodecV2:
         Time complexity: O(N)
         Space complexity: O(N)
         """
-        if not root:
-            return 'X'
-        values, queue = [], deque([root])
+        values = []
+        queue = deque([root])
         while queue:
             node = queue.popleft()
             if not node:
                 values.append('X')
             else:
-                values.append(str(node.val))
-                queue.extend([node.left, node.right])
-        return ','.join(values)
+                values.append(node.val)
+                queue.extend(child for child in (node.left, node.right))
+        return ','.join(map(str, values))
 
     def deserialize(self, data):
         """Decodes your encoded data to tree.
@@ -115,6 +114,6 @@ class CodecV2:
             left, right = data.popleft(), data.popleft()
             node.left = TreeNode(left) if left != 'X' else None
             node.right = TreeNode(right) if right != 'X' else None
-            queue.extend([kid for kid in (node.left, node.right) if kid])
+            queue.extend(child for child in (node.left, node.right) if child)
         return root
 
