@@ -1,11 +1,14 @@
 """ Implement a trie with insert, search, and startsWith methods. """
 
 import unittest as unittest
+from collections import defaultdict
+
+# Video explanation: https://www.youtube.com/watch?v=oobqoCJlHA0
 
 
 class TrieNode:
     def __init__(self):
-        self.children = dict()
+        self.children = defaultdict(TrieNode)
         self.end_of_word = False
 
 
@@ -13,11 +16,12 @@ class Trie(object):
     """ Do yourself a favor and checkout this article: https://leetcode.com/articles/implement-trie-prefix-tree/
     Time complexity:
         insert(word): O(k), where k is the length of word
-        search(word): O(k)
+        search(word): O(k), in each step we search for the next key character. In the worst case the algorithm performs
+        k operations
         startsWith(prefix): O(k)
     Space complexity:
-        insert(word): O(k), in the worst case the newly inserted key doesn't share a prefix with the the keys already
-        inserted in the trie. We have to add k new nodes
+        insert(word): O(k), in the worst case the newly inserted key doesn't share a prefix with the keys already
+        inserted in the trie. We have to add k new nodes.
         search(word): O(1)
         startsWith(prefix): O(1)
     """
@@ -28,8 +32,6 @@ class Trie(object):
     def insert(self, word):
         root = self.root
         for c in word:
-            if c not in root.children:
-                root.children[c] = TrieNode()
             root = root.children[c]  # By doing this we traverse down the tree, so the root is reassigned to its
             # child, and so on, so we are progressively following the child till we reach the end of word
         root.end_of_word = True
