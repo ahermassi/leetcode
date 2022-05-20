@@ -108,16 +108,18 @@ class WordDictionaryV2(object):
             c = word[index]
             if c == '.':
                 # Search for any sub-string starting with current character
-                # Why exclude '#'? Since '#' is not a 'real' character and only a placeholder (and we know it won't
+                # Why exclude '#' ? Since '#' is not a 'real' character and only a placeholder (and we know it won't
                 # have any children, since the word finished here), we don't want to traverse down this path.
-                return any(dfs(node[child], index + 1) for child in node if child != '#')
+                for child in node:
+                    if child != '#' and dfs(child, index + 1):
+                        return True
+                return False
             if c not in node:
                 return False
             return dfs(node[c], index + 1)
 
-        trie = self.trie
         n = len(word)
-        return dfs(trie, 0)
+        return dfs(self.trie, 0)
 
 
 class Test(unittest.TestCase):
