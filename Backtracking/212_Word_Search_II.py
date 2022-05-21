@@ -157,44 +157,42 @@ def find_words_v1(board, words):
 
 class TrieNodeV2:
     def __init__(self):
-        self.children = dict()
+        self.children = defaultdict(TrieNodeV2)
         self.word = None
 
 
 def find_words_v2(board, words):
     """ One optimization is to keep words in the Trie. Doing so could improve the performance of the algorithm a bit.
-        One benefit is that we would not need to pass the prefix as the parameter in the search() call, and this could
-        speed up a bit the recursive call.
+         One benefit is that we would not need to pass the prefix as the parameter in the search() call, and this could
+         speed up a bit the recursive call.
     """
 
     def addWord(word, root):
         for c in word:
-            if c not in root.children:
-                root.children[c] = TrieNodeV2()
             root = root.children[c]
         root.word = word
 
-    def search(i, j, root):
-        if not 0 <= i < n or not 0 <= j < m or board[i][j] not in root.children:
+    def search( i, j, node):
+        if not 0 <= i < n or not 0 <= j < m or board[i][j] not in node.children:
             return
         c = board[i][j]
+        node = node.children[c]
+        if node.word:  # Check if we found a match of word
+            res.append(node.word)
+            node.word = None  # Remove the matched word to avoid duplicates
         board[i][j] = '#'
-        root = root.children[c]
-        if root.word:  # Check if we find a match of word
-            res.append(root.word)
-            root.word = None  # Remove the matched word to avoid duplicates
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            search(x, y, root)
+            search(x, y, node)
         board[i][j] = c
 
-    root = TrieNodeV2()
+    trie = TrieNodeV2()
     n, m, res = len(board), len(board[0]), []
     for word in words:
-        node = root
+        node = trie
         addWord(word, node)
     for i in range(n):
         for j in range(m):
-            search(i, j, root)
+            search(i, j, trie)
     return res
 
 
