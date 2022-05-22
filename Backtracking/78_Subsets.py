@@ -88,11 +88,8 @@ def subsets_v2(nums):
      	  	                                                                                                      res =  [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3],[3]]
      	  	   // for loop will not be executed because index=n=3
 
-    Time complexity: O(N * 2^N), there are 2^N subsets to generate and each one takes O(N) time to copy into 'res'.
-    The recursive function is called 2^N times. Because we have 2 choices at each iteration in nums array: Either we
-    include nums[i] in the current set, or we exclude nums[i]. We need to create a copy of the current set because we
-    reuse the original one to build all the valid subsets. This copy costs O(N) and it is performed at each call of the
-    recursive function, which is called 2^N times. So total time complexity is O(N * 2^N).
+    Time complexity: O(2^N), there are 2^N subsets to generate. The recursive function is called 2^N times, since we
+    have 2 choices at each iteration in nums array: Either we include nums[i] in the current set, or we exclude nums[i].
     Space complexity: O(N), for call stack
     """
 
@@ -108,16 +105,21 @@ def subsets_v2(nums):
 
 
 def subsets_v3(nums):
-    """ This solution uses a clear backtracking template: add current candidate to the path, explore, and finally
-        backtrack.
-    Time complexity: O(N * 2^N)
+    """ This solution uses a clear backtracking template: Add current candidate to the path, explore, and finally
+        backtrack. Notice that we reuse the same path/subset for all calls.
+
+    Time complexity: O(N * 2^N), there are 2^N subsets to generate and each one takes O(N) time to copy into 'res'.
+    The recursive function is called 2^N times. Because we have 2 choices at each iteration in nums array: Either we
+    include nums[i] in the current set, or we exclude nums[i]. We need to create a copy of the current set because we
+    reuse the original one to build all the valid subsets. This copy costs O(N) and it is performed at each call of the
+    recursive function, which is called 2^N times. So total time complexity is O(N * 2^N).
     Space complexity: O(N), for call stack
     """
 
     def compute_subsets_at_index(index):
         res.append(path[:])
         for i in range(index, n):
-            path.append(nums[i])  # Finding all subsets that include nums[i]. Add current candidate to the path
+            path.append(nums[i])  # Find all subsets that include nums[i]. Add current candidate to the path.
             compute_subsets_at_index(i + 1)  # Explore
             path.pop()  # Backtrack. Remove nums[i] from the present subset and move further to explore subsets that
             # don't contain nums[i]
