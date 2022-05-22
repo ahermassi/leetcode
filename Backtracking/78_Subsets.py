@@ -130,6 +130,25 @@ def subsets_v3(nums):
 
 
 def subsets_v4(nums):
+    """ Good ol' backtracking without the use of a for loop.
+
+    Time complexity: O(N * 2^N)
+    Space complexity: O(N)
+    """
+
+    def compute_subsets_at_index(index, subset):
+        if index == n:
+            res.append(subset)
+            return
+        compute_subsets_at_index(index + 1, subset + [nums[index]])
+        compute_subsets_at_index(index + 1, subset)
+
+    n, res = len(nums), []
+    compute_subsets_at_index(0, [])
+    return res
+
+
+def subsets_v5(nums):
     """ The idea of this solution originated from Donald E. Knuth.
         We map each subset to a bitmask of length n, where 1 in the ith position in bitmask means the presence of
         nums[i] in the subset, and 0 means its absence.
@@ -149,7 +168,7 @@ def subsets_v4(nums):
     return res
 
 
-def subsets_v5(nums):
+def subsets_v6(nums):
     """ Simplified version of previous solution.
     Time complexity: O(N * 2^N)
     Space complexity: O(1)
@@ -178,6 +197,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, sorted(subsets_v3(test_array)))
             self.assertEqual(result, sorted(subsets_v4(test_array)))
             self.assertEqual(result, sorted(subsets_v5(test_array)))
+            self.assertEqual(result, sorted(subsets_v6(test_array)))
 
 
 if __name__ == '__main__':
