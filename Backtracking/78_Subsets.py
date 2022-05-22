@@ -150,11 +150,15 @@ def subsets_v4(nums):
 
 def subsets_v5(nums):
     """ The idea of this solution originated from Donald E. Knuth.
+
         We map each subset to a bitmask of length n, where 1 in the ith position in bitmask means the presence of
         nums[i] in the subset, and 0 means its absence.
+
         For instance, the bitmask 0..00 (all zeros) corresponds to an empty subset, and the bitmask 1..11 (all ones)
         corresponds to the entire input array nums.
+
         Hence, to solve the initial problem, we just need to generate 2^n bitmasks from 0..00 to 1..11.
+
     Time complexity: O(N * 2^N)
     Space complexity: O(1)
     """
@@ -170,6 +174,7 @@ def subsets_v5(nums):
 
 def subsets_v6(nums):
     """ Simplified version of previous solution.
+
     Time complexity: O(N * 2^N)
     Space complexity: O(1)
     """
@@ -178,7 +183,7 @@ def subsets_v6(nums):
     for i in range(p):
         # generate bitmask, from 0..00 to 1..11
         bitmask = bin(i | p)[3:]  # If i = 3 = 011 -> i|p = 0011|1000 = 0011 -> bin(i|p) = 0b0011 -> bin(i|p)[3:] = 011
-        # So each bitmask ends up being a string representing the the binary format of i
+        # So each bitmask ends up being a string representing the binary format of i
         res.append([nums[j] for j in range(n) if bitmask[j] == '1'])  # Map a subset to each bitmask: 1 on the jth
         # position in bitmask means the presence of nums[j] in the subset, and 0 means its absence.
     return res
