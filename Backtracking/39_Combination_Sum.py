@@ -9,13 +9,45 @@ import unittest2 as unittest
 
 
 def combination_sum_v1(candidates, target):
-    """ Explore all the possible paths that reduce the target to 0, passing an index parameter to DFS call to indicate
-        where to start adding candidates. At every step that is taken to complete a path, only elements explored from
-        that point onwards are considered. As a result, extending the path always involves adding a larger or equal
-        number to what was previously present. That is why it stays unique.
+    """ Backtracking is a general algorithm for finding all (or some) solutions to some computational problems. The idea
+         is that it incrementally builds candidates to the solutions, and abandons a candidate ("backtracks") as soon
+         as it determines that this candidate cannot lead to a final solution.
+
+         Specifically, to our problem, we could incrementally build the combination, and once we find the current
+         combination is not valid, we backtrack and try another option.
+
         An important detail on choosing the next number for the combination is that we select the candidates in order,
         where the total candidates are treated as a list. Once a candidate is added into the current combination, we
         will not look back to all the previous candidates in the next explorations.
+
+        To demonstrate the idea, let us consider the example of candidates = [3, 4, 5], target = 8, and zoom in a node
+        to see how we can choose the next numbers.
+
+        When we are at the node of [4], the precedent candidates are [3], and the candidates followed are [4, 5].
+        We don't add the precedent numbers into the current node, since they would have been explored in the nodes in
+        the left part of the subtree, i.e. the node of [3].
+
+        Even though we have already the element 4 in the current combination, we are giving the element another chance
+        in the next exploration, since the combination can contain duplicate numbers.
+
+        As a result, we would branch out in two directions, by adding the element 4 and 5 respectively into the current
+        combination.
+
+        We define a recursive function dfs(index, combination, remaining), which populates the combinations, starting
+        from the current combination (combination), the remaining sum to fulfill (remaining) and the current cursor
+        (index) to the list of candidates.
+
+        For the first base case of the recursive function, if remaining==0, i.e. we fulfilled the desired target sum,
+        therefore we can add the current combination to the final list.
+        As another base case, if remaining < 0, i.e. we exceed the target value, we will cease the exploration here.
+
+        Other than the above two base cases, we would then continue to explore the sublist of candidates as
+        [index ... n]. For each of the candidate, we invoke the recursive function itself with updated parameters.
+
+            - Specifically, we add the current candidate into the combination.
+            - With the added candidate, we now have less sum to fulfill, i.e. remaining - candidate.
+            - For the next exploration, still we start from the current cursor start.
+
     Time complexity: O(#candidates ^ (target/m)), where m is the minimal value among the candidates. The total number
     of steps during the backtracking would be the number of nodes in the execution tree. The fan-out of each node would
     be bounded to the total number of candidates (number of choices). The maximal depth of the tree would be (target/m),
@@ -34,7 +66,8 @@ def combination_sum_v1(candidates, target):
         if remaining == 0:
             res.append(combination)
             return
-        for i in range(index, n):  # We include 'index' because we're allowed to choose the same number multiple times.
+        for i in range(index, n):
+            # We include 'index' because we're allowed to choose the same number multiple times.
             # We are giving the element another chance in the next exploration, since the combination can contain
             # duplicate numbers.
             # With each iteration of the for loop, we will reduce the number of candidates. This is important to prevent
