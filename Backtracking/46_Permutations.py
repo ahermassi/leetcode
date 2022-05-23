@@ -67,7 +67,9 @@ def permute_v1(nums):
 
 def permute_v2(nums):
     """ Second solution.
-        Visualisation:
+
+        Visualization:
+
         dfs(nums = [1, 2, 3] , path = [] , result = [] )
         |____ dfs(nums = [2, 3] , path = [1] , result = [] )
         |      |___dfs(nums = [3] , path = [1, 2] , result = [] )
@@ -84,13 +86,15 @@ def permute_v2(nums):
             |    |___dfs(nums = [] , path = [3, 1, 2] , result = [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]] ) # added a new permutation to the result
             |___dfs(nums = [1] , path = [3, 2] , result = [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]] )
                 |___dfs(nums = [] , path = [3, 2, 1] , result = [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]] ) # added a new permutation to the result
+
     Time complexity: O(N!)
     Space complexity: O(N)
     """
     def dfs(nums, path):
         if not nums:
             res.append(path)
-            # return # backtracking
+            # return
+            # backtracking
         for i in range(len(nums)):
             dfs(nums[:i] + nums[i + 1:], path + [nums[i]])
 
