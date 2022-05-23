@@ -1,21 +1,32 @@
 """ Given a collection of distinct integers, return all possible permutations. """
 
+# Video explanation: https://www.youtube.com/watch?v=GCm7m5671Ps
+
 
 def permute_v1(nums):
-    """ Here is a backtracking function which takes the index of the first integer to consider.
+    """ Backtracking is an algorithm for finding all solutions by exploring all potential candidates. If the solution
+         candidate turns to be not a solution (or at least not the last one), backtracking algorithm discards it by
+         making some changes on the previous step, i.e. backtracks and then try again.
+
+        Here we use a backtracking function which takes the index of the first integer to consider as an argument.
+
+            - If the current integer to consider has an index n, that means that the current permutation is done.
+            - Otherwise, iterate over the integers from current index to index n - 1.
+                - Place ith integer first in the permutation, i.e. swap(nums[index], nums[i]).
+                - Proceed to create all permutations which starts from ith integer : backtrack(index + 1).
+                - Now backtrack, i.e. swap(nums[index], nums[i]) back.
+
         A good approach is to recognize that once a value has been chosen for an entry, we do not want to repeat it.
         Specifically, every permutation of A begins with one of A[0],A[1] ,. . . ,A[n - 1]. The idea is to generate all
-        permutations that begin with A[0], then all permutations that begin with A[1], and so on. Computing all
-        permutations beginning with A[0] entails computing all permutations of A[1,n - 1], which suggests the use of
-        recursion. To compute all permutations beginning with A[1] we swap A[0] with A[1] and compute all permutations
+        permutations that begin with A[0], then all permutations that begin with A[1], and so on.
+
+        Computing all permutations beginning with A[0] entails computing all permutations of A[1,n - 1], which suggests
+        the use of recursion.
+
+        To compute all permutations beginning with A[1], we swap A[0] with A[1] and compute all permutations
         of the updated A[1.,n - 1]. We then restore the original state before embarking on computing all permutations
         beginning with A[2], and so on.
-        If the first integer to consider has index n, that means there is nothing to compute.
-        Iterate over the integers from 'index' to index (n - 1), the end of the array.
-            - Place (index)th integer first in the permutation, i.e. swap(nums[index], nums[i]).
-            - Proceed to create all permutations which start from (index+1)th integer:
-              compute_permutations_at_index(index + 1).
-            - Now backtrack, i.e. swap(nums[index], nums[i]) back.
+
         For example, for the array [7, 3, 5], we would first generate all permutations starting with 7. This entails
         generating all permutations of [3, 5], which we do by finding all permutations of [3, 5] beginning with 3.
         Since [5] is an array of length 1, it has a single permutation. This implies [3, 5] has a single permutation
@@ -24,29 +35,33 @@ def permute_v1(nums):
         permutations of A beginning with 7, namely [7, 3, 5] and [7, 5, 3].
         We swap 7 with 3 to find all permutations beginning with 3, namely [3, 7, 5] and [3, 5, 7].
         The last two permutations we add are [5, 3, 7] and [5, 7, 3].
-        In all there are six permutations.
-    Time complexity: O(N * N!), because we generate N! permutations and each permutation requires O(N) to copy into res
-    Space complexity: O(N) for the recursive call stack (max depth of call tree)
+        There are six permutations in total.
+
+    Time complexity: O(N * N!), we generate N! permutations and there is a loop inside the recursive call which in the
+    worst case makes N iterations. This can be seen in this way: To find a single permutation it takes N computations
+    (height of recursion tree), and there are N! permutations in total
+    Space complexity: O(N), for the recursive call stack (max depth of call tree)
     """
-    def compute_permutations_at_index(index):
+    def compute_permutations_at_index(index, path):
         if index == n:
-            res.append(nums[:])
+            res.append(path)
+            return
         for i in range(index, n):
-            # We're using here the same principle of recursion. Given a sub-array starting at index 'index', loop over
-            # the elements of the sub-array, and at each iteration:
-            # 1- Bring the current element to the head of the sub-array at starting index 'index'
-            # 2- TRUST that the recursive call will compute the permutations of the sub-array at (index + 1)
-            # 3- Undo the swap to bring the sub-array to its initial state and move on to the next element
+            # We're using here the same principle of recursion. Given a subarray starting at index 'index', loop over
+            # the elements of the subarray, and at each iteration:
+            # 1- Bring the current element to the head of the subarray at starting index 'index'
+            # 2- TRUST that the recursive call will compute the permutations of the subarray at (index + 1)
+            # 3- Undo the swap to bring the subarray to its initial state and move on to the next element
             nums[index], nums[i] = nums[i], nums[index]
-            compute_permutations_at_index(index + 1)
+            compute_permutations_at_index(index + 1, path + [nums[index]])
             nums[index], nums[i] = nums[i], nums[index]  # Second swap: backtracking. Think of it as moving back up
-            # in the tree to explore the next branch. When we moved down of one level, we swapped 2 elements (1st
+            # in the tree to explore the next branch. When we moved down one level, we swapped 2 elements (1st
             # swap in the code). So when we go back up in the tree we need to swap these 2 elements back to their
             # original order at the parent node level (2nd swap in the code). This is called backtracking = done
             # exploring a branch, let's go back up and explore more branches.
 
     n, res = len(nums), []
-    compute_permutations_at_index(0)
+    compute_permutations_at_index(0, [])
     return res
 
 
