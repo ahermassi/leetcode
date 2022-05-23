@@ -112,21 +112,23 @@ def combination_sum_v2(candidates, target):
 
 def combination_sum_v3(candidates, target):
     """ This solution uses a clear backtracking template: Add current candidate to the path, explore, and finally
-        backtrack.
+         backtrack.
+
     Time complexity: O(#candidates ^ (target/m))
     Space complexity: O(target/m), for call stack
     """
 
     def dfs(index, remaining):
         if remaining == 0:
-            res.append(combination[:])  # This is the difference: We append a copy of the path as it is used throughout
-            # the entire backtracking process
+            res.append(combination[:])  # This is the difference: We append a copy of the path as it is shared amongst
+            # the recursive calls
+            return
+        if remaining < 0:  # There is no use in exploring a combination that sums beyond target
             return
         for i in range(index, n):  # We include 'index' because we're allowed to choose the same number multiple times
-            if candidates[i] <= remaining:  # There is no use in exploring a combination that sums to beyond target
-                combination.append(candidates[i])  # Add current candidate to the path
-                dfs(i, remaining - candidates[i])  # Explore
-                combination.pop()  # Backtrack
+            combination.append(candidates[i])  # Add current candidate to the path
+            dfs(i, remaining - candidates[i])  # Explore
+            combination.pop()  # Backtrack
 
     n, res, combination = len(candidates), [], []
     dfs(0, target)
