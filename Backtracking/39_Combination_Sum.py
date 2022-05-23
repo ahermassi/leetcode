@@ -80,16 +80,18 @@ def combination_sum_v1(candidates, target):
 
 
 def combination_sum_v2(candidates, target):
-    """ Same as above, but after sorting the input array. The only help with sorting is that we can stop searching 
-        earlier by breaking the for loop when candidate is larger than 'remaining' target.
+    """ The solution can be optimized by sorting the input array. The only help with sorting is that we can stop
+        searching earlier by breaking from the for loop when candidate is larger than 'remaining' target.
+
         Sorting is not for correctness but for speed. What we do by sorting is we limit the range of numbers on which
         we call DFS recursively, as we know the numbers outside the range cannot be in our solution. For small inputs,
         this speed up may not be substantial. For larger inputs, sorting will definitely give a faster solution.
-    Time complexity: O(#candidates ^ (target/m)), the largest number of elements in a combination sum would be
-    [min(candidates), min(candidates), min(candidates) ...] (think when candidates = [1, 2, 3] and target = 1000), and
-    to get the upper bound, we can say that for each element in the max length combination array, we can pick from any
-    of the elements we are given.
-    Space complexity: O(target), for call stack
+
+    Time complexity: O(#candidates ^ (target/m)), where m is the minimal value among the candidates. The largest number
+    of elements in a combination sum would be [min(candidates), min(candidates), min(candidates) ...] (think when
+    candidates = [1, 2, 3] and target = 1000), and to get the upper bound, we can say that for each element in the max
+    length combination array, we can pick from any of the elements we are given.
+    Space complexity: O(target/m), for call stack
     """
 
     def dfs(index, combination, remaining):
@@ -98,7 +100,7 @@ def combination_sum_v2(candidates, target):
             return
         for i in range(index, n):
             if candidates[i] > remaining:  # If one 'candidate' in bigger than 'remaining', the remaining items must
-                # be bigger than 'remaining', so break early. No use exploring a combination that sums beyond 'target'
+                # be bigger than 'remaining', so break early. No use exploring a combination that sums beyond 'target'.
                 break
             dfs(i, combination + [candidates[i]], remaining - candidates[i])
 
