@@ -3,7 +3,7 @@
 The solution set must not contain duplicate subsets. Return the solution in any order. """
 
 
-def subsets_with_dup(nums):
+def subsets_with_dup_v1(nums):
     """ This problem is a successor to 78- Subsets. The key to this problem is figuring out how to avoid duplicate
          subsets.
 
@@ -45,3 +45,67 @@ def subsets_with_dup(nums):
     n, res = len(nums), []
     compute_subsets_at_index(0, [])
     return res
+
+
+def subsets_with_dup_v2(nums):
+    """ Assume the given array has no duplicate elements. In this case, there will be a total of 2 ^N distinct subsets.
+         To find all the subsets, we start with an empty subset. This will be the first subset. Next, we consider one
+         element at a time and add it to each of the existing subsets.
+
+         However, in this problem, the given array can have duplicate elements which will produce duplicate subsets if
+         we follow the previously mentioned approach. Thus, we need to omit the duplicate subsets.
+
+         For this, we need to sort the given array first. To avoid adding duplicate subsets we follow this rule:
+
+                        Whenever the element under consideration has duplicates, we add one of the duplicate elements
+                        to all the existing subsets to create new subsets. For the rest of the duplicates, we only add
+                        them to the subsets created in the previous step.
+
+        In other words, we treat a group of duplicate elements as an array. Suppose we have a subarray [3, 3, 3]. The
+        ways to add the elements from this array to the existing subsets are as follows:
+
+            -Not add any element having value 3 in any subset.
+            - Add one 3 in all the subsets.
+            - Add two 3s in all the subsets.
+            - Add three 3 in all the subsets.
+
+        By convention, whenever a value is encountered for the first time, we add it to all the existing subsets. Then
+        onwards we add its duplicates only to the subsets created in the previous step.
+
+            - Initialize a variable prev_res_size to 0. prev_res_size holds the index of the subset in the subsets list
+               from where we should start adding the current element if the current element is a duplicate. In other
+               words, it holds the index of the first subset generated in the previous step.
+
+            - Iterate over the nums array considering one element at a time.
+
+            - If we haven't seen the value of the current element before, we need to add this element to all the
+               previously generated subsets. So set start_index to 0.
+
+            - If the current element is a duplicate element, add it only to subsets that were created in the previous
+               iteration. This means we will skip every subset that was created earlier than the previous iteration.
+               So instead of setting start_index to 0, set it equal to prev_res_size.
+
+            - Set prev_res_size to the current subsets size. This will be the starting index of the subsets generated in
+               the next iteration.
+
+            - Add the current element to all the subsets in the subsets list created before the current iteration
+               starting from start_index.
+
+    Time complexity: O(N * 2^N), in the worst case, i.e., with an array of N distinct integers, we will have a total of
+    2^N subsets, and the O(N) to copy them into output list.
+    Space complexity:
+    """
+    nums.sort()
+    all_subsets = [[]]
+    prev_res_size = 0
+    for i, num in enumerate(nums):
+        # prev_res_size refers to the size of the subset in the previous step. This value also indicates the starting
+        # index of the subsets generated in this step.
+        start_index = prev_res_size if i > 0 and nums[i] == nums[i - 1] else 0
+        prev_res_size = len(all_subsets)  # This will be the value of start_index in the next iteration if a
+        # duplicate is found.
+        temp = []
+        for j in range(start_index, prev_res_size):
+            temp.append(all_subsets[j] + [num])
+        all_subsets.extend(temp)
+    return all_subsets
