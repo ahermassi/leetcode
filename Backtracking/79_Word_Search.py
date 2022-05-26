@@ -9,31 +9,40 @@ def exist_v1(board, word):
     """ The accurate term to summarize the solution is backtracking, which is a methodology where we mark the current
         path of exploration, and if the path does not lead to a solution we revert the change (i.e. backtrack) and try
         another path.
+
         As the general idea for the solution, we would walk around the 2D grid, and at each step we mark our choice
         before jumping into the next step. At the end of each step, we would also revert our marking, so that we could
         have a clean slate to try another direction. In addition, the exploration is done via the DFS strategy, where
         we go as further as possible before we try the next direction.
+
         The skeleton of the algorithm is a loop that iterates over each cell in the grid. For each cell, we invoke the
         backtracking function to check if we would obtain a solution starting from this very cell.
-        For the backtracking function dfs(row, col, index), as a DFS algorithm, it is often implemented as a recursive
+
+        For the backtracking function search(row, col, index), as a DFS algorithm, it is often implemented as a recursive
         function. The function can be broken down into the following four steps:
+
             1- At the beginning, we first check if we reached the bottom case of the recursion, where the word to be
-               matched is empty, i.e. we have already found the match for each prefix of the word.
+                 matched is empty, i.e. we have already found the match for each prefix of the word.
+
             2- We then check if the current state is invalid, either the position of the cell is out of the boundary of
-               the board or the letter in the current cell does not match with the current letter of the word.
+                 the board or the letter in the current cell does not match with the current letter of the word.
+
             3- If the current step is valid, we then start the exploration. First, we mark the current cell as visited,
-               e.g. any non-alphabetic letter will do. Then we iterate through the four possible directions, namely up,
-               right, down and left.
-            4- At the end of the exploration, we revert the cell back to its original state. Finally we return the
-            result of the exploration.
-    Time complexity: O(N * M * (4^L)), where N and M are the dimensions of the board and L is the length of the word.
-    First, we have to find the first letter to start which gives time O(N * M). Then, for each search step it has 2~4
-    neighbours to go, and it has L steps, where L is the length of the word to be searched.
+                 e.g. any non-alphabetic letter will do. Then we iterate through the four possible directions, namely up,
+                 right, down and left.
+
+            4- At the end of the exploration, we revert the cell back to its original state. Finally, we return the
+                 result of the exploration.
+
+    Time complexity: O(N * M * (3^L)), where N and M are the dimensions of the board and L is the length of the word.
+    First, we have to find the first letter to start which gives time O(N * M). Then, for each search step it has 1~3
+    neighbours to go as from every block we go in at most 3 adjacent blocks (avoiding the direction we came from) and
+    it has L steps, where L is the length of the word to be searched.
     https://cs.stackexchange.com/questions/96626/whats-the-big-o-runtime-of-a-dfs-word-search-through-a-matrix
     Space complexity: O(L), for the recursion call stack
     """
 
-    def dfs(i, j, index):
+    def search(i, j, index):
         if index == length:  # No characters left to search
             return True
         if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index]:
@@ -41,14 +50,14 @@ def exist_v1(board, word):
         temp = board[i][j]
         board[i][j] = '#'  # Mark the choice before exploring further
         for x, y in directions:
-            if dfs(i + x, j + y, index + 1):
+            if search(i + x, j + y, index + 1):
                 return True  # Sudden-death return, no cleanup.
                 # Instead of returning True directly once we find a match, we could've simply broken out of the loop
                 # to do the cleanup before returning
                 # found = True
                 # break
         # None of the 4 potential paths got matched up to the end, meaning the current cell is not a good candidate,
-        # so return it to the non-visited pool by changing it back to its original value
+        # so return it back to the non-visited pool by changing it back to its original value
         board[i][j] = temp  # Backtrack: Revert the change, a clean slate and no side effect
         return False
 
@@ -56,7 +65,7 @@ def exist_v1(board, word):
     directions = {(-1, 0), (1, 0), (0, -1), (0, 1)}
     for i in range(n):
         for j in range(m):
-            if dfs(i, j, 0):
+            if search(i, j, 0):
                 return True
     return False
 
