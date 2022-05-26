@@ -111,17 +111,19 @@ def exist_v2(board, word):
 
 def exist_v3(board, word):
     """ Good ol' backtracking where we pass an augmented path to each recursive call.
-    Time complexity: O(N * M * (4^L))
+
+    Time complexity: O(N * M * (3^L))
     Space complexity: O(L)
     """
 
-    def dfs(i, j, index, visited):
+    def search(i, j, index, visited):
         if index == len(word):
             return True
         if not 0 <= i < n or not 0 <= j < m or (i, j) in visited or board[i][j] != word[index]:
             return False
         for x, y in directions:
-            if dfs(i + x, j + y, index + 1, visited | {(i, j)}):  # visited | {(i, j)} is equivalent to (path + new_val)
+            # visited | {(i, j)} is equivalent to (path + new_val)
+            if search(i + x, j + y, index + 1, visited | {(i, j)}):
                 return True
         return False
 
@@ -130,7 +132,7 @@ def exist_v3(board, word):
     visited = set()
     for i in range(n):
         for j in range(m):
-            if dfs(0, i, j, visited):
+            if search(0, i, j, visited):
                 return True
     return False
 
