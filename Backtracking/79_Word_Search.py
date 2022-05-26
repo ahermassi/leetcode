@@ -71,17 +71,21 @@ def exist_v1(board, word):
 
 
 def exist_v2(board, word):
-    """ Backtracking without altering the input board. Use a 'visited' set to store the visited cells. When we exhaust
-        all search possibilities, we backtrack and remove the cell from 'visited' set.
+    """ Backtracking without altering the input board.
+
+         We use a 'visited' set to store the visited cells. When we exhaust all search possibilities, we backtrack and
+         remove the cell from 'visited' set.
+
         This (and the technique used in the following solution) resemble what we usually do in the backtracking
         problems where we have to try/enumerate all the possible paths. At every recursive call, we'd either:
             - Call f(path + new_val), or
             - path.append(new_val); f(path); path.pop()
-    Time complexity: O(N * M * (4^L))
+
+    Time complexity: O(N * M * (3^L))
     Space complexity: O(L)
     """
 
-    def dfs(i, j, index):
+    def search(i, j, index):
         if index == length:
             return True
         if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index] or (i, j) in visited:
@@ -90,7 +94,7 @@ def exist_v2(board, word):
         # step. At the end of each step, we would also revert our marking, so that we could have a clean slate to try
         # another direction.
         for x, y in directions:
-            if dfs(i + x, j + y, index + 1):
+            if search(i + x, j + y, index + 1):
                 return True
         visited.remove((i, j))  # Backtrack and remove the mark
         return False
@@ -100,7 +104,7 @@ def exist_v2(board, word):
     visited = set()
     for i in range(n):
         for j in range(m):
-            if dfs(i, j, 0):
+            if search(i, j, 0):
                 return True
     return False
 
