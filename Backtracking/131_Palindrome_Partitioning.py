@@ -116,6 +116,52 @@ def partition_v2(s):
     return res
 
 
+def partition_v3(s):
+    """ This approach uses a similar backtracking algorithm. However, the previous approaches performs one extra
+         iteration to determine if a given substring is a palindrome. We are repeatedly iterating over the same
+         substring multiple times and the result is always the same. There are overlapping sub-problems, and we could
+         further optimize the approach by using Dynamic Programming to determine if a string is a palindrome in constant
+         time.
+
+         A given string s starting at index 'start'' and ending at index 'end' is a palindrome if following two
+         conditions are satisfied :
+
+            1- The characters at 'start' and 'end' indices are equal.
+            2- The substring starting at index start+1 and ending at index end−1 is a palindrome.
+
+        Let N be the length of the string. To determine if a substring starting at index 'start' and ending at index
+        'end' is a palindrome, we use a 2-dimensional array dp of size N * N where:
+
+                   dp[start][end] = true , if the substring beginning at index 'start'' and ending at index 'end' is a
+                   palindrome.
+                   Otherwise, dp[start][end] = false
+
+        Also, we must update the dp array if we find that the current string is a palindrome.
+
+        The logic is similar to the DP solution of 5- Longest Palindromic Substring.
+
+    Time complexity: O(2^N)
+    Space complexity: O(N^2), for call stack and dp array
+    """
+    def dfs(index, path):
+        if index == n:
+            res.append(path)
+            return
+        for i in range(index, n):
+            if s[index] == s[i] and (i - index <= 1 or dp[index + 1][i - 1]):
+                dp[index][i] = True
+                dfs(i + 1, path + [s[index:i + 1]])
+                # How is dp[index+1][i-1] is available even when we are at position 'index'? i always starts from
+                # 'index'' which is trying to add s[index] to the path. Since a single character is a palindrome,
+                # and the program recursively calls dfs(index+1) when i==index, therefore, when the call returns from
+                # index+1, dp[index+1] is already set.
+
+    n, res = len(s), []
+    dp = [[False] * n for _ in range(n)]
+    dfs(0, [])
+    return res
+
+
 class Test(unittest.TestCase):
     data = [('aab', [['a', 'a', 'b'], ['aa', 'b']])]
 
@@ -123,6 +169,7 @@ class Test(unittest.TestCase):
         for test_s, result in self.data:
             self.assertEqual(result, partition_v1(test_s))
             self.assertEqual(result, partition_v2(test_s))
+            self.assertEqual(result, partition_v3(test_s))
 
 
 if __name__ == '__main__':
