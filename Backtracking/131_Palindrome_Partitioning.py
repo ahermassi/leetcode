@@ -4,19 +4,60 @@ Return all possible palindrome partitioning of s. """
 import unittest2 as unittest
 
 
-# Watch: https://www.youtube.com/watch?v=4ykBXGbonlA
+# Video explanation: https://www.youtube.com/watch?v=4ykBXGbonlA
 
 def partition_v1(s):
-    """ We will take 'snapshots' of snippets as we advance through the string and see if they can add to the
+    """ The aim is to partition the string into all possible palindrome combinations. To achieve this, we must generate
+         all possible substrings of a string by partitioning at every index until we reach the end of the string.
+
+         The first thing that comes to mind is Depth First Search. In Depth First Search, we recursively expand
+         potential candidate until the defined goal is achieved. After that, we backtrack to explore the next potential
+         candidate.
+
+         In the backtracking algorithm, we recursively traverse over the string in depth-first search fashion. For each
+         recursive call, the beginning index of the string is given as 'index'.
+
+            - Iteratively generate all possible substrings beginning at index. The i pointer iterates from index till
+               the end of the string.
+
+            - For each of the substrings generated, check if it is a palindrome.
+
+            - If the substring is a palindrome, the substring is a potential candidate. Add substring to the path and
+               perform a depth-first search on the remaining substring. If current substring ends at index j, j+1 becomes
+               the start index for the next recursive call.
+
+            - Backtrack if start index is equal to the string length and add the path to the result.
+
+        We will take 'snapshots' or snippets as we advance through the string and see if they can add to the
         decomposition that we want to build.
-        Our Choice: The start and the end of a 'snapshot' that we want to add to a decomposition we are working on.
-        Our Constraints: Each piece of the decomposition must be a palindrome, we cannot choose and advance on a
+
+        Our Choice: The start and the end of a snapshot that we want to add to a decomposition we are working on.
+
+        Our Constraints: Each piece of the decomposition must be a palindrome, and we cannot choose and advance on a
         non-palindrome snippet.
-        Our Goal: Decompose the whole string. When our decomposition progress index is the length of the array then we
+
+        Our Goal: Decompose the whole string. When our decomposition progress index is the length of the string, then we
         know that we have achieved this.
-    Time complexity: O(N * 2^N), we are basically taking subsets so (2^N) and the O(N) time to copy array to our
-    answer. This is a rare worst case where all decompositions turn out to be palindromic (a string of all 1 character).
-    Our best case becomes greatly improved.
+
+    Time complexity: O(N * 2^N), we are basically taking subsets so (2^N). It is the number of possible partitioning
+    (each partitioning is a way to partition the string into substrings). For each partitioning, we do two things: build
+    the substrings for that partition and check whether each substring in that partitioning is a palindrome or not.
+    O(N * 2^N) is a rare worst case where all decompositions turn out to be palindromic (for example, a string of all
+    1 character like 'aaaaa'). Our best case becomes greatly improved.
+    Note: The number 2^N in complexity analysis above is in fact the number of nodes in the search tree - NOT the number
+    of substrings. It is the number of possible partitioning (each partitioning is a way to partition the string into
+    substrings). This can be derived as follows:
+    Imagine the string as a sequence of N chars separated by a pipe between neighbors, such as a string
+    "abcde" = a|b|c|d|e. Such a representation will have N-1 pipes - in this example, 4 pipes.
+    If we want the partitioning to have 4 substrings, then we can ask, "how many ways can we select 3 pipes out of the 4
+    pipes?" - answer is 4 choose 3, i.e. 4C3 = 4. The 4 ways to partition are:
+    { {"a", "b", "c", "de"}, {"a", "b", "cd", "e"}, {"a", "bc", "d", "e"}, {"ab", "c", "d", "e"}
+    Arguing like the above, the total number of ways to partition this example is when we ask all questions "how many
+    ways can we select 0 or 1 or 2 or 3 or 4 pipes?" = 4C0 + 4C1 + 4C2 + 4C3 + 4C4 = 24 = 16
+    In general, a string of length N will have N-1C0 + N-1C1 + ... +N-1CN-2 = 2N-1 = 2N-1 = O(2^N) partitioning.
+    So to summarize: For a string of length N, there will be (N - 1) intervals between characters. For every interval, we
+    can cut it or not cut it, so there will be 2^N ways to partition the string. For every partition way, we need to check
+    if it is palindrome, which is O(N).
     Space complexity: O(N), at worst we will always go N stack frames deep in our recursion since an all single
     character decomposition is always a palindromic decomposition.
     """
