@@ -87,17 +87,18 @@ def partition_v1(s):
 
 def partition_v2(s):
     """ Same solution but with a clearer backtracking.
+
     Time complexity: O(N * 2^N)
     Space complexity: O(N)
     """
 
-    def dfs(index, path):
+    def dfs(index):
         if index == n:
             res.append(path[:])  # Append a copy of path because the same path reference is used by all recursive calls
         for i in range(index, n):
             if is_palindrome(index, i):
                 path.append(s[index:i + 1])  # Choose
-                dfs(i + 1, path)  # Recurse
+                dfs(i + 1)  # Recurse
                 path.pop()  # Backtrack, un-choose. We are done searching, remove the snippet from our 'path'. Next
                 # loop iteration will try another snippet in this stack frame.
 
@@ -110,7 +111,8 @@ def partition_v2(s):
         return True
 
     n, res = len(s), []
-    dfs(0, [])
+    path = []
+    dfs(0)
     return res
 
 
