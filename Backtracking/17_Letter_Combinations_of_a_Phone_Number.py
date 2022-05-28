@@ -68,10 +68,12 @@ def letter_combinations_v1(digits):
 
 def letter_combinations_v2(digits):
     """ Iterative approach, similar to BFS where 'result' list is the queue.
+
         Example: digits = 23
             1st iteration: result = [''], new_result = [a, b, c]
             2nd iteration: result = [a, b, c], new_result = [ad, bd, cd, ae, be, ce, af, bf, cf]
             Return: result = [ad, bd, cd, ae, be, ce, af, bf, cf]
+
         Example: digits = 234
             1st iteration: result = [''], new_result = [a, b, c]
             2nd iteration: result = [a, b, c], new_result = [ad, bd, cd, ae, be, ce, af, bf, cf]
@@ -79,6 +81,7 @@ def letter_combinations_v2(digits):
             new_result = [adg, bdg, cdg, aeg, beg, ceg, afg, bfg, cfg, adh, bdh, cdh, aeh, beh, ceh, afh, bfh, cfh, adi,
                           bdi, cdi, aei, bei, cei, afi, bfi, cfi]
             Return: result
+
     Time complexity: O(3^N + 4^M)
     Space complexity: O(3^N + 4^M)
     """
@@ -89,8 +92,8 @@ def letter_combinations_v2(digits):
     for digit in digits:
         new_result = []
         for c in mapping[digit]:
-            for path in result:
-                new_result.append(path + c)
+            for combination in result:
+                new_result.append(combination + c)
         result = new_result
     return result
 
