@@ -2,7 +2,7 @@
 represent.
 A mapping of digit to letters (just like on the telephone buttons) is given. Note that 1 does not map to any letters.
 """
-
+from collections import deque
 import unittest2 as unittest
 
 # Video explanation: https://www.youtube.com/watch?v=a-sMgZ7HGW0
@@ -96,6 +96,28 @@ def letter_combinations_v2(digits):
                 new_result.append(combination + c)
         result = new_result
     return result
+
+
+def letter_combinations_v3(digits):
+    """ Iterative, BFS fashion using an actual queue.
+
+        For each digit added, remove and copy every element in the queue and add the possible letter to that partial
+        combination, then add the updated elements back into queue. Repeat this until all the digits are processed.
+
+    Time complexity: O(3^N + 4^M)
+    Space complexity: O(3^N + 4^M)
+    """
+    if not digits:
+        return None
+    mapping = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
+    queue = deque([''])
+    for digit in digits:
+        n = len(queue)
+        for _ in range(n):
+            combination = queue.popleft()
+            for c in mapping[digit]:
+                queue.append(combination + c)
+    return queue
 
 
 class Test(unittest.TestCase):
