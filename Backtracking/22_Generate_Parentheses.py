@@ -97,24 +97,25 @@ def generate_parenthesis_v1(n):
 
 
 def generate_parenthesis_v2(n):
-    """ Same algorithm but with "explicit" backtracking. Also, string concatenation can be expensive.
+    """ Same algorithm but with "explicit" backtracking. Also, expensive string concatenation can be avoided.
+
     Time complexity: O(4^n)
     Space complexity: O(n)
     """
-    def backtrack(open, close, s):
+    def dfs(open, close, path):
         if open == close == n:
-            res.append(''.join(s))
+            res.append(''.join(path))
         if open < n:
-            s.append('(')
-            backtrack(open + 1, close, s)
-            s.pop()
+            path.append('(')
+            dfs(open + 1, close, path)
+            path.pop()
         if open > close:
-            s.append(')')
-            backtrack(open, close + 1, s)
-            s.pop()
+            path.append(')')
+            dfs(open, close + 1, path)
+            path.pop()
 
     res = []
-    backtrack(0, 0, [])
+    dfs(0, 0, [])
     return res
 
 
