@@ -9,30 +9,43 @@ import unittest2 as unittest
 
 
 def rotate(matrix):
-    """ The obvious idea would be to transpose the matrix first and then reverse each row. Transposing a matrix
-        exchanges the row and column of the same index: 1st row becomes 1st column, 2nd row becomes 2nd column etc.
-        Rotating the matrix by 90 degrees (clockwise) puts the 1st row to the last column, 2nd row to the 2nd-to-last
-        column, etc.
-        Clockwise rotate:
+    """ The most elegant solution for rotating the matrix is to firstly reverse the matrix around the main diagonal, and
+         then reverse it from left to right. These operations are called transpose and reflect in linear algebra.
+
+        Transposing a matrix exchanges the row and column of the same index: 1st row becomes 1st column, 2nd row
+        becomes 2nd column etc. Rotating the matrix by 90 degrees (clockwise) puts the 1st row to the last column,
+        2nd row to the 2nd-to-last column, etc.
+
+        Clockwise rotation:
             First swap the symmetry, then reverse rows:
-            1 2 3     1 4 7     7 4 1
-            4 5 6  => 2 5 8  => 8 5 2
-            7 8 9     3 6 9     9 6 3
-        Anti-clockwise rotate:
-            First swap the symmetry, then reverse the matrix:
-            1 2 3     1 4 7     3 6 9
-            4 5 6  => 2 5 8  => 2 5 8
-            7 8 9     3 6 9     1 4 7
+            1 2 3           1 4 7             7 4 1
+            4 5 6   =>   2 5 8    =>    8 5 2
+            7 8 9           3 6 9             9 6 3
+
+        Anti-clockwise rotation:
+            First swap the symmetry, then reverse columns:
+            1 2 3           1 4 7             3 6 9
+            4 5 6  =>    2 5 8    =>    2 5 8
+            7 8 9           3 6 9             1 4 7
 
     Time complexity : O(N^2)
-    Space complexity : O(1) since we do a rotation in place
+    Space complexity : O(1), since we do a rotation in place
     """
     n = len(matrix)
+    # Transpose
     for i in range(n):
-        for j in range(i, n):
+        for j in range(i):
             matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
-    for row in matrix:
-        row.reverse()
+    # Reverse rows
+    for i in range(n):
+        left, right = 0, n - 1
+        while left < right:
+            matrix[i][left], matrix[i][right] = matrix[i][right], matrix[i][left]
+            left += 1
+            right -= 1
+    # Equivalent to:
+    # for row in matrix:
+    #     row.reverse()
 
 
 class Test(unittest.TestCase):
