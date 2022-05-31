@@ -50,12 +50,43 @@ def spiral_order_v2(matrix):
                 res.append(row.pop(0))
     return res
 
+# Video explanation: https://www.youtube.com/watch?v=BJnMZNwUk1M
+
 
 def spiral_order_v3(matrix):
     """ We simulate peeling off the layers as in the previous solution, but without modifying the input matrix.
+
+        We process entries in the sequence (Ro,Co), (R0,C1), …  (R0,Cn-1), i.e., we are moving to the right. Then we
+        process entries (Ro,Cn-1), (R1,Cn-1), …, (Rn-1,Cn-.1)., i.e., we are moving down. Then we process entries
+        (Rn-1,Cn-2), (Rn-1,Cn-3), …  (Rn-1,C0), i.e., we are moving to the left. Then we process entries
+        (Rn-2,C0), (Rn-3,C0), …, (R1,C0), i.e., we are moving up.
+        This method is applied until all elements are processed. Conceptually, we are processing the array in ‘shells'
+        from the outside moving to the center.
+
+        We can achieve moving in different directions by modifying row and column indices.
+
+        When shall we change our direction? We need to turn when we either reach the matrix boundaries, or we reach the
+        cells in the array that we have visited before. Matrix boundaries are fixed and provided already, but how could
+        we know if we have visited a particular cell or not?
+
+        We can move the boundaries towards the center of the matrix after we have traversed a row or a column.
+        Then, when we meet a boundary, we know it's time to change the direction and update the boundary.
+
+        Let's define row_begin, row_end, col_begin, col_end as the boundaries of rows and columns.
+
         We traverse right and increment row_begin, then traverse down and decrement col_end, then we traverse left
         and decrement row_end, and finally we traverse up and increment col_begin.
-        Note that row_begin, row_end, col_begin, col_end are the boundaries of rows and columns.
+
+        Before we traverse from right to left, we need to make sure that we are not on a row that has already been
+        traversed. If we are not, then we can traverse from right to left.
+        Similarly, before we traverse from top to bottom, we need to make sure that we are not on a column that has
+        already been traversed. Then we can traverse from down to up.
+
+        So these previous conditions avoid repeating the right-to-left or down-to-up scan if there is only 1 row or
+        column in the matrix.
+        First, (row_begin <= row_end) will return False if there is only 1 row, so no need to scan right-to-left.
+        Then, (col_begin <= col_end) will return False if there is only 1 column, so no need to scan down-to-up.
+
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
