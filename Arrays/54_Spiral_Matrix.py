@@ -29,7 +29,11 @@ def spiral_order_v1(matrix):
 
 
 def spiral_order_v2(matrix):
-    """ Walk through an example to better understand this solution. Peel off layers.
+    """ Peel off layers. Process the array in ‘shells' from the outside moving to the center.
+
+        We go boundary by boundary and move inwards. That is the essential operation. First row, last column, last row,
+        first column, and then we move inwards by 1 and then repeat. That is all the simulation we need.
+
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
