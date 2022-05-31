@@ -117,6 +117,37 @@ def spiral_order_v3(matrix):
     return res
 
 
+def spiral_order_v4(matrix):
+    """ We can avoid the boundary checks of the previous simulation if we use a direction variable.
+
+    Time complexity: O(N * M)
+    Space complexity: O(1)
+    """
+    row_begin, row_end = 0, len(matrix) - 1
+    col_begin, col_end = 0, len(matrix[0]) - 1
+    direction = 0
+    res = []
+    while row_begin <= row_end and col_begin <= col_end:
+        if direction == 0:
+            for j in range(col_begin, col_end + 1):
+                res.append(matrix[row_begin][j])
+            row_begin += 1
+        elif direction == 1:
+            for i in range(row_begin, row_end + 1):
+                res.append(matrix[i][col_end])
+            col_end -= 1
+        elif direction == 2:
+            for j in reversed(range(col_begin, col_end + 1)):
+                res.append(matrix[row_end][j])
+            row_end -= 1
+        else:
+            for i in reversed(range(row_begin, row_end + 1)):
+                res.append(matrix[i][col_begin])
+            col_begin += 1
+        direction = (direction + 1) % 4
+    return res
+
+
 class Test(unittest.TestCase):
     data = [([[
         [1, 2, 3],
