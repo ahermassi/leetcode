@@ -4,12 +4,16 @@ import unittest2 as unittest
 
 
 def set_zeroes_v1(matrix):
-    """ If any cell of the matrix has a zero we can record its row and column number. All the cells of this recorded
-        row and column can be marked zero in the next iteration.
+    """ If any cell of the matrix has a zero, we can record its row and column number. All the cells of this recorded
+         row and column can be marked zero in the next pass.
+
         We make a pass over our original array and look for zero entries.
+
         If we find that an entry at [i, j] is 0, then we need to record somewhere the row i and column j.
+
         Finally, we iterate over the original matrix. For every cell we check if the row r or column c had been marked
         earlier. If any of them was marked, we set the value in the cell to 0.
+
     Time complexity: O(N * M), where N and M are the number of rows and columns respectively
     Space complexity: O(N + M), since we're only recording the indices of rows and columns in the two hash sets
     """
