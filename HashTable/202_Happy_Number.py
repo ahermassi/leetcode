@@ -59,14 +59,21 @@ def is_happy_v2(n):
         have actual nodes and pointers, but the data does still form a linked list structure. The starting number is
         the head node of the list, and all the other numbers in the chain are nodes. The next pointer is obtained with
         our digit_square_sum(n) function.
+
         We can therefore use Floyd's Cycle-Finding Algorithm here. This algorithm is based on 2 runners running around
-        a circular race track, a fast runner and a slow runner. At each step of the algorithm, the slow runner goes
-        forward by 1 number in the chain, and the fast runner goes forward by 2 numbers (nested calls to the
-        digit_square_sum(n) function).
+        a circular racing track, a fast runner (hare) and a slow runner (tortoise). At each step of the algorithm, the
+        slow runner goes forward by 1 number in the chain, and the fast runner goes forward by 2 numbers
+        (nested calls to the digit_square_sum(n) function).
+
+        Regardless of where the tortoise and hare start in the cycle, they are guaranteed to eventually meet. This is
+        because the hare moves one node closer to the tortoise (in their direction of movement) each step.
+
         If n is a happy number, i.e. there is no cycle, then the fast runner will eventually get to 1 before the slow
         runner.
-        If n is not a happy number, then eventually the fast runner and the slow runner will be on the same number.
-    Time complexity: O(logn), we're treating the length of the chain to the cycle as insignificant compared to the cost
+
+        If n is not a happy number, then eventually the fast runner and the slow runner will meet at the same number.
+
+    Time complexity: O(log n), we're treating the length of the chain to the cycle as insignificant compared to the cost
     of calculating the next value for the first n
     Space complexity: O(1), we don't need a hash set to detect the cycle
     """
@@ -75,8 +82,8 @@ def is_happy_v2(n):
         total_sum = 0
         while n:
             digit = n % 10
-            n = n // 10
             total_sum += digit ** 2
+            n = n // 10
         return total_sum
 
     slow, fast = n, digit_square_sum(n)
