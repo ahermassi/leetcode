@@ -40,16 +40,16 @@ def plus_one_v1(digits):
 
 def plus_one_v2(digits):
     """ Same as above but recursively.
+
     Time complexity: O(N), where N is the length of the array
     Space complexity: O(N), for the call stack in the worst case of all array elements are equal to 9
     """
-    if len(digits) == 1 and digits[0] == 9:
-        return [1, 0]
+    if len(digits) == 0:
+        return [1]
     if digits[-1] != 9:
         digits[-1] += 1
     else:
-        digits[-1] = 0
-        digits[:-1] = plus_one_v2(digits[:-1])
+        digits = plus_one_v2(digits[:-1]) + [0]
     return digits
 
 
