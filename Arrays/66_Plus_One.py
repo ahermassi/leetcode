@@ -8,19 +8,34 @@ import unittest2 as unittest
 
 
 def plus_one_v1(digits):
-    """ Read array from end, and replace each digit with 0 as long as it is a 9. Otherwise, add 1 and return.
-    Time complexity: O(N)
-    Space complexity: O(1), when digits contains at least one not-nine digit, and O(N) otherwise
+    """ Identify the rightmost digit which is not equal to nine and increase that digit by one. All the following
+         consecutive digits of nine should be set to zero.
+
+         When all the digits are nines, we need to set all nines to zero and append 1 to the left side of the array.
+
+            - Move along the input array starting from the end of array.
+
+            - Set all the nines at the end of array to zero.
+
+            - If we meet a not-nine digit, we would increase it by one. The job is done - return digits.
+
+            - We're here because all the digits were equal to nine. Now they have all been set to zero. We then append
+               the digit 1 in front of the other digits and return the result.
+
+    Time complexity: O(N), since it's not more than one pass along the input list
+    Space complexity: O(1), when input contains at least one not-nine digit, and O(N) otherwise. Although we perform the
+    operation in-place (i.e. on the input list itself), in the worst scenario, we would need to allocate an intermediate
+    space to hold the result, which contains the N+1 elements.
     """
     i = len(digits) - 1
-    while i >= 0 and digits[i] == 9:
-        digits[i] = 0
-        i -= 1
-    if i >= 0:
-        digits[i] += 1
-    else:
-        digits = [1] + digits
-    return digits
+    while i >= 0:
+        if digits[i] == 9:
+            digits[i] = 0
+            i -= 1
+        else:
+            digits[i] += 1
+            return digits
+    return [1] + digits
 
 
 def plus_one_v2(digits):
