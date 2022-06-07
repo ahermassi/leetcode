@@ -82,6 +82,32 @@ def multiply_v1(num1, num2):
 
 
 def multiply_v2(num1, num2):
+    """ If coming up with left and right insertion indices if not intuitive, we can use a write index that we keep
+         shifting to the left once a digit multiplication is exhausted.
+    Time complexity: O(N * M)
+    Space complexity: O(N + M)
+    """
+    n, m = len(num1), len(num2)
+    res = [0] * (n + m)
+    write_index = n + m - 1
+    for i in reversed(range(n)):
+        a = (ord(num1[i]) - ord('0'))
+        index = write_index
+        for j in reversed(range(m)):
+            b = (ord(num2[j]) - ord('0'))
+            mul = a * b
+            mul += res[index]
+            res[index] = mul % 10
+            res[index-1] += mul // 10
+            index -= 1
+        write_index -= 1
+    i = 0
+    while i < n + m and res[i] == 0:
+        i += 1
+    return ''.join(map(str, res[i:])) if i < n + m else '0'
+
+
+def multiply_v3(num1, num2):
     """ Similar algorithm but with an extra loop. If we break the multiplication it into pieces, it will have the
         following steps:
             - Compute products from each pair of digits from num1 and num2
@@ -117,6 +143,7 @@ class Test(unittest.TestCase):
         for test_num1, test_num2, result in self.data:
             self.assertEqual(result, multiply_v1(test_num1, test_num2))
             self.assertEqual(result, multiply_v2(test_num1, test_num2))
+            self.assertEqual(result, multiply_v3(test_num1, test_num2))
 
 
 if __name__ == '__main__':
