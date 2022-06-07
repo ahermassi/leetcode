@@ -3,33 +3,59 @@ also represented as a string. """
 
 import unittest2 as unittest
 
-
+# Video explanation: https://www.youtube.com/watch?v=1vZswirL8Y8
 # Check out: https://leetcode.com/problems/multiply-strings/discuss/17605/Easiest-JAVA-Solution-with-Graph-Explanation
 
+
 def multiply_v1(num1, num2):
-    """ Start from right to left, perform multiplication on every pair of digits, and add them together.
+    """ We can try to break the problem down into manageable chunks, as is done in elementary mathematics. Thus, we will
+         focus on one digit at a time.
+
+         We take the ones place digit of the second number, then multiply it with all digits of the first number
+         consequently going backward, and write the result. We need to remember about carry as well.
+         Then we take the tens place digit of the second number and multiply it with all digits of the first number.
+         Then we continue the same way with hundreds place digit, then with thousands place digit of the second number,
+         and so on, until we have visited every digit in the second number.
+
+         If we know the maximum size of the answer array ahead of time, we can add each multiplication result directly
+         to the final answer.
+
+         Try a few test cases, multiply two numbers, count how many digits are in the result, and compare that to the
+         number of digits in each number. Notice that whenever two numbers with the number of digits N and M are
+         multiplied, the result never exceeds (N+M) digits.
+
+         So, an answer array of size N+M is guaranteed to be large enough to hold our final result. Let's create one and
+         initialize all of its values as zero.
+
+        Start from right to left, perform multiplication on every pair of digits, and add them together.
         We can immediately conclude that:
-            num1[i] * num2[j] will be placed at indices [i + j, i + j + 1]
+
+                num1[i] * num2[j] will be placed at indices [i + j, i + j + 1]
+
         Traverse from the end of the num1 and num2 strings, respectively, extract the characters at the
         corresponding positions, convert them into integers, and multiply them. Then determine the positions 'left' and
-        'right' where the multiplied two digits are going to be placed. Since 'right' is lower than 'left', the
-        resulting two-digit mul is first added to whatever is in the 'right' index, which may cause the number on the
-        'right' to be greater than 9, so the number on the tens place is added to the high position 'left', leaving
-        only the remainder at the 'right' position.
+        'right' where the multiplied two digits are going to be placed.
+
+        Since 'right' is lower than 'left', the resulting two-digit mul is first added to whatever is in the 'right'
+        index, which may cause the number on the 'right' to be greater than 9, so the number on the tens place is added
+        to the high position 'left', leaving only the remainder at the 'right' position.
+
         Remember that leading zeros should be skipped. If skipping them leaves us with an empty list, then return '0'.
-        Otherwise, return the result 'res'
+        Otherwise, return the result 'res'.
+
     Time complexity: O(N * M), where N is the length of num1 and M is the length of num2
     Space complexity: O(N + M)
     """
     n, m = len(num1), len(num2)
     res = [0] * (n + m)  # placeholder for multiplication, n digits by m digits results in n+m digits
     for i in reversed(range(n)):
+        a = (ord(num1[i]) - ord('0'))
         for j in reversed(range(m)):
-            mul = (ord(num1[i]) - ord('0')) * (ord(num2[j]) - ord('0'))
-            # 'left' and 'right' are where we're going to place the result of current multiplication in 'res' list.
+            b = (ord(num2[j]) - ord('0'))
+            mul = a * b
+            # 'left' and 'right' are where we're going to place the result of current multiplication in the list.
             # We use the observation that 'left' and 'right' are always going to be equal to i+j and i+j+1, respectively
-            left = i + j
-            right = i + j + 1
+            left, right = i + j, i + j + 1
             mul += res[right]  # There could be an integer at 'right' index from a previous calculation
             res[right] = mul % 10
             res[left] += mul // 10
@@ -50,9 +76,9 @@ def multiply_v1(num1, num2):
             # Before -> [0, 17, 0, 1]
             # After  ->  [9, 8, 0, 1]
     i = 0
-    while i < len(res) and res[i] == 0:  # Move through the 'res' array and locate where the zero padding ends
+    while i < n + m and res[i] == 0:  # Move through the array and locate where the zero padding ends
         i += 1
-    return ''.join(map(str, res[i:])) if i < len(res) else '0'
+    return ''.join(map(str, res[i:])) if i < n + m else '0'
 
 
 def multiply_v2(num1, num2):
