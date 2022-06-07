@@ -108,31 +108,46 @@ def multiply_v2(num1, num2):
 
 
 def multiply_v3(num1, num2):
-    """ Similar algorithm but with an extra loop. If we break the multiplication it into pieces, it will have the
-        following steps:
+    """ Similar algorithm but with an extra loop.
+
+         If we break the multiplication down into pieces, it will have the following steps:
+
             - Compute products from each pair of digits from num1 and num2
             - Carry each element over
+
         Example: num1 = "12", num2 = "19"
-        res = [0, 1, 11,18], after first loop
-        res = [0, 2, 2, 8], after second loop
+
+        First for loop:
+        res = [0, 0, 0,18], after first iteration
+        res = [0, 0, 9,18], after second iteration
+        res = [0, 0,11,18], after third iteration
+        res = [0, 1,11,18], after fourth iteration
+
+        Second for loop:
+        res = [0, 1, 11, 8], carry = 1, after first iteration
+        res = [0, 1, 2, 8], carry = 1, after second iteration
+        res = [0, 2, 2, 8], carry = 0, after third iteration
+
     Time complexity: O(N * M)
     Space complexity: O(N + M)
     """
     n, m = len(num1), len(num2)
     res = [0] * (n + m)
     for i in reversed(range(n)):
+        a = (ord(num1[i]) - ord('0'))
         for j in reversed(range(m)):
-            mul = (ord(num1[i]) - ord('0')) * (ord(num2[j]) - ord('0'))
+            b = (ord(num2[j]) - ord('0'))
+            mul = a * b
             res[i + j + 1] += mul
     carry = 0
     for i in reversed(range(len(res))):
         res[i] += carry
         carry = res[i] // 10
         res[i] %= 10
-    ptr = 0
-    while ptr < len(res) and res[ptr] == 0:
-        ptr += 1
-    return ''.join(map(str, res[ptr:])) if ptr < len(res) else '0'
+    i = 0
+    while i < len(res) and res[i] == 0:
+        i += 1
+    return ''.join(map(str, res[i:])) if i < len(res) else '0'
 
 
 class Test(unittest.TestCase):
