@@ -13,10 +13,10 @@ DetectSquares() Initializes the object with an empty data structure.
 void add(int[] point) Adds a new point = [x, y] to the data structure.
 int count(int[] point) Counts the number of ways to form axis-aligned squares with point = [x, y] as described above. """
 
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 
-class DetectSquares:
+class DetectSquaresV1:
     """ The idea is to keep two pieces of information:
 
             - Counter of points, that is how many times we have each of them
@@ -70,5 +70,57 @@ class DetectSquares:
             squares = 0
             squares += self.counter[(x - side_length, y)] * self.counter[(x - side_length, y1)]
             squares += self.counter[(x + side_length, y)] * self.counter[(x + side_length, y1)]
+            res += squares
+        return res
+
+
+class DetectSquaresV2:
+    """ We can apply the same idea as above but using a single hash map.
+
+        We store the COUNT of all points lying on x-axis with x coordinate, and for each point on x-axis, we have
+        corresponding y coordinate such as:
+
+                x_axis[x][y] = count of points with coordinate (x, y)
+
+        Notice how x_axis map gives us access to count of points with coordinates (x, y) AND immediate access to all
+        points that share the same x coordinate, thus combining the 2 maps of the previous solution.
+
+        Now, for check, we need to pick all points lying on x coordinate of the query point. For each of these points,
+        we calculate side length and find remaining two points at same distance on left and right sides of x.
+
+        For a query point p1 = (x, y), we try all the points p2 which have the same x coordinate with p1,
+        i.e. p1.x = p2.x
+        Since we now have two points p1 and p2, we can form a square by computing the positions of the two remain points
+        p3, p4.
+
+        To get the count of all possible squares, we need to multiply count of all possible p2, p3, and p4 possible
+        points.
+
+            - Count of right side squares = count(p3') * count(p4')
+            - Count of left side squares = count(p3'') * count(p4'')
+            => Result = count(p2) * (count of left side squares + count of right side squares)
+
+    Time complexity: O(1) for add(point), O(N) for count(point)
+    Space complexity: O(N)
+    """
+
+    def __init__(self):
+        self.x_axis = defaultdict(Counter)
+
+    def add(self, point):
+        x, y = point
+        self.x_axis[x][y] += 1
+
+    def count(self, point):
+        x, y = point
+        res = 0
+        for y1 in self.x_axis[x]:
+            if y1 == y:
+                continue
+            side_length = abs(y - y1)
+            squares = 0
+            squares += self.x_axis[x - side_length][y] * self.x_axis[x - side_length][y1]
+            squares += self.x_axis[x + side_length][y] * self.x_axis[x + side_length][y1]
+            squares *= self.x_axis[x][y1]
             res += squares
         return res
