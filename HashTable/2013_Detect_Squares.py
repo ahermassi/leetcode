@@ -1,0 +1,74 @@
+""" You are given a stream of points on the X-Y plane. Design an algorithm that:
+
+Adds new points from the stream into a data structure. Duplicate points are allowed and should be treated as different
+points.
+Given a query point, counts the number of ways to choose three points from the data structure such that the three points
+and the query point form an axis-aligned square with positive area.
+An axis-aligned square is a square whose edges are all the same length and are either parallel or perpendicular to the
+x-axis and y-axis.
+
+Implement the DetectSquares class:
+
+DetectSquares() Initializes the object with an empty data structure.
+void add(int[] point) Adds a new point = [x, y] to the data structure.
+int count(int[] point) Counts the number of ways to form axis-aligned squares with point = [x, y] as described above. """
+
+from collections import defaultdict
+
+
+class DetectSquares:
+    """ The idea is to keep two pieces of information:
+
+            - Counter of points, that is how many times we have each of them
+            - List of corresponding y coordinates for each x coordinate, that is given x we can quickly find all points
+               that share this x coordinate
+
+        What we need to do now:
+
+            - For add(self, point): We increment the points counter and append the y coordinate to its respective list
+
+            - For count(self, point): We need to find all points with the same x coordinate, i.e. points in the form
+               (x, y2), and then reconstruct square. There will be two ways to do it: One above x-axis and one below it.
+               Here we need to take into account the frequencies of our points, so we use the counter for that.
+
+        For a query point p1 = (x, y), we try all the points p2 which have the same x coordinate with p1,
+        i.e. p1.x = p2.x
+        Since we now have two points p1 and p2, we can form a square by computing the positions of the two remain points
+        p3, p4.
+
+            - Calculate side_len = abs(p1.y - p2.y)
+
+            - Case 1: p3, p4 points are on the left side of the vertical line [p1, p2]:
+               p3 = (p1.x - side_len, p2.y)
+               p4 = (p1.x - side_len, p1.y)
+
+            - Case 2: p3, p4 points are on the right side of the vertical line [p1, p2]:
+               p3 = (p1.x + side_len, p2.y)
+               p4 = (p1.x + side_len, p1.y)
+
+    Time complexity: O(1) for add(point), O(N) for count(point) but in practice it is less because usually we do not
+    have a lot of points on the same line
+    Space complexity: O(N)
+    """
+
+    def __init__(self):
+        self.counter = defaultdict(int)
+        self.x_axis = defaultdict(list)
+
+    def add(self, point):
+        x, y = point
+        self.counter[(x, y)] += 1
+        self.x_axis[x].append(y)
+
+    def count(self, point):
+        x, y = point
+        res = 0
+        for y1 in self.x_axis[x]:
+            if y1 == y:
+                continue
+            side_length = abs(y - y1)
+            squares = 0
+            squares += self.counter[(x - side_length, y)] * self.counter[(x - side_length, y1)]
+            squares += self.counter[(x + side_length, y)] * self.counter[(x + side_length, y1)]
+            res += squares
+        return res
