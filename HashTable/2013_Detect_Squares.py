@@ -124,3 +124,46 @@ class DetectSquaresV2:
             squares *= self.x_axis[x][y1]
             res += squares
         return res
+
+
+# Video explanation: https://www.youtube.com/watch?v=bahebearrDc
+
+class DetectSquaresV3:
+    """ Similar to the first solution, we maintain a counter of points, that is how many times we have each of them, in
+        a hash map.
+
+        However, for a query point p1 = (x, y), we try all the points p2 which together with p1 form the diagonal of
+        non-empty square, i.e. abs(p1.x - p2.x) == abs(p1.y - p2.y) and p1.x != p2.x
+
+        Since we now have two points p1 and p2, we can form a square by computing the positions of the two remain points
+        p3, p4:
+
+                    p3 = (p1.x, p2.y)
+                    p4 = (p2.x, p1.y)
+
+    Time complexity: O(1) for add(point), O(N) for count(point)
+    Space complexity: O(N)
+    """
+
+    def __init__(self):
+        self.counter = defaultdict(int)
+
+    def add(self, point):
+        x, y = point
+        self.counter[(x, y)] += 1
+
+    def count(self, point):
+        x, y = point
+        res = 0
+        # Attempting to access a non-existent key in a defaultdict will add that key (with a value of zero in this
+        # case). This causes the dictionary to mutate while we are iterating over it, which throws an error.
+        # Therefore, we have to 1) Make a copy of the list of keys before iterating, and 2) Include the diagonal
+        # point's count in the multiplication before adding to the result. This is because the call to .keys() will
+        # never include duplicates, whereas iterating over a list will allow us to come across multiple copies of
+        # the diagonal point.
+        keys = list(self.counter.keys())
+        for x1, y1 in keys:
+            # Skip empty square or invalid square point. Diagonal points CAN NOT lie on the same x-axis.
+            if x != x1 and abs(x - x1) == abs(y - y1):
+                res += self.counter[(x1, y1)] * self.counter[(x, y1)] * self.counter[(x1, y)]
+        return res
