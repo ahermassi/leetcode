@@ -75,6 +75,32 @@ def can_jump_v2(nums):
         farthest_reach = max(farthest_reach, i + v)
 
 
+def can_jump_v3(nums):
+    """ Backtracking for the sake of completeness. TLE.
+
+        This is the inefficient solution where we try every single jump pattern that takes us from the first position to
+        the last. We start from the first position and jump to every index that is reachable. We repeat the process
+        until last index is reached. When stuck, backtrack.
+
+        We can add memoization (cache results based on indices) to this solution to become Top-Down Dynamic Programming.
+
+    Time complexity: O(2^N), there are 2^N (upper bound) ways of jumping from the first position to the last
+    Space complexity: O(N), recursion requires additional memory for the stack frames
+    """
+
+    def dfs(index):
+        if index >= n - 1:
+            return True
+        farthest_reach = index + nums[index]
+        for i in range(index + 1, farthest_reach + 1):
+            if dfs(i):
+                return True
+        return False
+
+    n = len(nums)
+    return dfs(0)
+
+
 class Test(unittest.TestCase):
     data = [([2, 3, 1, 1, 4], True), ([3, 2, 1, 0, 4], False)]
 
@@ -82,6 +108,7 @@ class Test(unittest.TestCase):
         for test_array, result in self.data:
             self.assertEqual(result, can_jump_v1(test_array))
             self.assertEqual(result, can_jump_v2(test_array))
+            self.assertEqual(result, can_jump_v3(test_array))
 
 
 if __name__ == '__main__':
