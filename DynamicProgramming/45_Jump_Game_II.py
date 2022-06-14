@@ -79,3 +79,46 @@ def jump_v2(nums):
         start, end = end + 1, farthest_reach
         jumps += 1
     return jumps
+
+
+# Video explanation: https://www.youtube.com/watch?v=vBdo7wtwlXs
+
+
+def jump_v3(nums):
+    """ This solution uses the same concept of the previous algorithm but with a twist.
+
+         Let's say the range of the current jump is [cur_jump_start, cur_jump_end], farthest_reach is the farthest point
+         that all points in [cur_jump_start, cur_jump_end] can reach. Once the current index reaches cur_jump_end, then
+         trigger another jump by setting the new cur_jump_end to farthest_reach, then repeat the steps above.
+
+         Note that we exclude the last element from the iteration because as soon as we reach the last element, we do
+         not need to jump any further.
+
+         This is an implicit BFS solution. i == cur_jump_end means we visited all the nodes in the current level.
+         Incrementing 'jumps' is like incrementing the level we are on. cur_jump_end = farthest_reach is like getting
+         the queue size (level size) for the next level we are traversing.
+
+        The idea is pretty intuitive. Think of each of the indices as missile bases, each having a max range defined by
+        the value at that index. Now say, for example, we can reach 100 miles from base 0. If the target is in that
+        range, then well and good, it's just a direct hop. If not, we start our search for better launchers moving
+        forward.
+
+        We discover that base 1 gives better coverage i.e. > 100 miles, so we may simply move to that base.
+        This counts as an extra hop. However, that this is not necessarily the best choice. Within the range of this
+        launcher (at base 0), there could be other bases providing better coverage. Our job is to iterate through and
+        choose the launcher that improves our current range and reaches the target first.
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    n, jumps = len(nums), 0
+    cur_jump_end = farthest_reach = 0  # cur_jump_end marks the end of the range that we can jump to
+    for i in range(n - 1):
+        farthest_reach = max(farthest_reach, i + nums[i])  # Extend current coverage/reach as further as possible
+        if i == cur_jump_end:  # If we have come to the end of the current jump, we need to make another jump
+            cur_jump_end = farthest_reach
+            jumps += 1
+            # Check if we reached the end of the array already (optional)
+            # if cur_jump_end >= n - 1:
+            #     return jumps
+    return jumps
