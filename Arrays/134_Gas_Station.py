@@ -137,6 +137,32 @@ def can_complete_circuit_v2(gas, cost):
     return start
 
 
+def can_complete_circuit_v3(gas, cost):
+    """ This solution is a more explicit version of the first algorithm.
+
+         The idea is to keep track of the deficits that are incurred as we traverse the stations. Deficit occurs when
+         the gas tank would not be enough to travel to the next station.
+
+        At the last station, we simply need to ask if the current gas tank is enough to cover the deficits that have
+        occurred between 0 and ith stations. If so, it means that we can cover any deficit that we encounter between 0
+        and ith stations (note that order does not matter). Therefore, we can conclude that our starting position i+1
+        can circle back to itself.
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    n = len(gas)
+    current_tank = start = 0
+    gas_deficit = 0
+    for i in range(n):
+        current_tank += gas[i] - cost[i]
+        if current_tank < 0:
+            gas_deficit += current_tank
+            start = i + 1
+            current_tank = 0
+    return start if current_tank + gas_deficit >= 0 else -1
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 3, 4, 5], [3, 4, 5, 1, 2], 3), ([2, 3, 4], [3, 4, 3], -1)
             ]
@@ -145,6 +171,7 @@ class Test(unittest.TestCase):
         for test_gas, test_cost, result in self.data:
             self.assertEqual(result, can_complete_circuit_v1(test_gas, test_cost))
             self.assertEqual(result, can_complete_circuit_v2(test_gas, test_cost))
+            self.assertEqual(result, can_complete_circuit_v3(test_gas, test_cost))
 
 
 if __name__ == '__main__':
