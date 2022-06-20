@@ -4,30 +4,45 @@ each letter appears in at most one part, and return a list of integers represent
 from collections import defaultdict
 import unittest2 as unittest
 
+# Video explanation: https://www.youtube.com/watch?v=B7m8UmZE-vw
 
-def partition_labels_v1(S):
-    """ Traverse the string and record the last index of each char and use it to denote the start of the next section.
-        Reset the left pointer at the start of each new section. Store the window size as the result for each section.
+
+def partition_labels_v1(s):
+    """ Since each character can appear only in one partition, we cannot form a partition that ends before the index of
+         the last occurrence of one of the characters in the partition.
+
+         Traverse the string and record the last index of each character and use it to denote the start of the next
+         partition. Reset the left pointer at the start of each new partition. Store the window size as the result for
+         each section.
+
         Consider the first label, say it's 'a'. The first partition must include it, and also the last occurrence of
         'a'. However, between those two occurrences of 'a', there could be other labels that make the minimum size of
         this partition bigger. For example, in 'abccaddbeffe', the minimum first partition is 'abccaddb'. This gives us
         the idea for the algorithm: For each letter encountered, process the last occurrence of that letter, extending
         the current partition [left, right] appropriately.
-        We need a hash map last_index[char] -> index of S where char occurs last. Then, let 'left' and 'right' be the
-        start and end of the current partition. If we are at a character c that occurs last at some index after 'right',
-        we'll extend the partition right = last_index[c]. If we are at the end of the partition (i == right), then
-        we'll append a partition size to our answer, and set the start of our new partition to (i + 1).
-    Time complexity: O(N), where N is the length of S
-    Space complexity: O(1), as the hash map can never have more than 26 entries (alphabet size)
+
+        We need a hash map last_occurrence[char] -> index of s where char occurs last. Then, let 'partition_start' and
+        'partition_end' be the start and end of the current partition. If we are at a character c whose last
+        occurrence falls at an index after 'partition_end', we'll extend the partition:
+        partition_end = last_occurrence[c]. If we are at the end of the partition (i == partition_end), then we append a
+        partition size to our answer, and set the start of our new partition to (i + 1).
+
+        Imagine a bus moving forward, and imagine each character as a person yelling "I need to go that far!".
+        If a newcomer yelled a farther position, we extend our expected ending position to that position. Eventually,
+        if we reached a position that satisfied everybody in the bus at the moment, we partition and clear the bus.
+
+    Time complexity: O(N), where N is the length of s
+    Space complexity: O(1), as the hash map can't have more than 26 entries (alphabet size)
     """
-    last_index, res = {c: i for i, c in enumerate(S)}, []
-    left = right = 0
-    for i, c in enumerate(S):
-        right = max(right, last_index[c])  # This is the right end of the smallest partition we're looking for. This
-        # index guarantees that all the previous characters don't occur outside the window
-        if i == right:  # When we hit the right end, store the partition length and start over
-            res.append(right - left + 1)
-            left = i + 1  # Next partition starts just after the previous one
+    last_occurrence, res = {c: i for i, c in enumerate(s)}, []
+    partition_start = partition_end = 0
+    for i, c in enumerate(s):
+        # This is the right end of the smallest partition we're looking for. This index guarantees that all the
+        # previous characters don't occur outside the window.
+        partition_end = max(partition_end, last_occurrence[c])
+        if i == partition_end:  # When we hit the right end, store the partition size and start over
+            res.append(partition_end - partition_start + 1)
+            partition_start = i + 1  # Next partition starts just after the previous one
     return res
 
 
