@@ -10,32 +10,37 @@ import unittest2 as unittest
 
 
 def check_valid_string_v1(s):
-    """ The idea of recursion is very simple: increment 'open' when we encounter '(' and decrement it when we see a ')'.
-        Otherwise, we just need to consider 3 cases: skip * symbol or substitute it with either closing or opening
-        parenthesis, i.e. increase or decrease open.
-        Check for case when we want to decrement zero-valued open, that means that we want to put ) before (, which is
-        not acceptable.
-    Time complexity: O(N^2), O(3^N) + memoization, proportional to the size of the hash map which is open * index where
-    both factors are proportional to the size of the input string
+    """ Top-Down Dynamic Programming (recursion + memoization).
+
+        The idea of recursion is very simple: increment 'open' when we encounter '(' and increment 'close' when we
+         see a ')'. Otherwise, we just need to consider 3 cases: Skip '*' symbol or substitute it with either closing or
+         opening parenthesis.
+
+        Check for the case when we want to decrement zero-valued 'open', that means that we want to put ')' before
+        '(' which is not acceptable.
+
+    Time complexity: O(N^2), O(3^N) + memoization
     Space complexity: O(N)
     """
 
-    def dfs(open, index):
+    def dfs(index, open, close):
         if index == n:
-            return open == 0
-        if open < 0:
+            return open == close
+        if open < close:
             return False
-        if (open, index) not in memo:
-            if s[index] == '(':
-                memo[(open, index)] = dfs(open + 1, index + 1)
-            elif s[index] == ')':
-                memo[(open, index)] = dfs(open - 1, index + 1)
+        if (index, open, close) not in memo:
+            cur_char = s[index]
+            if cur_char == '(':
+                memo[(index, open, close)] = dfs(index + 1, open + 1, close)
+            elif cur_char == ')':
+                memo[(index, open, close)] = dfs(index + 1, open, close + 1)
             else:
-                memo[(open, index)] = dfs(open + 1, index + 1) or dfs(open - 1, index + 1) or dfs(open, index + 1)
-        return memo[(open, index)]
+                memo[(index, open, close)] = dfs(index + 1, open + 1, close) or dfs(index + 1, open, close + 1) \
+                                             or dfs(index + 1, open, close)
+        return memo[(index, open, close)]
 
     n, memo = len(s), {}
-    return dfs(0, 0)
+    return dfs(0, 0, 0)
 
 
 # Great visualization: https://bit.ly/3bZDp0n
