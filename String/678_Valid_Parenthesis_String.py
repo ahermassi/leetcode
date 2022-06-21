@@ -169,36 +169,45 @@ def check_valid_string_v2(s):
 
 
 def check_valid_string_v3(s):
-    """ The basic idea is to track the index of the left bracket and star position.
-        Step 1: Here we consider '*' as an opening parenthesis IF open stack becomes empty.
-        Push all the indices of the star and left bracket to their stack respectively. Once a right bracket comes try
-        to match it, so pop left bracket stack first if it is not empty. If the left bracket stack is empty, pop the
-        star stack if it is not empty. A false return can be made if both stacks are empty.
-        Step 2: Here we consider '*' as a closed parenthesis. Now attention is paid to the remaining stuff in these two
-        stacks. Note that the left bracket CANNOT appear after the star as there is NO way to balance the bracket. In
-        other words, if index at top of open stack > index at top of ast stack, it means there was no '*' after the
-        last '(' , so return false. Otherwise, pop out each from the left bracket and star stack.
+    """ Stack-based solution.
+
+        The basic idea is to track the index of the left bracket and asterisk. Push all the indices of the asterisks and
+        left brackets to their stacks, respectively.
+
+        Step 1: When we encounter a right bracket, we try to match it. So, pop left bracket stack first if it is not
+        empty. If the left bracket stack is empty, pop the asterisk stack if it is not empty. Here we consider '*' as
+        an open parenthesis that can be match a closing parenthesis. False can be returned if both stacks are empty.
+
+        Step 2: Here we consider '*' as a closing parenthesis. Attention is paid to the remaining stuff in the two
+        stacks. Note that the left bracket CANNOT appear after the asterisk as there is NO way to balance the bracket.
+        In other words, if index at top of left stack > index at top of asterisk stack, it means there was no '*' after
+        the last '(' , so return false. Otherwise, pop out each from the left bracket and asterisk stack.
+
         A correct sequence should have an empty left bracket stack, which means we were able to balance the complete
         string.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    open, star = [], []
+    left, asterisk = [], []
     for i, c in enumerate(s):
         if c == '(':
-            open.append(i)
+            left.append(i)
         elif c == '*':
-            star.append(i)
-        elif open:
-            open.pop()
-        elif star:
-            star.pop()
-        else:
+            asterisk.append(i)
+        elif left:
+            left.pop()
+        elif asterisk:
+            asterisk.pop()
+        else:  # We can't match the current ')'
             return False
-    while open and star:
-        if open.pop() > star.pop():
+    # So far, we have cleared all the ')' using '(' accordingly. But, we may have more '(' and '*' than ')'. In the
+    # remaining part, if there is any '(' after '*', we return False. We can only close an '(' if there is an '*'
+    # that occurs at a greater/later index.
+    while left and asterisk:
+        if left.pop() > asterisk.pop():
             return False
-    return not open
+    return not left
 
 
 class Test(unittest.TestCase):
