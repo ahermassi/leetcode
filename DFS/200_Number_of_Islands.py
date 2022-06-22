@@ -63,16 +63,18 @@ def num_islands_v2(grid):
 
 
 def num_islands_v3(grid):
-    """ BFS version.
-        Linearly scan the 2D grid. If a node contains a '1', then it is a root node that triggers a Breadth First
-        Search. Put it into a queue and and mark it as visited node. Iteratively search the neighbors of enqueued nodes
+    """ Same algorithm but using BFS.
+
+        Linearly scan the 2D grid. If a node contains a '1', then it is a root node that triggers a Breadth-First
+        Search. Put it into a queue and mark it as visited node. Iteratively search the neighbors of enqueued nodes
         until the queue becomes empty.
+
     Time complexity: O(N * M)
     Space complexity: O(min(N, M)). Considering BFS always starts from the upper left corner, grid[0][0], and BFS is
     scanning by the order of the same depth/level (FIFO), so there is no way an element can be added into the queue
-    after we have already scanned it at that same position. Which leads to the maximum size of queue should be the
+    after we have already scanned it at that same position. This leads to the maximum size of queue should be the
     maximum diagonal length of the grid, same as, min(N, M) (Find visualization in notes).
-    Think about an example where dif(N, M) is big like 3x1000 grid. The worst case is when we start from the middle of
+    Think about an example where diff(N, M) is big like 3x1000 grid. The worst case is when we start from the middle of
     the grid. Imagine how the processed points form a shape in the grid. It will be like a diamond and at some point it
     will reach the longer edge of the grid. The possible shape at time t would be:
         ......QXXXQ.........
@@ -80,7 +82,7 @@ def num_islands_v3(grid):
         ......QXXXQ.........
     So in this specific example (Q: points in the queue, .: not processed, X: processed) the number of the items in the
     queue is proportional to 3 because the smallest side limits the expanding. So the actual value will be min(N, M).
-    Example: Lets consider the below 3x4 grid. X denotes cells in the queue. The max space occupied by the queue in the
+    Example: Let's consider the below 3x4 grid. X denotes cells in the queue. The max space occupied by the queue in the
     below example is 3 which min(N, M).
 
         1 1 1 1
@@ -108,43 +110,43 @@ def num_islands_v3(grid):
         0 X 1 1
 
 
-
-        Step 6
+        Step 5
         0 0 0 X
         0 0 X 1
         0 X 1 1
 
-        Step 7
+        Step 6
         0 0 0 X
         0 0 X 1
         0 0 X 1
 
-        Step 8
+        Step 7
         0 0 0 X
+        0 0 0 X
+        0 0 X 1
+
+        Step 8
+        0 0 0 0
         0 0 0 X
         0 0 X 1
 
         Step 9
         0 0 0 0
         0 0 0 X
-        0 0 X 1
+        0 0 0 X
 
         Step 10
         0 0 0 0
-        0 0 0 X
+        0 0 0 0
         0 0 0 X
 
         Step 11
         0 0 0 0
         0 0 0 0
-        0 0 0 X
-
-        Step 12
-        0 0 0 0
-        0 0 0 0
         0 0 0 0
     """
-    n, m, res, visited = len(grid), len(grid[0]), 0, set()
+    n, m,  = len(grid), len(grid[0])
+    res, visited = 0, set()
     for i in range(n):
         for j in range(m):
             if grid[i][j] == '1' and (i, j) not in visited:
