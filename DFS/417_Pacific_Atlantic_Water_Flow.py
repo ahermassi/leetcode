@@ -73,32 +73,36 @@ def pacific_atlantic_v1(heights):
     return res
 
 
-def pacific_atlantic_v2(matrix):
-    """ BFS version of the previous algorithm. We add the border cells to a single queue and start a BFS from those
-        cells.
+def pacific_atlantic_v2(heights):
+    """ We can also use BFS, and it doesn't really make much of a difference.
+
+         BFS is very similar to DFS. Instead of using recursion, we'll use a queue and work iteratively for every
+         reachable cell. We start by collecting the cells that border the Pacific and Atlantic oceans into a queue.
+         Then, we iteratively figure out what cells can flow into one of or both oceans.
+
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
-    if not matrix:
-        return None
-    n, m, res = len(matrix), len(matrix[0]), []
-    pacific = [[False] * m for _ in range(n)]
-    atlantic = [[False] * m for _ in range(n)]
+    n, m, res = len(heights), len(heights[0]), []
+    can_flow_to_pacific = [[False] * m for _ in range(n)]
+    can_flow_to_atlantic = [[False] * m for _ in range(n)]
     queue = deque()
     for i in range(n):
-        queue.extend([(i, 0, pacific), (i, m - 1, atlantic)])
+        queue.append((i, 0, heights[i][0], can_flow_to_pacific))
+        queue.append((i, m - 1, heights[i][m - 1], can_flow_to_atlantic))
     for j in range(m):
-        queue.extend([(0, j, pacific), (n - 1, j, atlantic)])
+        queue.append((0, j, heights[0][j], can_flow_to_pacific))
+        queue.append((n - 1, j, heights[n - 1][j], can_flow_to_atlantic))
     while queue:
-        i, j, ocean = queue.popleft()
-        ocean[i][j] = True
+        i, j, prev_height, can_flow_to_ocean = queue.popleft()
+        if not 0 <= i < n or not 0 <= j < m or heights[i][j] < prev_height or can_flow_to_ocean[i][j]:
+            continue
+        can_flow_to_ocean[i][j] = True
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            if not 0 <= x < n or not 0 <= y < m or matrix[x][y] < matrix[i][j] or ocean[x][y]:
-                continue
-            queue.append((x, y, ocean))
+            queue.append((x, y, heights[i][j], can_flow_to_ocean))
     for i in range(n):
         for j in range(m):
-            if pacific[i][j] and atlantic[i][j]:
+            if can_flow_to_pacific[i][j] and can_flow_to_atlantic[i][j]:
                 res.append([i, j])
     return res
 
