@@ -7,43 +7,68 @@ Find the list of grid coordinates where water can flow to both the Pacific and A
 from collections import deque
 import unittest2 as unittest
 
+# Video explanation: https://www.youtube.com/watch?v=s-VkcjHqkGI
 
-def pacific_atlantic_v1(matrix):
-    """ The water on the continent (in the matrix) wants to flow out in the ocean. Water can advance only to positions
-        with values the same or lower as the current position value.
-        We do not need to scan the entire matrix to find the starting point of DFS. We essentially can find all points
-        from where water can get to the ocean by starting DFS at the border. Cells on the border (first/last row, and
-        first/last column) are guaranteed to get into the ocean. We start off with the border cells and go from there
-        to explore the inner land. The logic is similar to 130- Surrounded Regions.
-        Since water can only flow from higher/equal cell to lower cell, we dfs the neighbor cells with height higher
-        than or equal to current cell and mark as visited.
-        Maintain two boolean matrices for the two oceans, where ocean[i][j] indicates whether the cell matrix[i][j] can
-        reach the ocean. Finally go through all cells again and see if each cell can reach both oceans.
-    Time complexity: O(N * M)
+
+def pacific_atlantic_v1(heights):
+    """ The naive approach would be to check every cell - that is, iterate through every cell, and at each one, start a
+         traversal that follows the problem's conditions. That is, find every cell that manages to reach both oceans.
+
+         This approach, however, is extremely slow, as it repeats a ton of computation. Instead of looking for every
+         path from cell to ocean, let's start at the oceans and try to work our way to the cells. This will be much
+         faster because when we start a traversal at a cell, whatever result we end up with can be applied to only that
+         cell. However, when we start from the ocean and work backwards, we already know that every cell we visit MUST
+         be connected to the ocean.
+
+         The logic is similar to 130- Surrounded Regions.
+
+         If we start traversing from the ocean and flip the condition (check for higher height instead of lower height),
+         then we know that every cell we visit during the traversal can flow into that ocean.
+
+        Let's start a DFS traversal from every cell that is immediately beside the Pacific Ocean, and figure out what
+        cells can flow into the Pacific. Then, let's do the exact same thing with the Atlantic Ocean. At the end, the
+        cells that end up connected to both oceans will be our answer.
+
+        We maintain two boolean matrices for the two oceans, 'can_flow_to_pacific' and 'can_flow_to_atlantic', where
+        can_flow_to_ocean[i][j] indicates whether the cell (i, j) can reach the ocean, which we also use to keep track
+        of the cells we already visited to avoid infinite loops.
+
+        Summary:
+
+        If we start from the cells connected to the Atlantic Ocean and visit all cells having height greater than
+        current cell (water can only flow from a cell to another one with height equal or lower), we are able to reach
+        some subset of cells (let's call them A).
+        Next, we start from the cells connected to the Pacific Ocean and repeat the same process, we find another subset
+        (let's call this one B).
+        The final answer we need will be the intersection of sets A and B
+
+    Time complexity: O(N * M), in the worst case such as a matrix where every value is equal, we would visit every cell
+    twice. This is because we perform 2 traversals, and during each traversal, we visit each cell exactly once.
+    There are N * M cells total, which gives us a time complexity of O(2 * N * M) = O(N * M)
     Space complexity: O(N * M)
     """
 
-    def dfs(i, j, ocean):
-        ocean[i][j] = True  # matrix[i][j] can reach this ocean
+    def dfs(i, j, prev_height, can_flow_to_ocean):
+        # Check that the new cell has a higher or equal height, so that water can flow from the new cell to the old cell
+        if not 0 <= i < n or not 0 <= j < m or heights[i][j] < prev_height or can_flow_to_ocean[i][j]:
+            return
+        can_flow_to_ocean[i][j] = True  # This cell is reachable, so mark it.
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            if not 0 <= x < n or not 0 <= y < m or matrix[x][y] < matrix[i][j] or ocean[x][y]:
-                continue
-            dfs(x, y, ocean)
+            dfs(x, y, heights[i][j], can_flow_to_ocean)
 
-    if not matrix:
-        return None
-    n, m, res = len(matrix), len(matrix[0]), []
-    pacific = [[False] * m for _ in range(n)]
-    atlantic = [[False] * m for _ in range(n)]
+    n, m, res = len(heights), len(heights[0]), []
+    can_flow_to_pacific = [[False] * m for _ in range(n)]
+    can_flow_to_atlantic = [[False] * m for _ in range(n)]
     for i in range(n):
-        dfs(i, 0, pacific)  # Left border
-        dfs(i, m - 1, atlantic)  # Right border
+        dfs(i, 0, heights[i][0], can_flow_to_pacific)  # Left border
+        dfs(i, m-1, heights[i][m-1], can_flow_to_atlantic)  # Right border
     for j in range(m):
-        dfs(0, j, pacific)  # Top border
-        dfs(n - 1, j, atlantic)  # Bottom border
+        dfs(0, j, heights[0][j], can_flow_to_pacific)  # Top border
+        dfs(n-1, j, heights[n-1][j], can_flow_to_atlantic)  # Bottom border
     for i in range(n):
         for j in range(m):
-            if pacific[i][j] and atlantic[i][j]:
+            # Find all cells that can reach both oceans
+            if can_flow_to_pacific[i][j] and can_flow_to_atlantic[i][j]:
                 res.append([i, j])
     return res
 
