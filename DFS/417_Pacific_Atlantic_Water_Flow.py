@@ -107,39 +107,38 @@ def pacific_atlantic_v2(heights):
     return res
 
 
-def pacific_atlantic_v3(matrix):
+def pacific_atlantic_v3(heights):
     """ BFS using a separate queue for each ocean.
+
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
 
-    def bfs(queue, ocean):
+    def bfs(queue, can_flow_to_ocean):
         while queue:
-            i, j = queue.popleft()
-            ocean[i][j] = True
+            i, j, prev_height = queue.popleft()
+            if not 0 <= i < n or not 0 <= j < m or heights[i][j] < prev_height or can_flow_to_ocean[i][j]:
+                continue
+            can_flow_to_ocean[i][j] = True
             for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-                if not 0 <= x < n or not 0 <= y < m or matrix[x][y] < matrix[i][j] or ocean[x][y]:
-                    continue
-                queue.append((x, y))
+                queue.append((x, y, heights[i][j]))
 
-    if not matrix:
-        return None
-    n, m, res = len(matrix), len(matrix[0]), []
-    pacific = [[False] * m for _ in range(n)]
-    atlantic = [[False] * m for _ in range(n)]
+    n, m, res = len(heights), len(heights[0]), []
+    can_flow_to_pacific = [[False] * m for _ in range(n)]
+    can_flow_to_atlantic = [[False] * m for _ in range(n)]
     pacific_queue = deque()
     atlantic_queue = deque()
     for i in range(n):
-        pacific_queue.append((i, 0))
-        atlantic_queue.append((i, m - 1))
+        pacific_queue.append((i, 0, heights[i][0]))
+        atlantic_queue.append((i, m - 1, heights[i][m - 1]))
     for j in range(m):
-        pacific_queue.append((0, j))
-        atlantic_queue.append((n - 1, j))
-    bfs(pacific_queue, pacific)
-    bfs(atlantic_queue, atlantic)
+        pacific_queue.append((0, j, heights[0][j]))
+        atlantic_queue.append((n - 1, j, heights[n - 1][j]))
+    bfs(pacific_queue, can_flow_to_pacific)
+    bfs(atlantic_queue, can_flow_to_atlantic)
     for i in range(n):
         for j in range(m):
-            if pacific[i][j] and atlantic[i][j]:
+            if can_flow_to_pacific[i][j] and can_flow_to_atlantic[i][j]:
                 res.append([i, j])
     return res
 
