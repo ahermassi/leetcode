@@ -143,6 +143,35 @@ def pacific_atlantic_v3(heights):
     return res
 
 
+def pacific_atlantic_v4(heights):
+    """ We can replace the two boolean matrices with two hash sets where we collect the coordinates of the cells that
+         can flow into each of the oceans . The answer is the intersection of the sets.
+
+         Note that this is applicable to both DFS and BFS algorithms.
+
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, m = len(heights), len(heights[0])
+    can_flow_to_pacific = set()
+    can_flow_to_atlantic = set()
+    queue = deque()
+    for i in range(n):
+        queue.append((i, 0, heights[i][0], can_flow_to_pacific))
+        queue.append((i, m - 1, heights[i][m - 1], can_flow_to_atlantic))
+    for j in range(m):
+        queue.append((0, j, heights[0][j], can_flow_to_pacific))
+        queue.append((n - 1, j, heights[n - 1][j], can_flow_to_atlantic))
+    while queue:
+        i, j, prev_height, can_flow_to_ocean = queue.popleft()
+        if not 0 <= i < n or not 0 <= j < m or heights[i][j] < prev_height or (i, j) in can_flow_to_ocean:
+            continue
+        can_flow_to_ocean.add((i, j))
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            queue.append((x, y, heights[i][j], can_flow_to_ocean))
+    return list(can_flow_to_pacific & can_flow_to_atlantic)
+
+
 class Test(unittest.TestCase):
     data = [([[1, 2, 2, 3, 5], [3, 2, 3, 4, 4], [2, 4, 5, 3, 1], [6, 7, 1, 4, 5], [5, 1, 1, 2, 4]],
              [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]])]
@@ -152,6 +181,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, pacific_atlantic_v1(test_matrix))
             self.assertEqual(result, pacific_atlantic_v2(test_matrix))
             self.assertEqual(result, pacific_atlantic_v3(test_matrix))
+            self.assertEqual(result, pacific_atlantic_v4(test_matrix))
 
 
 if __name__ == '__main__':
