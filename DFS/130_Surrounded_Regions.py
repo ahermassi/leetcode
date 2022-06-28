@@ -74,31 +74,40 @@ def solve_v1(board):
 
 
 def solve_v2(board):
-    """ BFS version of previous solution.
-    Time complexity: O(N * M)
-    Space complexity: O(N * M)
+    """ Unlike the DFS strategy, in BFS (Breadth-First Search) we prioritize the visit of a cell's neighbors before
+         moving further (deeper) into the neighbor's neighbor.
+
+         We could reuse the bulk of the DFS approach, while simply replacing the dfs() function with a queue.
+
+         The fun part is that we could easily convert the BFS strategy to DFS by changing one single line of code, and
+         the obtained DFS implementation is done in iteration, instead of recursion.
+         The key is that instead of using the queue data structure which follows the principle of FIFO, if we use the
+         stack data structure which follows the principle of LIFO, we then switch the strategy from BFS to DFS.
+
+    Time complexity: O(N * M), in the worst case where it contains only the O cells on the board, we would traverse each
+    cell twice: once during the BFS traversal and the other time during the cell reversion in the last step.
+    Space complexity: O(N * M), we use a queue data structure to hold the cells to be visited. We then need to estimate
+    the upper bound on the size of the queue. Intuitively we could imagine the unfolding of BFS as the structure of an
+    onion. Each layer of the onion represents the cells that have the same distance to the starting point. Any given
+    moment, the queue would contain no more than two layers of onion, which in the worst case might cover almost all
+    cells in the board.
     """
-    if not board:
-        return None
     n, m = len(board), len(board[0])
     queue = deque()
     for i in range(n):
         queue.extend([(i, 0), (i, m-1)])
     for j in range(m):
         queue.extend([(0, j), (n-1, j)])
-    # More pythonically
-    # queue = deque([(i, j) for i in range(n) for (i, j) in {(i, 0), (i, m-1)}] + [(i, j) for j in range(m) for (i, j)
-    #                                                                              in {(0, j), (n-1, j)}])
     while queue:
         i, j = queue.popleft()
         if 0 <= i < n and 0 <= j < m and board[i][j] == 'O':
-            board[i][j] = '1'
+            board[i][j] = 'T'
             queue.extend([(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)])
     for i in range(n):
         for j in range(m):
             if board[i][j] == 'O':
                 board[i][j] = 'X'
-            elif board[i][j] == '1':
+            elif board[i][j] == 'T':
                 board[i][j] = 'O'
 
 
