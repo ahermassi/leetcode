@@ -65,32 +65,34 @@ def oranges_rotting_v1(grid):
 
 
 def oranges_rotting_v2(grid):
-    """ Same BFS using depth.
-        Every turn, the rotting spreads from each rotting orange to other adjacent oranges. Initially, the rotten
-        oranges have 'depth' 0 [as in the spanning tree of a graph], and every time they rot a neighbor, the neighbors
-        have 1 more depth. We want to know the largest possible depth.
-        Because we always explore nodes (oranges) with the smallest depth first, we're guaranteed that each orange that
-        becomes rotten does so with the lowest possible depth number.
+    """ BFS without altering the input grid. We use a hash set to keep track of the fresh oranges.
+
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
-    n, m, fresh, depth = len(grid), len(grid[0]), 0, 0
+    n, m = len(grid), len(grid[0])
     queue = deque()
+    fresh_oranges = set()
     for i in range(n):
         for j in range(m):
-            if grid[i][j] == 1:
-                fresh += 1
             if grid[i][j] == 2:
-                queue.append((i, j, 0))
-    if not fresh:
+                queue.append((i, j))
+            elif grid[i][j] == 1:
+                fresh_oranges.add((i, j))
+    if not fresh_oranges:
         return 0
-    while queue:
-        i, j, depth = queue.popleft()
-        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            if 0 <= x < n and 0 <= y < m and grid[x][y] == 1:
-                grid[x][y] = 2
-                queue.append((x, y, depth + 1))
-    return -1 if any(1 in row for row in grid) else depth
+    time = 0
+    while queue and fresh_oranges:
+        size = len(queue)
+        for _ in range(size):
+            i, j = queue.popleft()
+            for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+                if 0 <= x < n and 0 <= y < m and (x, y) in fresh_oranges:
+                    fresh_oranges.remove((x, y))
+                    queue.append((x, y))
+        time += 1
+    # Return -1 if there are fresh oranges left in the grid (there were no adjacent rotten oranges to make them rotten)
+    return time if not fresh_oranges else -1
 
 
 class Test(unittest.TestCase):
