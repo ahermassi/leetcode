@@ -1,7 +1,7 @@
-""" You are given a m x n 2D grid initialized with these three possible values.
--1 - A wall or an obstacle.
-0 - A gate.
-INF - Infinity means an empty room. We use the value 231 - 1 = 2147483647 to represent INF as you may assume that the
+""" You are given an m x n 2D grid initialized with these three possible values.
+-1   - A wall or an obstacle.
+0     - A gate.
+INF  - Infinity means an empty room. We use the value 231 - 1 = 2147483647 to represent INF as you may assume that the
 distance to a gate is less than 2147483647.
 Fill each empty room with the distance to its nearest gate. If it is impossible to reach a gate, it should be filled
 with INF. """
@@ -11,26 +11,28 @@ import unittest2 as unittest
 
 
 def walls_and_gates_v1(rooms):
-    """ DFS.
-        The condition rooms[i][j] < d solves 3 problems:
-            1- Do not update walls & gates (-1s & 0s) because d will be always strictly greater than 0 except for the
-               first call to dfs() from an empty room where d = 0
+    """ Brute force, DFS from every gate.
+
+        The condition rooms[i][j] < d solves 4 problems:
+
+            1- Do not update walls & gates (-1s & 0s) because d will always be strictly greater than 0 except for the
+                 first call to dfs() from an empty room where d = 0
             2- Distinguish the visited and not visited nodes (the visited can only have smaller distance)
-            3- Stop early when we find a previous gate has given shorter distance than the current one
+            3- Stop early when we find that a previous gate has given shorter distance than the current one
+
     Time complexity: O((N * M)^2) in the worst case, for each point in the grid, the gate could be at most N * M
     steps away
     Space complexity: O(N * M)
     """
 
-    def dfs(i, j, d):  # d is the distance of cell (i,j) to the nearest gate
+    def dfs(i, j, d):
+        # d is the distance from cell (i,j) to the nearest gate
         if not 0 <= i < n or not 0 <= j < m or rooms[i][j] < d:
             return
         rooms[i][j] = d
-        for x, y in (-1, 0), (1, 0), (0, -1), (0, 1):
-            dfs(i + x, j + y, d + 1)
+        for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1):
+            dfs(x, y, d + 1)
 
-    if not rooms:
-        return
     n, m = len(rooms), len(rooms[0])
     for i in range(n):
         for j in range(m):
