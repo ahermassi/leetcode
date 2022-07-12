@@ -94,32 +94,52 @@ def can_finish_dfs(num_courses, prerequisites):
 
 
 def can_finish_bfs(numCourses, prerequisites):
-    """ Same as above but in BFS fashion. This is called Kahn's algorithm for topological sorting.
-        A better way to understand this algorithm is to draw the graph and remove edges each time the in-degree of a
-        node is reduced, and remember to always start exploring from the nodes that have NO incoming edges (in-degree=0)
+    """ Kahn's algorithm for topological sorting.
+
+        The problem is to find a global order for all nodes in a DAG (Directed Acyclic Graph) with regard to their
+        dependencies.
+
+        In order to find a global order, we can start from those nodes which do not have any prerequisites
+        (i.e. outdegree of node is zero), we then incrementally add new nodes to the global order, following the
+        dependencies (edges). Once we follow an edge, we then remove it from the graph.
+
+        With the removal of edges, there would more nodes appearing without any prerequisite dependency, in addition to
+        the initial list in the first step.
+
+        The algorithm would terminate when we can no longer remove edges from the graph. There are two possible outcomes:
+
+            1- If there are still some edges left in the graph, then these edges must have formed certain cycles, which
+                 is similar to the deadlock situation. It is due to these cyclic dependencies that we cannot remove them
+                 during the above processes.
+            2- Otherwise, we have removed all the edges from the graph, and we got ourselves a topological order of the
+                 graph.
+
+        A better way to understand this algorithm is to draw the graph and remove edges each time the outdegree of a
+        node is reduced, and remember to always start exploring from the nodes that have NO outcoming edges (outdegree=0)
+
     Time complexity: O(|V| + |E|)
     Space complexity: O(|V| + |E|)
     """
-    graph = defaultdict(list)
-    indegree = [0] * numCourses
-    for course, prereq in prerequisites:  # Create graph, better be seen as is_prerequisite_of graph:
-        # graph[prerq] = course means prereq is a prerequisite of course
-        graph[prereq].append(course)
-        indegree[course] += 1  # Recording the number of prerequisites each course i has
-    queue = deque(course for course in range(numCourses) if indegree[course] == 0)  # Iterate over the indegrees list
-    # and find the node that has 0 indegree, which maps to 0 prerequisites. If none is found, then there must be a
-    # cycle.
-    n = len(queue)  # n is initialized to len(queue) because the queue contains the courses that have 0 prerequisites
-    # so they can be finished without any pre-processing
-    while queue and n != numCourses:  # adding n != numCourses to terminate loop earlier
+    courses_that_depend_on = defaultdict(list)
+    outdegree = [0] * numCourses
+    for course, prereq in prerequisites:  # Create graph
+        # courses_that_depend_on[prerq] = course means prereq is a prerequisite of course
+        courses_that_depend_on[prereq].append(course)
+        outdegree[course] += 1  # Record the number of prerequisites each course has
+    # Iterate over the outdegrees list and find the node that has 0 outdegree, which maps to 0 prerequisites. If none
+    # is found, then there must be a cycle.
+    queue = deque(course for course in range(numCourses) if outdegree[course] == 0)
+    courses_finished = len(queue)  # 'courses_finished' is initialized to len(queue) because the queue contains the
+    # courses that have 0 prerequisites so they can be finished without any pre-processing
+    while queue and courses_finished != numCourses:  # adding courses_finished != numCourses to terminate loop earlier
         course = queue.popleft()
-        for neighbor in graph[course]:  # Iterate through the courses that have 'course' as prerequisite
-            indegree[neighbor] -= 1  # This is equivalent to removing the edge neighbor -> course, which in other words
+        for neighbor in courses_that_depend_on[course]:  # Iterate over the courses that have 'course' as prerequisite
+            outdegree[neighbor] -= 1  # This is equivalent to removing the edge neighbor -> course, which in other words
             # means taking course 'course' and 'course' is no longer in the list of prerequisite of 'neighbor'
-            if indegree[neighbor] == 0:  # We've taken all the prerequisites of course 'neighbor' ..
-                n += 1  # .. so one more course has been finished
+            if outdegree[neighbor] == 0:  # We've taken all the prerequisites of course 'neighbor' ..
+                courses_finished += 1  # .. so one more course has been finished
                 queue.append(neighbor)  # Now explore the courses that have 'neighbor' as prerequisite
-    return n == numCourses
+    return courses_finished == numCourses
 
 
 class Test(unittest.TestCase):
