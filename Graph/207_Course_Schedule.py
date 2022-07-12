@@ -6,46 +6,89 @@ Given the total number of courses and a list of prerequisite pairs, is it possib
 from collections import defaultdict, deque
 import unittest2 as unittest
 
+# Video explanation: https://www.youtube.com/watch?v=EgI5nU9etnU
+
 
 def can_finish_dfs(num_courses, prerequisites):
     """ This is a direct application of topological sort. Note that this type of sort can only be applied on Directed
         Acyclic Graphs (DAG). A Directed cyclic graph fails to yield a topological sort because of the presence of a
-        cycle. This property is the intuition of this questions's algorithm.
+        cycle. This property is the intuition of this question's algorithm.
+
+        The problem could be modeled as a graph traversal problem, where each course can be represented as a vertex in
+        a graph and the dependency between the courses can be modeled as a directed edge between two vertex.
+
+        Therefore, the problem to determine if one could build a valid schedule of courses that satisfies all the
+        dependencies (i.e. constraints) would be equivalent to determining if the corresponding graph is a DAG, i.e.
+        there is no cycle in the graph.
+
+        The general idea here is that we could enumerate each course (vertex) to check if it could form cyclic
+        dependencies (i.e. a cyclic path) starting from this course. The check of cyclic dependencies for each course
+        could be done via backtracking/DFS, where we incrementally follow the dependencies until either there is no
+        more dependency or we come across a previously visited course along the path.
+        This is also known as Graph Coloring Algorithm.
+
+            - We build a graph data structure from the given list of course dependencies. Here we adopt the adjacency
+               list data structure to represent the graph, which can be implemented via hashmap. Each entry in the
+               adjacency list represents a node which consists of a node index and a list of neighbors nodes that follow
+               from the node.
+
+            - We then enumerate each node (course) in the constructed graph, to check if we could form a dependency
+               cycle starting from the node.
+
+            - We check if the current node has been explored before, otherwise we enumerate through its child nodes via
+               backtracking, where we bread-crumb our path (i.e. mark the nodes we visited) to detect if we come across
+               a previously visited node (hence a cycle detected). We also remove the breadcrumbs for each iteration.
+
+            - Once we visited all the child nodes, we mark the current node as checked.
+
         Recall that DFS maintains a color for each vertex. Initially, all vertices are white (0). When a vertex is
-        first discovered, it is colored gray (-1). When DFS finishes processing a vertex, that vertex is colored black
-        (1). As soon as we discover an edge from a gray vertex back to a gray vertex, a cycle exists and we can stop.
+        first discovered, it is colored gray (1). When DFS finishes processing a vertex and all its neighbors, that
+        vertex is colored black (2). As soon as we discover an edge from a gray vertex back to a gray vertex, a cycle
+        exists, and we can stop.
+
         If node course has not been visited, then mark it as 0.
-        If node course is being visited, then mark it as -1. If we find a vertex marked as -1 during DFS, then this
+        If node course is being visited, then mark it as 1. If we find a vertex marked as 1 during DFS, then this
         vertex is part of a cycle.
-        If node course has been visited, then mark it as 1. If a vertex was marked as 1, then no cycle contains course
+        If node course has been visited, then mark it as 2. If a vertex was marked as 2, then no cycle contains course
         or its successors.
-        -1 means this node is part of the current trip. If you see it again, it's a cycle. 1 means a DFS has been done
-        starting from this node, and no cycle was found. if we hit this, going down this path won't find any cycles.
-        In summary, a cycle exists if and only if DFS discovers an edge from a gray (-1) vertex to a gray vertex.
-    Time complexity: O(|V| + |E|), where V is the number of vertices and E is the number of edges. We iterate over all
-    vertices, and spend a constant amount of time per edge
-    Space complexity: O(|V|), which is the maximum stack depth. If we go deeper than |V| calls, some vertex must
-    repeat, implying a cycle in the graph, which leads to early termination.
+
+        1 means this node is part of the current trip, and either all of its descendants are not processed or it's still
+        in the function call stack. If you see it again, it's a cycle.
+        2 means the node and all its descendants were processed, and no cycle was found. if we hit this, going down this
+        path won't find any cycles.
+
+        In summary, a cycle exists if and only if DFS discovers an edge from a gray (1) vertex to a gray vertex.
+
+        Because the tree is a connected graph, we can start from any node. The graph is possibly not connected, so need
+        to check every node.
+
+    Time complexity: O(|V| + |E|), where V is the number of vertices/courses and E is the number of edges/dependencies.
+    It would take ∣E∣ time complexity to build the graph in the first step. Since we perform a postorder DFS traversal
+    on the graph, we visit each vertex and each edge once and only once in the worst case, i.e. ∣V∣+∣E∣.
+    Space complexity: O(|V| + |E|), we build a graph that would consume |V| + |E| space. Then, |V| is the maximum stack
+    depth. If we go deeper than |V| calls, some vertex must repeat, implying a cycle in the graph, which leads to
+    early termination.
     """
-    def dfs(i):
-        if visited[i] == -1:  # If ith node is marked as being visited, then a cycle is found
+    def dfs(vertex):
+        if visited[vertex] == 1:  # If the current vertex is marked as being visited, then a cycle is found
             return False
-        if visited[i] == 1:   # If it is done visiting, then do not visit again
+        if visited[vertex] == 2:   # If done exploring the current vertex, then do not visit again
             return True
-        visited[i] = -1  # Mark as being visited during current recursion
-        for neighbor in graph[i]:  # Visit all the neighbours
+        visited[vertex] = 1  # Mark the vertex as being visited during current recursion
+        for neighbor in graph[course]:  # Visit all the neighbours
             if not dfs(neighbor):
                 return False
-        visited[i] = 1  # After visiting all the neighbours, mark it as done visiting
+        visited[vertex] = 2  # After visiting all the neighbours, mark the vertex as done exploring
         return True
 
     graph = defaultdict(list)
     for course, prereq in prerequisites:  # Create graph
         graph[course].append(prereq)
     visited = [0] * num_courses
-    for i in range(num_courses):  # Visit each node.  Since the graph may not be strongly connected, we must examine
-        # each vertex and run DFS from it if it has not already been explored
-        if not dfs(i):
+    for course in range(num_courses):
+        # Visit each node. Since the graph may not be strongly connected, we must examine each vertex and run DFS
+        # from it if it has not already been explored
+        if not dfs(course):
             return False
     return True
 
