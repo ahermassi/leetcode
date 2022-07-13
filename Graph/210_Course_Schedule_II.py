@@ -8,71 +8,87 @@ return an empty array. """
 
 from collections import defaultdict, deque
 
-
+# Video explanation: https://www.youtube.com/watch?v=Akt3glAwyfY
 # Refer to this excellent article for both solutions: https://leetcode.com/articles/course-schedule-ii/
 
-def find_order_v1(numCourses, prerequisites):
+
+def find_order_v1(num_courses, prerequisites):
     """ We can represent the information provided in the question in the form of a graph.
+
         Each course would represent a vertex in the graph. The edges are modeled after the prerequisite relationship
         between courses. So, we are given that a pair such as [a, b] in the question means the course b is a
         prerequisite for the course a. This can be represented as a directed edge a ➔ b in the graph.
-        There is a possibility of a cycle in the graph. If the graph would be acyclic, then an ordering of subjects as
+
+        There is a possibility of a cycle in the graph. If the graph was acyclic, then an ordering of subjects as
         required in the question would always be possible. Since it's mentioned that such an ordering may not always be
         possible, that means we have a cyclic graph.
-        Such an ordering of subjects is referred to as a Topological Sorted Order and this is a common algorithmic
-        problem in the graph domain. There are two approaches to solve this problem. One of them is DFS approach. Same
-        logic as 207- Course Schedule.
+
+        Such an ordering of subjects is referred to as a Topological Sort and this is a common algorithmic problem in
+        the graph domain. There are two approaches to solve this problem. One of them is DFS approach. Same logic as
+        207- Course Schedule.
+
         Suppose we are at a node in our graph during the depth first traversal. Let's call this node A.
+
         The way DFS would work is that we would consider all possible paths stemming from A before finishing up the
         recursion for A and moving onto other nodes. All the nodes in the paths stemming from the node A would have A
         as an ancestor. The way this fits in our problem is, all the courses in the paths stemming from the course A
         would have A as a prerequisite.
+
         Now we know how to get all the courses that have a particular course as a prerequisite. If a valid ordering of
         courses is possible, the course A would come before all the other set of courses that have it as a prerequisite.
-        This idea for solving the problem can be explored using depth first search.
-        For each of the nodes in our graph, we will run a depth first search in case that node was not already visited
-        in some other node's DFS traversal.
-        Suppose we are executing the depth first search for a node N. We will recursively traverse all of the neighbors
-        of node N which have not been processed before. Once the processing of all the neighbors is done, we will add
-        the node N to the result list.
-        visited[node] == -1: The node is encountered again while his children are being examined. This indicates a
-        cycle.
-        visited[node] == 1: The node's children have been examined in an earlier call and no cycle was detected.
-        Move on.
+        This idea for solving the problem can be explored using depth-first search.
+
+        For each of the nodes in our graph, we will run a depth-first search in case that node was not already visited
+        in some other node's DFS traversal. Suppose we are executing the depth-first search for a node N. We will
+        recursively traverse all the neighbors of node N which have not been processed before. Once the processing of
+        all the neighbors is done, we will add the node N to the result list.
+
+        Recall that DFS maintains a color for each vertex. Initially, all vertices are white (0). When a vertex is
+        first discovered, it is colored gray (1). When DFS finishes processing a vertex and all its neighbors, that
+        vertex is colored black (2). As soon as we discover an edge from a gray vertex back to a gray vertex, a cycle
+        exists, and we can stop.
+
+        visited[node] == 1 means this node is part of the current trip, and either all of its descendants are not
+        processed or it's still in the function call stack. If you see it again, it's a cycle.
+        visited[node] == 2: means the node and all its descendants were processed, and no cycle was found. if we hit
+        this, going down this path won't find any cycles.
+
         Another way to think about it is the last few in the order must be those which are not prerequisites of other
         courses. Thinking it recursively means if one node has unvisited child node, we should visit them first before
-        we put this node down in the final order array. This sounds like the post-order of a DFS.
-        An important thing to note about topologically sorted order is that there won't be just one ordering of nodes
-        (courses). There can be multiple.
+        we put this node down in the final order array. This sounds like a postorder DFS.
+
+        An important thing to note about Topological Sort is that there won't be just one ordering of nodes (courses).
+        There can be multiple.
+
     Time complexity: O(|V| + |E|), where V is the number of vertices and E is the number of edges. Essentially we
     iterate through each node and each vertex in the graph once and only once.
-    Space complexity: O(|V| + |E|), we use the adjacency list to represent our graph initially. The space occupied is d
-    efined by the number of edges because for each node as the key, we have all its adjacent nodes in the form of a
+    Space complexity: O(|V| + |E|), we use the adjacency list to represent our graph initially. The space occupied is
+    defined by the number of edges because for each node as the key, we have all its adjacent nodes in the form of a
     list as the value.
     """
 
     def dfs(node):
-        if visited[node] == -1:  # Don't recurse further if we found a cycle already
+        if visited[node] == 1:  # Don't recurse further if we found a cycle already
             return False
-        if visited[node] == 1:
+        if visited[node] == 2:
             return True
-        visited[node] = -1  # Start the recursion
+        visited[node] = 1  # Start the recursion
         for neighbor in graph[node]:
             if not dfs(neighbor):
                 return False
         res.append(node)
-        visited[node] = 1
+        visited[node] = 2
         return True
 
-    graph = [[] for _ in range(numCourses)]  # Create the adjacency list representation of the graph
-    visited = [0] * numCourses
+    graph = defaultdict(list)
+    visited = [0] * num_courses
     for course, prereq in prerequisites:
         graph[course].append(prereq)
     res = []
-    for course in range(numCourses):
-        if not dfs(course):  # If a cycle exists, no topological ordering exists and therefore it will be impossible to
-            # take all courses.
-            return []
+    for course in range(num_courses):
+        # If a cycle exists, no topological ordering exists, and therefore it will be impossible to take all courses.
+        if not dfs(course):
+            return None
     return res
 
 
