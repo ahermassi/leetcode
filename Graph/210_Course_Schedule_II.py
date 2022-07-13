@@ -92,36 +92,37 @@ def find_order_v1(num_courses, prerequisites):
     return res
 
 
-def find_order_v2(numCourses, prerequisites):
-    """ BFS using node in-degree. Very similar to 207- Course Schedule. This is called Kahn's algorithm for topological
-        sorting.
-        The first node in the topological ordering will be the node that doesn't have any incoming edges. Essentially,
-        any node that has an in-degree of 0 can start the topologically sorted order. If there are multiple such nodes,
-        their relative order doesn't matter and they can appear in any order.
-        We first process all the nodes/courses with 0 in-degree implying no prerequisite courses required. If we remove
-        all these courses from the graph, along with their outgoing edges, we can find out the courses/nodes that
-        should be processed next. These would again be the nodes with 0 in-degree. We can continuously do this until
+def find_order_v2(num_courses, prerequisites):
+    """ Kahn's algorithm for Topological Sort.
+
+        The first node in the topological ordering will be the node that doesn't have any outcoming edges. Essentially,
+        any node that has an outdegree of 0 can start the topological sort. If there are multiple such nodes,
+        their relative order doesn't matter, and they can appear in any order.
+
+        We first process all the nodes/courses with 0 outdegree implying no prerequisite courses required. If we remove
+        all these courses from the graph, along with their ingoing edges, we can find out the courses/nodes that should
+        be processed next. These would again be the nodes with 0 outdegree. We can continuously do this until
         all the courses have been accounted for.
+
     Time complexity: O(|V| + |E|)
     Space complexity: O(N), where N is the number of courses, since we use an intermediate queue to keep all the nodes
-    with 0 in-degree
+    with 0 outdegree
     """
-    graph, indegree = defaultdict(list), [0] * numCourses
+    courses_that_depend_on, outdegree = defaultdict(list), [0] * num_courses
     for course, prereq in prerequisites:
-        graph[prereq].append(course)  # Create graph, better seen as is_prerequisite_of graph: graph[prepreq] = course
-        # means 'prereq' is a prerequisite of 'course'
-        indegree[course] += 1  # Recording the number of prerequisites each course has
-    queue = deque(course for course in range(numCourses) if indegree[course] == 0)  # Iterate the in-degree list and
-    # find the nodes that have 0 in-degree, which maps to 0 prerequisites. If none is found, then there must be a cycle
-    # and a topological ordering is not possible.
+        courses_that_depend_on[prereq].append(course)
+        outdegree[course] += 1  # Record the number of prerequisites each course has
+    # Iterate the outdegree list and find the nodes that have 0 in-degree, which maps to 0 prerequisites. If none is
+    # found, then there must be a cycle and a topological ordering is not possible.
+    queue = deque(course for course in range(num_courses) if outdegree[course] == 0)
     res = []
     while queue:
         course = queue.popleft()
         res.append(course)
-        for neighbor in graph[course]:
-            indegree[neighbor] -= 1
-            if indegree[neighbor] == 0:
+        for neighbor in courses_that_depend_on[course]:
+            outdegree[neighbor] -= 1
+            if outdegree[neighbor] == 0:
                 queue.append(neighbor)
-    return res if len(res) == numCourses else []
+    return res if len(res) == num_courses else []
 
 
