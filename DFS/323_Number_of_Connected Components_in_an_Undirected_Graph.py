@@ -6,14 +6,25 @@ import unittest2 as unittest
 
 
 def count_components_v1(n, edges):
-    """ If we run DFS from each of the nodes, all connected components will be visited if they are a part of the
-        initial node to be explored. If not, then there is some other connected component to be found from another node.
-        Once the DFS finishes, we increment the count because this means we're exploring another set of connected
-        components.
-    Time complexity: O(|V| + |E|), where V is the number of vertices (n) and E is the number of edges (length of edges'
-    list)
-    Space complexity: O(|V|^2) worst case when every node is connected to all other nodes, which means V keys in the
-    hah map and each has an V-1 size list. O(|V| + |E|) average case
+    """ In an undirected graph, a connected component is a subgraph in which each pair of vertices is connected via a
+         path. So essentially, all vertices in a connected component are reachable from one another.
+
+         If we run DFS, starting from a particular vertex, it will continue to visit the vertices depth-wise until there
+         are no more adjacent vertices left to visit. Thus, it will visit all the vertices within the connected
+         component that contains the starting vertex.
+
+         Each time we finish exploring a connected component, we can find another vertex that has not been visited yet,
+         and start a new DFS from there.
+
+         The number of times we start a new DFS will be the number of connected components.
+
+    Time complexity: O(|V| + |E|), where V is the number of vertices (n) and E is the number of edges. Building the
+    adjacency list will take O(E) operations, as we iterate over the list of edges once, and insert each edge into two
+    lists. During the DFS traversal, each vertex will only be visited once. This is because we mark each vertex as
+    visited as soon as we see it, and then we only visit vertices that are not marked as visited. In addition, when we
+    iterate over the edge list of each vertex, we look at each edge once. This has a total cost of O(V + E).
+    Space complexity: O(|V| + |E|), building the adjacency list will take O(E) space. To keep track of visited vertices,
+    a hash set of size O(V) is required. Also, the runtime stack for DFS will use O(V) space.
     """
 
     def dfs(vertex):
@@ -23,14 +34,14 @@ def count_components_v1(n, edges):
         for neighbor in graph[vertex]:
             dfs(neighbor)
 
-    visited, res = set(), 0
     graph = defaultdict(list)
     for src, dest in edges:
         graph[src].append(dest)
         graph[dest].append(src)
-    for i in range(n):
-        if i not in visited:
-            dfs(i)
+    visited, res = set(), 0
+    for vertex in range(n):
+        if vertex not in visited:
+            dfs(vertex)
             res += 1
     return res
 
