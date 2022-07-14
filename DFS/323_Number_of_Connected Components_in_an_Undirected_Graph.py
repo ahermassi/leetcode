@@ -47,20 +47,19 @@ def count_components_v1(n, edges):
 
 
 def count_components_v2(n, edges):
-    """ BFS is the same idea, except where do we start BFS from? If we start it from any node, we may only find that
-        one connected component, so instead we start it from all nodes and visit the max number of nodes using BFS and
-        only increment the count once we visit a new node from the adjacency list, meaning we only increment the count
-        once we're exploring a new connected component.
+    """ BFS is the same idea, except where do we start BFS from?
 
+         If we start it from any node, we may only find that one connected component, so instead we start it from all
+         nodes and visit the max number of nodes using BFS and only increment the count once we visit a new node from
+         the adjacency list, meaning we only increment the count when we're exploring a new connected component.
     """
-    res, visited = 0, set()
     graph = defaultdict(list)
     for src, dest in edges:
         graph[src].append(dest)
         graph[dest].append(src)
+    res, visited = 0, set()
     for i in range(n):
         if i not in visited:
-            res += 1
             queue = deque([i])
             while queue:
                 vertex = queue.popleft()
@@ -68,10 +67,9 @@ def count_components_v2(n, edges):
                 for neighbor in graph[vertex]:
                     if neighbor not in visited:
                         queue.append(neighbor)
+            res += 1
     return res
 
-
-# TODO: Union-Find
 
 class Test(unittest.TestCase):
     data = [(5, [[0, 1], [1, 2], [3, 4]], 2), (5, [[0, 1], [1, 2], [2, 3], [3, 4]], 1)]
