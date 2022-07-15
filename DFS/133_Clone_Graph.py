@@ -12,39 +12,48 @@ class Node(object):
         self.val = val
         self.neighbors = neighbors
 
+# Video explanation: https://www.youtube.com/watch?v=mQeF6bN8hMk
+
 
 def clone_graph_v1(node):
     """ The basic intuition for this problem is to just copy as we go. To avoid getting stuck in a loop, we would need
         some way to keep track of the nodes which have already been copied. By doing this we don't end up traversing
         them again.
-        Start traversing the graph from the given node.
-        We would take a hash map to store the reference of the copy of all the nodes that have already been visited and
-        cloned. The key for the hash map would be the node of the original graph and corresponding value would be the
-        corresponding cloned node of the cloned graph. If the node already exists in the map, we return corresponding
-        stored reference of the cloned node.
-        If we don't find the node in the hash map, we create a copy of it and put it in the hash map. It's important to
-        create a copy of the node and add it to the hash map before entering recursion. In the absence of such an
-        ordering, we would be caught in the recursion because of encountering the node again in somewhere down the
-        recursion again, we will be traversing it again thus getting into cycles.
-        Now make the recursive call for the neighbors of the node. Each recursive call made would return the clone of a
-        neighbor. We will prepare the list of these clones returned and put into neighbors of clone node which we had
-        created earlier. This way we will have cloned the given node and its neighbors.
-    Time complexity: O(V + E), we will touch V nodes and traverse E edges
-    Space complexity: O(V)
+
+            - Start traversing the graph from the given node.
+
+            - We would take a hash map to store the reference of the copy of all the nodes that have already been
+               visited and cloned. The key for the hash map would be the node of the original graph and corresponding
+               value would be corresponding cloned node of the cloned graph. If the node already exists in the map,
+               we return corresponding stored reference of the cloned node.
+
+            - If we don't find the node in the hash map, we create a copy of it and put it in the hash map. It's
+               important to create a copy of the node and add it to the hash map before entering recursion. In the
+               absence of such an ordering, we would be caught in the recursion because of encountering the node again
+               somewhere down the recursion, we will be traversing it again thus getting into cycles.
+
+            - Now make the recursive call for the neighbors of the node. Each recursive call made would return the
+               clone of a neighbor. We will prepare the list of these clones returned and put into neighbors of clone
+               node which we had created earlier. This way we will have cloned the given node and its neighbors.
+
+    Time complexity: O(|V| + |E|), we will touch V nodes and traverse E edges
+    Space complexity: O(|V|), this space is occupied by the hash map and in addition to that, space would also be
+    used by the recursion stack, which would be equal to O(H) where H is the height of the graph.
     """
 
-    def dfs(node):  # The job of dfs() is to clone a node and recursively clone its neighbors. One again, we TRUST that
-        # the recursive call will handle copying the neighbors
-        if node.val in clones:
-            return clones[node.val]
-        new_node = Node(node.val)
-        clones[node.val] = new_node
+    def dfs(node):
+        # The job of dfs() is to clone a node and recursively clone its neighbors. Once again, we TRUST that the
+        # recursive call will handle copying the neighbors
+        if node in clones:
+            return clones[node]
+        node_clone = Node(node.val)
+        clones[node] = node_clone  # We can also use the node's value as key as it's guaranteed to be unique
         for neighbor in node.neighbors:
-            new_node.neighbors.append(dfs(neighbor))
-        return new_node
+            node_clone.neighbors.append(dfs(neighbor))
+        return node_clone
 
     clones = {}
-    return dfs(node)
+    return dfs(node) if node else None
 
 # Watch: https://www.youtube.com/watch?v=vma9tCQUXk8
 
