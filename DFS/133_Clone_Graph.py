@@ -108,18 +108,19 @@ def clone_graph_v2(node):
 
 
 def clone_graph_v3(node):
-    """ Iterative version of above DFS.
-    Time complexity: O(V + E)
-    Space complexity: O(V)
+    """ Iterative version of DFS using a stack,
+
+    Time complexity: O(|V| + |E|)
+    Space complexity: O(|V|)
     """
-    new_node = Node(node.val)
-    clones = {node: new_node}
+    node_clone = Node(node.val)
+    clones = {node: node_clone}
     stack = [node]
     while stack:
-        top = stack.pop()
-        for neighbor in top.neighbors:
+        cur_node = stack.pop()
+        for neighbor in cur_node.neighbors:
             if neighbor not in clones:
-                stack.append(neighbor)
                 clones[neighbor] = Node(neighbor.val)
-            clones[top].neighbors.append(clones[neighbor])
-    return new_node
+                stack.append(neighbor)
+            clones[cur_node].neighbors.append(clones[neighbor])
+    return node_clone
