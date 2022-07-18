@@ -226,16 +226,22 @@ def ladder_length_v3(begin_word, end_word, word_list):
 
 
 def ladder_length_v4(begin_word, end_word, word_list):
-    """ Bidirectional BFS.
+    """ Yet another bidirectional BFS.
+
         Instead of extracting one word from each queue at each iteration, we process all the words in one of the
-        queues at each iteration. At the end of the iteration, we swap queues if one is smaller than the other.
-        In the below implementation, 'begin_queue' always holds the elements of the smallest queue.
+        queues at each iteration. At the end of each iteration, we swap queues if one is shorter than the other.
+
+        In this algorithm, begin_queue always holds the elements of the smallest queue. Also note that queue are
+        implemented using hash sets.
+
+        The reason this approach is fast is that, after each iteration, it always chooses the queue that has the smaller
+        size, which means it always tries to spend less computation (generating intermediate words) towards meeting
+        the goal.
     """
-    word_list = set(word_list)
     if end_word not in word_list:
         return 0
-    begin_queue = {begin_word}
-    end_queue = {end_word}
+    word_list = set(word_list)
+    begin_queue, end_queue = {begin_word},  {end_word}
     distance = 1
     while begin_queue:
         next_begin_queue = set()
@@ -265,6 +271,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, ladder_length_v1(test_begin_word, test_end_word, test_word_list))
             self.assertEqual(result, ladder_length_v2(test_begin_word, test_end_word, test_word_list))
             self.assertEqual(result, ladder_length_v3(test_begin_word, test_end_word, test_word_list))
+            self.assertEqual(result, ladder_length_v4(test_begin_word, test_end_word, test_word_list))
 
 
 if __name__ == '__main__':
