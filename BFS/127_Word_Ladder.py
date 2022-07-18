@@ -169,26 +169,29 @@ def ladder_length_v3(begin_word, end_word, word_list):
         levels. Consider a simple example of a binary tree. With each passing level in a complete binary tree, the
         number of nodes increase in powers of 2.
 
-        We can considerably cut down the search space of the standard breadth first search algorithm if we launch two
+        We can considerably cut down the search space of the standard breadth-first search algorithm if we start two
         simultaneous BFS, one from the begin_word and one from the end_word. We progress one node at a time from both
-        sides. At any point in time, if we find a common node in both the searches, we stop the search. This is known
-        as bidirectional BFS and it considerably cuts down on the search space and hence reduces the time and space
-        complexity.
+        sides. At any point in time, if we find a common node in both the searches, we stop the search.
+
+        This is known as bidirectional BFS, and it considerably cuts down on the search space and hence reduces the time
+        and space complexity.
+
         The motivation is that b^(d/2) + b^(d/2) is much less than b^d, where b is branch factor and d is depth.
 
         The algorithm is very similar to the standard BFS based approach we saw earlier. The only difference is we now
         do BFS starting from two nodes instead of one. This also changes the termination condition of our search.
-        We now have two 'visited' dictionaries to keep track of nodes visited from the search starting at the
-        respective ends. If we ever find a node/word which is in the 'visited' set of the parallel search, we terminate
-        our search since we have found the meet point of this bidirectional search.
+
+        We now have two 'visited' hash maps to keep track of nodes visited from the search starting at the respective
+        ends. If we ever find a node/word which is in the 'visited' map of the parallel search, we terminate the search
+        since we have found the meeting point of this bidirectional search.
 
         Termination condition for bidirectional search is finding a word which has already been seen by the parallel
         search. It's more like meeting in the middle instead of going all the way through.
 
-        The shortest transformation sequence is the sum of levels of the meet point node from both the ends. Thus, for
-        every visited node, we save its level as value in the 'visited' dictionary.
+        The length of the shortest transformation sequence is the sum of levels of the meeting point node from both
+        ends. Thus, for every visited node, we save its level as value in the visited map.
 
-    Time complexity: O(N * M), where N is the number of words and M is the length of each word (same length)
+    Time complexity: O(N * M^2), where N is the number of words and M is the length of each word (same length)
     Space complexity: O(N * M)
     """
 
@@ -198,25 +201,25 @@ def ladder_length_v3(begin_word, end_word, word_list):
         for i in range(n):
             for c in string.ascii_lowercase:
                 intermediate_word = word[:i] + c + word[i + 1:]
-                if intermediate_word in other_visited:  # If the intermediate word has already been visited from the
-                    # other parallel traversal, this means we have found the answer.
-                    return distance + word_list[intermediate_word]
+                # If the intermediate word has already been visited from the other parallel traversal, this means we
+                # have found the answer.
+                if intermediate_word in other_visited:
+                    return distance + other_visited[intermediate_word]
                 if intermediate_word in word_list and intermediate_word not in cur_visited:
                     cur_queue.append((intermediate_word, distance + 1))
                     cur_visited[intermediate_word] = distance + 1
         return None
 
-    word_list = set(word_list)
     if end_word not in word_list:
         return 0
+    word_list = set(word_list)
     begin_queue = deque([(begin_word, 1)])
     end_queue = deque([(end_word, 1)])
     begin_visited, end_visited = {begin_word: 1}, {end_word: 1}
-    while begin_queue and end_queue:  # We do a bidirectional search starting one pointer from begin word and one
-        # pointer from end word. Hopping one by one.
-        # One hop from begin word and one hop from end word
-        res = visit_word(begin_queue, begin_visited, end_visited) or \
-              visit_word(end_queue, end_visited, begin_visited)
+    while begin_queue and end_queue:
+        # We do a bidirectional search starting one pointer from begin word and one pointer from end word. Hopping
+        # one by one. One hop from begin word and one hop from end word
+        res = visit_word(begin_queue, begin_visited, end_visited) or visit_word(end_queue, end_visited, begin_visited)
         if res:
             return res
     return 0
@@ -261,6 +264,7 @@ class Test(unittest.TestCase):
         for test_begin_word, test_end_word, test_word_list, result in self.data:
             self.assertEqual(result, ladder_length_v1(test_begin_word, test_end_word, test_word_list))
             self.assertEqual(result, ladder_length_v2(test_begin_word, test_end_word, test_word_list))
+            self.assertEqual(result, ladder_length_v3(test_begin_word, test_end_word, test_word_list))
 
 
 if __name__ == '__main__':
