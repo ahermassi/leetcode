@@ -4,45 +4,115 @@ to check whether these edges make up a valid tree. """
 from collections import defaultdict, deque
 import unittest2 as unittest
 
+# Video explanation: https://www.youtube.com/watch?v=bXsUuownnoQ
+
 
 def valid_tree_v1(n, edges):
     """ According to the definition of tree on Wikipedia: 'a tree is an undirected graph in which any two vertices are
         connected by exactly one path. In other words, any CONNECTED graph without simple CYCLES is a tree.'
-        Therefore, we have to check 2 things:
-            1- Whether there is a cycle
-            2- Whether all vertices are connected (the number of connected components is 1)
-        Finding a cycle is a simple extension of cycle detection algorithm for directed graphs, except we need to
-        include the parent node as well in the DFS call.
-    Time complexity: O(|V| + |E|)
-    Space complexity: O(|V| + |E|)
+
+        Therefore, a graph G is a tree iff the following two conditions are met:
+
+            1- G is fully connected. In other words, for every pair of nodes in G, there is a path between them.
+            2- G contains no cycles. In other words, there is exactly one path between each pair of nodes in G.
+
+        Depth-first search is a classic graph traversal algorithm that can be used to check for both of these
+        conditions:
+
+            1- G is fully connected if, and only if, we started a depth-first search from a single source and discovered
+                 all nodes in G during it.
+            2- G contains no cycles if, and only if, the depth-first search never goes back to an already discovered
+                 node. We need to be careful though not to count trivial cycles of the form A → B → A that occur with
+                 most implementations of undirected edges.
+
+
+        Depth-first search requires being able to look up the adjacent (immediate neighbours) of a given node. Like
+        many graph problems though, the input format we're given doesn't allow us to quickly get the neighbours of a
+        node. Therefore, our first step is to convert the input into an adjacency list.
+
+        Recall that most depth-first searches follow a template like the one below for iterative depth-first search.
+        Note that this doesn't yet solve the problem of determining whether the input graph is a tree—we're simply
+        using it as a step towards building up a solution.
+
+            - Use a stack to keep track of unexplored nodes.
+            - Use a set to keep track of already seen nodes to avoid infinite looping.
+            - While there are nodes remaining on the stack, take one off to visit.
+            - Check for unseen neighbours of this node.
+            - If we've already seen this node, continue. Otherwise, put this neighbour onto the stack and record that
+               it has been seen.
+
+        Let's now figure out how we can modify the basic depth-first search template to do the two checks we need.
+
+        The first check is straightforward. If the graph is fully connected, then every node must have been seen.
+        This means that all nodes must be in the seen set at the end. Because a set removes duplicates, and the only
+        values going into it were valid node numbers, then we know that the graph was fully connected if, and only if,
+        the seen set contains n values at the end.
+
+        For the second check, you might be thinking: can't we just modify the above algorithm to return false when a
+        neighbour is in visited set?
+
+        This, however, would only work on a directed graph. On an undirected graph, like the one we're working with
+        here, trivial "cycles" will be detected. For example, if there's an undirected edge between node A and node B,
+        a detected cycle will include A → B → A. This is because an undirected edge is actually 2 edges in the adjacency
+        list, and so forms a trivial cycle.
+
+        There are several strategies of detecting whether an undirected graph contains cycles, while excluding the
+        trivial cycles. Most rely on the idea that a depth-first search should only go along each edge once, and
+        therefore only in one direction. This means that when we go along an edge, we should do something to ensure
+        that we don't then later go back along it in the opposite direction.
+
+        One of the strategies is to keep track of the "parent" node that we got to a node from. Then, when we iterate
+        through the neighbours of a node, we ignore the "parent" node as otherwise it'll be detected as a trivial cycle
+        (and we know that the parent node has already been visited by this point anyway). The starting node (0 in this
+        implementation) has no "parent", so put it as -1.
+
+        At first, it's a little more difficult to understand why this strategy even works. A good way to think about it
+        is to remember that we just want to avoid going along edges we've already been on (in the opposite direction).
+        The parent links prevent that, as each node is only entered for exploration once. So, imagine you're walking
+        through a maze, with the condition that you're not allowed to go back along any path you've already been on.
+        If you still somehow end up somewhere you were previously, there must have been a cycle!
+
+    Time complexity: O(|V| + |E|), creating the adjacency list requires initialising a list of length V, with a cost of
+    O(V), and then iterating over and inserting E edges, for a cost of O(E). This gives us O(V) + O(N) = O(N + E).
+    Each node is added to the data structure once. This means that the outer loop will run V times. For each of the V
+    nodes, its adjacent edges is iterated over once. In total, this means that all E edges are iterated over once by the
+    inner loop. This, therefore, gives a total time complexity of O(|V| + |E|)
+    Space complexity: O(|V| + |E|), the adjacency list is a list of length V, with inner lists with lengths that add to
+    a total of E. This gives a total of O(V + E) space. In the worst case, the recursion stack will have all V nodes on
+    it at the same time, giving a total of O(V) space.
     """
 
     def dfs(vertex, parent):
         visited.add(vertex)
         for neighbor in graph[vertex]:
-            if neighbor in visited and neighbor != parent:  # If a neighbor was previously visited and this neighbor is
-                # NOT my parent (the graph is undirected, so A-B == A->B and B->A), then we have a cycle.
-                # Example: edges = [0, 1], graph = {0: [1], 1: [0, 2]}
+            if neighbor == parent:
+                continue
+            if neighbor in visited:
+                # If a neighbor was previously visited and this neighbor is NOT my parent (the graph is undirected,
+                # so A-B == A->B and B->A), then we have a cycle.
+                # Example: edges = [0, 1], graph = {0: [1], 1: [0, 2]}.
                 # Mark 0 as visited and proceed to its neighbors, which is only node 1. When dfs() is called with
-                # (vertex=1, parent=0), we again proceed to examine the neighbors of 1: node 0 is there, but 0 is
-                # 1's parent due to the undirected nature of the graph.
+                # (vertex=1, parent=0), we again proceed to examine the neighbors of 1: node 0 is there, but 0 is 1's
+                # parent due to the undirected nature of the graph.
                 return False
-            if neighbor not in visited and not dfs(neighbor, vertex):  # 'neighbor' has not been visited, so let's
-                # check if there's cycle starting from 'neighbor'
+            # 'neighbor' has not been visited and is not the parent of current vertex, so let's check if there's
+            # cycle starting from 'neighbor'
+            if not dfs(neighbor, vertex):
                 return False
         return True
 
     graph = defaultdict(list)
-    for a, b in edges:
-        graph[a].append(b)
-        graph[b].append(a)
+    for src, dest in edges:
+        graph[src].append(dest)
+        graph[dest].append(src)
     visited = set()
-    if not dfs(0, -1):  # Make sure there's no cycle
+
+    if not dfs(0, -1):
+        # Make sure there's no cycle. Note: node 0 isn't guaranteed to exist, so we can get a key error if we don't
+        # use a defaultdict.
         return False
-    if any(i for i in range(n) if i not in visited):  # Make sure all vertices are connected. If the graph is a tree,
-        # all nodes will be marked as visited by the end of DFS.
-        return False
-    return True
+    # Check if all vertices are connected. If the graph is a tree, all nodes will be visited by the end of DFS.
+    return len(visited) == n
 
 
 def valid_tree_v2(n, edges):
