@@ -169,27 +169,27 @@ def valid_tree_v2(n, edges):
 
 
 def valid_tree_v3(n, edges):
-    """ BFS version of the previous algorithm.
+    """ BFS version of the first DFS approach.
+
     Time complexity: O(|V| + |E|)
     Space complexity: O(|V| + |E|)
     """
     graph = defaultdict(list)
-    for a, b in edges:
-        graph[a].append(b)
-        graph[b].append(a)
+    for src, dest in edges:
+        graph[src].append(dest)
+        graph[dest].append(src)
     visited = set()
     queue = deque([(0, -1)])
     while queue:
         vertex, parent = queue.popleft()
         visited.add(vertex)
         for neighbor in graph[vertex]:
-            if neighbor in visited and neighbor != parent:
+            if neighbor == parent:
+                continue
+            if neighbor in visited:
                 return False
-            if neighbor not in visited:
-                queue.append((neighbor, vertex))
-    if any(i for i in range(n) if i not in visited):
-        return False
-    return True
+            queue.append((neighbor, vertex))
+    return len(visited) == n
 
 
 class Test(unittest.TestCase):
@@ -199,6 +199,7 @@ class Test(unittest.TestCase):
         for test_n, test_edges, result in self.data:
             self.assertEqual(result, valid_tree_v1(test_n, test_edges))
             self.assertEqual(result, valid_tree_v2(test_n, test_edges))
+            self.assertEqual(result, valid_tree_v3(test_n, test_edges))
 
 
 if __name__ == '__main__':
