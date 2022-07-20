@@ -106,7 +106,6 @@ def valid_tree_v1(n, edges):
         graph[src].append(dest)
         graph[dest].append(src)
     visited = set()
-
     if not dfs(0, -1):
         # Make sure there's no cycle. Note: node 0 isn't guaranteed to exist, so we can get a key error if we don't
         # use a defaultdict.
@@ -116,6 +115,60 @@ def valid_tree_v1(n, edges):
 
 
 def valid_tree_v2(n, edges):
+    """ Depending on how much graph theory you know, there's a better definition for determining whether a given graph
+         is a tree.
+
+         For the graph to be a valid tree, it must have exactly n-1 edges. Any less, and it can't possibly be fully
+         connected. Any more, and it has to contain cycles. Additionally, if the graph is fully connected and contains
+         exactly n-1 edges, it can't possibly contain a cycle, and therefore must be a tree!
+
+         Going by this definition, our algorithm needs to do the following:
+
+            - Check whether there are n-1 edges. If there's not, then return false.
+
+            - Check whether the graph is fully connected. Return true if it is, false if otherwise.
+
+        Recall that the most complicated part of the previous approach was in checking whether the graph contained
+        cycles. This was because in an undirected graph, we needed to be careful of trivial cycles. Checking whether a
+        graph is fully connected is straightforward—we simply check if all nodes were reachable from a search starting
+        at a single node.
+
+        Like before, we can check for connectivity using recursive depth-first search, iterative depth-first search, or
+        iterative breadth-first search. We still need to use a visited set to prevent the algorithm getting caught in an
+        infinite loop if there are indeed cycles (and to prevent looping on the trivial cycles).
+
+        In other words: In order for a graph to be a tree, it must satisfy the following condition:
+
+                    Number of edges = Number of nodes - 1 and is connected
+                (the 1st condition implies that the connected graph has no cycle)
+
+        The DFS followed by length of visited set check allows us to verify that there is only one connected component
+        in the graph.
+
+    Time complexity: O(|V| + |E|)
+    Space complexity: O(|V|)
+    """
+
+    def dfs(vertex):
+        if vertex in visited:
+            return
+        visited.add(vertex)
+        for neighbor in graph[vertex]:
+            dfs(neighbor)
+
+    if len(edges) != n - 1:
+        return False
+    graph = defaultdict(list)
+    for src, dest in edges:
+        graph[src].append(dest)
+        graph[dest].append(src)
+    visited = set()
+    dfs(0)
+    # If the graph is connected then all vertices must be visited
+    return len(visited) == n
+
+
+def valid_tree_v3(n, edges):
     """ BFS version of the previous algorithm.
     Time complexity: O(|V| + |E|)
     Space complexity: O(|V| + |E|)
