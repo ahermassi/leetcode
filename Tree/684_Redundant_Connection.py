@@ -73,33 +73,38 @@ def find_redundant_connection_v1(edges):
         graph[dest].append(src)
 
 
-# https://leetcode.com/articles/redundant-connection/
-# https://leetcode.com/problems/redundant-connection/discuss/123819/Union-Find-with-Explanations-(Java-Python)
-
 def find_redundant_connection_v2(edges):
-    """ Union-find solution. We simply find the first edge occurring in the graph that is already connected.
-    Time complexity: O(N), where N is the number of vertices (and also the number of edges) in the graph
+    """ In an undirected graph, like the one we're working with here, trivial "cycles" will be detected. For example,
+         if there's an undirected edge between node A and node B, a detected cycle will include A → B → A. This is
+         because an undirected edge is actually 2 edges in the adjacency list, and so forms a trivial cycle.
+
+         We keep track of the "parent" node that we got to a node from. Then, when we iterate through the neighbours
+         of a node, we ignore the "parent" node as otherwise it'll be detected as a trivial cycle (and we know that the
+         parent node has already been visited by this point anyway).
+
+         Note that we no longer need to use a visited set because, with the introduction of parent parameter, we're
+         dealing with a 'directed' graph, and we already know that no cycle exists yet before each call to path_exists().
+
+    Time complexity: O(N^2)
     Space complexity: O(N)
     """
 
-    def find(x):
-        if parent[x] == 0:
-            return x
-        parent[x] = find(parent[x])
-        return parent[x]
+    def path_exists(src, dest, parent):
+        if src == dest:
+            return True
+        for neighbor in graph[src]:
+            if neighbor == parent:
+                continue
+            if path_exists(neighbor, dest, src):
+                return True
+        return False
 
-    def union(x, y):
-        rootX = find(x)
-        rootY = find(y)
-        if rootX == rootY:
-            return False
-        parent[rootX] = rootY
-        return True
-
-    parent = [0] * len(edges)
-    for x, y in edges:
-        if not union(x - 1, y - 1):
-            return [x, y]
+    graph = defaultdict(list)
+    for src, dest in edges:
+        if path_exists(src, dest, 0):  # 0 is a non-existent node, so we use it as a parent
+            return [src, dest]
+        graph[src].append(dest)
+        graph[dest].append(src)
 
 
 class Test(unittest.TestCase):
