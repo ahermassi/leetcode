@@ -124,25 +124,37 @@ def find_itinerary_v1(tickets):
 
 
 def find_itinerary_v2(tickets):
-    """ Iterative version of the above algorithm using an explicit stack.
+    """ Iterative version of the previous solution using an explicit stack.
+
         Considering the passenger has to be physically in one place before moving to another airport, we are
         considering using up all tickets and choose lexicographically smaller solution if case of a tie. Thinking as
         that passenger, they choose their flight greedily as the lexicographical order. Once they arrive at an airport
         without departure flights with more tickets at hand, the passenger will push current ticket in a stack and look
         at whether it is possible to travel to other places from the airport on their way.
+
+        How does this approach (and the previous one) guarantee that we are using all tickets?
+
+        We can assume from the problem statement that all tickets (edges) are within the same connected component, since
+        it states at least one valid itinerary can be formed. We won't have any disjoint components such that we might
+        miss out on visiting an edge if we start at the 'JFK' node. In the DFS, we are removing edges from the adjacency
+        list each time we traverse an edge. Thus, we will visit each edge exactly once, so every ticket will be used
+        exactly once.
+
     Time complexity: O(E logE)
     Space complexity: O(|E| + |V|)
     """
 
     graph = defaultdict(list)
-    for origin, dest in tickets:
-        heappush(graph[origin], dest)
+    for src, dest in tickets:
+        heappush(graph[src], dest)
     stack, res = ['JFK'], []
     while stack:
         destinations = graph[stack[-1]]
         if destinations:
             stack.append(heappop(destinations))  # While we visit the edge, we trim it off from the graph
         else:
+            # If there is no further children to traverse then add this airport to result. This airport should be the
+            # last to visit since we can't anywhere from here. That's why we return the reverse of the result
             res.append(stack.pop())
     return res[::-1]
 
@@ -156,6 +168,7 @@ class Test(unittest.TestCase):
     def test_find_itinerary(self):
         for test_tickets, result in self.data:
             self.assertEqual(result, find_itinerary_v1(test_tickets))
+            self.assertEqual(result, find_itinerary_v2(test_tickets))
 
 
 if __name__ == '__main__':
