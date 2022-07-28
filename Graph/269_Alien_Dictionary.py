@@ -114,10 +114,16 @@ def alien_order_v1(words):
     # problem description.
     return ''.join(res) if len(res) == len(indegree) else ''
 
+# Video explanation: https://www.youtube.com/watch?v=6kTZYvNNyps
+
 
 def alien_order_v2(words):
     """ Another approach is to use a depth-first search. We still need to extract relations and then generate an
-        adjacency list in the same way as before, but this time we don't need the out-degree map.
+        adjacency list in the same way as before, but this time we don't need the indegree map.
+
+        Recall that in a depth-first search, nodes are returned once they either have no outgoing links left, or all
+        their outgoing links have been visited. Therefore, the order in which nodes are returned by the depth-first
+        search will be the reverse of a valid alphabet order.
 
         One issue we need to be careful of is cycles. In directed graphs, we often detect cycles by using graph
         coloring. All nodes start as white, and then once they're first visited they become grey, and then once all
@@ -133,18 +139,18 @@ def alien_order_v2(words):
         For each of the nodes in our graph, we will run a depth-first search in case that node was not already visited
         in some other node's DFS traversal.
 
-        Suppose we are executing the depth-first search for a node N. We will recursively traverse all of the neighbors
-        of node N which have not been processed before. Once the processing of all the neighbors is done, we will add
-        the node N to the result list.
+        Suppose we are executing the depth-first search for a node N. We will recursively traverse all the neighbors of
+        node N which have not been processed before. Once the processing of all the neighbors is done, we will add the
+        node N to the result list.
 
-        visited[node] == -1: The node is encountered again while its children are being examined. This indicates a
-        cycle.
-        visited[node] == 1: The node's children have been examined in an earlier call and no cycle was detected.
-        Move on.
+        visited[node] == 1 means this node is part of the current trip, and either all of its descendants are not
+        processed or it's still in the function call stack. If you see it again, it's a cycle.
+        visited[node] == 2: means the node and all its descendants were processed, and no cycle was found. if we hit
+        this, going down this path won't find any cycles.
 
         Another way to think about it is the last few in the order must be those which are not prerequisites of other
         characters. Thinking of it recursively means if one node has unvisited children nodes, we should visit them
-        first before we put this node down in the final order list. This sounds like the post-order of a DFS.
+        first before we put this node down in the final order list. This sounds like the postorder DFS.
 
         An important thing to note about topologically sorted order is that there won't be just one ordering of nodes
         (characters). There can be multiple.
@@ -156,37 +162,39 @@ def alien_order_v2(words):
     list as the value.
     """
 
-    def dfs(node):
-        if visited[node] == -1:  # Don't recurse further if we found a cycle already
+    def dfs(vertex):
+        if visited[vertex] == 1:  # Don't recurse further if we found a cycle already
             return False
-        if visited[node] == 1:
+        if visited[vertex] == 2:
             return True
-        visited[node] = -1  # Start the recursion
-        for neighbor in graph[node]:
+        visited[vertex] = 1  # Start the recursion
+        for neighbor in graph[vertex]:
             if not dfs(neighbor):
                 return False
-        res.append(node)
-        visited[node] = 1
+        res.append(vertex)
+        visited[vertex] = 2
         return True
 
-    graph = defaultdict(list)
     n = len(words)
+    graph = defaultdict(list)
     for i in range(n - 1):
-        cur, nxt = words[i], words[i + 1]
+        cur_word, next_word = words[i], words[i + 1]
+        min_len = min(len(cur_word), len(next_word))
         j = 0
-        while j < min(len(cur), len(nxt)) and cur[j] == nxt[j]:
+        while j < min_len and cur_word[j] == next_word[j]:
             j += 1
-        if j == len(nxt) and j < len(cur):
+        if j == min_len and len(cur_word) > len(next_word):
             return ''
-        if j < min(len(cur), len(nxt)) and cur[j] not in graph[nxt[j]]:
-            graph[nxt[j]].append(cur[j])  # Create graph, better seen as is_prerequisite_of graph:
-            # graph[char1] = char2 means 'char1' is a prerequisite of 'char2' and precedes it in the alien alphabet
+        if j < min_len and next_word[j] not in graph[cur_word[j]]:
+            # Create graph, better seen as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
+            # prerequisite of 'char2' and precedes it in the alien alphabet
+            graph[cur_word[j]].append(next_word[j])
     visited = {c: 0 for word in words for c in word}
     res = []
     for c in visited:
         if not dfs(c):  # If a cycle exists, no topological ordering is possible
             return ''
-    return ''.join(res)
+    return ''.join(res[::-1])
 
 
 class Test(unittest.TestCase):
