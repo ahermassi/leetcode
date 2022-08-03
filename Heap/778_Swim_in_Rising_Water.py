@@ -79,12 +79,27 @@ def swim_in_water_v1(grid):
 
 def swim_in_water_v2(grid):
     """ Whether the swim is possible is a monotone function with respect to time, so we can binary-search this
-        function for the correct time: the smallest t for which the swim is possible.
+         function for the correct time: The smallest t for which the swim is possible.
 
-        Say we guess that the correct time is t. To check whether it is possible, we perform a simple depth-first
-        search where we can only walk in squares that are at most t.
+         Say we guess that the correct time is t. To check whether it is possible, we perform a simple depth-first
+         search where we can only walk in squares that are at most t.
 
-    Time complexity: O(N^2 logN), depth-first search O(N^2) and we make up to O(logN) of them
+         One important factor is the given condition that gird[i][j] < N^2. This rationalized this approach by
+         providing an upper bound. With that in mind, the question can be transformed to the following: We know one of
+         the numbers in [0, N^2) is our answer, and how do we find that? We can check each one of them using the
+         reachable_with_water_level() function, which is basic linear search. To make it more efficient, since we are
+         dealing with a search problem, binary search becomes a natural choice, which leads us to this approach.
+
+         The answer (least time to reach) lies in a fixed range and that range is 0 to N^2 - 1.
+         The important observation is that if we can reach from start vertex to end vertex within t time then we can also
+         reach within t+1 time. This means if we define a function F where F(t) = true/false depending on whether we can
+         reach from start vertex to end vertex within t time, then the F function would look something like this:
+
+                    F(t): [false, false, .... ,false, true, true, ... ,true]
+
+        So we have to find the first t such that F(t) is true. This should be the answer or the minimum time.
+
+    Time complexity: O(N^2 logN), depth-first search is O(N^2) and we make up to O(logN) calls
     Space complexity: O(N^2), the maximum size of the stack
     """
 
@@ -92,7 +107,7 @@ def swim_in_water_v2(grid):
         if not 0 <= i < n or not 0 <= j < n or (i, j) in visited or grid[i][j] > level:
             # If current square elevation > level, then wait till time for that elevation
             return False
-        if (i, j) == (n - 1, n - 1):
+        if i == j == n - 1:
             return True
         visited.add((i, j))
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
@@ -105,8 +120,8 @@ def swim_in_water_v2(grid):
     while left < right:
         mid = (left + right) // 2
         if reachable_with_water_level(mid, 0, 0, set()):
-            # We are able to reach bottom-right cell with min_max_time=mid => Try lower to minimize it
+            # We are able to reach bottom-right cell with smallest_max_along_path=mid => Try lower to minimize it
             right = mid
-        else:  # We fail to reach the bottom-right cell min_max_time=mid => Try higher
+        else:  # We fail to reach the bottom-right cell with smallest_max_along_path=mid => Try higher
             left = mid + 1
     return left
