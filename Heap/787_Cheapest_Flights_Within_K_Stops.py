@@ -7,7 +7,7 @@ from heapq import heappop, heappush
 import unittest2 as unittest
 
 
-def find_cheapest_price(flights, src, dst, k):
+def find_cheapest_price_v1(flights, src, dst, k):
     """ Dijkstra's algorithm using priority queue.
 
         If we forget about the part where the number of stops is limited, then the problem simply becomes the shortest
@@ -126,6 +126,81 @@ def find_cheapest_price(flights, src, dst, k):
             heappush(heap, (total_cost + cost, neighbor, stops_left - 1))
     return -1
 
+# Video explanation: https://www.youtube.com/watch?v=5eIK3zUdYmE
+
+
+def find_cheapest_price_v2(flights, src, dst, k):
+    """ Bellman-Ford
+
+         Like Dijkstra's algorithm, Bellman-Ford proceeds by relaxation, in which approximations to the correct distance
+         are replaced by better ones until they eventually reach the solution. In both algorithms, the approximate
+         distance to each vertex is always an overestimate of the true distance and is replaced by the minimum of its
+         old value and the length of a newly found path.
+
+         However, Dijkstra's algorithm uses a priority queue to greedily select the closest vertex that has not yet been
+         processed, and performs this relaxation process on all of its outgoing edges; by contrast, the Bellman-Ford
+         algorithm simply relaxes all the edges and does this∣V∣−1 times, where ∣V∣ is the number of vertices in the
+         graph. In each of these repetitions, the number of vertices with correctly calculated distances grows, from
+         which it follows that eventually, all vertices will have their correct distances. This method allows the
+         Bellman-Ford algorithm to be applied to a wider class of inputs than Dijkstra.
+
+         The term "relax an edge" simply means that for a given edge U -> V we check if dU+Weight(U,V) <dV, where dU and
+         dV represent the shortest path distances of these nodes from the source right now. To relax an edge means to
+         see if the shortest distance can be updated or not.
+
+         An important part to understanding the Bellman Ford's working is that at each step, the relaxations lead to the
+         discovery of new shortest paths to nodes. After the first iteration over all the vertices, the algorithm finds
+         out all the shortest paths from the source to nodes which can be reached with one hop (one edge). That makes
+         sense because the only edges we'll be able to relax are the ones that are directly connected to the source as
+         all the other nodes have their shortest distances set to infinity initially.
+
+        Similarly, after the (K+1)th step, Bellman-Ford will find the shortest distances for all the nodes that can be
+        reached from the source using a maximum of K stops. Isn't that what the question asks us to do? If we run
+        Bellman-Ford for K+1 iterations, it will find out the shortest paths of length K or less, and it will find all
+        such paths. We can then check if our destination node was reached or not and if it was, then the value for that
+        node would be our shortest path.
+
+        Another important thing to note about this algorithm is that we don't need to build an adjacency list.
+        The algorithm simply iterates over the edges of the graph and that information is already available in the
+        input.
+
+            - We have a loop that does K + 1 iterations. The plus one is because we need to find the cheapest flight
+               route with at most K stops in between. That translates to K + 1 edges at most.
+
+            - In each iteration, we loop over all the edges in the graph and try to relax each one of them. Again, note
+               that the edges or the flights are already given to us in the input and don't need to build any kind of
+               adjacency list or matrix structure which is otherwise standard for other graph algorithms.
+
+            - After K + 1 iterations, we check if the destination has been reached or not. If it's been discovered, then
+               the distance at that point will be the shortest using at most K + 1 edges.
+
+            - We use an array to store the current shortest distances of each node from the source. This is possible
+               because the number of nodes is not big, and we don't need to use a dictionary here. However, a
+               single array is not sufficient here because any values updated in a particular iteration cannot be used
+               to update other values in the same iteration. Thus, we need another distance array which will store
+               values of the previous iteration. So, we essentially use 2 arrays of size V, and we swap between them in
+               each iteration i.e.
+                        Iteration-0 ----
+                        Array-1 is the main array
+                        Array-2 becomes the previous array
+                        Iteration-1 ----
+                        Array-2 is the main array
+                        Array-1 becomes the previous array
+
+    Time complexity: O(K * E),  we have K+1 iterations and in each iteration we go over all the edges in the graph
+    Space complexity: O(V), occupied by the two distance arrays
+    """
+    n = len(flights)
+    prev_cost = [float('inf')] * n
+    prev_cost[src] = 0
+    for _ in range(k + 1):
+        cur_cost = prev_cost[:]
+        for source, destination, cost in flights:
+            if prev_cost[source] + cost < cur_cost[destination]:
+                cur_cost[destination] = prev_cost[source] + cost
+        prev_cost = cur_cost
+    return prev_cost[dst] if prev_cost[dst] != float('inf') else -1
+
 
 class Test(unittest.TestCase):
     data = [([[0, 1, 100], [1, 2, 100], [0, 2, 500]], 0, 2, 1, 200),
@@ -133,7 +208,8 @@ class Test(unittest.TestCase):
 
     def test_find_cheapest_price(self):
         for test_flights, test_src, test_dst, test_k, result in self.data:
-            self.assertEqual(result, find_cheapest_price(test_flights, test_src, test_dst, test_k))
+            self.assertEqual(result, find_cheapest_price_v1(test_flights, test_src, test_dst, test_k))
+            self.assertEqual(result, find_cheapest_price_v2(test_flights, test_src, test_dst, test_k))
 
 
 if __name__ == '__main__':
