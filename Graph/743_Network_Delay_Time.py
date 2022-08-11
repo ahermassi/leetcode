@@ -9,36 +9,88 @@ from heapq import heappop, heappush
 import unittest2 as unittest
 
 
-def network_delay_time_v1(times, N, K):
-    """ DFS. Let's record the time time[node] when the signal reaches the node. If some signal arrived earlier, we
-        don't need to broadcast it anymore. Otherwise, we should broadcast the signal.
-        We'll maintain time[node], the earliest that we arrived at each node. When visiting a node while t time has
-        elapsed, if this is the currently fastest signal at this node, let's broadcast signals from this node.
-        To speed things up, at each visited node we'll consider signals exiting the node that are faster first, by
-        sorting the edges. Sorting is effective because we are likely to be able to reduce the number of the
-        unnecessary calls to dfs(). In general, it is more likely to get the minimum time to reach one node if we start
-        from the lowest cost. Keep in mind that every time we find a better (faster) path to reach the node, we need to
-        call dfs() again from the node.
-        We visit each node at some time, and if that time is better than the fastest time we've reached this node, we
-        travel along outgoing edges in sorted order.
-    Time complexity: O(N^N + E * logE), where E is the length of times. We can only fully visit each node up to N-1
-    times, one per each other node. Plus, we have to explore every edge and sort them.
-    Space complexity: O(N + E), the size of the graph (O(E), plus the size of the implicit call stack in DFS (O(N))
+def network_delay_time_v1(times, n, k):
+    """ Depth-First Search.
+
+        It is possible for a node to receive signals from multiple adjacent nodes at different times. The timestamp at
+        which a node receives the signal is the time that the first signal reaches the node.
+
+        Therefore, the problem boils down to finding the time required for each node to receive the signal, and the
+        answer will be the maximum time required by any of the nodes. Why maximum? Because we need to find the time at
+        which all nodes receive the signal, so the timestamp at which the last node receives the signal is the answer.
+
+        In this approach, we will simulate the signal and send it through the nodes as per the problem description to
+        find the answer. Starting from node k, the signal will travel to the adjacent nodes along the directed edges.
+        We will track the signal movement with respect to time in a Depth-First Search manner.
+
+        Start the DFS with node=k and current timestamp cur_time=0. Before we traverse to the adjacent nodes, we mark
+        the time required for the current node in the array signal_received_at as cur_time. Now, we will traverse all
+        the adjacent nodes to the current node.
+
+        For each adjacent node, we will start a DFS with the updated timestamp i.e., equal to the sum of cur_time and
+        the time it takes to traverse the edge from current node to the adjacent node.
+
+        As we discussed before, there can be multiple signals received at a particular node, and we are only interested
+        in the time that the first signal reached the node. Hence, we will perform the DFS only if cur_time is less than
+        the time we have stored corresponding to the current node in signal_received_at. This is because if cur_time is
+        greater than or equal to signal_received_at[node], it means that the current node received a signal before the
+        current signal could reach it.
+
+        There is a trick that can reduce the execution time. Instead of traversing adjacent nodes arbitrarily, we can
+        traverse them in increasing order of their travel time. Although this will increase the time complexity of the
+        algorithm, it will increase the probability of finding the fastest time path first. Hence, there could be fewer
+        DFS calls and hence better execution time.
+
+            - Create an adjacency list such that graph[source] contains pairs (time, dest). Here, time denotes the time
+               required for the signal to travel from source to dest.
+
+            - For all nodes, initialize signal_received_at as a large value to signify that, so far, no signal has been
+               received.
+
+            - Perform DFS on the node k and with the cur_time as 0. For each recursive call:
+                    * If cur_time is greater than or equal to signal_received_at[node], then return.
+                    * Otherwise, set signal_received_at[node] equal to cur_time which is the new shortest time required
+                       to reach the current node. Sort the edges connecting to every node in graph[node] in increasing
+                       order of their travel time.Then, perform a DFS for each of the adjacent nodes using the updated
+                       timestamp.
+
+            - Find the maximum value in the array signal_received_at. If any value in signal_received_at is still the
+               large value we initialized the array with, then return -1 as that node is not reachable from k.
+               Otherwise, return the maximum value in the array.
+
+        When visiting a node while t time has elapsed, if this is currently the fastest signal at this node, let's
+        broadcast signals from this node. To speed things up, at each visited node we'll consider signals exiting the
+        node that are faster first, by sorting the edges.
+
+        Sorting is effective because we are likely to be able to reduce the number of the unnecessary DFS calls.
+        In general, it is more likely to get the minimum time to reach one node if we start from the lowest cost.
+        Keep in mind that every time we find a better (faster) path to reach the node, we need to call DFS again from
+        the node.
+
+    Time complexity: O(N^N + E * logE), where N is the number of nodes and and E is the length of times. We can only
+    fully visit each node up to N-1 times, one per each other node. Also, we sort the edges corresponding to each node.
+    Space complexity: O(N + E), building the adjacency list will take O(E) space and the runtime stack for DFS can have
+    at most N active functions calls
     """
 
     def dfs(node, cur_time):
-        if time[node] <= cur_time:  # We arrived at this node earlier than this in the past
+        if signal_received_at[node] <= cur_time:
+            # If the current time is greater than or equal to the fastest signal received, then no need to iterate
+            # over adjacent nodes
             return
-        time[node] = cur_time
-        for t, neighbor in sorted(graph[node]):
-            dfs(neighbor, cur_time + t)
+        signal_received_at[node] = cur_time  # Fastest signal time for current node so far
+        for time, neighbor in sorted(graph[node]):
+            # Broadcast the signal to adjacent nodes
+            # cur_time + time = time when signal reaches neighbor node
+            dfs(neighbor, cur_time + time)
 
     graph = defaultdict(list)
     for source, destination, time in times:
-        graph[source].append((time, destination))  # The edge is (time, destination) so we can sort on time later on
-    time = {i: float('inf') for i in range(1, N + 1)}  # time[i] = the earliest (least amount of time) we've reached i
-    dfs(K, 0)
-    return max(time.values()) if max(time.values()) != float('inf') else -1
+        graph[source].append((time, destination))  # The edge is (time, destination) so we can sort by time later on
+    signal_received_at = [float('inf')] * (n + 1)  # signal_received_at[node] = the earliest time we've reached the node
+    signal_received_at[0] = 0  # Node 0 doesn't exist
+    dfs(k, 0)
+    return max(signal_received_at) if max(signal_received_at) != float('inf') else -1
 
 
 def network_delay_time_v2(times, N, K):
