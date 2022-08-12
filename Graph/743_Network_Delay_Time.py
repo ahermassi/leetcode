@@ -93,30 +93,76 @@ def network_delay_time_v1(times, n, k):
     return max(signal_received_at) if max(signal_received_at) != float('inf') else -1
 
 
-def network_delay_time_v2(times, N, K):
-    """ Dijkstra's algorithm using priority queue (heap). The algorithm is based on repeatedly making the candidate
-        move that has the least distance traveled.
-        We use a priority queue to store all the nodes we encounter and their distances to K using a tuple
-        (distance to K, node). For every node we visit, if its distance to K is determined, we don't need to look at it
-        anymore because we always pop the nearest one to K in the priority queue, so we can be sure that the distance
-        is the shortest. Otherwise, we keep on exploring its neighbors. [4]
-        If we don't visit every node we return -1, else we return the node which takes the longest time to reach.
-    Time complexity: O(E logE), since heap might store E number of edges and each operation takes logE
-    Space complexity: O(E), graph and heap store at most E number of entries
+# Video explanation: https://www.youtube.com/watch?v=EaphyqKU4PQ
+# Excellent Dijkstra's explanation: https://www.youtube.com/watch?v=pVfj6mxhdMw
+
+def network_delay_time_v2(times, n, k):
+    """ Dijkstra's Algorithm.
+
+         As mentioned earlier, our objective is to find the fastest path from node k to every other node. This is a
+         typical use case for the Single Source Shortest Path (SSSP) algorithm. Hence, In this approach, we will use
+         Dijkstra's Algorithm to find the fastest path to every node from node k.
+
+        We will start with node k and then iterate over every adjacent node. In the previous approach, we broadcast the
+        signal from visited nodes using DFS. However, in this approach, we will use a priority queue to traverse the
+        nodes in increasing order of the time required to reach them. Therefore, in each iteration, we will visit the
+        node with the shortest travel time. This will help us find the fastest time path first.
+
+            - Create an adjacency list such that graph[source] contains pairs (dest, time). Here, time denotes the time
+               required for the signal to travel from source to dest.
+
+            - For all nodes, initialize signal_received_at as a large value to signify that, so far, no signal has been
+               received.
+
+            - Initialize a priority queue with the pair of starting node k and its distance 0. While the priority queue
+               is not empty:
+                    * Pop the top node from the priority queue.
+                    * If the current path takes less time than the value at signal_received_at[node], update the time
+                       at signal_received_at[current_node] to current path time. Then, traverse all outgoing edges
+                       connected to the current node and add them to the priority queue.
+
+            - Find the maximum value in the array signal_received_at. If any value in signal_received_at is still the
+               large value we initialized the array with, then return -1 as that node is not reachable from k.
+               Otherwise, return the maximum value in the array.
+
+        The algorithm is based on repeatedly making the candidate move that has the least distance traveled.
+        We use a priority queue to store all the nodes we encounter and their distances to node k using a tuple
+        (distance to k, node). For every node we visit, if its distance to k is determined, we don't need to look at it
+        anymore because we always pop the nearest one to k in the priority queue, so we can be sure that the distance
+        is the shortest. Otherwise, we keep on exploring its neighbors.
+
+        The priority queue will prioritize neighbors with shorter distances. That means that if a node gets added twice
+        (but one distance is larger than the other), the shorter distance will be polled first. Then, it will have been
+        visited and even if we come across it again it just gets skipped. Also, since the nodes are added in closest to
+        furthest and there are no negative distances, we don't have to worry about a case where a larger distance is
+        added first and then a short distance version comes along (for same node). When a node is added, it is
+        guaranteed to be the next closest unvisited node.
+
+    Time complexity: O(E logV), where V is the number of vertices and E is the number of total edges in the given network.
+    The heap can grow to size E, since we're just dumping all the neighbors into it. Thus, push and pop operations on
+    the priority queue take O(logE) time. The value of E can be at most V⋅(V−1). Therefore, O(logE) is equivalent to
+    O(log V^2) which in turn equivalent to O(2logV). Hence, the time complexity for priority queue operations equals
+    O(logV). Although the number of vertices in the priority queue could be equal to E, we will only visit each vertex
+    only once. If we encounter a vertex for the second time, then cur_time will be greater than
+    signal_received_at[vertex], and we can continue to the next vertex in the priority queue. Hence, in total E edges
+    will be traversed and for each edge, there could be one priority queue insertion operation.
+    Space complexity: O(N+ E), graph and heap store at most E entries, signal_received_at takes O(N) space
     """
-    graph = defaultdict(dict)
+    graph = defaultdict(list)
     for source, destination, time in times:
-        graph[source][destination] = time
-    time, heap = {}, [(0, K)]
-    while heap:
-        cur_time, node = heappop(heap)
-        if node in time:
+        graph[source].append((destination, time))
+    signal_received_at = [float('inf')] * (n + 1)
+    signal_received_at[0] = 0
+    queue = [(0, k)]
+    while queue:
+        cur_time, vertex = heappop(queue)
+        if signal_received_at[vertex] != float('inf'):
             continue
-        time[node] = cur_time  # If we arrive at a node, we're sure we got here in the least amount of time since we
-        # use a min heap
-        for neighbor, t in graph[node].items():
-            heappush(heap, (cur_time + t, neighbor))  # The min heap is sorted in ascending order of time
-    return max(time.values()) if len(time) == N else -1
+        # If we arrive at a node, we're sure we got here in the least amount of time because we use a min heap
+        signal_received_at[vertex] = cur_time
+        for neighbor, time in graph[vertex]:
+            heappush(queue, (signal_received_at[vertex] + time, neighbor))
+    return max(signal_received_at) if max(signal_received_at) != float('inf') else -1
 
 
 def network_delay_time_v3(times, N, K):
