@@ -194,23 +194,26 @@ def network_delay_time_v3(times, n, k):
     return -1
 
 
-def network_delay_time_v4(times, N, K):
-    """ This is the standard Dijkstra's algorithm using a normal queue.
-    Time complexity: O(N^2 + E), where E is the length of times
-    Space complexity: O(N + E), the size of the graph (O(E)) plus the size of the queue (O(N)) and hash map
+def network_delay_time_v4(times, n, k):
+    """ This is the standard Dijkstra's algorithm using a regular queue.
+
+    Time complexity: O(V^2 + E), where V is the number of vertices and E is the number of edges
+    Space complexity: O(V + E), the size of the graph is O(E) and the size of the queue is O(V),
+    signal_received_at takes O(V) space
     """
-    graph = defaultdict(dict)
-    for source, destination, time in times:
-        graph[source][destination] = time
-    time = {i: float('inf') for i in range(1, N + 1)}
-    queue = deque([(0, K)])
+    graph = defaultdict(list)
+    for src, dest, time in times:
+        graph[src].append((dest, time))
+    signal_received_at = [float('inf')] * (n + 1)
+    signal_received_at[0] = 0
+    queue = deque([(0, k)])
     while queue:
-        cur_time, node = queue.popleft()
-        if cur_time < time[node]:
-            time[node] = cur_time
-            for neighbor, t in graph[node].items():
-                queue.append((cur_time + t, neighbor))
-    return max(time.values()) if max(time.values()) != float('inf') else -1
+        cur_time, vertex = queue.popleft()
+        if cur_time < signal_received_at[vertex]:
+            signal_received_at[vertex] = cur_time
+            for neighbor, time in graph[vertex]:
+                queue.append((signal_received_at[vertex] + time, neighbor))
+    return max(signal_received_at) if max(signal_received_at) != float('inf') else -1
 
 
 class Test(unittest.TestCase):
