@@ -165,27 +165,32 @@ def network_delay_time_v2(times, n, k):
     return max(signal_received_at) if max(signal_received_at) != float('inf') else -1
 
 
-def network_delay_time_v3(times, N, K):
-    """ Slight improvement of the previous solution. In fact, we don't have to pop all the elements from the heap, and
-        we can terminate early when N = 0, since when N = 0 we have visited all the nodes along the shortest path from
-        the source node.
-    Time complexity: O(E logE)
-    Space complexity: O(E)
+def network_delay_time_v3(times, n, k):
+    """ Slight improvement of the previous solution.
+
+         In fact, we don't have to pop all the elements from the heap, and we can terminate early when n = 0,
+         since n = 0 means we have visited all the nodes along the shortest path from the source node.
+
+    Time complexity: O(E logV)
+    Space complexity: O(N + E)
     """
-    graph = defaultdict(dict)
+    graph = defaultdict(list)
     for source, destination, time in times:
-        graph[source][destination] = time
-    time, heap = {}, [(0, K)]
-    while heap:
-        cur_time, node = heappop(heap)
-        if node in time:
+        graph[source].append((destination, time))
+    signal_received_at = [float('inf')] * (n + 1)
+    signal_received_at[0] = 0
+    queue = [(0, k)]
+    while queue:
+        cur_time, vertex = heappop(queue)
+        if signal_received_at[vertex] != float('inf'):
             continue
-        time[node] = cur_time
-        N -= 1  # Improvement
-        if not N:
-            return max(time.values())
-        for neighbor, t in graph[node].items():
-            heappush(heap, (cur_time + t, neighbor))
+        # If we arrive at a node, we're sure we got here in the least amount of time because we use a min heap
+        signal_received_at[vertex] = cur_time
+        n -= 1
+        if not n:
+            return max(signal_received_at)
+        for neighbor, time in graph[vertex]:
+            heappush(queue, (signal_received_at[vertex] + time, neighbor))
     return -1
 
 
