@@ -21,7 +21,8 @@ def group_anagrams_v1(strs):
 
     Time Complexity: O(N * (K logK)), where N is the number of strings and K is the length of the longest string
     The outer loop has complexity O(N) as we iterate through each string. Then, we sort each string in O(K logK) time.
-    Space Complexity: O(N)
+    Space Complexity: O(N * K), the worst-case scenario the list has no anagrams, so the resulting hash map has N
+    keys to which a value of length at most K is associated
     """
     anagrams = defaultdict(list)
     for s in strs:
@@ -33,19 +34,20 @@ def group_anagrams_v1(strs):
 
 def group_anagrams_v2(strs):
     """ Two strings are anagrams if and only if their character counts (respective number of occurrences of each
-        character) are the same. We can transform each string s into a character count, char_count, consisting of 26
-        non-negative integers representing the number of a's, b's, c's, etc. We use these counts as the basis for our
-        hash map.
+         character) are the same. We can transform each string into a character count, char_count, consisting of 26
+         non-negative integers representing the number of a's, b's, c's, etc. We use these counts as the basis for our
+         hash map.
+
     Time complexity: O(N * K), where N is the number of strings and K is the length of the longest string
-    Space complexity: O(N)
+    Space complexity: O(N * K), the worst-case scenario the list has no anagrams, so the resulting hash map has N
+    keys to which a value of length at most K is associated
     """
     anagrams = defaultdict(list)
     for s in strs:
         char_count = [0] * 26
         for c in s:
             char_count[ord(c) - ord('a')] += 1
-        anagrams[tuple(char_count)].append(s)  # List is not hashable and can't serve as dict key, so we transform it
-        # to tuple
+        anagrams[tuple(char_count)].append(s)
     return anagrams.values()
 
 
