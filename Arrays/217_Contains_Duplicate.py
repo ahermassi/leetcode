@@ -5,6 +5,12 @@ element is distinct. """
 from collections import defaultdict
 import unittest2 as unittest
 
+# Note: For certain test cases with not very large N, the runtime of Approach #1 can be slower than Approach #2.
+# The reason is hash table has some overhead in maintaining its property. We should keep in mind that real world
+# performance can be different from what the Big-O notation says. The Big-O notation only tells us that for
+# sufficiently large input, one will be faster than the other. Therefore, when N is not sufficiently large,
+# an O(N) algorithm can be slower than an O(N logN) algorithm.
+
 
 def contains_duplicate_v1(nums):
     """ The good old hash set in action. This solution performs an optimal number of operations because it can exit
