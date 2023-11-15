@@ -24,13 +24,18 @@ def is_palindrome(s):
         characters, performing case-insensitive comparison on the alphanumeric characters. We return False as soon as
         there is a mismatch. If the indices cross, we have verified that the string is a palindrome.
 
-    Time complexity: O(N), where N is the length of s
+    Time complexity: O(N), where N is the length of s, in the worst case all characters in the string need to be
+    checked exactly once
     Space complexity: O(1)
     """
     left, right = 0, len(s) - 1
     while left < right:
         while left < right and not s[left].isalnum():  # 'left' skips non-alphanumeric characters
             left += 1
+        # We can also replace the while loop with the following:
+        # if not s[left].isalnum():
+        #     left += 1
+        #     continue
         while left < right and not s[right].isalnum():  # 'right' skips non-alphanumeric characters
             right -= 1
         if s[left].lower() != s[right].lower():
