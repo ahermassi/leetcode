@@ -3,13 +3,27 @@ is decoded back to the original list of strings. """
 
 
 class CodecV1:
-    """ Naive solution here is to join strings using delimiters.
-        What to use as a delimiter? Each string may contain any possible characters out of 256 valid ascii characters.
+    """ We often use a delimiter, which is a special character or sequence of characters that we insert between each
+         string when we combine them into one. The key thing about a delimiter is that it must be a character or
+         sequence of characters that doesn't occur in the strings we're encoding. This allows us to correctly separate
+         the strings when we decode them.
+
+         If the strings we're encoding could contain any ASCII character, then we can't use an ASCII character as the
+         delimiter, because we wouldn't know whether that character is part of a string or a delimiter.
+
+         That's where the idea of a non-ASCII delimiter comes in. There are many more characters available than just
+         the ones in the ASCII set. Unicode is a character encoding standard that includes virtually every character
+         from every writing system in the world, plus many symbols, control characters, and more. There are many
+         Unicode characters that are not commonly used in text, and we can use one of these as our delimiter.
+
+         This non-ASCII delimiter approach is simple and effective as long as we can be sure that the delimiter
+         character won't appear in the strings we're encoding.
     """
 
     def encode(self, strs):
         """ Encodes a list of strings to a single string.
-        Time complexity: O(N), where N is a number of strings in the input array
+
+        Time complexity: O(N), where N is the total number of characters across all strings in the input list
         Space complexity: O(1)
         """
         return chr(258).join(strs)
