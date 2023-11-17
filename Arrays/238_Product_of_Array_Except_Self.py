@@ -12,14 +12,14 @@ def product_except_self_v1(nums):
         For every given index i, we will make use of the product of all the numbers to the left of it and multiply
         it by the product of all the numbers to the right. This will give us the product of all the numbers except the
         one at the given index i.
+
     Time complexity: O(N), where N is the number of elements in the input array
     Space complexity: O(N)
     """
     n = len(nums)
-    left_prod, right_prod = [0] * n, [0] * n
-    # For the element at index 0, there are no elements to the left, so left[0] would be 1
-    # For the element at index n-1, there are no elements to the right, so right[-1] would be 1
-    left_prod[0] = right_prod[-1] = 1
+    left_prod, right_prod = [1] * n, [1] * n
+    # For the element at index 0, there are no elements to the left, so left_prod[0] would be 1
+    # For the element at index n-1, there are no elements to the right, so right_prod[-1] would be 1
     for i in range(1, n):
         # left_prod[i] is the product of elements to the left of index i in nums
         left_prod[i] = left_prod[i - 1] * nums[i - 1]
@@ -42,8 +42,7 @@ def product_except_self_v2(nums):
     Space complexity: O(1), since we don't use any additional array for our computations
     """
     n = len(nums)
-    left_prod = [0] * n
-    left_prod[0] = 1
+    left_prod = [1] * n
     for i in range(1, n):
         left_prod[i] = left_prod[i - 1] * nums[i - 1]
     cur_right_prod = 1  # For the element at index (n - 1), there are no elements to the right, so cur_right_prod is 1
