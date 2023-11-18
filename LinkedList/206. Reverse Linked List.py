@@ -12,6 +12,7 @@ class ListNode:
 
 def reverse_list_v1(head):
     """ Push all nodes to a stack, then pop them in order to get the linked list in reverse order.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -22,11 +23,11 @@ def reverse_list_v1(head):
         stack.append(head)
         head = head.next
     head = stack.pop()
-    temp = head
+    ptr = head
     while stack:
-        temp.next = stack.pop()
-        temp = temp.next
-    temp.next = None
+        ptr.next = stack.pop()
+        ptr = ptr.next
+    ptr.next = None
     return head
 
 
