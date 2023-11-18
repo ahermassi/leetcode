@@ -61,9 +61,10 @@ def max_area_v2(height):
         The reason greedy works in this problem is the following:
 
         For a container delimited by i and j, where height[i] < height[j], when we increment i, we skip all the
-        possible container combinations (i, j-1), (i, j-2)... (i, i+1). All of these lines have height equal to or less
-        than height[i] and width less than j-i. Since the area is (j-i)*min(height[i], height[j]), we couldn't have
-        skipped any better solution. Therefore, we can just increment the index at the lesser height.
+        possible container combinations (i, j-1), (i, j-2)... (i, i+1). All of these lines have height equal to or
+        greater than height[i] and width less than j-i. Since the area is (j-i)*min(height[i], height[j]), we couldn't
+        have possibly skipped any better solution: the width is shrinking and height[i] is the height BOTTLENECK.
+        Therefore, we can just increment the index at the lesser height.
 
     Time complexity: O(N)
     Space complexity: O(1)
