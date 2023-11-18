@@ -26,8 +26,8 @@ def three_sum_v1(nums):
             If the total is greater than zero, we need it to be smaller, so we move the right pointer
             If the total is zero, bingo! [5]
 
-            We need to move the left and right pointers to the next different numbers, so we do not get duplicate results
-            [3], [4]
+            We need to move the left (and right, but not necessarily) pointers to the next different numbers, so we do
+            not get duplicate results [3], [4]
 
     Time complexity: O(N logN + (N^2)) ~= O(N^2)
     Space complexity: O(N), for the sort
@@ -46,8 +46,8 @@ def three_sum_v1(nums):
                 res.append([nums[i], nums[left], nums[right]])
                 while left < right and nums[left] == nums[left+1]:  # [3]
                     left += 1
-                while left < right and nums[right] == nums[right-1]:  # [4]
-                    right -= 1
+                # while left < right and nums[right] == nums[right-1]:  # [4]
+                #     right -= 1
                 left += 1
                 right -= 1
             elif s < 0:
