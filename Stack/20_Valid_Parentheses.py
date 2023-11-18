@@ -72,11 +72,13 @@ def is_valid_v1(s):
 
 
 def is_valid_v2(s):
-    """ A similar stack-based version.
-        Whenever we encounter an opening bracket, we push its counterpart closing bracket to the stack (kind of
-        anticipating the closing pair). If a closing bracket is met, we see if the element sitting on the top of the
+    """ A similar stack-based solution.
+
+        Whenever we encounter an opening bracket, we push its counterpart closing bracket to the stack (as if
+        anticipating the closing bracket). If a closing bracket is met, we check if the element sitting on the top of the
         stack is the same bracket, since we already anticipated the current closing bracket. If not, the expression is
         invalid.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
