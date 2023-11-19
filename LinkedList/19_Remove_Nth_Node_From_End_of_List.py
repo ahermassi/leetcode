@@ -40,10 +40,7 @@ def remove_nth_from_end_v1(head, n):
 
 
 def remove_nth_from_end_v2(head, n):
-    """ One-pass approach.
-
-        First we will add an auxiliary "dummy" node, which points to the list head. The "dummy" node is used to simplify
-        some corner cases such as a list with only one node, or removing the head of the list.
+    """ One-pass solution.
 
         The above algorithm could be optimized to one pass. We use two pointers to traverse the list. The first
         pointer is advanced by (n+1) steps from the dummy head of the list. Now, both pointers are separated by exactly
@@ -54,7 +51,7 @@ def remove_nth_from_end_v2(head, n):
         skip the next node. We relink the next pointer of the node referenced by the second pointer to point to the
         node's next next node.
 
-        For eg. let the list be 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9, and n = 4.
+        For example: let the list be 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9, and n = 4.
 
         dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
         ^                                                 ^
@@ -74,15 +71,15 @@ def remove_nth_from_end_v2(head, n):
     Time complexity: O(N), where N is list length
     Space complexity: O(1)
     """
-    dummy = ListNode(0)
-    dummy.next = head
-    slow = fast = dummy
+    dummy_head = ListNode(0)
+    dummy_head.next = head
+    slow = fast = dummy_head
     for _ in range(n + 1):
         fast = fast.next
     while fast:  # Move fast to the end, maintaining the gap
         slow, fast = slow.next, fast.next
     slow.next = slow.next.next
-    return dummy.next
+    return dummy_head.next
 
 
 def remove_nth_from_end_v3(head, n):
