@@ -117,7 +117,7 @@ def remove_nth_from_end_v3(head, n):
     Space complexity: O(1)
     """
 
-    fast = head
+    slow = fast = head
     for _ in range(n):
         fast = fast.next
     if not fast:
@@ -126,7 +126,6 @@ def remove_nth_from_end_v3(head, n):
         # can't happen if the node to be removed is the first node, as there is no node before it. So if fast == null,
         # then we should just return the list with the first node removed, or head.next.
         return head.next
-    slow = head
     while fast.next:
         slow, fast = slow.next, fast.next
     slow.next = slow.next.next
