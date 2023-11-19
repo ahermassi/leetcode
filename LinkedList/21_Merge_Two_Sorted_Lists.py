@@ -18,7 +18,7 @@ class ListNode:
 # Video explanation: https://www.youtube.com/watch?v=GfRQvf7MB3k
 
 def merge_two_lists_v1(l1, l2):
-    """ We create a dummy head, and a tail indicating last node in this growing List.
+    """ We create a dummy head and a dummy tail indicating last node in this growing List.
 
         At each step, if the value at l1 is less than or equal to the value at l2, then we connect l1 to the previous
         node and advance l1. Otherwise, we do the same, but for l2. Then, regardless of which list we connected, we
@@ -28,44 +28,49 @@ def merge_two_lists_v1(l1, l2):
         SORTED order), if either list is non-null, it contains only elements greater than all the previously-merged
         elements.
 
-        How come dummy.next is returned when it never gets set?
+        How come dummy_head.next is returned when it never gets set?
 
-        This code can be confusing because we never see dummy.next get explicitly set to anything, but the reason is
-        that both dummy and tail are simply references to the same object in memory.
+        This code can be confusing because we never see dummy_head.next get explicitly set to anything, but the
+        reason is that both dummy_head and dummy_tail are simply references to the same object in memory.
 
-        Notice that dummy is the only object we create. The variable tail isn't created the same way. So there is only
-        ONE ListNode object actually in memory.
+        Notice that dummy_head is the only object we create. The variable dummy_tail isn't created the same way.
+        So there is only ONE ListNode object actually in memory.
 
-        When we see "tail = dummy", we might think that all we're doing is assigning a copy of dummy to tail, and then
-        we have two separate variables, but that is false. When we say "tail = dummy", what we're actually saying is
-        that both of these variables are now pointing to the exact same object in memory; It doesn't get cloned.
+        When we see "dummy_tail = dummy_head", we might think that all we're doing is assigning a copy of dummy_head
+        to dummy_tail, and then we have two separate variables, but that is false. When we say
+        "dummy_tail = dummy_head", what we're actually saying is that both of these variables are now pointing to the
+        exact same object in memory; It doesn't get cloned.
 
-        So in the first pass of the while loop, when tail.next = l1 or tail.next = l2, what we're actually doing is
-        changing the reference of the object dummy. So dummy.next also gets set to either l1 or l2 at that point.
+        So in the first pass of the while loop, when dummy_tail.next = l1 or dummy_tail.next = l2, what we're actually
+        doing is changing the reference of the object dummy_head. So dummy_head.next also gets set to either l1 or
+        l2 at that point.
 
         This only happens on the first pass of the while loop, because at that point, we change the references when we
-        do "tail = tail.next" at the end of the while loop. The variable tail changes references on every pass of the
-        while loop, and that's how we actually traverse the lists - tail is always changed to reference the next node in
-        the sorted list, and that reference is then what changes the .next of the current node, whereas dummy never gets
-         set to anything else, so it's always pointing to the beginning of the new merged list.
+        do "dummy_tail = dummy_tail.next" at the end of the while loop iteration. The variable dummy_tail changes
+        references on every pass of the while loop, and that's how we actually traverse the lists - dummy_tail is
+        always changed to reference the next node in the sorted list, and that reference is then what changes the .next
+        of the current node, whereas dummy_head never gets set to anything else, so it's always pointing to the
+        beginning of the new merged list.
 
-    Time complexity: O(N + M), the while loop runs for a number of iterations equal to sum of lengths of the two lists.
-    Space complexity: O(1), the iterative approach only allocates a few pointers, so it has a constant overall memory
+    Time complexity: O(N + M), the while loop runs for a number of iterations equal to sum of lengths of the two lists
+    Space complexity: O(1), the iterative approach only allocates a few pointers so it has a constant overall memory
     footprint
     """
-    dummy = tail = ListNode(0)  # Dummy head and tail, starting at same position
+    # Dummy head and tail, starting at same position
+    dummy_head = ListNode(0)
+    dummy_tail = dummy_head
     while l1 and l2:
         if l1.val <= l2.val:
-            tail.next = l1
+            dummy_tail.next = l1
             l1 = l1.next
         else:
-            tail.next = l2
+            dummy_tail.next = l2
             l2 = l2.next
-        tail = tail.next
-    tail.next = l1 or l2  # If we exhausted either list, we just append the other list to the end of the merged list
-    # since the list still standing will have all elements greater than the last item in the merged list so far (and
-    # is in sorted order)
-    return dummy.next
+        dummy_tail = dummy_tail.next
+    # If we exhausted either list, we just append the other list to the end of the merged list since the list still
+    # standing will have all elements greater than the last item in the merged list so far (and is in sorted order)
+    dummy_tail.next = l1 or l2
+    return dummy_head.next
 
 
 def merge_two_lists_v2(l1, l2):
