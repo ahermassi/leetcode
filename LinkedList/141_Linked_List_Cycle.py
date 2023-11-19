@@ -47,7 +47,22 @@ def has_cycle_v1(head):
         way for the runner to "skip" the walker is if they were on the same node, but the loop would've ended if that
         occurred.
 
-    Time complexity: O(N)
+    Time complexity: O(N), we consider the following two cases separately:
+        - List has no cycle: The fast pointer reaches the end first and the runtime depends on the list's length, O(N)
+        - List has a cycle: We break down the movement of the slow pointer into two steps, the non-cyclic part and the
+           cyclic part:
+            From start point to the beginning of circle/cycle, the distance is a.
+            From the start point of the circle to the meeting point, the distance is b.
+            From meeting point to beginning of circle is c.
+            So b + c = circumference of the circle.
+            When fast and slow meet, total distance of:
+            slow runner = a + b
+            fast runner  = a + b + (b + c) * k (k = 1, 2, 3...)
+            Since fast runner = 2 * slow runner
+            —> a + b + (b + c) * k  = 2 * (a + b)
+            —> (b + c) * k = a + b
+            We conclude that number of iterations = almost cyclic length (b+c).
+        Therefore, the worst-case time complexity is O(N+(b+c)), which is O(N)
     Space complexity: O(1)
     """
     slow, fast = head, head
