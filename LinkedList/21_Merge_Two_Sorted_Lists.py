@@ -94,10 +94,21 @@ def merge_two_lists_v2(l1, l2):
     if not l1 or not l2:
         return l1 or l2
     if l1.val <= l2.val:
-        l1.next = merge_two_lists_v1(l1.next, l2)  # This is the case list1[0] + merge(list1[1:], list2)
+        l1.next = merge_two_lists_v2(l1.next, l2)  # This is the case list1[0] + merge(list1[1:], list2)
         return l1
-    l2.next = merge_two_lists_v1(l1, l2.next)  # This is the case list2[0] + merge(list1, list2[1:])
+    l2.next = merge_two_lists_v2(l1, l2.next)  # This is the case list2[0] + merge(list1, list2[1:])
     return l2
+    # We could also use a dummy head:
+    # if not l1 or not l2:
+    #     return l1 or l2
+    # dummy_head = ListNode(0)
+    # if l1.val <= l2.val:
+    #     dummy_head.next = l1
+    #     l1.next = merge_two_lists_v2(l1.next, l2)  # This is the case list1[0] + merge(list1[1:], list2)
+    # else:
+    #     dummy_head.next = l2
+    #     l2.next = merge_two_lists_v2(l1, l2.next)  # This is the case list2[0] + merge(list1, list2[1:])
+    # return dummy_head.next
 
 
 class Test(unittest.TestCase):
