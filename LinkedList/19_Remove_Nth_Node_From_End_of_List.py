@@ -16,6 +16,13 @@ def remove_nth_from_end_v1(head, n):
         We notice that the problem could be simply reduced to another one : Remove the (L - n + 1)th node from the
         beginning in the list , where L is the list length. This problem is easy to solve once we found list length L.
 
+        We will add an auxiliary "dummy_head" node, which points to the list head. The "dummy" node is used to simplify
+        some corner cases such as a list with only one node, or removing the head of the list.
+
+        On the first pass, we find the list length. Then we set a pointer to the dummy node and start to move it
+        through the list till it comes to the (length - n)th node. We relink next pointer of the (length - n)th node to
+        the (length - n + 2)th node.
+
     Time complexity: O(N), where N is list length
     Space complexity: O(1)
     """
@@ -23,13 +30,13 @@ def remove_nth_from_end_v1(head, n):
     while cur:
         length += 1
         cur = cur.next
-    if n == length:  # This is for the case of n is equal to the length of list, which means removing head of list
-        return head.next
-    cur = head
-    for _ in range(length - n - 1):
+    dummy_head = ListNode(0)
+    dummy_head.next = head
+    cur = dummy_head
+    for _ in range(length - n):
         cur = cur.next
     cur.next = cur.next.next
-    return head
+    return dummy_head.next
 
 
 def remove_nth_from_end_v2(head, n):
