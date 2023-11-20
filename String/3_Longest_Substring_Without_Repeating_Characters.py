@@ -3,6 +3,27 @@
 import unittest2 as unittest
 
 
+def length_of_longest_substring_v0(s):
+    """ Brute force. Check all the substring one by one to see if it has no duplicate character.
+
+         To check if one substring has duplicate characters, we can use a hash set. We iterate through all the characters
+         in the substring and put them into the set one by one. Before putting one character, we check if the set
+         already contains it.
+
+    Time complexity: O(N^2)
+    Space complexity: O(N), or O(1) if the set of characters considered is the English alphabet O(26)
+    """
+    n, res = len(s), 0
+    for i in range(n):
+        chars = {s[i]}
+        j = i + 1
+        while j < n and s[j] not in chars:
+            chars.add(s[j])
+            j += 1
+        res = max(res, j - i)
+    return res
+
+
 def length_of_longest_substring_v1(s):
     """ Reuse previous computation as we iterate through the string. Suppose we know the longest duplicate-free
         substring ending at a given index right. The longest duplicate-free substring ending at index (right + 1) is either:
@@ -111,6 +132,7 @@ class Test(unittest.TestCase):
 
     def test_length_of_longest_substring(self):
         for test_string, result in self.data:
+            self.assertEqual(result, length_of_longest_substring_v0(test_string))
             self.assertEqual(result, length_of_longest_substring_v1(test_string))
             self.assertEqual(result, length_of_longest_substring_v2(test_string))
 
