@@ -127,6 +127,7 @@ def character_replacement_v1(s, k):
 def character_replacement_v2(s, k):
     """ Same idea but we keep shrinking the window from the left AS LONG AS the max number of character replacements
         exceeds k.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -134,10 +135,9 @@ def character_replacement_v2(s, k):
     left = right = max_frequency = res = 0
     counter = defaultdict(int)
     while right < n:
-        c = s[right]
-        counter[c] += 1
-        max_frequency = max(max_frequency, counter[c])
-        while right - left +  1 - max_frequency > k:
+        counter[s[right]] += 1
+        max_frequency = max(max_frequency, counter[s[right]])
+        while right - left + 1 - max_frequency > k:
             counter[s[left]] -= 1
             left += 1
         res = max(res, right - left + 1)
