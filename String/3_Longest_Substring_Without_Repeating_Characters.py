@@ -118,15 +118,16 @@ def length_of_longest_substring_v1(s):
 
 
 def length_of_longest_substring_v2(s):
-    """ Similar idea to previous solution but uses a hash set to keep track of the characters processed so far (window).
-        The only difference is that as long as the current character at 'right' pointer is duplicate, we delete from
-        the head of the window by moving 'left' pointer forward one step at a time until the occurrence of the
-        duplicate character is removed, then we can add the character at 'right' index to the hash set.
+    """ Similar to the previous solution but using a hash set to keep track of the characters processed so far (window).
+         As long as the current character at 'right' pointer is duplicate, we delete from the left of the window by
+         moving 'left' pointer forward one step at a time until the occurrence of the duplicate character is removed,
+         then we can insert the current character into the set.
+
     Time complexity: O(N)
     Space complexity: O(N), or O(1)
     """
     n = len(s)
-    prev_chars = set()  # A hash set is used to represent the current sliding window
+    prev_chars = set()  # A hash set is used to contain the unique characters in the current sliding window
     res = left = right = 0
     while right < n:
         c = s[right]
