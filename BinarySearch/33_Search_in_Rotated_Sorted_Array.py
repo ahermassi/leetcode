@@ -99,8 +99,8 @@ def search_v1(nums, target):
 
 
 def search_v2(nums, target):
-    """ This is the exact same solution. However, it looks like when the range inclusion checks are more explicit the
-        intuition is much clearer.
+    """ This is the exact same solution. However, range checks are more explicit.
+
     Time complexity: O(logN)
     Space complexity: O(1)
     """
@@ -109,22 +109,22 @@ def search_v2(nums, target):
         mid = (left + right) // 2
         if nums[mid] == target:
             return mid
-        if nums[left] <= nums[mid]:
-            # target is greater than mid element, and we know that the subarray from left to mid is
-            # sorted/non-rotated, so go right because a smaller value can't exist to the left
+        if nums[mid] >= nums[left]:
+            # The subarray from left to mid is sorted/non-rotated.
+            # If target is greater than mid element,  go right because a smaller value can't exist to the left
             # OR
-            # target is smaller than leftmost element, and we know that the subarray from left to mid is
-            # sorted/non-rotated in INCREASING ORDER, so go right because a smaller value can't exist to the left
+            # If target is smaller than leftmost element, and we know that the subarray from left to mid is
+            # sorted/non-rotated in INCREASING ORDER, go right because a smaller value can't exist to the left
             if target > nums[mid] or target < nums[left]:
                 left = mid + 1
             else:
                 right = mid - 1
         else:
-            # target is smaller than mid element, and we know that the subarray from mid to right is
-            # sorted/non-rotated, so go left because a smaller value can't exist to the right
+            # The subarray from mid to right is sorted/non-rotated.
+            # If target is smaller than mid element, go left because a smaller value can't exist to the right
             # OR
-            # target is greater than rightmost element, and we know that the subarray from mid to right is
-            # sorted/non-rotated in INCREASING ORDER, so go left because a larger value can't exist to the right
+            # If target is greater than rightmost element, and we know that the subarray from mid to right is
+            # sorted/non-rotated in INCREASING ORDER, go left because a larger value can't exist to the right
             if target < nums[mid] or target > nums[right]:
                 right = mid - 1
             else:
