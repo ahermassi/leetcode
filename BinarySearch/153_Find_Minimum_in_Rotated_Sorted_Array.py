@@ -71,11 +71,11 @@ def find_min_v2(nums):
             - All the elements to the left of Inflection Point > leftmost element of the array
             - All the elements to the right of Inflection Point < rightmost element of the array
 
-        Notice the numbers are divided into two sections: numbers larger than the rightmost element of the array and
-        numbers smaller than it. The minimum element is at the boundary between the two sections.
+        Notice that the numbers are divided into two sections: numbers larger than the RIGHTMOST element of the array
+        and numbers smaller than it. The minimum element is at the BOUNDARY between the two sections.
 
-        A better way to visualize thus algorithm is thinking that we apply a filter of "< rightmost element" to each
-        value in the array, which conceptually produces a boolean array.
+        A better way to visualize this algorithm is thinking that we apply a filter of "< rightmost element" to each
+        value in the array, it conceptually produces a boolean array.
         For example, nums = [3,4,5,1,2] => filter( < rightmost element) => [F, F, F, F, T, T]
 
         Now the problem becomes finding the first T which can easily be solved using binary search.
@@ -104,11 +104,11 @@ def find_min_v2(nums):
             # In the first iteration, when we start with mid = 4, right = 9.
             # nums[mid] <= nums[right]; we know the numbers continued increasing to the right of mid, so
             # they never reached the pivot and wrapped around. Therefore, we know the pivot must be at index <= mid.
-            # We also now know mid stores a smaller value than at least one other index in the list (to its right),
+            # We also now know that mid stores a smaller value than at least one other index in the list (to its right),
             # so we do not discard it by doing right = mid - 1. It still might have the minimum value.
             # Since we use round down for mid, and left < right, right would never be the same as mid. This situation
             # becomes very clear in the case of a two-element array (or just in general when the left and right pointers
-            # are adjacent, .i.e. right = left + 1, in which case mid = left) Therefore, we can always make right = mid
+            # are adjacent, .i.e. right = left + 1, in which case mid = left). Therefore, we can always make right = mid
             # while we don't have to worry the loop will not end, ensuring the interval is always shrinking.
 
     # At this point, left and right converge to a single index (for minimum value). Our if/else block forces the bounds
