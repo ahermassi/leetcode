@@ -46,16 +46,19 @@ def find_min_v1(nums):
     left, right = 0, len(nums) - 1
     while left <= right:
         mid = (left + right) // 2
-        if nums[mid] > nums[mid + 1]:  # If the middle element is greater than its next element, then nums[mid + 1] is
-            # the smallest. This point would be the point of change from higher to lower values.
+        if nums[mid] > nums[mid + 1]:
+            # If the middle element is greater than its next element, then nums[mid + 1] is the smallest. This point
+            # would be the point of change from higher to lower values.
             return nums[mid + 1]
-        if nums[mid] < nums[mid - 1]:  # If the middle element is less than its previous element, then nums[mid] is
-            # the smallest
+        if nums[mid] < nums[mid - 1]:
+            # If the middle element is less than its previous element, then nums[mid] is the smallest
             return nums[mid]
-        if nums[left] < nums[mid]:  # If the middle element is greater than the leftmost element, this means the
-            # smallest value is still somewhere to the right as we are still dealing with a sorted/non-rotated half
+        if nums[mid] > nums[left]:
+            # If the middle element is greater than the leftmost element, this means the smallest value is still
+            # somewhere to the right as we are still dealing with a sorted/non-rotated half
             left = mid + 1
-        else:  # If nums[left] is greater than middle value, then this means the smallest value is somewhere to the left
+        else:
+            # If nums[mid] is smaller than leftmost value, then this means the smallest value is somewhere to the left
             right = mid - 1
 
 
