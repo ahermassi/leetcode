@@ -10,47 +10,70 @@ import unittest2 as unittest
 
 
 def search_v1(nums, target):
-    """ We have an ascending array, which is rotated at some pivot. Let's call the rotation the Inflection Point. (IP)
+    """ Let's take a step back and consider a regular binary search. Why are we able to confidently discard half of the
+         array after comparing target with the middle value nums[mid]? The reason is that both halves of the array are
+         sorted. Hence, if target is less than the middle value, it's assured to be smaller than every value in the
+         right half. If target is larger than the middle value, it's guaranteed to be larger than every value in the
+         left half. Therefore, we can safely discard one half of nums in either case.
+
+         However, a rotated sorted array may not possess this characteristic – we can't determine whether target is
+         definitively not in the array just by comparing boundary values.
+
+        We have an ascending array, which is rotated at some pivot. Let's call the index where the rotation occurs the
+        Inflection Point (IP).
         One characteristic the inflection point holds is:
+
                 arr[IP] > arr[IP + 1] and arr[IP] > arr[IP - 1]
+
         So if we had an array like: [7, 8, 9, 0, 1, 2, 3, 4] the inflection point, IP would be the number 9.
 
          One thing we notice is that values until the IP are ascending, and values from IP + 1 until the end of the
          array are also ascending (binary search, wink, wink). Also, the values in [0, IP] are always bigger than those
          in [IP + 1, n].
 
-         The idea is that when rotating the array, there must be one half of the array that is still in sorted order.
+         Although the array is rotated, it retains some properties of sorted arrays that we can leverage. Specifically,
+         one half of the array (either the left or the right) will always be sorted. This means we can still apply
+         binary search by determining which half of our array is sorted and whether the target lies within it.
+
+         It is straightforward to determine if a sorted array nums[left ~ right] could possibly contain target. We can
+         simply compare target with the two boundary values nums[left] and nums[right].
+         If nums[left] <= target <= nums[right], then nums[left ~ right] might contain target, which needs to be
+         verified by binary search, so we continue with this subarray.
+        Otherwise, target is guaranteed to not be in nums[left ~ right], and there is no need to search over this array,
+        so we continue with the other subarray.
+
          Perform standard binary search. Take an index in the middle as a pivot.
+         If nums[mid] == target, the job is done, return mid.
+         Otherwise, there could be two situations:
 
-        If nums[mid] == target, the job is done, return mid.
+            1- Middle element is greater than the leftmost element in the array, i.e. the part of array from the leftmost
+                 element to the middle one, nums[left ~ mid], is sorted/non-rotated. In a normally sorted array, if the
+                 start is less than or equal to the midpoint, it means all elements till the midpoint are in the correct
+                 increasing order.
 
-        Now there could be two situations:
+                 If the target lies within this sorted left half:
+                        nums[left] <= target < nums[mid]
+                 it suggests that the sorted left half might include target while the other half does not contain
+                 target. Consequently, we focus on the left half for further search: right = mid - 1.
 
-            1- Middle element is larger than the first element in the array, i.e. the part of array from the leftmost
-                 element to the middle one is non-rotated.
-                 If the target is located in that non-rotated part as well, go left: right = mid - 1.
-                 Otherwise, go right: left = mid + 1.
+                 Otherwise, the left half is guaranteed not to contain target, and we will move on to the right half:
+                 left = mid + 1.
 
-            2- Middle element is smaller than the first element of the array, i.e. the rotation index is somewhere
-                 between left and mid. That means that the part of array from the middle element to the rightmost one is
-                 non-rotated.
-                 If target is in that non-rotated part as well, go right: left = mid + 1.
-                 Otherwise, go left: right = mid - 1.
+            2- Middle element is smaller than the leftmost element of the array, which implies that the rotation index
+                 is somewhere between left and mid. That means that the part of array from the middle element to the
+                 rightmost one, nums[mid ~ right], is sorted/non-rotated.
 
-        So we only need to be in the ordered, non-rotated half to determine whether the target value is in this area
-        and which half is preserved.
+                 If the target lies within this sorted right half:
+                        nums[mid] < target <= nums[right]
+                 it suggests that the sorted right half might include target, so go right: left = mid + 1.
 
-        Formula: If a sorted array is shifted, and we examine the middle element, always one side will be sorted.
+                 Otherwise, the right half is guaranteed not to contain target, and we will move on to the left half:
+                 right = mid - 1.
 
-            1- Take the middle and compare with target, if matches return.
-
-            2- If middle is bigger than left side, it means the subarray from left to mid is sorted/non-rotated.
-                2a- If nums[left] <= target < nums[middle], search on left side: right = mid - 1
-                2b- Left side is sorted, but target not in there, search on right side: left = mid + 1
-
-            3- If middle is less than left side, it means the subarray from mid to right is sorted/non-rotated.
-                3a- If nums[middle] < target <= nums[right], search on right side: left = mid + 1
-                3b- Right side is sorted, but target not in there, search on left side: right = mid - 1
+        The beauty of this approach lies in its ability to determine with certainty which half of the array to look in,
+        even though the array is rotated. By checking which half of the array is sorted and then using the sorted
+        property to determine if the target lies in that half, we can effectively eliminate half of the array from
+        consideration at each step
 
     Time complexity: O(logN)
     Space complexity: O(1)
@@ -60,8 +83,9 @@ def search_v1(nums, target):
         mid = (left + right) // 2
         if nums[mid] == target:
             return mid
-        if nums[left] <= nums[mid]:  # It's <= instead of < because when there's only two elements, 'mid' and 'left'
-            # point to exactly the same element. Then we have to include = to make sure it covers this case.
+        if nums[mid] >= nums[left]:
+            # It's <= instead of < because when there's only two elements, 'mid' and 'left' point to exactly the same
+            # element. Then we have to include = to make sure it covers this case.
             if nums[left] <= target < nums[mid]:
                 right = mid - 1
             else:
