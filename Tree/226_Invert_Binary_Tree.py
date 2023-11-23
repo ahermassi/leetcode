@@ -40,9 +40,9 @@ def invert_tree_v1(root):
     """
     if not root:
         return None
-    left, right = invert_tree_v1(root.right), invert_tree_v1(root.left)
-    root.left = left
-    root.right = right
+    inverted_left, inverted_right = invert_tree_v1(root.left), invert_tree_v1(root.right)
+    root.left = inverted_right
+    root.right = inverted_left
     return root
 
 
