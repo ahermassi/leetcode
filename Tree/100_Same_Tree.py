@@ -11,16 +11,16 @@ def is_same_tree_v1(p, q):
          child nodes recursively.
 
     Time complexity: O(N), where N is a number of nodes in the tree, since we visit each node exactly once
-    Space complexity: O(logN), in the best case of completely balanced tree and O(N) in the worst case of completely
-    unbalanced tree, to keep a recursion stack
+    Space complexity: O(logN) in the best case of completely balanced tree and O(N) in the worst case of skewed tree
+    to keep the recursion stack
     """
     if not p and not q:
         return True
     if not p or not q:
         return False
-    if p.val == q.val:
-        return is_same_tree_v1(p.left, q.left) and is_same_tree_v1(p.right, q.right)
-    return False
+    if p.val != q.val:
+        return False
+    return is_same_tree_v1(p.left, q.left) and is_same_tree_v1(p.right, q.right)
 
 
 def is_same_tree_v2(p, q):
