@@ -47,7 +47,7 @@ def invert_tree_v1(root):
 
 
 def invert_tree_v2(root):
-    """ Iterative approach, in a manner similar to DFS.
+    """ Alternatively, we can solve the problem iteratively, in a manner similar to DFS.
 
         As long as the stack is not empty, remove the next node from the stack, swap its children, and add the children
         to the stack. Eventually, the stack will be empty and all the children swapped.
