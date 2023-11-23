@@ -32,7 +32,7 @@ def max_depth_v1(root):
 
         Let's have faith in recursion and assume that we are already given the maximum depth of root's left and right
         subtrees by recursion. So, to fnd the maximum depth of the binary tree, we will have to take out the maximum out
-        of the left and right subtrees' depths and add 1 to that to consider the root's level.
+        of the left and right subtrees' depths and add 1 to that to account for the root's level.
 
     Time complexity: O(N), where N is the number of nodes
     Space complexity: in the worst case, the tree is completely unbalanced, e.g. each node has only left child node,
@@ -42,9 +42,9 @@ def max_depth_v1(root):
     """
     if not root:
         return 0
-    left_depth = max_depth_v1(root.left)
-    right_depth = max_depth_v1(root.right)
-    return 1 + max(left_depth, right_depth)  # Add 1 to account for the root level
+    left_max_depth = max_depth_v1(root.left)
+    right_max_depth = max_depth_v1(root.right)
+    return 1 + max(left_max_depth, right_max_depth)  # Add 1 to account for the root level
 
 
 def max_depth_v2(root):
