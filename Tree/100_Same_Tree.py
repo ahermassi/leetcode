@@ -25,8 +25,11 @@ def is_same_tree_v1(p, q):
 
 def is_same_tree_v2(p, q):
     """ Iterative solution using a stack.
+
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(1) best case when both trees are skewed where in each iteration we both remove and add exactly
+    two nodes to the stack, meaning that there would only ever be two nodes in the stack and the space utilisation
+    remains constant throughout execution. O(N) worst case when the tree is balanced
     """
     stack = [(p, q)]
     while stack:
