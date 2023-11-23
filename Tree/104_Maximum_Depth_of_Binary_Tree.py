@@ -62,7 +62,10 @@ def max_depth_v2(root):
         step.
 
     Time complexity: O(N)
-    Space complexity: O(logN) best case, O(N) worst case
+    Space complexity: O(1) best case when the tree is skewed where in each iteration we both remove and add exactly one
+    node to the stack, meaning that there would only ever be one node in the stack and the space utilisation
+    remains constant throughout execution regardless of the number of nodes in the tree. O(N) worst case when the tree
+    is balanced; at one point the stack will hold ~N/2 nodes
     """
     if not root:
         return 0
