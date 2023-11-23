@@ -44,8 +44,13 @@ def is_same_tree_v2(p, q):
 
 def is_same_tree_v3(p, q):
     """ Iterative solution using a queue.
+
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(1) best case when both trees are skewed where in each iteration we both remove and add exactly
+    two nodes to the stack, meaning that there would only ever be two nodes in the stack and the space utilisation
+    remains constant throughout execution. O(N) worst case when the tree is balanced where the last level contains half
+    of the nodes, and all of those will be on a queue at the same time. A perfect tree with N nodes will have
+    (N + 1) / 2 leaves
     """
     queue = deque([(p, q)])
     while queue:
