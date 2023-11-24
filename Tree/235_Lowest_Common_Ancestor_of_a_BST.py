@@ -12,24 +12,26 @@ class TreeNode(object):
         self.left = None
         self.right = None
 
+# Video explanation: https://youtu.be/gs2LMfuOR9k
+
 
 def lowest_common_ancestor_v1(root, p, q):
-    """ Lowest Common Ancestor of two nodes p and q would be the last ancestor node common to both of them. Here last
-        is defined in terms of the depth of the node.
+    """ Lowest Common Ancestor of two nodes p and q would be the last ancestor node common to both of them. In this
+         context, "last" is defined in terms of the depth of the node.
 
-        Without loss of generality, assume the key at p is smaller (since the problem specified keys are distinct, it
-        cannot be that p and q hold equal keys). Consider the key stored at the root of the BST.
+        Without loss of generality, assume the value at p is smaller (since the problem specified values are distinct,
+        it cannot be that p and q hold equal values). Consider the value stored at the root of the BST.
         There are 4 possibilities:
 
-            1- If the root's key is the same as that stored at p or at q, we are done: The root is the LCA.
+            1- If the root's value is the same as that stored at p or at q, we are done: The root is the LCA.
 
-            2- If the key at p is smaller than the key at the root, and the key at q is greater than the key at the
-               root, the root is the LCA.
+            2- If the value at p is smaller than the value at the root, and the value at q is greater than the value
+                 at the root, the root is the LCA.
 
-            3- If the keys at p and q are both smaller than that at the root, the LCA must lie in the left subtree of
+            3- If the values at p and q are both smaller than that at the root, the LCA must lie in the left subtree of
                the root.
 
-            4- If both keys are larger than that at the root, then the LCA must lie in the right subtree of the root.
+            4- If both values are larger than that at the root, then the LCA must lie in the right subtree of the root.
 
         Instead of recursively calling the function, we traverse down the tree iteratively. This is possible without
         using a stack or recursion since we don't need to backtrace to find the LCA node. We just want to find the split
@@ -44,8 +46,8 @@ def lowest_common_ancestor_v1(root, p, q):
         If the previous two statements are not true, this means we have found the node which is common to node
         p's and q's subtrees, and hence we return this common node as the LCA.
 
-    Time complexity: O(N), in the worst case when all nodes have only one child (skewed tree) and p and q are near the
-    bottom. O(logN) for a balanced BST
+    Time complexity: O(height); O(N), in the worst case when all nodes have only one child (skewed tree) and p and q
+    are near the bottom; O(logN) for a balanced BST since we reduce the nodes to check by half after each step
     Space complexity: O(1)
     """
     cur = root
@@ -54,7 +56,8 @@ def lowest_common_ancestor_v1(root, p, q):
             cur = cur.left
         elif p.val > cur.val and q.val > cur.val:
             cur = cur.right
-        else:  # We have found the split point, i.e. the LCA node: min(p.val, q.val) <= cur.val <= max(p.val, q.val)
+        else:
+            # We have found the split point, i.e. the LCA node: min(p.val, q.val) <= cur.val <= max(p.val, q.val)
             return cur
 
 
