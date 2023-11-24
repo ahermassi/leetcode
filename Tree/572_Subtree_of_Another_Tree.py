@@ -16,6 +16,36 @@ class TreeNode(object):
         self.right = None
 
 
+def is_subtree_v0(root, sub_root):
+    """ Brute force.
+
+         We perform a BFS (or recursive DFS) traversal of the first tree 'root'.
+
+         At each node, we perform a recursive check to verify if the subtree at the current node is identical to the
+         tree 'sub_root'. If it's not the case, we carry on the BFS until the queue is empty or a match is found.
+
+    Time complexity: O(N * M), where N and M is the number of nodes in root and sub_root, respectively
+    Space complexity: O(N), since in the worst case the queue will contain all nodes in one level of the binary tree.
+    For a full binary tree, the leaf level has ⌈N/2⌉= O(N) leaves.
+    """
+
+    def same_tree(s, t):
+        if not s and not t:
+            return True
+        if not s or not t or s.val != t.val:
+            return False
+        return same_tree(s.left, t.left) and same_tree(s.right, t.right)
+
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        if same_tree(node, sub_root):
+            return True
+        queue.extend([child for child in (node.left, node.right) if child])
+    return False
+
+
+# Video explanation: https://youtu.be/E36O5SWp-LE
 def is_subtree_v1(root, sub_root):
     """ Recursive DFS.
 
@@ -44,34 +74,6 @@ def is_subtree_v1(root, sub_root):
         return True
     # Check if we can find sub_root to the left or right of root
     return is_subtree_v1(root.left, sub_root) or is_subtree_v1(root.right, sub_root)
-
-
-def is_subtree_v2(root, sub_root):
-    """ We do a BFS traversal of the first tree 'root'.
-
-         At each node whose value is identical to the second tree  'sub_root' root value, we perform a recursive check
-         to verify if the subtree at the current node is identical to the tree 'sub_root'. If it's not the case, we
-         carry on the BFS until the queue is empty or a match is found.
-
-    Time complexity: O(N * M), where N and M is the number of nodes in root and sub_root, respectively
-    Space complexity: O(N), since in the worst case the queue will contain all nodes in one level of the binary tree.
-    For a full binary tree, the leaf level has ⌈N/2⌉= O(N) leaves.
-    """
-
-    def is_identical(s, t):
-        if not s and not t:
-            return True
-        if not s or not t or s.val != t.val:
-            return False
-        return is_identical(s.left, t.left) and is_identical(s.right, t.right)
-
-    queue = deque([root])
-    while queue:
-        node = queue.popleft()
-        if node.val == sub_root.val and is_identical(node, sub_root):
-            return True
-        queue.extend([kid for kid in (node.left, node.right) if kid])
-    return False
 
 
 def is_subtree_v3(root, sub_root):
@@ -123,10 +125,10 @@ class Test(unittest.TestCase):
     root3.right.left = TreeNode(0)
 
     def test_is_subtree(self):
+        self.assertTrue(is_subtree_v0(self.root1, self.root2))
+        self.assertFalse(is_subtree_v0(self.root1, self.root3))
         self.assertTrue(is_subtree_v1(self.root1, self.root2))
         self.assertFalse(is_subtree_v1(self.root1, self.root3))
-        self.assertTrue(is_subtree_v2(self.root1, self.root2))
-        self.assertFalse(is_subtree_v2(self.root1, self.root3))
         self.assertTrue(is_subtree_v3(self.root1, self.root2))
         self.assertFalse(is_subtree_v3(self.root1, self.root3))
 
