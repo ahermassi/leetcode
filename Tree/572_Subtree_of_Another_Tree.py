@@ -16,10 +16,40 @@ class TreeNode(object):
         self.right = None
 
 
-def is_subtree_v0(root, sub_root):
-    """ Brute force.
+# Video explanation: https://youtu.be/E36O5SWp-LE
+def is_subtree_v1(root, sub_root):
+    """ Recursive DFS.
 
-         We perform a BFS (or recursive DFS) traversal of the first tree 'root'.
+        We can traverse the tree rooted at root, and for each node in the tree check if the tree rooted at that node is
+        identical to the tree rooted at subRoot. If we find such a node, we can return true. If traversing the entire
+        tree rooted at root doesn't yield any such node, we can return false.
+
+        Since we have to check for identicality, again and again, we can write a function same_tree which takes two
+        roots of two trees and returns true if the trees are identical and false otherwise.
+
+    Time complexity: O(N * M), where N is the number of nodes in the tree. For every node in the tree we check if the
+    tree rooted at node is identical to subRoot. This check takes O(M) time, where M is the number of nodes in subRoot.
+    Space complexity: O(N + M), the depth of the recursion tree can go up to N. Recursion stack space is dictated by the
+    height of 'root'. Each of these calls will have M recursive calls to same_tree.
+    """
+
+    def same_tree(s, t):
+        if not s and not t:
+            return True
+        if not s or not t or s.val != t.val:
+            return False
+        return same_tree(s.left, t.left) and same_tree(s.right, t.right)
+
+    if not root:
+        return False
+    if same_tree(root, sub_root):  # If root and sub_root are equal right off the bat, we're done!
+        return True
+    # Check if we can find sub_root to the left or right of root
+    return is_subtree_v1(root.left, sub_root) or is_subtree_v1(root.right, sub_root)
+
+
+def is_subtree_v2(root, sub_root):
+    """ We perform a BFS traversal of the first tree 'root'.
 
          At each node, we perform a recursive check to verify if the subtree at the current node is identical to the
          tree 'sub_root'. If it's not the case, we carry on the BFS until the queue is empty or a match is found.
@@ -43,37 +73,6 @@ def is_subtree_v0(root, sub_root):
             return True
         queue.extend([child for child in (node.left, node.right) if child])
     return False
-
-
-# Video explanation: https://youtu.be/E36O5SWp-LE
-def is_subtree_v1(root, sub_root):
-    """ Recursive DFS.
-
-            1- Start with a node of tree 'root' (lets call this root-node)
-            2- Compare the trees forming with root root-node and root 'sub_root'
-            3- If the trees match (100- Same Tree logic) then return true
-            4- Otherwise, go to step 1 and check for root.left || root.right
-
-    Time complexity: O(N * M), where N and M is the number of nodes in root and sub_root, respectively. In worst case
-    (skewed tree) the traversal takes O(N * M)
-    Space complexity: O(N), the depth of the recursion tree can go up to N. Recursion stack space is dictated by the
-    height of 'root'. Even if 'sub_root' is the bigger tree, 'root' has no clue and will keep checking till its max
-    depth.
-    """
-
-    def is_identical(s, t):  # Dumb comprehensive comparison off all nodes of s and t
-        if not s and not t:
-            return True
-        if not s or not t or s.val != t.val:
-            return False
-        return is_identical(s.left, t.left) and is_identical(s.right, t.right)
-
-    if not root:
-        return False
-    if is_identical(root, sub_root):  # If root and sub_root are equal right off the bat, we're done!
-        return True
-    # Check if we can find sub_root to the left or right of root
-    return is_subtree_v1(root.left, sub_root) or is_subtree_v1(root.right, sub_root)
 
 
 def is_subtree_v3(root, sub_root):
@@ -125,10 +124,10 @@ class Test(unittest.TestCase):
     root3.right.left = TreeNode(0)
 
     def test_is_subtree(self):
-        self.assertTrue(is_subtree_v0(self.root1, self.root2))
-        self.assertFalse(is_subtree_v0(self.root1, self.root3))
         self.assertTrue(is_subtree_v1(self.root1, self.root2))
         self.assertFalse(is_subtree_v1(self.root1, self.root3))
+        self.assertTrue(is_subtree_v2(self.root1, self.root2))
+        self.assertFalse(is_subtree_v2(self.root1, self.root3))
         self.assertTrue(is_subtree_v3(self.root1, self.root2))
         self.assertFalse(is_subtree_v3(self.root1, self.root3))
 
