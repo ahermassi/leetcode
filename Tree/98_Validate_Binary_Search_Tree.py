@@ -114,6 +114,26 @@ def is_valid_bst_v4(root):
     return True
 
 
+def is_valid_bst_v5(root):
+    """ Recursive in-order traversal, for the sake of completeness.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    def inorder(node):
+        if not node:
+            return True
+        if not inorder(node.left):
+            return False
+        if node.val <= prev_val[0]:
+            return False
+        prev_val[0] = node.val
+        return inorder(node.right)
+
+    prev_val = [float('-inf')]
+    return inorder(root)
+
+
 class Test(unittest.TestCase):
     root1 = TreeNode(2)
     root1.left = TreeNode(1)
@@ -133,6 +153,8 @@ class Test(unittest.TestCase):
         self.assertFalse(is_valid_bst_v3(self.root2))
         self.assertTrue(is_valid_bst_v4(self.root1))
         self.assertFalse(is_valid_bst_v4(self.root2))
+        self.assertTrue(is_valid_bst_v5(self.root1))
+        self.assertFalse(is_valid_bst_v5(self.root2))
 
 
 if __name__ == '__main__':
