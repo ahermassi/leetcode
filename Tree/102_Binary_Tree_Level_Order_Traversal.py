@@ -45,32 +45,32 @@ def level_order_v1(root):
 def level_order_v2(root):
     """ The simplest way to solve the problem is to use a recursion.
 
-         Let's first ensure that the tree is not empty, and then call recursively the function dfs(node, level), which
+         Let's first ensure that the tree is not empty, and then call recursively the function dfs(node, depth), which
          takes the current node and its level/depth as the arguments.
          This function does the following :
 
-            - The output list here is called 'res'', and hence the current level is just a length of this list,
-               len(res). The dfs function uses the current node's level as an index of the output list
+            - The output list here is called res, and hence the current level is just the length of this list,
+               len(res). The dfs function uses the current node's depth as index of the output list
 
             - Append the node value to the last list in levels
 
-            - Process recursively child nodes if they are not None
+            - Process recursively child nodes if they are not null
 
     Time complexity: O(N)
     Space complexity: O(N), in the worst case of a skewed tree, O(logN) average
     """
 
-    def dfs(root, level):
-        if not root:
-            return
-        if level == len(res):  # Start a new level
+    def dfs(root, depth):
+        if depth == len(res):  # Start a new level
             res.append([])
-        res[level].append(root.val)
-        dfs(root.left, level + 1)
-        dfs(root.right, level + 1)
+        res[depth].append(root.val)
+        if root.left:
+            dfs(root.left, depth + 1)
+        if root.right:
+            dfs(root.right, depth + 1)
 
     res = []
-    dfs(root, 0)  # We initially start at level 0
+    dfs(root, 0)  # We initially start at depth 0
     return res
 
 
