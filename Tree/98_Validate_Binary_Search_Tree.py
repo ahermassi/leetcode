@@ -38,7 +38,7 @@ def is_valid_bst_v1(root):
 
 
 def is_valid_bst_v2(root):
-    """ On the first sight, the problem is trivial. Let's traverse the tree and check at each step if
+    """  On the first sight, the problem is trivial. Let's traverse the tree and check at each step if
          node.right.val > node.val and node.left.val < node.val. The problem is this approach will not work for all
          cases. Not only the right child should be larger than the node but all the elements in the right subtree.
 
@@ -51,7 +51,7 @@ def is_valid_bst_v2(root):
         the current one and update limits accordingly.
 
     Time complexity: O(N), since we visit each node exactly once
-    Space complexity: O(N), since we keep up to the entire tree
+    Space complexity: O(N), worst case to hold the function call stack if the tree is skewed
     """
 
     def validate(root, lower, upper):
