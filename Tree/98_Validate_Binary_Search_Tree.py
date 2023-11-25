@@ -15,14 +15,14 @@ def is_valid_bst_v1(root):
     """ Iterative in-order traversal.
 
         Do we need to keep the whole in-order traversal list? Actually, no. The last added in-order element is enough
-        to ensure that at each step the tree is BST (or not). In fact, 'prev' variable is what should've been inserted
-        into an in-order list at this point of iteration if 'prev' was a list.
+        to ensure that at each step the tree is BST (or not). At each iteration, 'prev' is the node value that
+        should've been inserted into the in-order traversal list if 'prev' was a list.
 
     Time complexity: O(N), in the worst case when the tree is BST or the 'bad' element is a rightmost leaf
-    Space complexity: O(N), to keep stack
+    Space complexity: O(N), to keep the stack in the worst case of a skewed BST
     """
-    stack, prev = [], float('-inf')
-    cur = root
+    prev = float('-inf')
+    stack, cur = [], root
     while stack or cur:
         while cur:
             stack.append(cur)
