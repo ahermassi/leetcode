@@ -15,8 +15,11 @@ class TreeNode(object):
 
 
 def kth_smallest_v1(root, k):
-    """ Iterative in-order. This way we could speed up the solution because there is no need to build the entire
-         inorder traversal, and we can stop once we meet the kth element.
+    """ Iterative inorder.
+
+         We can use the property of BST: inorder traversal of BST is an array sorted in ascending order. We could speed
+         up the solution knowing that there is no need to build the entire inorder traversal, as we can stop once we
+         meet the kth element.
 
          The idea is that we're maintaining a stack of nodes to visit as well as our current active node. Because we're
          doing an in-order traversal of a BST we always want to visit the leftmost child first since we know that is the
@@ -28,9 +31,9 @@ def kth_smallest_v1(root, k):
         its right. From there, we restart our iteration checking if the right node has any left children adding nodes to
         visit later to the stack.
 
-    Time complexity: O(N + k) in the worst case of a skewed BST, since before starting to pop out we have to go down to
-    a leaf. O(logN + k) in the best case of a balanced BST.
-    Space complexity: O(logN) average case, O(N) worst case, to keep the stack
+    Time complexity: O(N + k) in the worst case of a skewed BST with all the nodes in the left subtree, since before
+    starting to pop out we have to go down to a leaf. O(logN + k) in the best case of a balanced BST.
+    Space complexity: O(logN) average case, O(N) worst case to keep the stack
     """
     stack, cur = [], root
     while stack or cur:
