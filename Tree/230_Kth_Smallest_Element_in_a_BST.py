@@ -48,26 +48,26 @@ def kth_smallest_v1(root, k):
 
 
 def kth_smallest_v2(root, k):
-    """ Recursive in-order traversal.
+    """ Recursive inorder traversal.
+
+         If the length of our resulting list becomes k, then we have enough elements. Break out of the recursion and
+         return the last element in the list.
 
     Time complexity: O(N)
     Space complexity: O(logN) average case, O(N) worst case
     """
-
-    def in_order(root):
-        if not root:
+    def inorder(node):
+        if not node:
             return
-        in_order(root.left)
-        count[0] -= 1
-        if not count[0]:
-            res[0] = root.val
+        inorder(node.left)
+        if len(inorder_values) == k:
             return
-        in_order(root.right)
+        inorder_values.append(node.val)
+        inorder(node.right)
 
-    count = [k]
-    res = [None]
-    in_order(root)
-    return res[0]
+    inorder_values = []
+    inorder(root)
+    return inorder_values[-1]
 
 
 def kth_smallest_v3(root, k):
