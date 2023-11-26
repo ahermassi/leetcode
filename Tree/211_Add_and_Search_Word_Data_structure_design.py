@@ -115,7 +115,7 @@ class WordDictionaryV2(object):
                 # Why exclude '#' ? Since '#' is not a 'real' character and only a placeholder (and we know it won't
                 # have any children, since the word finished here), we don't want to traverse down this path.
                 for child in node:
-                    if child != '#' and dfs(child, index + 1):
+                    if child != '#' and dfs(node[child], index + 1):
                         return True
                 return False
             if c not in node:
@@ -127,7 +127,7 @@ class WordDictionaryV2(object):
 
 
 class Test(unittest.TestCase):
-    word_dictionary = WordDictionaryV1()
+    word_dictionary = WordDictionaryV2()
     word_dictionary.addWord("bad")
     word_dictionary.addWord("dad")
     word_dictionary.addWord("mad")
