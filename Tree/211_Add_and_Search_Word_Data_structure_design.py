@@ -76,8 +76,8 @@ class WordDictionaryV1(object):
             c = word[index]
             if c == '.':
                 # Can we find the REST of the string in any of the children?
-                for child in node.children.values():
-                    if dfs(child, index + 1):
+                for child in node.children:
+                    if dfs(node.children[child], index + 1):
                         return True
                 return False
             if c not in node.children:
@@ -85,23 +85,23 @@ class WordDictionaryV1(object):
             return dfs(node.children[c], index + 1)  # Start of the prefix was found, so keep following that path
 
         n = len(word)
-        return dfs(self.root, n)
+        return dfs(self.root, 0)
 
 
 class WordDictionaryV2(object):
-    """ A different implementation using hash map as a trie (nested hash maps). """
+    """ A trie implementation using nested hash map. """
 
     def __init__(self):
-        self.trie = dict()
+        self.root = dict()
 
     def addWord(self, word):
-        trie = self.trie
+        root = self.root
         for c in word:
-            if c not in trie:  # Add a dictionary for each new character, creating a nested dictionary from word's
-                # characters
-                trie[c] = dict()
-            trie = trie[c]
-        trie['#'] = '#'  # Add end of word mark to the dictionary of current node
+            if c not in root:
+                # Add a dictionary for each new character, creating a nested dictionary from word's characters
+                root[c] = dict()
+            root = root[c]
+        root['#'] = '#'  # Add end of word mark to the dictionary of current node
 
     def search(self, word):
 
@@ -123,7 +123,7 @@ class WordDictionaryV2(object):
             return dfs(node[c], index + 1)
 
         n = len(word)
-        return dfs(self.trie, 0)
+        return dfs(self.root, 0)
 
 
 class Test(unittest.TestCase):
