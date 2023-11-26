@@ -29,13 +29,14 @@ class TreeNode(object):
         self.right = None
 
 
+# Video explanation: https://youtu.be/ihj4IQGZ2zc
 def build_tree_v1(preorder, inorder):
     """ The two key observations are:
 
-            - Preorder traversal follows Root -> Left -> Right, therefore, given the preorder array preorder, we have
-               easy access to the root which is preorder[0].
+            - Preorder traversal follows Root -> Left -> Right, therefore, given the preorder array, we have easy
+               access to the root which is preorder[0].
 
-            - Inorder traversal follows Left -> Root -> Right, therefore if we know the position of Root in the inorder
+            - Inorder traversal follows Left -> Root -> Right, therefore if we know the position of root in the inorder
                list, we can recursively split the entire array into two subtrees.
 
         Now the idea should be clear enough. We will design a recursive function that will set the first element of
@@ -44,13 +45,15 @@ def build_tree_v1(preorder, inorder):
         the right should be the right subtree. Both subtrees can be constructed by making another recursive call.
 
         It is worth noting that we should build a hashmap to record the relation of value -> index for inorder, so that
-        we can find the position of root in constant time.
+        we can find the position of root in constant time. Furthermore, if we don't want to create a deque out of the
+        preorder  list, we can instead use an integer variable preorderIndex to keep track of the element that will be
+        used to construct the root.
 
         The reason we are given two types of binary tree traversals is because it is not possible to construct binary
         tree from a single traversal.
 
         Example: preorder = [3, 9, 20, 15, 7], inorder = [9, 3, 15, 20, 7]
-                3 is root, [9] is the left subtree, [15, 20, 7] is the right subtree, and so on (recursively)
+        3 is root, [9] is the left subtree, [15, 20, 7] is the right subtree, and so on (recursively)
 
     Time complexity: O(N), the recursive helper method has a cost of O(1) for each call and is called once for each of
     the N nodes, giving a total of O(N)
@@ -60,6 +63,7 @@ def build_tree_v1(preorder, inorder):
     def build_tree(left, right):
         # These boundaries are only used to check if the subtree is empty
         if not left > right:
+            # There are no elements to construct the tree
             return None
         root = TreeNode(preorder.popleft())
         index = indices[root.val]
