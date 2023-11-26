@@ -48,14 +48,18 @@ class WordDictionaryV1(object):
         """ Returns if the word is in the data structure. A word could contain the dot character '.' to represent
             any one letter.
 
-            The function tries to find a suffix of the string that starts at 'index'. If the value of one of the
-            children of the current trie node is equal to the character at current 'index', we recursively try to find
-            the rest of the string starting at ('index' + 1), and the exploration starts from that child.
+            In the absence of '.' characters, the search would be as simple as addWord. Each key is represented in the
+            trie as a path from the root to the internal node or leaf. We start from the root and go down in trie,
+            checking character by character.
 
-            The presence of '.' characters forces us to explore all possible paths at each . level.
+            The presence of '.' characters forces us to explore all possible paths at each '.' level.
             If the first character of the suffix is the wildcard '.', then all the children of the current trie node
             are good candidates to hold the rest of the string. If any of the children returns a positive result,
             we win.
+
+            The recursive function tries to find a suffix of the string that starts at 'index'. If the value of one of
+            the children of the current trie node is equal to the character at current 'index', we recursively try to
+            find the rest of the string starting at (index + 1), and the exploration starts from that child.
 
         Time complexity: O(M) if we exclude wildcards (.), worst case search will iterate through the longest word
         (i.e. linear to the maximum number of characters in a word). With wildcards, it will iterate through the whole
