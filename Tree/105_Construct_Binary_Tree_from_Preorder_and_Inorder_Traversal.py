@@ -78,20 +78,20 @@ def build_tree_v1(preorder, inorder):
 
 
 def build_tree_v2(preorder, inorder):
-    """ Iterative, stack based solution. """
+    """ Iterative, stack-based solution. """
     if not preorder:
         return None
-    inorder_indexes = {num: i for i, num in enumerate(inorder)}  # build a map of the indices of the values as they
-    # appear in the in-order array
+    # Build a map of the indices of the values as they appear in the inorder array
+    inorder_indexes = {num: i for i, num in enumerate(inorder)}
     root = TreeNode(preorder[0])
     stack = [root]  # Initialize the stack of tree nodes
     for i in range(1, len(preorder)):
         val = preorder[i]
         node = TreeNode(val)
         index = inorder_indexes[val]
-        if index < inorder_indexes[stack[-1].val]:  # The new node's index in inorder is less than the stack top's
-            # index then it is on the left of the last node, so it must be its left child (that's the way preorder
-            # works)
+        if index < inorder_indexes[stack[-1].val]:
+            # The new node's index in inorder is less than the stack top's index then it is on the left of the last
+            # node, so it must be its left child (that's the way preorder works)
             stack[-1].left = node
         else:
             # The new node is on the right of the last node, so it must be the right child of either the last node or
