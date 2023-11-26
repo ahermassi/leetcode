@@ -97,32 +97,33 @@ class TrieV1(object):
 
 
 class TrieV2:
-    """ The Trie itself can be used as a root node without the need of creating a TrieNode. """
+    """ A trie implementation using nested hash map. """
 
     def __init__(self):
-        self.children = defaultdict(TrieV2)
-        self.end_of_word = False
+        self.root = dict()
 
-    def insert(self, word):
-        root = self
+    def insert(self, word: str) -> None:
+        root = self.root
         for c in word:
-            root = root.children[c]
-        root.end_of_word = True
+            if c not in root:
+                root[c] = dict()
+            root = root[c]
+        root['#'] = '#' # Add end of word marker to the map of current node
 
-    def search(self, word):
-        root = self
+    def search(self, word: str) -> bool:
+        root = self.root
         for c in word:
-            if c not in root.children:
+            if c not in root:
                 return False
-            root = root.children[c]
-        return root.end_of_word
+            root = root[c]
+        return '#' in root
 
-    def startsWith(self, prefix):
-        root = self
+    def startsWith(self, prefix: str) -> bool:
+        root = self.root
         for c in prefix:
-            if c not in root.children:
+            if c not in root:
                 return False
-            root = root.children[c]
+            root = root[c]
         return True
 
 
