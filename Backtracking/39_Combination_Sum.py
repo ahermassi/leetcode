@@ -120,16 +120,15 @@ def combination_sum_v3(candidates, target):
     Space complexity: O(target/m), for call stack
     """
 
-    def dfs(index, remaining):
-        if remaining == 0:
-            res.append(combination[:])  # This is the difference: We append a copy of the path as it is shared amongst
-            # the recursive calls
+    def dfs(index, remainder):
+        if remainder == 0:
+            res.append(combination[:])  # We append a copy of the path as it is shared among all the recursive calls
             return
-        if remaining < 0:  # There is no use in exploring a combination that sums beyond target
+        if remainder < 0:  # There is no use in exploring a combination that sums beyond target
             return
         for i in range(index, n):  # We include 'index' because we're allowed to choose the same number multiple times
             combination.append(candidates[i])  # Add current candidate to the path
-            dfs(i, remaining - candidates[i])  # Explore
+            dfs(i, remainder - candidates[i])  # Explore
             combination.pop()  # Backtrack
 
     n, res, combination = len(candidates), [], []
