@@ -97,8 +97,9 @@ def exist_v2(board, word):
             return True
         if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index] or (i, j) in visited:
             return False
-        visited.add((i, j))  # Mark the cell as visited. At each step, we mark our choice before jumping into the next
-        # step. At the end of each step, we would also revert our marking, so that we could have a clean slate to try
+        visited.add((i, j))
+        # Mark the cell as visited. At each step, we mark our choice before jumping into the next step.
+        # At the end of each step, we would also revert our marking, so that we could have a clean slate to try
         # another direction.
         for x, y in directions:
             if search(i + x, j + y, index + 1):
