@@ -5,21 +5,22 @@ or vertically neighboring. The same letter cell may not be used more than once. 
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/pfiQ_PS1g8E
 def exist_v1(board, word):
     """ The accurate term to summarize the solution is backtracking, which is a methodology where we mark the current
-        path of exploration, and if the path does not lead to a solution we revert the change (i.e. backtrack) and try
-        another path.
+         path of exploration, and if the path does not lead to a solution we revert the change (i.e. backtrack) and try
+         another path.
 
-        As the general idea for the solution, we would walk around the 2D grid, and at each step we mark our choice
-        before jumping into the next step. At the end of each step, we would also revert our marking, so that we could
-        have a clean slate to try another direction. In addition, the exploration is done via the DFS strategy, where
-        we go as further as possible before we try the next direction.
+         As the general idea for the solution, we would walk around the 2D grid, and at each step we mark our choice
+         before jumping into the next step. At the end of each step, we would also revert our marking, so that we could
+         have a clean slate to try another direction. In addition, the exploration is done via the DFS strategy, where
+         we go as further as possible before we try the next direction.
 
-        The skeleton of the algorithm is a loop that iterates over each cell in the grid. For each cell, we invoke the
-        backtracking function to check if we would obtain a solution starting from this very cell.
+         The skeleton of the algorithm is a loop that iterates over each cell in the grid. For each cell, we invoke the
+         backtracking function to check if we would obtain a solution starting from this very cell.
 
-        For the backtracking function search(row, col, index), as a DFS algorithm, it is often implemented as a recursive
-        function. The function can be broken down into the following four steps:
+         For the backtracking function search(row, col, index), as a DFS algorithm, it is often implemented as a recursive
+         function. The function can be broken down into the following four steps:
 
             1- At the beginning, we first check if we reached the bottom case of the recursion, where the word to be
                  matched is empty, i.e. we have already found the match for each prefix of the word.
@@ -35,11 +36,15 @@ def exist_v1(board, word):
                  result of the exploration.
 
     Time complexity: O(N * M * (3^L)), where N and M are the dimensions of the board and L is the length of the word.
-    First, we have to find the first letter to start which gives time O(N * M). Then, for each search step it has 1~3
-    neighbours to go as from every block we go in at most 3 adjacent blocks (avoiding the direction we came from) and
-    it has L steps, where L is the length of the word to be searched.
+    We iterate through the board for backtracking, i.e. there could be N * M times invocation for the backtracking
+    function in the worst case. For the backtracking function, initially we could have at most 4 directions to explore,
+    but further the choices are reduced into 3 (since we won't go back to where we come from). As a result, the
+    execution trace after the first step could be visualized as a 3-ary tree, each of the branches represent a potential
+    exploration in the corresponding direction. Therefore, in the worst case, the total number of invocation would be
+    the number of nodes in a full 3-nary tree, which is about 3^L.
     https://cs.stackexchange.com/questions/96626/whats-the-big-o-runtime-of-a-dfs-word-search-through-a-matrix
-    Space complexity: O(L), for the recursion call stack
+    Space complexity: O(L), the main consumption of the memory lies in the recursion call of the backtracking function.
+    The maximum length of the call stack would be the length of the word.
     """
 
     def search(i, j, index):
@@ -51,7 +56,9 @@ def exist_v1(board, word):
         board[i][j] = '#'  # Mark the choice before exploring further
         for x, y in directions:
             if search(i + x, j + y, index + 1):
-                return True  # Sudden-death return, no cleanup.
+                return True
+                # Sudden-death return, no cleanup. This would, however, leave with a "side-effect," i.e. the matched
+                # letters in the original board would be altered to #
                 # Instead of returning True directly once we find a match, we could've simply broken out of the loop
                 # to do the cleanup before returning
                 # found = True
