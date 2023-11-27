@@ -82,7 +82,7 @@ def combination_sum_v1(candidates, target):
 
 def combination_sum_v2(candidates, target):
     """ The solution can be optimized by sorting the input array. The only help with sorting is that we can stop
-        searching earlier by breaking from the for loop when candidate is larger than 'remaining' target.
+        searching earlier by breaking from the for loop when the candidate is larger than remainder target.
 
         Sorting is not for correctness but for speed. What we do by sorting is we limit the range of numbers on which
         we call DFS recursively, as we know the numbers outside the range cannot be in our solution. For small inputs,
@@ -95,15 +95,16 @@ def combination_sum_v2(candidates, target):
     Space complexity: O(target/m), for call stack
     """
 
-    def dfs(index, combination, remaining):
-        if remaining == 0:
+    def dfs(index, combination, remainder):
+        if remainder == 0:
             res.append(combination)
             return
         for i in range(index, n):
-            if candidates[i] > remaining:  # If one 'candidate' in bigger than 'remaining', the remaining items must
-                # be bigger than 'remaining', so break early. No use exploring a combination that sums beyond 'target'.
+            if candidates[i] > remainder:
+                # If the 'candidate' in bigger than 'remainder', the remaining candidates must be bigger than
+                # 'remainder' too,so break early. No use exploring a combination that sums beyond 'target'.
                 break
-            dfs(i, combination + [candidates[i]], remaining - candidates[i])
+            dfs(i, combination + [candidates[i]], remainder - candidates[i])
 
     n, res = len(candidates), []
     candidates.sort()
