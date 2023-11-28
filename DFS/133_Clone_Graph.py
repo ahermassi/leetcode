@@ -78,30 +78,34 @@ def clone_graph_v2(node):
             clones[cur_node].neighbors.append(clones[neighbor])
     return node_clone
 
-# Watch: https://www.youtube.com/watch?v=vma9tCQUXk8
 
-
+# Video explanation: https://www.youtube.com/watch?v=vma9tCQUXk8
 def clone_graph_v3(node):
     """ We also have the BFS way of doing iterative traversal of the graph.
 
          We will use a hash map to store the reference of the copy of all the nodes that have already been visited and
-         copied.
-        Add the first node to the queue. Clone the first node and add it to the hash map.
+         copied in order to avoid cycles.
 
-        Do the BFS traversal:
+            - Add the first node to the queue. Clone the first node and add it to the hash map.
 
-            - Pop a node from the front of the queue
-            - Visit all the neighbors of this node
-            - If any of the neighbors was already visited, then it must be present in the hash map. Get the clone of
-               this neighbor from the hash map in that case.
-            - Otherwise, create a clone and store it in the hash map
-            - Add the clones of the neighbors to the corresponding list of the clone node
+            - Do the BFS traversal:
+
+                -> Pop a node from the front of the queue
+                -> Visit all the neighbors of this node.
+                      If any of the neighbors was already visited, then it must be present in the hash map. Get the
+                      clone of this neighbor from the hash map in that case.
+                      Otherwise, create a clone and store it in the hash map.
+                -> Add the clones of the neighbors to the corresponding list of the clone node
 
         In summary: We push a node to the queue and make sure that the node is already cloned. Then, we process
         neighbors. If a neighbor is already cloned, we just append it to the current clone neighbors list. Otherwise,
         we clone the neighbor and append it to the queue to make sure that we can visit it in the next iteration.
 
-    Time complexity: O(|V| + |E|), we will visit V nodes and traverse E edges
+    Time complexity: O(|V| + |E|), we keep track of all the nodes that are visited in a hashmap, which ensures that
+    each vertex (node) is enqueued at most once, and dequeued at most once. So the total time devoted to queue
+    operations is O(|V|), where V is the number of nodes/vertices. The inner loop scans the neighbors list of each
+    node only when the node is dequeued. Therefore, it scans each neighbors list at most once and so the total time in
+    scanning the list is O(|E|), where E is the number of edges.
     Space complexity: O(|V|), we will store V vertices in the hashtable, and the queue can hold at worst some fractional
     multiple of the total number for vertices. Imagine 1 node connected to 9 nodes all at once in a graph of size
     10, and we start from that 1 node. Our queue would have 9 nodes in it at once on the first iteration. In addition,
@@ -112,8 +116,9 @@ def clone_graph_v3(node):
     When we look at node 2 you only go to edges 1 and 3
     So basically we go through 16 edges + 8 nodes = O(|V| + |E|)
     """
-    node_copy = Node(node.val)
-    clones = {node: node_copy}
+    if not node:
+        return None
+    clones = {node: Node(node.val)}
     queue = deque([node])  # The queue is used to store ORIGINAL nodes that need to be cloned
     while queue:
         cur_node = queue.popleft()
@@ -126,5 +131,4 @@ def clone_graph_v3(node):
             # Draw the edge from 'cur_node' clone to 'neighbor' clone.
             # Do you see how our hash map makes this quick access possible?
             clones[cur_node].neighbors.append(clones[neighbor])
-
-    return node_copy
+    return clones[node]
