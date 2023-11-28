@@ -63,6 +63,7 @@ def num_islands_v2(grid):
     return islands
 
 
+# Video explanation: https://youtu.be/pV2kpPD66nE
 def num_islands_v3(grid):
     """ Same algorithm but using BFS.
 
