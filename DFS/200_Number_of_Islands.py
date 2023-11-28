@@ -42,6 +42,7 @@ def num_islands_v1(grid):
 def num_islands_v2(grid):
     """ Same solution as above but without using a 'visited' set. Instead, mark every visited cell as '0'. This is
         also known as 'sinking' the islands.
+
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
@@ -52,14 +53,14 @@ def num_islands_v2(grid):
         for x, y in directions:
             dfs(i+x, j+y)
 
-    n, m, res = len(grid), len(grid[0]), 0
+    n, m, islands = len(grid), len(grid[0]), 0
     directions = {(-1, 0), (1, 0), (0, -1), (0, 1)}
     for i in range(n):
         for j in range(m):
             if grid[i][j] == '1':
                 dfs(i, j)
-                res += 1
-    return res
+                islands += 1
+    return islands
 
 
 def num_islands_v3(grid):
