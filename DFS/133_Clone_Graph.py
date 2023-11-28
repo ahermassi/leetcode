@@ -59,10 +59,29 @@ def clone_graph_v1(node):
     clones = {}
     return dfs(node) if node else None
 
+
+def clone_graph_v2(node):
+    """ Iterative DFS using a stack.
+
+    Time complexity: O(|V| + |E|)
+    Space complexity: O(|V|)
+    """
+    node_clone = Node(node.val)
+    clones = {node: node_clone}
+    stack = [node]
+    while stack:
+        cur_node = stack.pop()
+        for neighbor in cur_node.neighbors:
+            if neighbor not in clones:
+                clones[neighbor] = Node(neighbor.val)
+                stack.append(neighbor)
+            clones[cur_node].neighbors.append(clones[neighbor])
+    return node_clone
+
 # Watch: https://www.youtube.com/watch?v=vma9tCQUXk8
 
 
-def clone_graph_v2(node):
+def clone_graph_v3(node):
     """ We also have the BFS way of doing iterative traversal of the graph.
 
          We will use a hash map to store the reference of the copy of all the nodes that have already been visited and
@@ -109,22 +128,3 @@ def clone_graph_v2(node):
             clones[cur_node].neighbors.append(clones[neighbor])
 
     return node_copy
-
-
-def clone_graph_v3(node):
-    """ Iterative version of DFS using a stack,
-
-    Time complexity: O(|V| + |E|)
-    Space complexity: O(|V|)
-    """
-    node_clone = Node(node.val)
-    clones = {node: node_clone}
-    stack = [node]
-    while stack:
-        cur_node = stack.pop()
-        for neighbor in cur_node.neighbors:
-            if neighbor not in clones:
-                clones[neighbor] = Node(neighbor.val)
-                stack.append(neighbor)
-            clones[cur_node].neighbors.append(clones[neighbor])
-    return node_clone
