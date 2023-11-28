@@ -145,21 +145,24 @@ def num_islands_v3(grid):
         0 0 0 0
         0 0 0 0
         0 0 0 0
+
+        Can also think about what happens if grid is 1xN or Mx1 (1 row or 1 col). Only max of 1 item will be in the
+        queue at a time
     """
     n, m,  = len(grid), len(grid[0])
-    res, visited = 0, set()
+    islands, visited = 0, set()
     for i in range(n):
         for j in range(m):
             if grid[i][j] == '1' and (i, j) not in visited:
                 queue = deque([(i, j)])
                 while queue:
                     x, y = queue.popleft()
-                    if not 0 <= x < n or not 0 <= y < m or (x, y) in visited or grid[x][y] == '0':
-                        continue
-                    visited.add((x, y))
-                    queue.extend([(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)])
-                res += 1
-    return res
+                    for a, b in (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1):
+                        if 0 <= a < n and 0 <= b < m and grid[a][b] == '1' and (a, b) not in visited:
+                            queue.append((a, b))
+                            visited.add((a, b))
+                islands += 1
+    return islands
 
 
 class Test(unittest.TestCase):
