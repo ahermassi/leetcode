@@ -12,13 +12,16 @@ class Node(object):
         self.val = val
         self.neighbors = neighbors
 
+
 # Video explanation: https://www.youtube.com/watch?v=mQeF6bN8hMk
-
-
 def clone_graph_v1(node):
-    """ The basic intuition for this problem is to just copy as we go. To avoid getting stuck in a loop, we would need
-        some way to keep track of the nodes which have already been copied. By doing this we don't end up traversing
-        them again.
+    """ The basic intuition for this problem is to just copy as we go. What is crucial to understand is that we don't
+         want to get stuck in a cycle while we are traversing the graph. According to the problem statement, any given
+         undirected edge could be represented as two directional edges. So, if there is an undirected edge between node
+         A and node B, the graph representation for it would have a directed edge from A to B and another from B to A.
+
+         To avoid getting stuck in a loop, we would need some way to keep track of the nodes which have already been
+         copied. By doing this we don't end up traversing them again.
 
             - Start traversing the graph from the given node.
 
@@ -32,9 +35,9 @@ def clone_graph_v1(node):
                absence of such an ordering, we would be caught in the recursion because of encountering the node again
                somewhere down the recursion, we will be traversing it again thus getting into cycles.
 
-            - Now make the recursive call for the neighbors of the node. Each recursive call made would return the
-               clone of a neighbor. We will prepare the list of these clones returned and put into neighbors of clone
-               node which we had created earlier. This way we will have cloned the given node and its neighbors.
+            - Now make the recursive call for the neighbors of the node. Each recursive call would return the clone of
+               a neighbor. We will prepare the list of these clones returned and put into neighbors of clone node which
+               we had created earlier. This way we will have cloned the given node and its neighbors.
 
     Time complexity: O(|V| + |E|), we will touch V nodes and traverse E edges
     Space complexity: O(|V|), this space is occupied by the hash map and in addition to that, space would also be
@@ -42,13 +45,14 @@ def clone_graph_v1(node):
     """
 
     def dfs(node):
-        # The job of dfs() is to clone a node and recursively clone its neighbors. Once again, we TRUST that the
-        # recursive call will handle copying the neighbors
+        # The job of dfs(node) is to clone a node and recursively clone its neighbors. Once again, we TRUST that the
+        # recursive call will handle copying the neighbors.
         if node in clones:
             return clones[node]
         node_clone = Node(node.val)
         clones[node] = node_clone  # We can also use the node's value as key as it's guaranteed to be unique
         for neighbor in node.neighbors:
+            # Iterate through the neighbors to generate their clones
             node_clone.neighbors.append(dfs(neighbor))
         return node_clone
 
