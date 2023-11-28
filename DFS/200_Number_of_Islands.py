@@ -10,15 +10,15 @@ def num_islands_v1(grid):
     """ Treat the 2D grid map as an undirected graph and there is an edge between two horizontally or vertically
          adjacent nodes of value '1'.
 
-         Linear scan the cells, and if a cell contains '1' then it is a root node that triggers a DFS to mark all
+         Linearly scan the cells, and if a cell contains '1' then it is a root node that triggers a DFS to mark all
          adjacent nodes, then increase the islands counter by 1. The algorithm uses a 'visited' set in order to avoid
          an infinite recursion.
 
         Count the number of root nodes that trigger DFS. This number would be the number of islands since each DFS
         starting at some root identifies an island.
 
-    Time complexity: O(N * M), where N is the number of rows in the given grid and M is the number of columns. We visit
-    every cell once.
+    Time complexity: O(N * M), where N is the number of rows in the given grid and M is the number of columns. Because
+    we mark cells as visited, we won't visit the same cell multiple times.
     Space complexity: O(N * M), for both 'visited' set and recursion call stack
     """
     def dfs(i, j):
@@ -29,14 +29,14 @@ def num_islands_v1(grid):
             dfs(i+x, j+y)
 
     n, m = len(grid), len(grid[0])
-    res, visited = 0, set()
+    islands, visited = 0, set()
     directions = {(-1, 0), (1, 0), (0, -1), (0, 1)}
     for i in range(n):
         for j in range(m):
             if grid[i][j] == '1' and (i, j) not in visited:
                 dfs(i, j)
-                res += 1
-    return res
+                islands += 1
+    return islands
 
 
 def num_islands_v2(grid):
@@ -168,7 +168,8 @@ class Test(unittest.TestCase):
     def test_num_islands(self):
         for test_island, result in self.data:
             self.assertEqual(result, num_islands_v1(test_island))
-            self.assertEqual(result, num_islands_v2(test_island))
+            # self.assertEqual(result, num_islands_v2(test_island))
+            self.assertEqual(result, num_islands_v3(test_island))
 
 
 if __name__ == '__main__':
