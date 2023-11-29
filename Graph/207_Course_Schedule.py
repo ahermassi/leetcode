@@ -6,29 +6,50 @@ Given the total number of courses and a list of prerequisite pairs, is it possib
 from collections import defaultdict, deque
 import unittest2 as unittest
 
+
 # Video explanation: https://www.youtube.com/watch?v=EgI5nU9etnU
-
-
 def can_finish_dfs(num_courses, prerequisites):
-    """ This is a direct application of topological sort. Note that this type of sort can only be applied on Directed
-        Acyclic Graphs (DAG). A Directed cyclic graph fails to yield a topological sort because of the presence of a
-        cycle. This property is the intuition of this question's algorithm.
+    """ We can see that we have been given certain courses with some dependencies between them. The dependencies are
+         expressed as pairs, which provides some hints for framing the problem in terms of a graph.
 
-        The problem could be modeled as a graph traversal problem, where each course can be represented as a vertex in
+         The problem could be modeled as a graph traversal problem, where each course can be represented as a vertex in
         a graph and the dependency between the courses can be modeled as a directed edge between two vertex.
 
-        Therefore, the problem to determine if one could build a valid schedule of courses that satisfies all the
-        dependencies (i.e. constraints) would be equivalent to determining if the corresponding graph is a DAG, i.e.
-        there is no cycle in the graph.
+        A topological sort or topological ordering of a directed graph is a linear ordering of its vertices such that
+        for every directed edge u -> v from vertex u to vertex v, u comes before v in the ordering.
+
+        This problem a direct application of topological sort. Note that this type of sort can only be applied on
+        Directed Acyclic Graphs (DAG). A Directed cyclic graph fails to yield a topological sort because of the
+        presence of a cycle. This property is the intuition of this question's algorithm.
+
+        Therefore, whether we could build a valid schedule of courses that satisfies all the dependencies
+        (i.e. constraints) is reduced to determining if the corresponding graph is a DAG, i.e. there is no cycle in the
+        graph.
 
         The general idea here is that we could enumerate each course (vertex) to check if it could form cyclic
         dependencies (i.e. a cyclic path) starting from this course. The check of cyclic dependencies for each course
-        could be done via backtracking/DFS, where we incrementally follow the dependencies until either there is no
-        more dependency or we come across a previously visited course along the path.
+        could be done via backtracking/DFS.
+
+        In DFS, we use a recursive function to explore nodes as far as possible along each branch. Upon reaching the end
+        of a branch, we backtrack to the previous node and continue exploring the next branches.
+        Once we encounter an unvisited node, we will take one of its neighbor nodes (if exists) as the next node on this
+        branch. Recursively call the function to take the next node as the 'starting node' and solve the sub-problem.
+
+        A node remains in the DFS recursion stack until all of its branches (all nodes in its subtree) have been
+        explored. When we have examined all of a node's branches, i.e. visited all the nodes in its subtree, the node
+        is removed from the DFS recursive stack.
+
+        If the graph has a cycle, we must have a back edge connecting a node to one of its ancestors while traversing
+        nodes in the DFS manner.
+
+        To detect the cycle, we must keep track of the visited nodes (like in a normal DFS) and also the nodes in the
+        function's recursion call stack for DFS traversal. The nodes in the stack store the current path that we are on.
+        There is a cycle in the graph if a node is reached that is already in the recursion stack.
+
         This is also known as Graph Coloring Algorithm.
 
             - We build a graph data structure from the given list of course dependencies. Here we adopt the adjacency
-               list data structure to represent the graph, which can be implemented via hashmap. Each entry in the
+               list data structure to represent the graph, which can be implemented using a hashmap. Each entry in the
                adjacency list represents a node which consists of a node index and a list of neighbors nodes that follow
                from the node.
 
@@ -70,19 +91,22 @@ def can_finish_dfs(num_courses, prerequisites):
     early termination.
     """
     def dfs(vertex):
-        if visited[vertex] == 1:  # If the current vertex is marked as being visited, then a cycle is found
+        if visited[vertex] == 1:
+            # If the current vertex is marked as being visited, then a cycle is found
             return False
-        if visited[vertex] == 2:   # If done exploring the current vertex, then do not visit again
+        if visited[vertex] == 2:
+            # If done exploring the current vertex, then do not visit again
             return True
         visited[vertex] = 1  # Mark the vertex as being visited during current recursion
-        for neighbor in graph[course]:  # Visit all the neighbours
+        for neighbor in graph[course]:
+            # Visit all the neighbours
             if not dfs(neighbor):
                 return False
         visited[vertex] = 2  # After visiting all the neighbours, mark the vertex as done exploring
         return True
 
     graph = defaultdict(list)
-    for course, prereq in prerequisites:  # Create graph
+    for course, prereq in prerequisites:  # Construct the graph
         graph[course].append(prereq)
     visited = [0] * num_courses
     for course in range(num_courses):
