@@ -57,7 +57,7 @@ def count_components_v2(n, edges):
     for src, dest in edges:
         graph[src].append(dest)
         graph[dest].append(src)
-    res, visited = 0, set()
+    components, visited = 0, set()
     for i in range(n):
         if i not in visited:
             queue = deque([i])
@@ -67,8 +67,8 @@ def count_components_v2(n, edges):
                 for neighbor in graph[vertex]:
                     if neighbor not in visited:
                         queue.append(neighbor)
-            res += 1
-    return res
+            components += 1
+    return components
 
 
 class Test(unittest.TestCase):
