@@ -84,33 +84,36 @@ def pacific_atlantic_v1(heights):
 def pacific_atlantic_v2(heights):
     """ We can also use BFS, and it doesn't really make much of a difference.
 
-         BFS is very similar to DFS. Instead of using recursion, we'll use a queue and work iteratively for every
+         BFS is very similar to DFS. Instead of using recursion, we'll use a queue and work iteratively from every
          reachable cell. We start by collecting the cells that border the Pacific and Atlantic oceans into a queue.
          Then, we iteratively figure out what cells can flow into one of or both oceans.
 
     Time complexity: O(N * M)
-    Space complexity: O(N * M)
+    Space complexity: O(N * M), the extra space we use comes from the queue and the data structure we use to keep track
+    of what cells have been visited. The amount of space we will use scales linearly with the number of cells.
     """
     n, m, res = len(heights), len(heights[0]), []
-    can_flow_to_pacific = [[False] * m for _ in range(n)]
-    can_flow_to_atlantic = [[False] * m for _ in range(n)]
+    can_flow_to_pacific, can_flow_to_atlantic = set(), set()
     queue = deque()
     for i in range(n):
-        queue.append((i, 0, heights[i][0], can_flow_to_pacific))
-        queue.append((i, m - 1, heights[i][m - 1], can_flow_to_atlantic))
+        queue.append((i, 0, can_flow_to_pacific))
+        queue.append((i, m - 1, can_flow_to_atlantic))
     for j in range(m):
-        queue.append((0, j, heights[0][j], can_flow_to_pacific))
-        queue.append((n - 1, j, heights[n - 1][j], can_flow_to_atlantic))
+        queue.append((0, j, can_flow_to_pacific))
+        queue.append((n - 1, j, can_flow_to_atlantic))
     while queue:
-        i, j, prev_height, can_flow_to_ocean = queue.popleft()
-        if not 0 <= i < n or not 0 <= j < m or heights[i][j] < prev_height or can_flow_to_ocean[i][j]:
-            continue
-        can_flow_to_ocean[i][j] = True
+        i, j, can_flow_to_ocean = queue.popleft()
+        can_flow_to_ocean.add((i,j)) # This cell is reachable, so mark it.
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            queue.append((x, y, heights[i][j], can_flow_to_ocean))
+            # Check that the new cell is within bounds, hasn't already been visited, and has a higher or equal
+            # height, so that water can flow from the new cell to the old cell
+            if 0 <= x < n and 0 <= y < m and (x, y) not in can_flow_to_ocean and heights[x][y] >= heights[i][j]:
+                # If we've gotten this far, that means the new cell is reachable
+                queue.append((x, y, can_flow_to_ocean))
     for i in range(n):
         for j in range(m):
-            if can_flow_to_pacific[i][j] and can_flow_to_atlantic[i][j]:
+            # Find all cells that can reach both oceans
+            if (i,j) in can_flow_to_pacific and (i,j) in can_flow_to_atlantic:
                 res.append([i, j])
     return res
 
