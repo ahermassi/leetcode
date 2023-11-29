@@ -18,7 +18,7 @@ def count_components_v1(n, edges):
 
          The number of times we start a new DFS will be the number of connected components.
 
-    Time complexity: O(|V| + |E|), where V is the number of vertices (n) and E is the number of edges. Building the
+    Time complexity: O(|V| + |E|), where V is the number of vertices and E is the number of edges. Building the
     adjacency list will take O(E) operations, as we iterate over the list of edges once, and insert each edge into two
     lists. During the DFS traversal, each vertex will only be visited once. This is because we mark each vertex as
     visited as soon as we see it, and then we only visit vertices that are not marked as visited. In addition, when we
@@ -38,12 +38,12 @@ def count_components_v1(n, edges):
     for src, dest in edges:
         graph[src].append(dest)
         graph[dest].append(src)
-    visited, res = set(), 0
+    visited, components = set(), 0
     for vertex in range(n):
         if vertex not in visited:
             dfs(vertex)
-            res += 1
-    return res
+            components += 1
+    return components
 
 
 def count_components_v2(n, edges):
