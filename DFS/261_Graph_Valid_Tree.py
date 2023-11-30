@@ -4,9 +4,8 @@ to check whether these edges make up a valid tree. """
 from collections import defaultdict, deque
 import unittest2 as unittest
 
+
 # Video explanation: https://www.youtube.com/watch?v=bXsUuownnoQ
-
-
 def valid_tree_v1(n, edges):
     """ According to the definition of tree on Wikipedia: 'a tree is an undirected graph in which any two vertices are
         connected by exactly one path. In other words, any CONNECTED graph without simple CYCLES is a tree.'
@@ -25,21 +24,20 @@ def valid_tree_v1(n, edges):
                  node. We need to be careful though not to count trivial cycles of the form A → B → A that occur with
                  most implementations of undirected edges.
 
-
-        Depth-first search requires being able to look up the adjacent (immediate neighbours) of a given node. Like
-        many graph problems though, the input format we're given doesn't allow us to quickly get the neighbours of a
+        Depth-first search requires being able to look up the adjacent (immediate neighbors) of a given node. Like
+        many graph problems though, the input format we're given doesn't allow us to quickly get the neighbors of a
         node. Therefore, our first step is to convert the input into an adjacency list.
 
         Recall that most depth-first searches follow a template like the one below for iterative depth-first search.
         Note that this doesn't yet solve the problem of determining whether the input graph is a tree—we're simply
         using it as a step towards building up a solution.
 
-            - Use a stack to keep track of unexplored nodes.
-            - Use a set to keep track of already seen nodes to avoid infinite looping.
-            - While there are nodes remaining on the stack, take one off to visit.
-            - Check for unseen neighbours of this node.
-            - If we've already seen this node, continue. Otherwise, put this neighbour onto the stack and record that
-               it has been seen.
+            - Use a stack to keep track of unexplored nodes
+            - Use a set to keep track of already seen nodes to avoid infinite looping
+            - While there are nodes remaining on the stack, take one off to visit
+            - Check for unseen neighbors of this node
+            - If we've already seen this node, continue. Otherwise, put this neighbor onto the stack and record that
+               it has been seen
 
         Let's now figure out how we can modify the basic depth-first search template to do the two checks we need.
 
@@ -49,7 +47,7 @@ def valid_tree_v1(n, edges):
         the seen set contains n values at the end.
 
         For the second check, you might be thinking: can't we just modify the above algorithm to return false when a
-        neighbour is in visited set?
+        neighbor is in visited set?
 
         This, however, would only work on a directed graph. On an undirected graph, like the one we're working with
         here, trivial "cycles" will be detected. For example, if there's an undirected edge between node A and node B,
@@ -62,7 +60,7 @@ def valid_tree_v1(n, edges):
         that we don't then later go back along it in the opposite direction.
 
         One of the strategies is to keep track of the "parent" node that we got to a node from. Then, when we iterate
-        through the neighbours of a node, we ignore the "parent" node as otherwise it'll be detected as a trivial cycle
+        through the neighbors of a node, we ignore the "parent" node as otherwise it'll be detected as a trivial cycle
         (and we know that the parent node has already been visited by this point anyway). The starting node (0 in this
         implementation) has no "parent", so put it as -1.
 
@@ -72,8 +70,8 @@ def valid_tree_v1(n, edges):
         through a maze, with the condition that you're not allowed to go back along any path you've already been on.
         If you still somehow end up somewhere you were previously, there must have been a cycle!
 
-    Time complexity: O(|V| + |E|), creating the adjacency list requires initialising a list of length V, with a cost of
-    O(V), and then iterating over and inserting E edges, for a cost of O(E). This gives us O(V) + O(N) = O(N + E).
+    Time complexity: O(|V| + |E|), creating the adjacency list requires initializing a list of length V, with a cost of
+    O(V), and then iterating over and inserting E edges, for a cost of O(E). This gives us O(V) + O(E) = O(V + E).
     Each node is added to the data structure once. This means that the outer loop will run V times. For each of the V
     nodes, its adjacent edges is iterated over once. In total, this means that all E edges are iterated over once by the
     inner loop. This, therefore, gives a total time complexity of O(|V| + |E|)
