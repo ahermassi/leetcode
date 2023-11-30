@@ -126,15 +126,27 @@ def climb_stairs_v3(n):
 
 
 def climb_stairs_v4(n):
-    """ No need to store every middle result. We notice that this is just the Fibonacci series. We can just use local
-        variables to keep track of the items 1 step and 2 steps behind where we stand.
+    """ While the above works well enough, we can optimize our approach even further by making a simple but important
+         observation: we are only using the last 2 sub-problem answers when solving each sub-problem. If we look at the
+         recurrence again, we can see that the only pieces information we use are climb(n−1) and climb(n−2). Since we're
+         computing from bottom-up, once we compute those answers, the smaller sub-problems (such as climb(n−3)) are not
+         needed anymore.
+
+         Thus, instead of keeping the entire dp array, we can save some space and just maintain 2 variables that track
+         our last 2 sub-problem answers.
+
     Time complexity: O(n)
     Space complexity: O(1)
     """
-    a, b = 1, 1
-    for _ in range(n):
-        a, b = b, a + b
-    return a
+    if n <= 2:
+        return n
+    two_below = 1  # 2 steps below 3 - ways to take 1 step: 1
+    one_below = 2  # 1 step below 3 - ways to take 2 steps: 2
+    for i in range(3, n + 1):
+        # step up to i + 1
+        # 2 steps below becomes 1 step below
+        two_below, one_below = one_below, one_below + two_below
+    return one_below
 
 
 
