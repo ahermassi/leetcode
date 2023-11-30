@@ -50,22 +50,39 @@ def climb_stairs_v1(n):
 
 
 def climb_stairs_v2(n):
-    """ Top down + memoization
-        Here are the steps to get the solution incrementally:
-        Base cases:
-            if n == 1, then there is only one NEW way to climb the stair
-            if n == 2, then there are two NEW ways to climb the stairs
-        The key intuition to solve the problem is that given a number of stairs n, if we know the number of ways to get
-        to the points (n-1) and (n-2), respectively, denoted as n1 and n2 , then the total ways to get to the point n
-        is n1 + n2. Because from the (n-1)th point we can take one single step to reach n, and from the (n-2)th point
-        we can take two steps to get there.
-        In other words: show me how many distinct ways we can climb to the (n-1)th and (n-2)th steps, because when
-        we reach those points we can climb 1 or 2 steps, respectively, to reach the top. So at the end, it is the sum
-        of how many distinct ways we can climb to points (n-1) and (n-2).
-        Now given the above intuition, we can construct a hash map where each entry stores the solution for each number
-        n. Or if we look at it closer, it is clear that this is basically a fibonacci number with the starting numbers
-        as 1 and 2 instead of 1 and 1.
-    Time complexity: O(n)
+    """ Top down DP + memoization
+
+         In the previous approach, we are redundantly calculating the result for every step. Let's think about
+         calculating the ways to climb 6 stairs, climbStairs(6).
+
+                                                    climbStairs(6)
+									            /                          \
+								            cS(5)       +                 cS(4)
+					                        /    \                          /    \
+			                            cS(4)   +   cS(3)            cS(3) + cS(2)
+						                /  \           /   \              /   \
+				                  cS(3) + cS(2) cS(2) + cS(1)  cS(2) + cS(1)
+					              /  \
+			                  cS(2) + cS(1)
+
+        As we can see from the recursion tree above, we are calculating climbStairs(4) and climbStairs(3) multiple
+        times. Specifically, climbStairs(4) is being recalculated twice, while climbStairs(3) is being recalculated
+        3 times. If we think about what happens for larger values of n, we can see that we are recalculating a lot of
+        values.
+
+        What if instead of recomputing each value of climbStairs, we made sure to save the unique values, trading space
+        for time? That's what a top-down dynamic programming approach called memoization is. We make use of a
+        dictionary memo in which we store the values of climbStairs that we have computed, and if we ever have to
+        compute that value again we just check memo in (average) O(1) time instead of doing the work all over again.
+
+         In this way, we are pruning recursion tree with the help of memo map and educing the size of recursion tree
+         down to n.
+
+         This top-down paradigm works well when we approach the problem from the top of the stairs (the last step we
+         needed to climb, n) down.
+
+    Time complexity: O(n), there are n distinct sub-problems to solve, each requiring only O(1) amount of work of
+    getting the values of smaller sub-problems from memo and adding them together.
     Space complexity: O(n)
     """
 
