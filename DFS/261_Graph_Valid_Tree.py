@@ -116,9 +116,9 @@ def valid_tree_v2(n, edges):
     """ Depending on how much graph theory you know, there's a better definition for determining whether a given graph
          is a tree.
 
-         For the graph to be a valid tree, it must have exactly n-1 edges. Any less, and it can't possibly be fully
-         connected. Any more, and it has to contain cycles. Additionally, if the graph is fully connected and contains
-         exactly n-1 edges, it can't possibly contain a cycle, and therefore must be a tree!
+         For an undirected graph to be a valid tree, it must have exactly n-1 edges. Any less, and it can't possibly be
+         fully connected. Any more, and it has to contain cycles. Additionally, if the graph is fully connected and
+         contains exactly n-1 edges, it can't possibly contain a cycle, and therefore must be a tree!
 
          Going by this definition, our algorithm needs to do the following:
 
@@ -135,9 +135,12 @@ def valid_tree_v2(n, edges):
         iterative breadth-first search. We still need to use a visited set to prevent the algorithm getting caught in an
         infinite loop if there are indeed cycles (and to prevent looping on the trivial cycles).
 
-        In other words: In order for a graph to be a tree, it must satisfy the following condition:
+        In other words: In order for an undirected graph to be a tree, it must satisfy the following condition:
 
-                    Number of edges = Number of nodes - 1 and is connected
+                    Number of edges = Number of nodes - 1
+                                            AND
+                                The graph is connected
+
                 (the 1st condition implies that the connected graph has no cycle)
 
         The DFS followed by length of visited set check allows us to verify that there is only one connected component
@@ -162,7 +165,7 @@ def valid_tree_v2(n, edges):
         graph[dest].append(src)
     visited = set()
     dfs(0)
-    # If the graph is connected then all vertices must be visited
+    # If the graph is connected then all vertices must have been visited during DFS
     return len(visited) == n
 
 
