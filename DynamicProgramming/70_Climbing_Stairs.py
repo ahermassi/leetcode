@@ -2,9 +2,45 @@
 Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top? """
 
 
+# Video explanation for all solutions: https://youtu.be/Y0lT9Fck7qI
+
 def climb_stairs_v1(n):
-    """ This is the classic/intuitive recursive solution. However, it returns TLE.
-        To reach nth step, what could have been our previous steps? Either (n-1) or (n-2)
+    """ Brute force recursive solution. TLE.
+
+        To calculate the number of ways to climb the stairs, we can observe that when we are on the nth stair, we have
+        two options:
+
+            - Either we climbed one stair from the (n-1)th stair, or
+            - We climbed two stairs from the (n-2)th stair
+
+        By leveraging this observation, we can break down the problem into smaller sub-problems and apply the concept of
+        the Fibonacci series.
+
+        The base cases are:
+
+            - n=1: There's only 1 way to climb a singular step - just climb that step! We couldn't possibly take 2
+               steps in this situation, because then we'd be climbing more steps than there are to climb.
+
+            - n=2: We can either climb the 2 steps by taking 2 steps, or climb 1 step twice, for a total of 2 ways to
+               climb.
+
+        The number of ways to reach step n depends on the number of ways to get to (n-1)th step and the number of ways
+        to get to (n-2)th step n−2n - 2n−2. Since both of the above possibilities are valid choices, the number of ways
+        to get to n is going to be their sum.
+
+        Why sum?
+
+        Think about what happens on the nth step. We can get to it either from (n-1)th step, or from (n-2)th step.
+        Say there are x distinct ways to get to (n-1)th step, and y distinct ways to get to (n-2)th step.
+
+        For (n-1), to get to n we just need to add 1 to the end of each of those x paths that lead here. That does not
+        change the number of those paths in which we're interested -- it just makes them all acquire a 'tail' of 1.
+
+        For (n-2), to get to n we will need to add 2 to each of the y paths that lead there. That also doesn't change
+        the number of the paths that lead to it, just makes them all acquire a 'tail' of 2.
+
+        What actually happens at the step of n, is we're adding up those two groups of possible ways to get to n.
+
     Time complexity: O(2^n), we have n levels and at each level we can make 2 choices, O(b^d)
     Space complexity: O(n)
     """
