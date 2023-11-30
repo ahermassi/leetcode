@@ -175,21 +175,20 @@ def valid_tree_v3(n, edges):
     Time complexity: O(|V| + |E|)
     Space complexity: O(|V| + |E|)
     """
+    if len(edges) != n - 1:
+        return False
     graph = defaultdict(list)
     for src, dest in edges:
         graph[src].append(dest)
         graph[dest].append(src)
     visited = set()
-    queue = deque([(0, -1)])
+    queue = deque([0])
     while queue:
-        vertex, parent = queue.popleft()
+        vertex = queue.popleft()
         visited.add(vertex)
         for neighbor in graph[vertex]:
-            if neighbor == parent:
-                continue
-            if neighbor in visited:
-                return False
-            queue.append((neighbor, vertex))
+            if neighbor not in visited:
+                queue.append(neighbor)
     return len(visited) == n
 
 
