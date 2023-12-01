@@ -7,17 +7,17 @@ def merge(intervals):
     """ If we sort the intervals by their start value, then each set of intervals that can be merged will appear as a
          contiguous "run" in the sorted list.
 
-        Two intervals i1 and i2 overlap if the following requirements are satisfied:
+        Two intervals i1 and i2 overlap if the following two conditions are met:
 
-            Requirement 1: i2.start <= i1.end
-            Requirement 2: i1.start <= i2.end
+                    i2.start <= i1.end
+                    i1.start <= i2.end
 
         i1: #......................#
              s1                   e1
         i2:       #.....................#
                    s2                  e2
         s2 <= e1 and s1 <= e2
-        If any of the 2 conditions is not verified, the intervals wouldn't overlap.
+        If any of the two conditions is not verified, the intervals wouldn't overlap.
 
         If s2 > e1:
         i1: #......................#
@@ -32,10 +32,10 @@ def merge(intervals):
                    s2                  e2
 
         We pre-process the list by sorting intervals by start. This way, requirement 2 i1.start <= i2.start < i2.end is
-        promised. We only have to compare i1.end with i2.start to see if requirement 1 is satisfied.
+        met. We only have to compare i1.end with i2.start to see if requirement 1 is satisfied.
 
         First, we sort the list. Then, we consider each interval in turn as follows: If the current interval begins
-        after the previous interval ends, then they do NOT overlap and we can append the current interval to 'res'.
+        after the previous interval ends, then they do NOT overlap, and we can append the current interval to 'merged'.
         Otherwise, they do overlap, and we merge them by updating the end of the previous interval if it is less than
         the end of the current interval.
 
@@ -46,16 +46,16 @@ def merge(intervals):
     Otherwise, we must allocate linear space to store a copy of intervals and sort that.
     """
     intervals.sort()
-    res = []
+    merged = []
     for start, end in intervals:
         # If the list of merged intervals is empty or if the current interval does not overlap with the previous,
         # simply append it
-        if not res or start > res[-1][1]:
-            res.append([start, end])
+        if not merged or start > merged[-1][1]:
+            merged.append([start, end])
         else:
-            # Otherwise, there is overlap, so we merge the current and previous intervals
-            res[-1][1] = max(res[-1][1], end)
-    return res
+            # Otherwise, there is an overlap, so we merge the current and previous intervals
+            merged[-1][1] = max(merged[-1][1], end)
+    return merged
 
 # There seems to be a follow-up at Facebook to implement the algorithm with no sorting, using a BST.
 # https://leetcode.com/problems/merge-intervals/discuss/21451/Share-my-BST-interval-tree-solution-C%2B%2B-No-sorting!
