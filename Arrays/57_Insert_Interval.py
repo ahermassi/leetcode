@@ -9,20 +9,19 @@ Return intervals after the insertion. """
 
 
 def insert_v1(intervals, new_interval):
-    """ The standard solution consists of two parts:
-            -Figure out how to sort the input data. That could be done directly by a sorting or indirectly by a heap usage.
-            -Parse the sorted input to have a solution.
-        In case of a sorted input, we don't need the first part
+    """ The most intuitive approach is to insert newInterval into the original list keeping the start value of intervals
+         in ascending order. This can be done using linear search, we can iterate over the intervals in the list, and
+         the newInterval should be inserted just before the interval having a greater start value. This way, we can
+         produce the list of intervals in ascending order of their start value and merge them using the algorithm in
+         56- Merge Intervals.
 
-        The straightforward one-pass strategy could be implemented in three steps:
+        However, we can use a straightforward one-pass strategy which could be implemented in three steps:
 
             - Add to the output all the intervals starting before newInterval
-            - Add to the output newInterval, and merge it with the last added interval if newInterval starts before the
-               last added interval ends
-            - Add the next intervals one by one, and merge with the last added interval if the current interval starts
-               before the last added interval ends
+            - Add to the output newInterval and merge it with the last added one if there is an overlap
+            - Add the remaining intervals one by one, and merge with the last added interval if there is an overlap
 
-        Basically, the same strategy as 56- Merge Intervals, with an additional care to add the new interval in its
+        Basically, the same approach as 56- Merge Intervals, with an additional care to add the new interval in its
         proper position in order not to destroy the well-sorted input.
 
     Time complexity: O(N)
@@ -30,7 +29,7 @@ def insert_v1(intervals, new_interval):
     """
     n, res = len(intervals), []
     i = 0
-    # Add all intervals starting before newInterval
+    # Add all the intervals that start before newInterval
     while i < n and intervals[i][0] < new_interval[0]:
         res.append(intervals[i])
         i += 1
@@ -39,7 +38,7 @@ def insert_v1(intervals, new_interval):
         res.append(new_interval)
     else:
         res[-1][1] = max(res[-1][1], new_interval[1])
-    # Add next intervals, and merge if needed
+    # Add remaining intervals and merge if needed
     while i < n:
         if intervals[i][0] > res[-1][1]:
             res.append(intervals[i])
