@@ -4,12 +4,16 @@ determine if a person could attend all meetings. """
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/PaJxqZVPhbg
 def can_attend_meetings(intervals):
-    """ The idea is to sort the meetings by starting time. Then, go through the meetings one by one. Two meetings
-         overlap if one of them starts while the other is still taking place.
+    """ The straightforward solution is to compare every two meetings in the array, and see if they conflict with each
+         other (i.e. if they overlap). Two meetings overlap if one of them starts while the other is still taking place.
+
+        A more optimal approach is to sort the meetings by starting time. Then, go through the meetings one by one.
+        Two meetings overlap if one of them starts while the other is still taking place.
 
     Time complexity: O(N logN)
-    Space complexity: O(N) for Timsort
+    Space complexity: O(N), used by sorting
     """
     intervals.sort()
     n = len(intervals)
