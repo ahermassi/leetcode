@@ -61,26 +61,26 @@ def erase_overlap_intervals_v1(intervals):
 
 
 def erase_overlap_intervals_v2(intervals):
-    """ The previous approach was based on choosing intervals greedily based on the starting points. But in this
-         approach, we go for choosing points greedily based on the end points.
+    """ The previous approach was based on choosing intervals greedily based on the starting times. In this approach, we
+        choose greedily based on the end times.
 
-         For this, firstly we sort the given intervals based on the end points. Then, we traverse over the sorted
-         intervals. While traversing, we can encounter 2 possibilities:
+         For this, we sort the given intervals based on the end time. Then, we traverse the sorted intervals. We can
+         encounter 2 possibilities:
 
-            - The two intervals currently considered are non-overlapping: In this case, we need not remove any interval,
-               and for the next iteration the current interval becomes the previous interval.
+            - The current and previous intervals are non-overlapping: In this case, we don't need to remove any
+               interval, and we can continue by simply assigning prev_interval_end the end time of the current interval.
 
-            - The two intervals currently considered are overlapping and the starting point of the current interval falls
-               before the ending point of the previous interval: In this case, it is obvious that the current interval
+            - The current and previous intervals are overlapping and the starting time of the current interval falls
+               before the ending time of the previous interval: In this case, it is obvious that the current interval
                completely subsumes the previous interval (current interval starts before previous interval and ends
-               after it, since intervals are sorted by end points). Hence, it is advantageous to remove the current
-               interval so that we can get more range available to accommodate future intervals. Thus, previous
-               interval remains unchanged and the current interval is removed.
+               after it, since intervals are sorted by end time). Hence, it is advantageous to remove the current
+               interval so that we can get more room to accommodate future intervals. Thus, the current interval is
+               removed and prev_interval_end is unchanged.
 
-        Intuition: If we choose the interval that ends early, we'll have more space left to accommodate more intervals.
+        Intuition: If we choose the interval that ends early, we'll have more room left to accommodate more intervals.
         If we have two overlapping intervals A and B, we can only keep one. The question is, which one should we keep?
-        Obviously, we want to keep the one that ends earlier. This way, we have higher chance of putting other intervals
-        after it. So, we decided to sort by end time.
+        To avoid overlap, we should always greedily choose to keep the interval with an earlier end time. This way, we
+        have higher chance of placing other intervals after it. So, we decided to sort by end time.
 
     Time complexity: O(N logN)
     Space complexity: O(N)
@@ -91,9 +91,11 @@ def erase_overlap_intervals_v2(intervals):
     for start, end in intervals:
         if start < prev_interval_end:
             removed += 1
-            # We don't update prev_interval_end, because 'end' is greater than prev_interval_end (intervals are
+            # We don't update prev_interval_end, because 'end' is greater than 'prev_interval_end' (intervals are
             # sorted by end time)
         else:
+            # We can safely take this interval because it won't cause an overlap. We should update prev_interval_end
+            # since this interval is now the most recent interval we are keeping.
             prev_interval_end = end
     return removed
 
