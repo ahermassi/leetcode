@@ -5,42 +5,45 @@ import unittest2 as unittest
 
 
 # Video explanation: https://www.youtube.com/watch?v=nONCGxWoUfM
-
 def erase_overlap_intervals_v1(intervals):
-    """ The problem is the same as:
+    """ Finding the minimum number of intervals to remove is equivalent to finding the maximum number of
+         non-overlapping intervals. This is the famous interval scheduling problem.
 
-                Given a collection of intervals, find the maximum number of intervals that are
-                non-overlapping.
+        Let's start by considering the intervals according to their start times. If two intervals i1 and i2 overlap, we
+        greedily choose to remove the interval with the latest end time to minimize overlap chances with subsequent
+        intervals.
+        Let's call k the choice we need to make between i1.end and i2.end. We want to maximize the number of intervals
+        we keep (without overlap), so we want to maximize our choices for the next intervals. Because the next interval
+        must have a start time greater than or equal to k to avoid overlap, a larger value of k can never give us more
+        choices than a  smaller value of k. As such, we should try to minimize k. Therefore, we should always greedily
+        remove the interval with the latest end time.
 
-        Sort the intervals by their start time. If two intervals overlap, the interval with the latest end time will be
-        removed to have as little impact on subsequent intervals as possible.
-
-        While considering the intervals in the ascending order of starting points, we make use of a pointer
-        prev_interval_end to keep track of the interval just included in the final list. While traversing, we can
+        While considering the intervals in the ascending order of starting times, we make use of a pointer
+        prev_interval_end to keep track of the end time of the previously processed interval. While traversing, we can
         encounter 3 possibilities:
 
-            - The two intervals currently considered are non-overlapping: In this case, we need not remove any
-               interval, and we can continue by simply assigning the prev_interval_end pointer to the later interval
+            - The current and previous intervals are non-overlapping: In this case, we don't need to remove any
+               interval, and we can continue by simply assigning prev_interval_end the end time of the current interval,
                and the count of intervals removed remains unchanged.
 
-            - The two intervals currently considered are overlapping and the end point of the later interval falls
-               before the end point of the previous interval: In this case, we can simply take the later interval.
+            - The current and previous intervals are overlapping and the end time of the current interval falls
+               before the end time of the previous interval: In this case, we can simply take the current interval.
                The choice is obvious since choosing an interval of smaller width will lead to more available space
-               in which more intervals can be accommodated. Hence, the prev_interval_end pointer is updated to
-               current interval's end and the count of intervals removed is incremented by 1.
+               in which more intervals can be accommodated. Hence, prev_interval_end pointer is updated to current
+               interval's end time and the count of removed intervals is incremented by 1.
 
-            - The two intervals currently considered are overlapping and the end point of the later interval falls after
-               the end point of the previous interval: In this case, we can work in a greedy manner and directly remove
-               the later interval. Thus, the prev_interval_end pointer remains unchanged and the count of intervals
-               removed is incremented by 1.
+            - The current and previous intervals are overlapping and the end time of the current interval falls after
+               the end time of the previous interval: In this case, we can work in a greedy manner and directly remove
+               the current interval. Thus, prev_interval_end pointer remains unchanged and the count of removed
+               intervals is incremented by 1.
 
         The heuristic is: Always keep the interval with the earliest end time. Then we can get the maximal number of
         non-overlapping intervals, thus the minimal number of intervals to remove. This is because the interval with
-        the earliest end time produces the maximal capacity to hold rest intervals.
+        the earliest end time produces the maximal room for accommodating future intervals.
 
-        If two intervals are overlapping, we want to remove the interval that has the longer end point -- the longer
-        interval will always overlap with more or the same number of future intervals compared to the shorter one.
-        By removing it, there is less of a chance that it's going to overlap with the following intervals.
+        In other words, if two intervals are overlapping, we want to remove the interval that has the later end point
+        -- the longer interval will always overlap with more or the same number of future intervals compared to the
+        shorter one. By removing it, there is less of a chance that it's going to overlap with the following intervals.
 
     Time complexity: O(N logN)
     Space complexity: O(N), for sort
@@ -50,7 +53,7 @@ def erase_overlap_intervals_v1(intervals):
     prev_interval_end = float('-inf')  # Pointer to keep track of the end time of previously processed interval
     for start, end in intervals:
         if start < prev_interval_end:  # Find overlapping interval
-            prev_interval_end = min(prev_interval_end, end)  # Keep the interval with the smallest end time
+            prev_interval_end = min(prev_interval_end, end)  # Keep the interval with the earliest end time
             removed += 1
         else:
             prev_interval_end = end  # Update end time
