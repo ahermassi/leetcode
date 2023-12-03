@@ -8,16 +8,22 @@ import unittest2 as unittest
 # More details: https://leetcode.com/articles/meeting-rooms-ii/
 
 def min_meeting_rooms_v1(intervals):
-    """ In the worst case, we can assign a new room to all the meetings but that is not really optimal, right? Unless
-        of course they all collide with each other.
+    """ Let's approach this problem from the perspective of a group of people who want to hold a meeting and have not
+         been allocated a room yet. What would they do?
+
+         This group would essentially go from one room to another and check if any meeting room is free. If they find a
+         room that is indeed free, they would start their meeting in that room. Otherwise, they would wait for a room
+         to be free. As soon as the room frees up, they would occupy it.
+
+        This is the basic approach that we will follow in this question. In the worst case, we can assign a new room to
+        all the meetings but that is not really optimal, unless of course they all collide with each other.
 
         We need to be able to find out efficiently if a room is available for the current meeting and assign a new room
         only if none of the assigned rooms is currently free.
 
         We can't really process the given meetings in any random order. The most basic way of processing the meetings
-        is in increasing order of their start times and this is the order we will follow. After all, if you're an IT guy
-        you should allocate a room to the meeting that is scheduled for 9 a.m. before you worry about the 5 p.m.
-        meeting, right?
+        is in increasing order of their start times and this is the order we will follow. After all, it makes sense to
+        allocate a room to the meeting that is scheduled for 9 a.m. before we worry about the 5 p.m. meeting.
 
         Sorting part is easy, but for every meeting how do we find out efficiently if a room is available? At any point
         in time we have multiple rooms that can be occupied, and we don't really care which room is free as long as we
