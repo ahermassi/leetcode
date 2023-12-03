@@ -10,10 +10,10 @@ import unittest2 as unittest
 def can_jump_v1(nums):
     """ We call a position in the array a 'good index' if starting at that position, we can reach the last index.
          Otherwise, that index is called a 'bad index'. The problem then reduces to whether or not index 0 is a
-         good index.
+         'good index'.
 
-        The idea is to work backwards from the last index and keep track of the smallest index 'last_good_index' that
-        can jump to the last index. Check whether the current index i can jump to this smallest index.
+        The idea is to work backwards from the last index and keep track of the smallest 'last_good_index' that can
+        jump to the last index. At each iteration, we check whether the current index can jump to this smallest index.
 
         Iterating right-to-left, for each position we check if there is a potential jump that reaches a 'good' index
         (currPosition + nums[currPosition] >= last_good_index). If we can reach a 'good' index, then our position is
@@ -27,7 +27,7 @@ def can_jump_v1(nums):
         Last index can trivially reach to last index. How can we reach the last index (we will call it last_position)
         from a preceding index?
         If we have a preceding index i in nums which has jump count nums[i] which satisfies i+nums[i] >= last_position,
-        we know that this i is good enough to be treated as the last index because all we need to do now is to get to
+        we know that index i is good enough to be treated as the last index because all we need to do now is to get to
         index i. So, we're going to treat this index as a new last_position.
 
         If we have indices which are like sinkholes, those with 0 as jump and every other preceding index can only jump
@@ -45,9 +45,10 @@ def can_jump_v1(nums):
     n = len(nums)
     last_good_index = n - 1  # (last_good_index = i) means 'from index i, we can jump and reach the end of array'
     for i in reversed(range(n)):
-        if i + nums[i] >= last_good_index:  # If I can jump to last_good_index, I'm going to be the new last_good_index
+        if i + nums[i] >= last_good_index:
+            # If I can jump to last_good_index, I'm going to be the new last_good_index
             last_good_index = i
-    return last_good_index == 0  # This means from index 0 we can jump and reach the end of array
+    return last_good_index == 0  # This means from index 0 we can jump and reach the end of the array
 
 
 def can_jump_v2(nums):
