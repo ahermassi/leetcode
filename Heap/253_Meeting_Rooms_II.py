@@ -90,25 +90,26 @@ def min_meeting_rooms_v1(intervals):
     return len(earliest_ending)
 
 
+# Video explanation: https://youtu.be/FdzJmTCVyJU
 def min_meeting_rooms_v2(intervals):
     """ The meeting timings given to us define a chronological order of events throughout the day. We are given the
-        start and end timings for the meetings which can help us define this ordering.
+         start and end timings for the meetings which can help us define this ordering.
 
-        Arranging the meetings according to their start times helps us know the natural order of meetings throughout
-        the day. However, simply knowing when a meeting starts doesn't tell us much about its duration.
+         Arranging the meetings according to their start times helps us know the natural order of meetings throughout
+         the day. However, simply knowing when a meeting starts doesn't tell us much about its duration.
 
-        We also need the meetings sorted by their ending times because an ending event essentially tells us that there
-        MUST have been a corresponding starting event and more importantly, an ending event tells us that a previously
-        occupied room has now become free.
+         We also need the meetings sorted by their ending times because an ending event essentially tells us that there
+         MUST have been a corresponding starting event and more importantly, an ending event tells us that a previously
+         occupied room has now become free.
 
-        A meeting is defined by its start and end times. However, for this specific solution, we need to treat the
-        start and end times INDIVIDUALLY. This might not make sense right away because a meeting is defined by its
-        start and end times. If we separate the two and treat them individually, then the identity of a meeting goes
-        away. This is fine because:
+         A meeting is defined by its start and end times. However, for this specific solution, we need to treat the
+         start and end times INDIVIDUALLY. This might not make sense right away because a meeting is defined by its
+         start and end times. If we separate the two and treat them individually, then the identity of a meeting goes
+         away. This is fine because:
 
-                When we encounter an ending event, that means that some meeting that started earlier has ended
-                now. We are not really concerned with which meeting has ended. All we need is that SOME meeting
-                ended thus making a room available.
+                    When we encounter an ending event, that means that some meeting that started earlier has ended
+                    now. We are not really concerned with which meeting has ended. All we need is that SOME meeting
+                    ended thus making a room available.
 
         Separate out the start times and the end times in their separate arrays.
 
@@ -121,16 +122,18 @@ def min_meeting_rooms_v2(intervals):
         When considering a specific meeting pointed to by 'start_pointer', we check if this start timing is greater
         than the meeting pointed to by 'end_pointer'. If this is the case, then that would mean some meeting has ended
         by the time the meeting at 'start_pointer' had to start. So we can reuse one of the rooms. Otherwise, we have
-        to allocate a new room. If a meeting has indeed ended i.e. if start[start_pointer] >= end[end_pointer], then we
-        increment 'end_pointer'.
+        to allocate a new room.
+        If a meeting has indeed ended i.e. if start_timings[start_pointer] >= end_timings[end_pointer], then we advance
+        'end_pointer'.
 
         Repeat this process until 'start_pointer' processes all the meetings.
 
         Why does this work?
 
-        This is an interval partitioning problem. We can have two correct heuristics that 1) We process intervals
-        ordered by starting time and assign each interval to a 'current vacant' room, and 2) We only check the room
-        with the earliest ending time for global vacancy. If there is no vacant room, we create one.
+        This is an interval partitioning problem. We can have two correct heuristics that:
+        1) We process intervals ordered by starting time and assign each interval to a 'current vacant' room, and
+        2) We only check the room with the earliest ending time for global vacancy. If there is no vacant room, we
+            create one.
 
         Since we iterate intervals by starting time, there is no better choice than the current interval as the
         remaining intervals would all request one more room if current one does. And we also need to track the ending
@@ -156,11 +159,12 @@ def min_meeting_rooms_v2(intervals):
     used_rooms = 0
     start_pointer = end_pointer = 0
     while start_pointer < n:  # Until all the meetings have been processed
-        # If the earliest ending meeting hasn't ended by the time the meeting at 'start_pointer' starts
         if start_timings[start_pointer] < end_timings[end_pointer]:
+            # If the earliest ending meeting hasn't ended by the time the meeting at 'start_pointer' starts
             used_rooms += 1  # Allocate a new room for the current meeting
-        else:  # If there is a meeting that has ended by the time the meeting at 'start_pointer' starts
-            end_pointer += 1  # Use that same room and increment 'end_pointer'
+        else:
+            # If there is a meeting that has ended by the time the meeting at 'start_pointer' starts
+            end_pointer += 1  # Use that same room and advance 'end_pointer'
         start_pointer += 1
     return used_rooms
 
