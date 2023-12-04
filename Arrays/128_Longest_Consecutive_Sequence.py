@@ -3,17 +3,20 @@ Your algorithm should run in O(n) complexity. """
 
 import unittest2 as unittest
 
-# Video explanation: https://www.youtube.com/watch?v=P6RZZMu_maU
 
-
+# Video explanation: https://youtu.be/P6RZZMu_maU
 def longest_consecutive_v1(nums):
     """ Because a sequence could start at any number in nums, we can exhaust the entire search space by building as
         long a sequence as possible from every number.
 
-        First, turn the input into a set of numbers. Then, go through the numbers. If the number 'num' is the start of
-        a streak (i.e., num-1 is not in the set), then test next_num = num+1, num+2, num+3, ... and stop at the first
-        number not in the set. The length of the streak is then simply (next_num - num), and we update our global best
-        with that.
+        We consider each number in nums, attempting to count as high as possible from that number using only numbers in
+        nums. After it counts too high (i.e. current number refers to a number that nums does not contain), it records
+        the length of the sequence if it is larger than the current best.
+
+        To allow for O(1) lookups, we first turn the input into a hash set of numbers. Then, go through the set.
+        If the current number 'num' is the start of a streak (i.e., num-1 is not in the set), then test
+        next_num = num+1, num+2, num+3, ... and stop at the first number not in the set. The length of the streak is
+        then (next_num - num), and we update our global best to that.
 
         Intuition: We only attempt to build sequences from numbers that are not already part of a longer sequence.
         This is accomplished by first ensuring that the number that would immediately precede the current number in a
@@ -27,11 +30,11 @@ def longest_consecutive_v1(nums):
     O(N + N) = O(N) time.
     For example, nums = [6, 5, 4, 3, 2, 1] only the value 1 is valid for the loop, and that is O(N).
     For example, nums =  [100, 99, 98, ..., 1] (i.e. an array in reverse order):
-    100 operations to add each element in the array to the set
-    100 operations checking whether n - 1 exists in the set
-    Once we get to 1, 100 operations to see if 1+ {1, 2, 3, ..., 100} exists in the set
+    100 operations to add each element in the array to the set.
+    100 operations checking whether n - 1 exists in the set.
+    Once we get to 1, 100 operations to see if 1+ {1, 2, 3, ..., 100} exists in the set.
     This is essentially 3N operations, which is expressed as O(N).
-    In other words, we go through everything once to build the set (this is O(N)), and we go through everything once
+    In other words, we go through every number once to build the set (this is O(N)), and we go through every number once
     again looking for sequences (also O(N)), and then we find a sequence of length N (also O(N)).
     Space complexity: O(N)
     """
