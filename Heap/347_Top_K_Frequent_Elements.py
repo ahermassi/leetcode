@@ -84,6 +84,17 @@ def top_k_frequent_v3(nums, k):
 
 def top_k_frequent_v4(nums, k):
     """ Quick Select. Similar to 215- Kth Largest Element in an Array and 973- K Closest Points to Origin.
+
+        Quickselect is a textbook algorithm typically used to solve the problems "find kth something": kth smallest,
+        kth largest, kth most frequent, kth less frequent, etc. Like quicksort, quickselect was developed by Tony Hoare
+        and is also known as Hoare's selection algorithm.
+
+        The approach is the same as for quicksort:
+
+                    Choose a pivot and define its position in a sorted array in a linear time using the so-called
+                                                            partition algorithm
+
+
         Build a hash map element -> its frequency and convert its keys into the array 'unique_nums' of unique elements.
         Note that elements are unique, but their frequencies are not. If by chance our pivot element took (N - k)th
         final position, then k elements on the right are these top k frequent we're looking for. If not, we can choose
@@ -94,24 +105,28 @@ def top_k_frequent_v4(nums, k):
         sorted array, sorted by the frequency. All elements on the left of the pivot are less frequent than the pivot,
         and all elements on the right are more frequent or have the same frequency.
 
+        Hence, the array is now split into two parts. If by chance our pivot element took (N - k)th final position, then
+        k elements on the right are these top k frequent we're looking for. If not, we can choose one more pivot and
+        place it in its perfect position.
+
         There are different partition algorithms. The most simple one is Lomuto's Partition Scheme, and so is what
         we will use. Here is how it works:
 
-        Move pivot at the end of the array using swap.
-        Set the store pointer i and scan pointer j at the beginning of the array: i = j = left.
-        Iterate over the array and move all less frequent elements to the left: swap(i, j).
-        Move i one step to the right after each swap.
-        Once the entire array scanned, move the pivot to its original place and return this index.
+            - Move pivot at the end of the array using swap.
+            - Set the store pointer i and scan pointer j at the beginning of the array: i = j = left.
+            - Iterate over the array and move all less frequent elements to the left: swap(i, j).
+            - Move i one step to the right after each swap.
+            - Once the entire array scanned, move the pivot to its original place and return this index.
 
-        Compare 'pivot_index' and (N - k).
+        Compare 'pivot_index' and (N - k):
             - If pivot_index == N - k, the pivot is (N - k)th most frequent element, and all elements on the right are
               more frequent or of the same frequency. Return these top k frequent elements: unique_nums[N - k:]
             - Otherwise, choose the side of the array to proceed accordingly.
 
     Time complexity: O(N) in the average case, O(N^2) in the worst case. In the worst-case of constantly bad chosen
-    pivots, the problem is not divided by half at each step, it becomes just one element less, that leads to O(N^2)
+    pivots, the problem is not divided by half at each step, it becomes just one element less, which leads to O(N^2)
     time complexity. It happens, for example, if at each step we choose the pivot not randomly, but take the rightmost
-    element. For the random pivot choice the probability of having such a worst-case is negligibly small.
+    element. For the random pivot choice the probability of having this worst-case is negligibly small.
     Space complexity: O(N)
     """
 
@@ -119,16 +134,17 @@ def top_k_frequent_v4(nums, k):
         pivot_index = randint(left, right)
         pivot = unique_nums[pivot_index]
         unique_nums[pivot_index], unique_nums[right] = unique_nums[right], unique_nums[pivot_index]
-        i = j = left  # i will keep track of the 'tail' of the section of items less than the pivot so that
-        # at the end we can 'sandwich' the pivot between the section less than it and the section equal to or greater
-        # than it. j will scan for us. All the elements before i (excluding i) are less than the pivot.
+        i = j = left
+        # i will keep track of the 'tail' of the section of items less than the pivot so that at the end we can
+        # 'sandwich' the pivot between the section less than it and the section equal to or greater than it.
+        # j will  scan for us. All the elements before i (excluding i) are less than the pivot.
         while j < right:
             if counter[unique_nums[j]] < counter[pivot]:
                 unique_nums[i], unique_nums[j] = unique_nums[j], unique_nums[i]
                 i += 1
             j += 1
-        unique_nums[i], unique_nums[right] = unique_nums[right], unique_nums[i]  # Bring the pivot back after the
-        # section of items less than the pivot. i keeps the tail of this section
+        # Bring the pivot back after the section of items less than the pivot. i keeps the tail of this section
+        unique_nums[i], unique_nums[right] = unique_nums[right], unique_nums[i]
         return i  # Return the pivot's final resting position
 
     counter = Counter(nums)
