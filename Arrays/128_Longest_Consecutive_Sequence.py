@@ -63,16 +63,15 @@ def longest_consecutive_v2(nums):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    s = set(nums)
-    res = 0
+    nums_set, res = set(nums), 0
     for num in nums:
         prev_num = num - 1
-        while prev_num in s:
-            s.remove(prev_num)
+        while prev_num in nums_set:
+            nums_set.remove(prev_num)
             prev_num -= 1
         next_num = num + 1
-        while next_num in s:
-            s.remove(next_num)
+        while next_num in nums_set:
+            nums_set.remove(next_num)
             next_num += 1
         res = max(res, next_num - prev_num - 1)
     return res
