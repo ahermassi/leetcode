@@ -31,24 +31,29 @@ def top_k_frequent_v1(nums, k):
 
 def top_k_frequent_v2(nums, k):
     """ Build a frequency hash map, 'counter'. Then build another hash map that maps frequencies to the elements that
-        appear with that frequency, 'freq'. Now, in a reversed range [len(nums) + 1 .. 0], if any index in that range
-        is in 'freq' map, append the corresponding elements to the final output list 'res'. Return when 'res' has
-        already k elements.
+         appear with that frequency, 'freq'.
+
+         Then, in a reversed range [len(nums) + 1 .. 0], if any index in that range is in 'freq' map, append the
+         corresponding elements to the final output list. Return when the list has already k elements.
+
         Note: we use a reversed range because we want the top k or most frequent k, so it makes sense to start with
-        the max index.
+        the max frequency.
+
     Time complexity: O(N)
-    Space complexity: O(N) for the hash maps
+    Space complexity: O(N), for the hash maps
     """
-    n, res = len(nums), []
-    counter = Counter(nums)
+    n, topk = len(nums), []
+    counter = defaultdict(int)
+    for num in nums:
+        counter[num] += 1
     freq = defaultdict(list)
     for num, count in counter.items():
         freq[count].append(num)
     for i in reversed(range(n+1)):
         for num in freq[i]:
-            res.append(num)
-            if len(res) == k:
-                return res
+            topk.append(num)
+            if len(topk) == k:
+                return topk
 
 
 def top_k_frequent_v3(nums, k):
