@@ -9,7 +9,7 @@ import unittest2 as unittest
 
 
 def rotate(matrix):
-    """ The most elegant solution for rotating the matrix is to firstly reverse the matrix around the main diagonal, and
+    """ The most elegant solution for rotating the matrix is to first reverse the matrix around the main diagonal, and
          then reverse it from left to right. These operations are called transpose and reflect in linear algebra.
 
         Transposing a matrix exchanges the row and column of the same index: 1st row becomes 1st column, 2nd row
@@ -23,7 +23,8 @@ def rotate(matrix):
             7 8 9           3 6 9             9 6 3
 
         Anti-clockwise rotation:
-            First swap the symmetry, then reverse columns:
+            First swap the symmetry, then reverse columns (essentially reversing the order of rows, i.e. reversing the
+            matrix itself):
             1 2 3           1 4 7             3 6 9
             4 5 6  =>    2 5 8    =>    2 5 8
             7 8 9           3 6 9             1 4 7
