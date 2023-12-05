@@ -31,21 +31,23 @@ def spiral_order_v1(matrix):
 def spiral_order_v2(matrix):
     """ Peel off layers. Process the array in ‘shells' from the outside moving to the center.
 
-        We go boundary by boundary and move inwards. That is the essential operation. First row, last column, last row,
-        first column, and then we move inwards by 1 and then repeat. That is all the simulation we need.
+        We go boundary by boundary and move inwards. That is the essential operation. First row, last column, last row
+        in reverse order, first column in reverse order, and then we move inwards by 1 and then repeat.
+        That is all the simulation we need.
 
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
     res = []
     while matrix:
-        res.extend(matrix.pop(0))
+        res.extend(matrix.pop(0)) # First row
         if matrix and matrix[0]:
             for row in matrix:
-                res.append(row.pop())
+                res.append(row.pop()) # Last column == last element of each row
         if matrix:
-            res.extend(matrix.pop()[::-1])
+            res.extend(matrix.pop()[::-1]) # Last row in reverse order
         if matrix and matrix[0]:
+            # First column in reverse order. First column == first element of each row
             for row in matrix[::-1]:
                 res.append(row.pop(0))
     return res
