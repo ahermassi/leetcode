@@ -42,7 +42,7 @@ def set_zeroes_v2(matrix):
          set the value in the cell to 0.
 
          Note that the dummy value is only assigned to non-zero elements because zero elements could entail further
-         updates to the matrix later on, and by assigning a dummy value to them we're keeping these updates from
+         updates to the matrix later on, and by assigning a dummy value to them, we're preventing these updates from
          occurring.
 
     Time complexity: O((N * M) * (N + M)), where N and M are the number of rows and columns respectively. Even though
