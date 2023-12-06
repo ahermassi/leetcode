@@ -2,6 +2,7 @@
 """
 
 
+# Video explanation: https://youtu.be/XYQecbcd6_c
 def longest_palindrome_v1(s):
     """ Expand from centers.
 
@@ -35,6 +36,7 @@ def longest_palindrome_v1(s):
 
 def longest_palindrome_v2(s):
     """ Bottom-up Dynamic Programming.
+
         We observe that we can avoid unnecessary re-computation while validating palindromes.
         Consider the case 'ababa'. If we already knew that 'bab' is a palindrome, it is obvious that 'ababa' must be a
         palindrome since the two left and right end letters are the same.
@@ -45,6 +47,7 @@ def longest_palindrome_v2(s):
         This yields a straightforward DP solution, in which we first initialize the 1-letter palindromes, and work our
         way up finding all 2-letter palindromes, and so on.
         Why are we counting down for i, but counting up for j? Each sub-problem dp[i][j] depends on dp[i+1][j-1].
+
     Time complexity: O(N^2)
     Space complexity: O(N^2), to store dp array
     """
