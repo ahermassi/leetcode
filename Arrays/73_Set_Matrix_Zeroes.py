@@ -18,15 +18,15 @@ def set_zeroes_v1(matrix):
     Space complexity: O(N + M), since we're only recording the indices of rows and columns in the two hash sets
     """
     n, m = len(matrix), len(matrix[0])
-    rows, cols = set(), set()
+    zero_rows, zero_cols = set(), set()
     for i in range(n):
         for j in range(m):
             if matrix[i][j] == 0:
-                rows.add(i)
-                cols.add(j)
+                zero_rows.add(i)
+                zero_cols.add(j)
     for i in range(n):
         for j in range(m):
-            if i in rows or j in cols:
+            if i in zero_rows or j in zero_cols:
                 matrix[i][j] = 0
 
 
