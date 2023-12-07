@@ -56,60 +56,83 @@ def count_substrings_v1(s):
 
 
 def count_substrings_v2(s):
-    """ Bottom-up Dynamic Programming.
+    """ Bottom-Up Dynamic Programming.
+
         This problem displays two, necessary characteristics of a dynamic programming problem:
-            1- Optimal substructure: Remember that larger palindromes are made of smaller palindromes. Congratulation,
-               we have discovered a substructure to our problem! Knowing that a string is made up of a palindrome helps
-               us determine if the string itself is a palindrome. Here's an example: for the string 'axbobxa', the
-               first and the last characters match, so it's a potential palindrome. If we knew already that its
-               substring 'xbobx' is also a palindrome, there wouldn't be a need for any further checks.
-               But is this substructure optimal? Yes! Since the optimal result for a string relies only on the optimal
-               result for just one sub-problem, and has to do just one check for the boundary characters (in constant
-               time), this is an optimal substructure. We cannot get this result by checking fewer than one sub-problem
-               (it wouldn't be a substructure anymore) or doing the boundary characters check faster (it's already
-               constant time!).
+
+            1- Optimal substructure: Remember that larger palindromes are made of smaller palindromes. Congratulations,
+                 we have discovered a substructure to our problem! Knowing that a string is made up of a palindrome helps
+                 us determine if the string itself is a palindrome.
+                 Here's an example: for the string 'axbobxa', the first and the last characters match, so it's a
+                 potential palindrome. If we knew already that its substring 'xbobx' is also a palindrome, there
+                 wouldn't be a need for any further checks.
+                 But is this substructure optimal? Yes! Since the optimal result for a string relies only on the optimal
+                 result for just one sub-problem, and has to do just one check for the boundary characters (in constant
+                 time), this is an optimal substructure. We cannot get this result by checking fewer than one sub-problem
+                 (it wouldn't be a substructure anymore) or doing the boundary characters check faster (it's already
+                 constant time!).
+
             2- Overlapping sub-problems: While checking all substrings of a large string for palindromicity, we might
-               need to check some smaller substrings for the same, repeatedly. If we store the result of processing
-               those smaller substrings, we can reuse those while processing larger substrings.
-               Here's an example: for the string 'axbobx'", the substring 'bob' needs to checked for the substring
-               'xbobx' and the string 'axbobxa'. In fact, to check all three of these strings, the single character
-               string 'o' needs to be checked.
+                 need to check some smaller substrings for the same, repeatedly. If we store the result of processing
+                 those smaller substrings, we can reuse those while processing larger substrings.
+                 Here's an example: for the string 'axbobx'", the substring 'bob' needs to checked for the substring
+                 'xbobx' and the string 'axbobxa'. In fact, to check all three of these strings, the single character
+                 string 'o' needs to be checked.
+
         We define our state dp[i][j] as following:
 
-            dp[i][j] is True if the substring composed of the ith to the jth characters of the input string is a
-            palindrome
+                        dp[i][j] is True if the substring composed of the ith to the jth characters
+                                        of the input string is a palindrome
 
         A string is considered a palindrome if:
+
             - Its first and last characters are equal, and
             - The rest of the string (excluding the boundary characters) is also a palindrome
+
         Thus, the answer to our problem lies in counting all substrings whose state is true:
 
-                dp[i][j] = (s[i] == s[j]) AND (dp[i+1][j-1])
+                        dp[i][j] = (s[i] == s[j]) AND (dp[i+1][j-1])
 
-        But here, we should explain why we use dp[i+1][j-1] to calculate dp[i][j]. The reason is that i is in
-        descending order and j is in ascending order. Then we know that before d[i][j] the value of d[i+1][j-1] is
-        already known and calculated in a previous iteration.
+        The optimal substructure mentioned above ensures that the state for a string depends only on the state for a
+        single substring. If we compute (and save) the states for all smaller strings first, larger strings can be
+        processed by reusing previously saved states. The base cases define states for single and double letter strings.
+        We can use those to compute states for three character (and subsequently larger) strings.
+
+        The answer is found by counting all states that evaluate true. Since each state tells whether a unique substring
+        is a palindrome or not, counting true states provides us the number of palindromic substrings.
+
+        We should explain why we use dp[i+1][j-1] to calculate dp[i][j]. The reason is that i is in descending order and
+        j is in ascending order. Then we know that before d[i][j] the value of d[i+1][j-1] is already known and
+        calculated in a previous iteration.
+
         Build a table with all possible string[start:end] combinations, storing which are palindromes and which are
         not (True or False). At any given moment, when we're checking if string[i:j] is a palindrome, we only need to
         know two things:
+
             1- Is string[i] equal to string[j] ?
             2- Is string[i+1:j-1] a palindrome?
+
         For condition (1), a simple check will do. For condition (2), we use the table. If both conditions are met,
-        mark dp[i][j] as True and increase the count.
-    Time complexity: O(N^2)
+        mark dp[i][j] as True and increment the count.
+
+    Time complexity: O(N^2), the number of dynamic programming states that need to calculated is the same as the number
+    of substrings, which is N*(N-1)/2. Each state can be calculated in constant time using a previously calculated state.
     Space complexity: O(N^2), to store dp array
     """
     n, res = len(s), 0
     dp = [[False] * n for _ in range(n)]
-    for i in range(n):  # Every isolated character is a palindrome
+    for i in range(n):
+        # Single-letter substrings are palindromes by definition
         dp[i][i] = True
         res += 1
-    for i in reversed(range(n)):  # We reverse the range because the sub-problem is not populated yet. For example, if
-        # we want to know if substring s[0-5] (i.e. dp[0][5]) is palindrome, we'd look up the table for dp[1][4].
+    for i in reversed(range(n)):
+        # We reverse the range because the sub-problem is not populated yet. For example, if we want to know
+        # if substring s[0-5] (i.e. dp[0][5]) is palindrome, we'd look up the table for dp[1][4].
         # However, if i goes from left to right, dp[1] has not been calculated yet because dp[1] comes after dp[0].
         for j in range(i + 1, n):
-            if s[i] == s[j] and (j - i == 1 or dp[i + 1][j - 1]):  # When j = i + 1, j - i = 1, which is basically the
-                # previous check s[i] == s[j]. When j > i + 1, the check dp[i + 1][j - 1] is necessary
+            if s[i] == s[j] and (j - i == 1 or dp[i + 1][j - 1]):
+                # When j = i + 1, j - i = 1, which is basically the previous check s[i] == s[j]. When j > i + 1,
+                # the check dp[i + 1][j - 1] is necessary
                 dp[i][j] = True
                 res += 1
     return res
