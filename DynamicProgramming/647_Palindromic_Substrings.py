@@ -7,30 +7,45 @@ import unittest2 as unittest
 
 def count_substrings_v1(s):
     """ Expand Around Center. Same as 5- Longest Palindromic Substring.
+
         There are two types of palindromes: Odd and even length palindromes.
         Odd length palindromes have a single character in the middle. Even length palindromes have two characters
         that constitute the middle, both of which are same. e.g. 'noon' with two middle characters 'o'.
-        Multiple palindromes have the same centers. If we choose a center, we can continue to expand around it as long
-        as we can make larger and larger palindromes. Let's take the string 'lever' as an example: If we choose the
-        character 'v' as the center, we can see that the palindromes 'v and 'eve' are possible. However, the final
-        expansion 'lever' is not a palindrome (the first and last characters don't match).
+
+        Palindromes are compositionally homogeneous around their center. In layman's terms, smaller palindromes make up
+        larger palindromes. If we take the palindrome "eve" and surround it with the character 'l', we get a larger
+        palindrome "level". Conversely, if we removed the starting and ending characters from "eve', we'd be left with
+        the smaller, single-character palindrome "v".
+
+        Let's take the string 'lever' as another example: If we choose the character 'v' as the center, we can see that
+        the palindromes 'v and 'eve' are possible. However, the final expansion 'lever' is not a palindrome (the first
+        and last characters don't match).
+
+        Palindromes are like onions, you remove the boundary characters, and you're left with another, smaller
+        palindrome.
+
         We choose all possible centers for potential palindromes:
+
             - Every single character in the string is a center for possible odd-length palindromes
             - Every pair of consecutive characters in the string is a center for possible even-length palindromes
+
         For every center, we can expand around it as long as we get palindromes (i.e. the first and last characters
         should match).
+
     Time complexity: O(N^2), since expanding a palindrome around its center could take O(N). Each center can
-    potentially expand to the length of the string, so time spent on each center is linear on average.
+    potentially expand to the length of the string, so time spent on each center is linear on average. The number of
+    possible palindromic centers is 2N−1: there are N single character centers and N−1 consecutive character pairs as
+    centers.
     Space complexity: O(1)
     """
 
-    def palindromes_at(i, j):
-        count = 0
-        while i >= 0 and j < n and s[i] == s[j]:
-            count += 1
-            i -= 1
-            j += 1
-        return count
+    def palindromes_at(left, right):
+        palindromes = 0
+        while left >= 0 and right < n and s[left] == s[right]:
+            palindromes += 1
+            left -= 1
+            right += 1
+        return palindromes
 
     res, n = 0, len(s)
     for i in range(n):
