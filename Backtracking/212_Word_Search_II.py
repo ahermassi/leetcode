@@ -4,6 +4,51 @@ or vertically neighboring. The same letter cell may not be used more than once i
 
 from collections import defaultdict
 
+
+def find_words_v0(board, words):
+    """ Brute force. TLE.
+
+        Apply the same search algorithm as in 79- Word Search for every word in the input list.
+
+    Time complexity: O(W * N * M * (3^L)), where W is the number of words, N and M are the dimensions of the board, and
+    L is the length of the longest word. We iterate through the board for backtracking, i.e. there could be N * M times
+    invocation for the backtracking function in the worst case. For the backtracking function, initially we could have
+    at most 4 directions to explore, but further the choices are reduced into 3 (since we won't go back to where we come
+    from). As a result, the execution trace after the first step could be visualized as a 3-ary tree, each of the
+    branches represent a potential exploration in the corresponding direction. Therefore, in the worst case, the total
+    number of invocation would be the number of nodes in a full 3-nary tree, which is about 3^L.
+    https://cs.stackexchange.com/questions/96626/whats-the-big-o-runtime-of-a-dfs-word-search-through-a-matrix
+    Space complexity: O(L), the main consumption of the memory lies in the recursion call of the backtracking function.
+    The maximum length of the call stack would be the length of the longest word.
+    """
+
+    def search_word(i, j, index, word_len):
+        if index == word_len:
+            return True
+        if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index]:
+            return False
+        temp = board[i][j]
+        board[i][j] = '#'
+        found = False
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            if search_word(x, y, index + 1, word_len):
+                found = True
+                break
+        board[i][j] = temp
+        return found
+
+    n, m = len(board), len(board[0])
+    words = set(words)
+    res = []
+    for i in range(n):
+        for j in range(m):
+            for word in words.copy():
+                if search_word(i, j, 0, len(word)):
+                    res.append(word)
+                    words.remove(word)
+    return res
+
+
 # Video explanation: https://www.youtube.com/watch?v=asbcE9mZz_U
 
 
