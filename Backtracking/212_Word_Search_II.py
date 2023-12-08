@@ -49,9 +49,7 @@ def find_words_v0(board, words):
     return res
 
 
-# Video explanation: https://www.youtube.com/watch?v=asbcE9mZz_U
-
-
+# Video explanation: https://youtu.be/asbcE9mZz_U
 class TrieNodeV1:
     def __init__(self):
         self.children = defaultdict(TrieNodeV1)
@@ -60,39 +58,44 @@ class TrieNodeV1:
 
 def find_words_v1(board, words):
     """ Intuitively, in order to cross out all potential words, the overall strategy would be to iterate the cells one
-        by one, and from each cell we walk along its neighbors in four potential directions to find matched words.
-        While wandering around the board, we would stop the exploration when we know it would not lead to the discovery
-        of new words.
+         by one, and from each cell we walk along its neighbors in four potential directions to find matching words.
+         While wandering around the board, we would stop the exploration when we know it would not lead to the discovery
+         of new words.
 
-        However, during the backtracking process, we would encounter more often the need to tell if there exists any
-        word in the dictionary that contains a certain prefix, rather than if an entire string exists as a word in the
-        dictionary.
+         The key of the solution lies on how we find the matching of word from the dictionary. Intuitively, we might
+         resort to the hashset data structure. This could work.
 
-        The capability of finding a matching prefix is where the Trie data structure shines, compared to the hashset.
-        Not only can a Trie tell the membership of a word, but also it can instantly find the words that share a given
-        prefix.
+         However, during the backtracking process, we would encounter more often the need to tell if there exists any
+         word in the dictionary that contains a certain prefix, rather than if an entire string exists as a word in the
+         dictionary. Because if we know that there does not exist any match of word in the dictionary for a given
+         prefix, then we would not need to further explore certain direction. And this would greatly reduce the
+         exploration space, therefore improve the performance of the backtracking algorithm.
 
-        If we know that there does not exist any match in the dictionary for a given prefix, then we would not need
-        to further explore certain direction. This would greatly reduce the exploration space, therefore improve the
-        performance of the backtracking algorithm.
+         The capability of finding a matching prefix is where the Trie data structure shines, compared to the hashset.
+         Not only can a Trie tell the membership of a word, but also it can instantly find the words that share a given
+         prefix.
 
-        The overall workflow of the algorithm is intuitive, and it consists of a loop over each cell in the board and a
-        recursive function call starting from that cell. Here is the skeleton of the algorithm.
+         If we know that there does not exist any match in the dictionary for a given prefix, then we would not need
+         to further explore certain direction. This would greatly reduce the exploration space, therefore improve the
+         performance of the backtracking algorithm.
 
-            - We build a Trie out of the words in the dictionary, which would be used later for prefix matching.
+         The overall workflow of the algorithm is intuitive, and it consists of a loop over each cell in the board and a
+         recursive function call starting from that cell. Here is the skeleton of the algorithm:
+
+            - Build a Trie out of the words in the dictionary, which would be used later for prefix matching.
 
             - Starting from each cell, we start the backtracking exploration (i.e. search(cell)), if there exists any
-              word in the dictionary, i.e. in the trie, that starts with the letter in the cell.
+               word in the dictionary, i.e. in the trie, that starts with the letter in the cell.
 
             - During the recursive function call search(cell), we explore the neighbor cells around the current cell
-              for the next recursive call search(neighborCell). At each call, we check if the sequence of letters that
-              we traversed so far matches any word in the dictionary with the help of the trie that we built.
-              If a match is found, we add the word to the result list and remove it from the trie to avoid duplicate
-              results.
+               for the next recursive call search(neighborCell). At each call, we check if the sequence of letters that
+               we traversed so far matches any word in the dictionary with the help of the trie that we built.
+               If a match is found, we add the word to the result list and remove it from the trie to avoid duplicate
+               results.
 
         This last pruning idea is motivated by the fact that the time complexity of the overall algorithm sort of
-        depends on the size of the trie. For a leaf node in the trie, once we traverse it (i.e. find a matched word), we
-        would no longer need to traverse it again. Therefore, we could prune it out from the trie.
+        depends on the size of the trie. For a leaf node in the trie, once we traverse it (i.e. find a matching word),
+        we would no longer need to traverse it again. Therefore, we could prune it out from the trie.
 
         Use a 'one time search' trie. As a side benefit, we do not need to check if there is any duplicates in
         the result set. As a result, we could simply use a list instead of set to keep the results, which could speed
@@ -101,9 +104,10 @@ def find_words_v1(board, words):
         Bottom line:
 
                         We use a trie so that we can exit the backtracking early when the current path is not a prefix
-                        of any word in the trie.
+                                                                        of any word in the trie
 
         This is what the board looks like after each visit (words = ['oath', 'pea', 'eat', 'rain']):
+
         o | a | a | n |
         e | t | a | e  |
         i | h | k | r  |
@@ -167,33 +171,34 @@ def find_words_v1(board, words):
     there is no overlapping of prefixes among the words, the trie would have as many nodes as the letters of all words.
     """
 
-    def addWord(word, root):
+    def addWord(word):
+        root = trie
         for c in word:
             root = root.children[c]
         root.end_of_word = True
 
-    def search(i, j, node, word):
+    def search(i, j, node, prefix):
         if not 0 <= i < n or not 0 <= j < m or board[i][j] not in node.children:
             return
         c = board[i][j]
         node = node.children[c]
-        word += c
-        if node.end_of_word:  # Check if we found a match of word
-            res.append(word)
-            node.end_of_word = False  # Remove the matched word to avoid duplicates. Since we already completed that
-            # word and added it to the result array, we don't want to get duplicates of that word, so we set the flag
-            # to False. Example: words = ['aaa','aaab']. After matching 'aaa', when we search for 'aaab' we will add
-            # 'aaa' again if we don't set its flag to False.
+        prefix += c
+        if node.end_of_word:  # Check if we found a word match
+            res.append(prefix)
+            node.end_of_word = False
+            # Remove the matched word to avoid duplicates. Since we already completed that word and added it
+            # to the result array, we don't want to get duplicates of that word, so we set the flag to False.
+            # Example: words = ['aaa','aaab']. After matching 'aaa', when we search for 'aaab' we will add
+            # 'aaa' again if we don't set its flag to False, removing it from the trie.
         board[i][j] = '#'  # Before the exploration, mark the cell as visited
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            search(x, y, node, word)
+            search(x, y, node, prefix)
         board[i][j] = c  # End of exploration, so we restore the cell
 
     trie = TrieNodeV1()
     n, m, res = len(board), len(board[0]), []
     for word in words:
-        node = trie
-        addWord(word, node)
+        addWord(word)
     for i in range(n):
         for j in range(m):
             search(i, j, trie, '')
