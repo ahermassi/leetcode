@@ -212,12 +212,13 @@ class TrieNodeV2:
 
 
 def find_words_v2(board, words):
-    """ One optimization is to keep words in the Trie. Doing so could improve the performance of the algorithm a bit.
+    """ One optimization is to keep the words in the Trie. Doing so could improve the performance of the algorithm.
          One benefit is that we would not need to pass the prefix as the parameter in the search() call, and this could
          speed up a bit the recursive call.
     """
 
-    def addWord(word, root):
+    def addWord(word):
+        root = trie
         for c in word:
             root = root.children[c]
         root.word = word
@@ -227,9 +228,9 @@ def find_words_v2(board, words):
             return
         c = board[i][j]
         node = node.children[c]
-        if node.word:  # Check if we found a match of word
+        if node.word:  # Check if we found a word match
             res.append(node.word)
-            node.word = None  # Remove the matched word to avoid duplicates
+            node.word = None  # Remove the matched word from the trie to avoid duplicates
         board[i][j] = '#'
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
             search(x, y, node)
@@ -238,8 +239,7 @@ def find_words_v2(board, words):
     trie = TrieNodeV2()
     n, m, res = len(board), len(board[0]), []
     for word in words:
-        node = trie
-        addWord(word, node)
+        addWord(word)
     for i in range(n):
         for j in range(m):
             search(i, j, trie)
