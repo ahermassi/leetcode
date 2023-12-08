@@ -64,38 +64,42 @@ def set_zeroes_v2(matrix):
                 matrix[i][j] = 0
 
 
-# Video explanation: https://www.youtube.com/watch?v=T41rL0L3Pnw
-
+# Video explanation: https://youtu.be/T41rL0L3Pnw
 def set_zeroes_v3(matrix):
-    """ The inefficiency in the previous approach is that we might be repeatedly setting a row or column even if it was
-         set to zero already. We can avoid this by postponing the step of setting a row or a column to zeroes.
+    """ The inefficiency of the previous approach is that we might be repeatedly resetting a row or column even if it
+         was already set to zero. We can avoid this by postponing the step of setting a row or a column to zero.
 
-         We can rather use the first cell of every row and column as a flag. This flag would determine whether a row or
-         column has been set to zero. This means for every cell instead of going to (N + M) cells and setting it to
-         zero, we just set the flag in two cells.
+         Rather than using additional variables to keep track of rows and columns to be reset, we use the matrix cells
+         as the indicators.
 
-        These flags are used later to update the matrix. If the first cell of a row is set to zero this means the row
-        should be marked zero. If the first cell of a column is set to zero this means the column should be marked zero.
+         The idea is that we can use the first cell of every row and column as a flag. This flag would determine whether
+         a row or a column has to be set to zero. This means for every cell instead of going to (N + M) cells and
+         setting them to zero, we just set the flag in two cells.
 
-        We iterate over the matrix, and if matrix[i][j] == 0 we mark the first cell of the row i (matrix[i][0]) and
-        the first cell of a column j (matrix[0][j]) as zeroes.
+        These flags are used later to update the matrix. If the first cell of a row is set to zero, which can be used as
+        a flag in this problem, this means the entire row should be marked zero. Similarly, if the first cell of a column
+        is set to zero this means the entire column should be marked zero.
 
-        The first cell of the first row and first column, i.e. matrix[0][0], is the same . Hence, we use an additional
-        variable 'first_col_zero' to tell us if the first column had been marked or not and matrix[0][0] would be
-        used to tell the same for the first row.
+            - We iterate over the matrix, and if matrix[i][j] == 0 we set the first cell of row i (matrix[i][0])  and
+               the first cell of column j (matrix[0][j]) to zeroes.
 
-        After we're done marking, we iterate over the original matrix starting from second row and second column i.e.
-        matrix[1][1] onwards. For every cell, we check if the row i or column j had been marked earlier by checking the
-        respective first row cell (matrix[i][0]) or first column cell (matrix[0][j]). If any of them was marked, we set
-        the value in the current cell to 0.
+            - The first cell of the first row and the first cell of the first column, i.e. matrix[0][0], are the same.
+               Hence, we use an additional variable 'first_col_zero' to tell us if the first column had been marked or
+               not, and matrix[0][0] would be used to tell the same for the first row (matrix[0][0] would act as
+               'first_row_zero').
 
-        We then check if matrix[0][0] == 0, if this is the case, we mark the first row as zero.
+            - After we're done marking, we iterate over the original matrix starting from second row and second column.
+               For every cell, we check if the row i or column j had been marked earlier by checking the respective
+               first row cell (matrix[i][0]) or first column cell (matrix[0][j]). If any of them was marked, we set the
+               value in the current cell to 0.
 
-        Finally, we check if the first column was marked, and if it's the case we make all entries in it as zeros.
+            - We then check if matrix[0][0] == 0, if this is the case, we mark the first row as zero.
 
-        Note how the first row and first column serve as the 'rows' and 'cols' sets that we used in the first approach.
-        It means matrix[i][0] = 0 has the same meaning as 'i in rows' and matrix[0][j] = 0 has the same meaning
-        as 'j in cols'.
+            - Finally, we check if 'first_col_zero' is true, and if it's the case we mark the first column as zero.
+
+        Note how the first row and first column serve as the 'zero_rows' and 'zero_cols' hash sets that we used in the
+        first approach. It means matrix[i][0] = 0 has the same meaning as 'i in zero_rows' and matrix[0][j] = 0 has the
+        same meaning as 'j in zero_cols'.
 
         By placing the marker zeros in the first row and first column, there are two benefits. First, there is no
         confusion whether a zero is real or marker in the main chunk of the matrix. Second, confusion of marker zero and
@@ -117,10 +121,11 @@ def set_zeroes_v3(matrix):
     Space complexity: O(1)
     """
     n, m = len(matrix), len(matrix[0])
-    first_row_zero = False if matrix[0][0] else True
+    # first_row_zero = False if matrix[0][0] else True
     first_col_zero = False
     for i in range(n):
-        if matrix[i][0] == 0:  # The first cell of this row is zero, so the first column needs to be set to zero as well
+        if matrix[i][0] == 0:
+            # The first cell of this row is zero, so the first column needs to be set to zero as well
             first_col_zero = True
         for j in range(1, m):
             if matrix[i][j] == 0:
@@ -131,7 +136,8 @@ def set_zeroes_v3(matrix):
         for j in range(1, m):
             if matrix[i][0] == 0 or matrix[0][j] == 0:
                 matrix[i][j] = 0
-    if first_row_zero:  # See if the first row needs to be set to zero as well
+    if matrix[0][0] == 0:  # See if the first row needs to be set to zero as well
+    # if first_row_zero:
         for j in range(m):
             matrix[0][j] = 0
     if first_col_zero:  # See if the first column needs to be set to zero as well
