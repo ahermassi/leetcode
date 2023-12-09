@@ -4,17 +4,38 @@ array. """
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/WnPLSRLSANE?t=482
 def missing_number_v1(nums):
     """ We can compute the sum of nums in linear time, and by Gauss' formula, we can compute the sum of the first n
-        natural numbers in constant time. Therefore, the number that is missing is simply the result of Gauss' formula
-        minus the sum of nums.
+         natural numbers in constant time. Therefore, the number that is missing is simply the result of Gauss' formula
+         minus the sum of nums.
+
+         Instead of directly applying Gauss'  formula, we can also run a loop to calculate the sum.
+
     Time complexity: O(N), although Gauss' formula can be computed in O(1) time, summing nums costs O(n) time, so the
     algorithm is overall linear.
     Space complexity: O(1)
     """
     n = len(nums)
-    return n * (n + 1) / 2 - sum(nums)
-
+    missing = 0
+    for i in range(n + 1):
+        missing += i
+    for num in nums:
+        missing -= num
+    # return missing
+    # Alternatively, we can also combine the two loops:
+    n = len(nums)
+    missing = 0
+    for i, num in enumerate(nums):
+        missing += i - num
+    missing += n # Indices range above is 0 ... n-1
+    # return missing
+    # Or initialize 'missing' to n:
+    n = len(nums)
+    missing = n
+    for i, num in enumerate(nums):
+        missing += i - num
+    return missing
 
 # Vide explanation: https://youtu.be/WnPLSRLSANE
 def missing_number_v2(nums):
