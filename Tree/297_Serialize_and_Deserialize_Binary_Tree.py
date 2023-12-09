@@ -81,12 +81,13 @@ class CodecV1:
 
 class CodecV2:
     """ We can also use a BFS traversal to serialize/deserialize the tree, similar to how Leetcode does it.
-        We use 'X' to represent null values. When deserializing the string, we assign left and right child for each
-        non-null node, and add the non-null children to the queue, waiting to be processed later.
+         We use 'X' to represent null values. When deserializing the string, we assign left and right child for each
+         non-null node, and add the non-null children to the queue, waiting to be processed later.
     """
 
     def serialize(self, root):
         """Encodes a tree to a single string.
+
         Time complexity: O(N)
         Space complexity: O(N)
         """
@@ -102,21 +103,22 @@ class CodecV2:
         return ','.join(map(str, values))
 
     def deserialize(self, data):
-        """Decodes your encoded data to tree.
+        """Decodes the encoded data to tree.
+
         Time complexity: O(N)
         Space complexity: O(N)
         """
         if data[0] == 'X':
             return None
-        data = deque(data.split(','))
+        data_queue = deque(data.split(','))
         root = TreeNode(data.popleft())
-        queue = deque([root])
-        while queue:
-            node = queue.popleft()
-            left, right = data.popleft(), data.popleft()
-            node.left = TreeNode(left) if left != 'X' else None
-            node.right = TreeNode(right) if right != 'X' else None
-            queue.extend(child for child in (node.left, node.right) if child)
+        node_queue = deque([root])
+        while node_queue:
+            node = node_queue.popleft()
+            left_val, right_val = data_queue.popleft(), data_queue.popleft()
+            node.left = TreeNode(left_val) if left_val != 'X' else None
+            node.right = TreeNode(right_val) if right_val != 'X' else None
+            node_queue.extend(child for child in (node.left, node.right) if child)
         return root
 
 
