@@ -17,31 +17,32 @@ class TreeNode(object):
         self.left = None
         self.right = None
 
-# Great explanation: https://www.youtube.com/watch?v=suj1ro8TIVY
-# Another one: https://www.youtube.com/watch?v=u4JAi2JJhI8
 
-
+# Great explanation: https://www.youtu.be/suj1ro8TIVY
+# Another one: https://youtu.be/u4JAi2JJhI8
 class CodecV1:
-    """ DFS is more adapted for our needs, since the linkage among the adjacent nodes is naturally encoded in the
-        order, which is rather helpful for the later task of deserialization.
+    """ DFS is better adapted for our needs, since the linkage among the adjacent nodes is naturally encoded in the
+         order, which is rather helpful for the later task of deserialization.
 
-        The idea is simple: print the tree in preorder traversal, use 'X' to denote null nodes, and separate nodes
-        with ','. For deserialization, we use a queue to store the preorder traversal, and since we have 'X' as null
-        node, we know exactly where to end building subtrees.
+         The idea is simple: print the tree in preorder traversal, use 'X' to denote null nodes, and separate nodes
+         with ','. For deserialization, we use a queue to store the preorder traversal, and since we have 'X' as null
+         node, we know exactly where to end building subtrees.
 
-        The intuition for the deserialization is the recognition that the first node in the preorder sequence is the
-        root, and the sequence for the root's left subtree appears BEFORE all the nodes in the root's right subtree.
-        It is not easy to see where the left subtree sequence ends. However, if we solve the problem recursively, we
-        can assume that the routine correctly computes the left subtree, which will also tell us where the right
-        subtree begins.
+         The intuition for the deserialization is recognizing that the first node in the preorder sequence is the root,
+         and the sequence for the root's left subtree appears BEFORE all the nodes in the root's right subtree.
 
-        Note that serialization contains information about the node values as well as the information about the tree
-        structure. 'None' or 'X' appears for each leaf to mark the absence of left and right child node, this is how
-        we save the tree structure during the serialization.
+         It is not easy to see where the left subtree sequence ends. However, if we solve the problem recursively, we
+         can assume that the routine correctly computes the left subtree, which will also tell us where the right
+         subtree begins.
+
+         Note that serialization contains information about the node values as well as the information about the tree
+         structure. 'X' appears for each leaf to mark the absence of left and right child node, this is how we save the
+          tree structure during the serialization.
     """
 
     def serialize(self, root):
         """Encodes a tree to a single string.
+
         Time complexity: O(N), we visit each node exactly once
         Space complexity: O(N), we keep the entire tree
         """
@@ -59,22 +60,23 @@ class CodecV1:
         return ','.join(values)
 
     def deserialize(self, data):
-        """Decodes your encoded data to tree.
+        """Decodes the encoded data to tree.
+
         Time complexity: O(N), we visit each node exactly once
         Space complexity: O(N)
         """
 
-        def build_tree(queue):
+        def build_tree():
             value = queue.popleft()
             if value == 'X':
                 return None
             root = TreeNode(value)
-            root.left = build_tree(queue)
-            root.right = build_tree(queue)
+            root.left = build_tree()
+            root.right = build_tree()
             return root
 
         queue = deque(data.split(','))
-        return build_tree(queue)
+        return build_tree()
 
 
 class CodecV2:
