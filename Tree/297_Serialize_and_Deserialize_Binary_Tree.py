@@ -129,6 +129,7 @@ class CodecV3:
 
     def serialize(self, root):
         """Encodes a tree to a single string.
+
         Time complexity: O(N)
         Space complexity: O(N)
         """
@@ -144,7 +145,8 @@ class CodecV3:
         return ','.join(map(str, values))
 
     def deserialize(self, data):
-        """Decodes your encoded data to tree.
+        """Decodes the encoded data to tree.
+
         Time complexity: O(N)
         Space complexity: O(N)
         """
