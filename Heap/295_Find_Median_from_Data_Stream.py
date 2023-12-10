@@ -10,19 +10,20 @@ double findMedian() - Return the median of all elements so far. """
 from heapq import heappush, heappop
 
 
+# Video explanation: https://youtu.be/itmhHWaHupI
 class MedianFinder:
     """ There are some valuable insights that could help us to tackle this problem. Concretely, we can infer two things:
 
-        If we could maintain direct access to median elements at all times, then finding the median would take a constant
-        amount of time.
-        If we could find a reasonably fast way of adding numbers to our containers, additional penalties incurred could
-        be lessened.
+            1- If we could maintain direct access to median elements at all times, then finding the median would take a
+                 constant amount of time.
+            2- If we could find a reasonably fast way of adding numbers to our containers, additional penalties incurred
+                 could be lessened.
 
         But perhaps the most important insight, which is not readily observable, is the fact that we only need a
         consistent way to access the median elements. Keeping the entire input sorted is not a requirement.
         Well, if only there were a data structure which could handle our needs.
 
-        Heaps are a natural ingredient for this dish! Adding elements to them takes logarithmic order of time. They also
+        Heaps are a natural ingredient for this dish. Adding elements to them takes logarithmic order of time. They also
         give direct access to the maximal/minimal elements in a group.
 
         If we could maintain two heaps in the following way:
@@ -30,7 +31,7 @@ class MedianFinder:
             A max-heap to store the smaller half of the input numbers
             A min-heap to store the larger half of the input numbers
 
-        This gives access to median values in the input: They comprise the top of the heaps!
+        That gives access to median values in the input: They comprise the top of the heaps.
         If the following conditions are met:
 
             1- Both the heaps are balanced (or nearly balanced)
@@ -58,12 +59,11 @@ class MedianFinder:
             - Add 'num' to max-heap 'smaller'. Now with this insertion, 'smaller'' may contain a large element which
                should belong to 'larger' heap. So we need to balance by removing the highest element from 'smaller'
                and offer it to 'larger'.
-            - The min-heap 'larger' might end holding more elements than the max-heap 'smaller' after the balancing
-              operation. We fix that by removing the smallest element from 'larger' and offering it to 'smaller'.
-              This step ensures that we do not disturb the nice little size property we just mentioned.
+            - The min-heap 'larger' might end up holding more elements than the max-heap 'smaller' after the balancing
+               operation. We fix that by removing the smallest element from 'larger' and offering it to 'smaller'.
+               This step ensures that we do not disturb the nice little size property we just mentioned.
 
-        A little example will clear this up! Say we take input from the stream [41, 35, 62, 5, 97, 108]. The run-though
-        of the algorithm looks like this:
+        Say we take input from the stream [41, 35, 62, 5, 97, 108]. The run-though of the algorithm looks like this:
 
         Adding number 41
         MaxHeap smaller: [41]
@@ -76,23 +76,23 @@ class MedianFinder:
         Median is 38
         =======================
         Adding number 62
-        MaxHeap smaller: [41, 35]
+        MaxHeap smaller: [35, 41]
         MinHeap larger: [62]
         Median is 41
         =======================
         Adding number 4
-        MaxHeap smaller: [35, 4]
-        MinHeap larger: [41, 62]
+        MaxHeap smaller: [4, 35]
+        MinHeap larger: [62, 41]
         Median is 38
         =======================
         Adding number 97
-        MaxHeap smaller: [41, 35, 4]
-        MinHeap larger: [62, 97]
+        MaxHeap smaller: [4, 35, 41]
+        MinHeap larger: [97, 62]
         Median is 41
         =======================
         Adding number 108
-        MaxHeap smaller: [41, 35, 4]
-        MinHeap larger: [62, 97, 108]
+        MaxHeap smaller: [4, 35, 41]
+        MinHeap larger: [108, 97, 62]
         Median is 51.5
 
     Time complexity: O(logN) for addNum(), O(1) for findMedian()
@@ -110,6 +110,16 @@ class MedianFinder:
         heappush(self.larger, -heappop(self.smaller))
         if len(self.smaller) < len(self.larger):
             heappush(self.smaller, -heappop(self.larger))
+
+        # Could also be written as follows:
+        if self.smaller and num < -self.smaller[0]:
+            heappush(self.smaller, -num)
+        else:
+            heappush(self.larger, num)
+        if len(self.smaller) < len(self.larger):
+            heappush(self.smaller, -heappop(self.larger))
+        elif len(self.smaller) > len(self.larger) + 1:
+            heappush(self.larger, -heappop(self.smaller))
 
     def findMedian(self) -> float:
         if len(self.smaller) == len(self.larger):
