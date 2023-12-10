@@ -51,16 +51,25 @@ def maximum_subarray_v1(nums):
 
 
 def maximum_subarray_v2(nums):
-    """ This is an optimization problem, which can be usually solved using DP. So when it comes to DP, the first thing
-        for us to figure out is the format of the sub problem (or the state of each sub problem).
-        The format of the sub problem is something like: maxSubArray(int A[], int i), which means the maxSubArray for
-        A[0:i] which must has A[i] as the end element. Now the connection between the sub problem and the original one
-        becomes clear. Let dp[i] be the maximum sum of a contiguous sub array ending at index i:
-            dp[i] = max(nums[i], dp[i-1] + nums[i])
-        If the maximum sum of a contiguous sub array up to index (i-1) is positive, it is possible to make the maximum
-        sum value bigger, so we add the current element to the sum.
-        If the maximum sum is negative, adding it to the current element will only make a smaller sum. So we start over
-        a new sum with the current element.
+    """ Bottom-Up Dynamic Programming.
+
+        This is an optimization problem, which can be usually solved using Dynamic Programming. The first thing for us
+        to figure out is the format of the sub-problem (or the state of each sub-problem).
+
+        The format of the sub-problem is something like: maxSubArray(int A[], int i), which means the maxSubArray for
+        A[0:i] which must have A[i] as the end element. Now the connection between the sub-problem and the original one
+        becomes clear.
+
+        Let dp[i] be the maximum sum of a contiguous subarray ending at index i:
+
+                            dp[i] = max(nums[i], dp[i-1] + nums[i])
+
+        When visiting a number in the array, it's worth resetting the current subarray to only the currently visited
+        number if the currently visited number is larger than the sum of it and the previous subarray.
+
+        Kadane's algorithm is basically a space optimization of this approach: dp[i] only depends on dp[i-1]. So we
+        don't really need to maintain the whole dp array of N elements.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
