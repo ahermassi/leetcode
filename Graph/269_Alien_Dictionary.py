@@ -121,39 +121,38 @@ def alien_order_v1(words):
     # If not all letters are in the output, that means there was a cycle and so no valid ordering. Return ''.
     return ''.join(res) if len(res) == len(indegree) else ''
 
+
 # Video explanation: https://www.youtube.com/watch?v=6kTZYvNNyps
-
-
 def alien_order_v2(words):
     """ Another approach is to use a depth-first search. We still need to extract relations and then generate an
-        adjacency list in the same way as before, but this time we don't need the indegree map.
+         adjacency list in the same way as before, but this time we don't need the indegree map.
 
-        Recall that in a depth-first search, nodes are returned once they either have no outgoing links left, or all
-        their outgoing links have been visited. Therefore, the order in which nodes are returned by the depth-first
-        search will be the reverse of a valid alphabet order.
+         Recall that in a depth-first search, nodes are returned once they either have no outgoing links left, or all
+         their outgoing links have been visited. Therefore, the order in which nodes are returned by the depth-first
+         search will be the reverse of a valid alphabet order.
 
-        One issue we need to be careful of is cycles. In directed graphs, we often detect cycles by using graph
-        coloring. All nodes start as white, and then once they're first visited they become grey, and then once all
-        their outgoing nodes have been fully explored, they become black. We know there is a cycle if we enter a node
-        that is currently grey. It works because all nodes that are currently on the stack are grey. Nodes are changed
-        to black when they are removed from the stack.
+         One issue we need to be careful of is cycles. In directed graphs, we often detect cycles by using graph
+         coloring. All nodes start as white, and then once they're first visited they become grey, and then once all
+         their outgoing nodes have been fully explored, they become black. We know there is a cycle if we enter a node
+         that is currently grey. It works because all nodes that are currently on the stack are grey. Nodes are changed
+         to black when they are removed from the stack.
 
-        The way DFS would work is that we would consider all possible paths stemming from A before finishing up the
-        recursion for A and moving onto other nodes. All the nodes in the paths stemming from the node A would have A
-        as an ancestor. The way this fits in our problem is, all the characters in the paths stemming from character
-        A would have A as a 'prerequisite'.
+         The way DFS would work is that we would consider all possible paths stemming from A before finishing up the
+         recursion for A and moving onto other nodes. All the nodes in the paths stemming from the node A would have A
+         as an ancestor. The way this fits in our problem is, all the characters in the paths stemming from character
+         A would have A as a 'prerequisite'.
 
-        For each of the nodes in our graph, we will run a depth-first search in case that node was not already visited
-        in some other node's DFS traversal.
+         For each of the nodes in our graph, we will run a depth-first search in case that node was not already visited
+         in some other node's DFS traversal.
 
-        Suppose we are executing the depth-first search for a node N. We will recursively traverse all the neighbors of
-        node N which have not been processed before. Once the processing of all the neighbors is done, we will add the
-        node N to the result list.
+         Suppose we are executing the depth-first search for a node N. We will recursively traverse all the neighbors of
+         node N which have not been processed before. Once the processing of all the neighbors is done, we will add the
+         node N to the result list.
 
-        visited[node] == 1 means this node is part of the current trip, and either all of its descendants are not
-        processed or it's still in the function call stack. If you see it again, it's a cycle.
-        visited[node] == 2: means the node and all its descendants were processed, and no cycle was found. if we hit
-        this, going down this path won't find any cycles.
+         visited[node] == 0 means this node is part of the current trip, and either all of its descendants are not
+         processed or it's still in the function call stack. If we see it again, it's a cycle.
+         visited[node] == 1: means the node and all its descendants were processed, and no cycle was found. if we hit
+         this, going down this path won't find any cycles.
 
         Another way to think about it is the last few in the order must be those which are not prerequisites of other
         characters. Thinking of it recursively means if one node has unvisited children nodes, we should visit them
@@ -170,16 +169,16 @@ def alien_order_v2(words):
     """
 
     def dfs(vertex):
-        if visited[vertex] == 1:  # Don't recurse further if we found a cycle already
+        if visited[vertex] == 0:  # Don't recurse further if a cycle was already found
             return False
-        if visited[vertex] == 2:
+        if visited[vertex] == 1:
             return True
-        visited[vertex] = 1  # Start the recursion
+        visited[vertex] = 0  # Start the recursion
         for neighbor in graph[vertex]:
             if not dfs(neighbor):
                 return False
         res.append(vertex)
-        visited[vertex] = 2
+        visited[vertex] = 1
         return True
 
     n = len(words)
@@ -193,13 +192,14 @@ def alien_order_v2(words):
         if j == min_len and len(cur_word) > len(next_word):
             return ''
         if j < min_len and next_word[j] not in graph[cur_word[j]]:
-            # Create graph, better seen as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
+            # Create graph, better thought of as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
             # prerequisite of 'char2' and precedes it in the alien alphabet
             graph[cur_word[j]].append(next_word[j])
-    visited = {c: 0 for word in words for c in word}
+    visited = {c: -1 for word in words for c in word}
     res = []
     for c in visited:
-        if not dfs(c):  # If a cycle exists, no topological ordering is possible
+        if not dfs(c):
+            # If a cycle exists, no topological ordering is possible
             return ''
     return ''.join(res[::-1])
 
