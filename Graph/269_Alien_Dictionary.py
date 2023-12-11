@@ -16,19 +16,23 @@ def alien_order_v1(words):
 
             - The input can contain words followed by their prefix, for example, 'abcd' and then 'ab'. These cases will
                never result in a valid alphabet (because in a valid alphabet, prefixes are always first). We'll need to
-               make sure our solution detects these cases correctly.
+               make sure the solution detects these cases correctly.
 
             - There can be more than one valid alphabet ordering. It is fine for the algorithm to return anyone of them.
 
+            - The output string must contain all unique letters that were within the input list, including those that
+               could be in any position within the ordering. It should not contain any additional letters that were not
+               in the input.
+
         All approaches break the problem into three steps:
 
-            1- Extracting dependency rules from the input. For example 'A must be before C', 'X must be before D', or
+            1- Extract dependency rules from the input. For example 'A must be before C', 'X must be before D', or
                  'E must be before B'.
 
-            2- Putting the dependency rules into a graph with letters as nodes and dependencies as edges (an adjacency
-                 list is best).
+            2- Put the dependency rules into a graph with letters as nodes and dependencies as edges (an adjacency list
+                 is best).
 
-            3- Topologically sorting the graph nodes
+            3- Topologically sort the graph nodes
 
         Remember that in an ordinary English dictionary, all the words starting with 'a' are at the start, followed by
         all the ones starting with 'b', then 'c', 'd', 'e', and at the very end, 'z'. In the alien dictionary, we also
@@ -37,6 +41,10 @@ def alien_order_v1(words):
         Going back to the English dictionary analogy, the word 'abacus' will appear before 'algorithm'. This is because
         when the first letter of two words is the same, we instead look at the second letter; 'b' and 'l' in this case.
         'b' is before 'l' in the alphabet.
+
+        Let's take a closer look at the first two words of an "alien dictionary"; ''wxqkj' and 'whgg'. Seeing as the
+        first letters are the same, 'w', we look at the second letters. The first word has 'x', and the second word has
+        'h'. Therefore, we know that 'x' is before 'h' in this alien dictionary.
 
         Hopefully, we're starting to see a pattern here. When two words are adjacent, we need to look for the first
         difference between them. That difference tells us the relative order between two letters.
@@ -57,8 +65,8 @@ def alien_order_v1(words):
         we can also count up how many incoming edges each letter has. We call the number of incoming edges the
         indegree of a node.
 
-        Then, instead of removing an edge from a reverse adjacency list, we can simply decrement the count by 1. Once
-        the count reaches 0, this is equivalent to there being no incoming edges left in the reverse adjacency list.
+        Therefore, when a character has a 'prerequisite' extracted, we can simply decrement its count by 1. Once the
+        count reaches 0, this is equivalent to there being no incoming edges left.
 
         We'll do a BFS for all letters that are reachable, adding each letter to the output as soon as it's reachable.
         A letter is reachable once all the letters that need to be before it have been added to the output.
@@ -68,7 +76,7 @@ def alien_order_v1(words):
 
         We continue this until the queue is empty. After that, we check whether all letters were put in the output list.
         If some are missing, this is because we got to a point where all remaining letters had at least one edge going
-        out; this means there must be a cycle! In that case, we should return '' as per the problem description.
+        in; this means there must be a cycle! In that case, we should return '' as per the problem description.
         Otherwise, we should return the complete ordering we found.
 
         One edge case we need to be careful of is where a word is followed by its own prefix. In these cases, it is
@@ -92,17 +100,17 @@ def alien_order_v1(words):
             j += 1
         if j == min_len and len(cur_word) > len(next_word):  # Check that next_word isn't a prefix of cur_word
             return ''
-        # Even though the values associated with the graph keys are hash sets, we have to check that we're not
-        # processing the same edge twice as it would result in a wrong indegree value
+        # Even though the adjacency lists are hash sets, we have to check that we're not processing the same edge
+        # more than once as it would result in a wrong indegree value
         if j < min_len and next_word[j] not in graph[cur_word[j]]:
-            # Create graph, better seen as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
+            # Create graph, better thought of as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
             # prerequisite of 'char2' and precedes it in the alien alphabet
             graph[cur_word[j]].add(next_word[j])
             indegree[next_word[j]] += 1  # Record the number of 'prerequisites' each character has
-    # Iterate the indegree list and find the nodes that have an indegree of 0, which maps to 0 'prerequisites'. If
-    # none is found, then there must be a cycle and a topological ordering is not possible.
-    queue = deque([c for c in indegree if indegree[c] == 0])
+    queue = deque(c for c in indegree if indegree[c] == 0)
     res = []
+    # Iterate over the indegree list and find the nodes that have an indegree of 0, which maps to 0 'prerequisites'.
+    # If none is found, then there must be a cycle and a topological ordering is not possible.
     while queue:
         vertex = queue.popleft()
         res.append(vertex)
@@ -110,8 +118,7 @@ def alien_order_v1(words):
             indegree[neighbor] -= 1
             if indegree[neighbor] == 0:
                 queue.append(neighbor)
-    # If not all letters are in output, that means there was a cycle and so no valid ordering. Return '' as per the
-    # problem description.
+    # If not all letters are in the output, that means there was a cycle and so no valid ordering. Return ''.
     return ''.join(res) if len(res) == len(indegree) else ''
 
 # Video explanation: https://www.youtube.com/watch?v=6kTZYvNNyps
