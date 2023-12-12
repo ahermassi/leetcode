@@ -11,27 +11,67 @@ import unittest2 as unittest
 
 
 def rob_v1(nums):
-    """ A robber has 2 options:
-            1- Rob current house i
-            2- Don't rob current house i
-        If 1st option is selected, it means the robber can't rob previous (i-1) house but can safely proceed to the
-        one before previous (i-2) and get all cumulative loot that follows.
-        If 2nd option is selected, the robber gets all the possible loot from robbery of (i-1) house and all the
-        following buildings.
+    """ A series of choices essentially gives us a subset of houses from the original list. We need to make these
+         choices in such a way that the overall profit is maximized.
+
+         There is no greedy way of deciding if the robber should rob a house or not. The best greedy strategy may be to
+         check the neighboring houses and only rob a house if it gives them more money than the neighbors combined.
+         That might be a sound greedy strategy. However, by doing so, the robber may miss out on making the maximum
+         profit.
+
+         What we need is to try all the possibilities and see which one gives the robber the optimal loot. We do this
+         because there is no plausible greedy strategy that we can use to decide if the robber should rob a particular
+         house or not.
+
+         The basic choice that we make is whether to rob the current house or not. If the robber decides to rob the
+         current house, they have to skip the previous house. Otherwise, they can evaluate the same choice on the next
+         house i.e. to rob or not to rob.
+
+         To approach a problem recursively, we need to make sure that it can be broken down into sub-problems.
+         Additionally, we need to ensure that the optimal solution to these sub-problems can be used to form the
+         solution to the main problem. Let's see how we can divide this problem into smaller recursive problems.
+
+         Let's say that we have a function called rob_houses which we will use to solve this problem. The only input
+         this function takes is an index, position. This position essentially represents a PREFIX in the array which the
+         robber has scanned so far. Essentially, the position indicates that the robber has scanned houses
+         [0...position-1].
+
+        Naturally, the answer to our problem would be the function call rob_houses(N), where N represents the total
+        number of houses, which means scan all the houses and return the maximum profit.
+
+        Now let's think about rob_houses(i) for a moment. This simply represents a sub-array or a prefix from the main
+        array. We can think about this as a smaller max-profit problem in itself, can't we?
+
+        A prefix of the initial set of houses simply means a smaller set of houses that the robber has to consider. We
+        will be working with the assumption that in the function call rob_houses(i), the robber has to maximize their
+        profit from 0...i-1 houses.
+
+        At each step, the robber has two options:
+
+            1- Rob current house i: If this option is selected, it means the robber can't rob previous (i-1) house but
+                 can safely proceed to the one before previous (i-2) and get all cumulative loot that follows.
+            2- Don't rob current house i: If this option is selected, the robber gets all the possible loot from robbery
+            of house (i-1) and all the following houses.
+
         So it boils down to calculating what is more profitable:
+
             1- Robbery of current house + loot from houses before the previous
             2- Loot from the previous house robbery and any loot captured after that
-            rob(i) = max(rob(i-2) + currentHouseValue, rob(i-1))
+
+        Let's put this mathematically:
+
+                    rob_houses(i) = max(rob_houses(i-2) + currentHouseValue, rob_houses(i-1))
+
     Time complexity: O(2^N)
     Space complexity: O(N)
     """
     # This solution TLEs.
-    def helper(i):
+    def rob_houses(i):
         if i < 0:
             return 0
-        return max(nums[i] + helper(i - 2), helper(i - 1))
+        return max(nums[i] + rob_houses(i - 2), rob_houses(i - 1))
 
-    return helper(len(nums) - 1)
+    return rob_houses(len(nums) - 1)
 
 
 def rob_v2(nums):
