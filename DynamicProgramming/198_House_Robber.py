@@ -142,6 +142,7 @@ def rob_v3(nums):
     return dp[-1]
 
 
+# Video explanation: https://youtu.be/73r3KWiEvyk
 def rob_v4(nums):
     """ This is the exact same solution as the previous one with the exception that we will be optimizing the space
          complexity here.
