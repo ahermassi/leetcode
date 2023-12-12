@@ -75,20 +75,27 @@ def rob_v1(nums):
 
 
 def rob_v2(nums):
-    """ Recursion + memoization
-    Time complexity: O(N)
-    Space complexity: O(N)
+    """ Top-Down Dynamic Programming
+
+        If we visualize the recursion tree from the previous solution, we can see that we have repeating sub-problems,
+        in which case we can use memoization or caching to reduce the overall solution complexity. We cache the already
+        computed results so that we don't need to re-calculate the maximum profit for previously seen sub-problems.
+
+    Time complexity: O(N), since we process at most N recursive calls thanks to caching, and during each of these calls,
+    we make an O(1) computation which is simply making two other recursive calls, finding their maximum, and populating
+     the cache based on that.
+    Space complexity: O(N), which is occupied by the cache and also by the recursion stack
     """
 
-    def helper(i):
+    def rob_houses(i):
         if i < 0:
             return 0
         if i not in memo:
-            memo[i] = max(nums[i] + helper(i - 2), helper(i - 1))
+            memo[i] = max(nums[i] + rob_houses(i - 2), rob_houses(i - 1))
         return memo[i]
 
     memo = {}
-    return helper(len(nums) - 1)
+    return rob_houses(len(nums) - 1)
 
 
 def rob_v3(nums):
