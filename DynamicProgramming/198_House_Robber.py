@@ -143,16 +143,22 @@ def rob_v3(nums):
 
 
 def rob_v4(nums):
-    """ We notice that in the previous solution we use only dp[i] and dp[i-1], so going just 2 steps back. We can save
-        them in 2 variables instead.
+    """ This is the exact same solution as the previous one with the exception that we will be optimizing the space
+         complexity here.
+
+         We notice that in the previous solution, in order to calculate the value at a current index in the dynamic
+         programming table, we simply need to know the previous two values. So instead of keeping an entire table for
+         storing these cached values, we can get by with simply keeping track of the "previous" two values.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    a = b = 0
     n = len(nums)
+    rob_previous = rob_before_previous = 0
     for i in range(n):
-        a, b = b, max(nums[i] + a, b)
-    return b
+        cur_max_loot = max(nums[i] + rob_before_previous, rob_previous)
+        rob_before_previous, rob_previous = rob_previous, cur_max_loot
+    return rob_previous
 
 
 class Test(unittest.TestCase):
