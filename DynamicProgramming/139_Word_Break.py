@@ -77,29 +77,38 @@ def word_break_v2(s, word_dict):
 
 
 def word_break_v3(s, word_dict):
-    """ Dynamic programming.
-        dp[i] is True if s[:i] can be segmented into words from the dictionary.
+    """ Bottom-Up Dynamic Programming.
+
+        Let dp[i] be whether s[:i] can be segmented into words from the dictionary.
         In other words:
-            dp[i] = True if the first i characters of s can be partitioned according to the words in the dictionary
-        The intuition behind this approach is that the given problem (s) can be divided into sub problems s1 and s2. If
-        these sub problems individually satisfy the required conditions, the complete problem s also satisfies the
-        same.
-        For example, 'catsanddog' can be split into two substrings 'catsand', 'dog'. The sub problem 'catsand' can be
+
+                dp[i] = True if the first i characters of s can be partitioned using to the words in the dictionary
+
+        Therefore:
+
+                dp[i] = any(index j before i such as dp[j] and the prefix s[j:i] is in the dictionary of words)
+
+        The intuition behind this approach is that the given problem (s) can be divided into sub-problems s1 and s2. If
+        these sub problems individually satisfy the required conditions, the complete problem s also satisfies it.
+
+        For example, 'catsanddog' can be split into two substrings 'catsand', 'dog'. The sub-problem 'catsand' can be
         further divided into 'cats', 'and', which individually are part of the dictionary making 'catsand' satisfy the
-        condition. Going further backwards, 'catsand', 'dog' also satisfy the required criteria individually leading to
-        the complete string 'catsanddog' also to satisfy the criteria.
-    Time complexity: O(N^3), not O(N^2) because of the substring s[i:j] which takes O(N)
-    Space complexity: ? O(N) for dp array + set of dictionary's word
+        condition. Thus, 'catsand', 'dog' also satisfy the required criteria individually leading to the complete
+        string 'catsanddog' also to satisfy the criteria.
+
+    Time complexity: O(N^3), not O(N^2) because of the string slicing s[i:j] which takes O(N)
+    Space complexity: O(N) for dp array + set of dictionary's words
     """
     n, word_dict = len(s), set(word_dict)
     dp = [False] * (n + 1)
     dp[0] = True
     for i in range(1, n + 1):
         for j in range(i):
-            if dp[j] and s[j:i] in word_dict:  # The first j characters of the string can be partitioned using the
-                # words in the dictionary and the rest of the string contains one of the words of the dictionary
+            if dp[j] and s[j:i] in word_dict:
+                # The first j characters of the string can be partitioned using the words in the dictionary and
+                # the rest of the string contains one of the words of the dictionary
                 dp[i] = True
-                break  # Break. The first i characters can be segmented. We have no more business here
+                break  # Break. The first i characters can be segmented. We have no more business here.
     return dp[n]
 
 
