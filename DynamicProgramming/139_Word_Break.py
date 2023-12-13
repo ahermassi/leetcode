@@ -46,13 +46,18 @@ def word_break_v1(s, word_dict):
 
 
 def word_break_v2(s, word_dict):
-    """ In the previous approach, we can see that many sub problems were redundant, i.e we were calling the recursive
-        function multiple times for a particular string. To avoid this, we can use memoization method, where an array
-        'memo' is used to store the results of the sub problems. Now, when the function is called again for a particular
-        string, value will be fetched and returned using the 'memo' array, if its value has been already evaluated.
-        With memoization, many redundant sub problems are avoided and recursion tree is pruned and thus it reduces the
-        time complexity by a large factor.
-    Time complexity: O(N^2)
+    """ Top-Down Dynamic Programming.
+
+         In the previous solution, we can see that many sub-problems were redundant, i.e. we were calling the recursive
+         function multiple times for a particular prefix. To avoid this, we can use memoization/caching, where an array
+         'memo' is used to store the results of the previously calculated sub-problems.
+
+         Using memoization, many redundant sub-problems are avoided and recursion tree is pruned, and thus it reduces
+         the time complexity by a large factor.
+
+    Time complexity: O(N * L), where L is the average length of the words in the words' dictionary. There are N states,
+    and thanks to memoization we only calculate each state once. To calculate a state, we perform some substring
+    operations which costs O(L).
     Space complexity: O(N)
     """
 
