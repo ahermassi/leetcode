@@ -7,25 +7,37 @@ You may assume the dictionary does not contain duplicate words. """
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/Sx9NNgInc3A
 def word_break_v1(s, word_dict):
-    """ Brute force, top-down recursion. TLE.
+    """ Brute force. TLE.
+
         The naive approach to solve this problem is to use recursion. To find the solution, we check every possible
         prefix of that string in the dictionary of words. If it is found in the dictionary, then the recursive function
         is called for the remaining portion of that string. And, if in some function call it is found that the complete
         string is in dictionary, then it will return true.
-    Time complexity: O(2^N), given a string of length N, there are (N + 1) ways to split it into two parts. At each
-    step, we have a choice: to split or not to split. In the worst case, when all choices are to be checked, that
-    results in O(2^N)
+
+    Time complexity: O(2^N), given a string of length N, there are (N + 1) ways to split it into two parts; example
+    s="abc", we can split it into ["",abc], [a, bc], [ab, c], [abc, ""]. At each step, we have a choice: to split or
+    not to split. In the worst case, when all choices are to be checked, and that results in O(2^N). Or using the
+    Master Theorem:
+    T(N) = T(N-1) + T(N-2) + ... + T(0)
+    T(N-1) = T(N-2) + ... + T(0)
+    T(N) - T(N-1) = T(N-1)
+    T(N) = 2*T(N-1)
+    T(N-1) = 2*T(N-2)
+    ...
+    T(N) = 2 * 2 * .... 2 * T(1) {n-1} times => ~ 2^N-1 => O(2^N)
     Space complexity: O(N), the depth of the recursion tree can go up to N
     """
 
     def dfs(index):
-        """ Return True if the substring starting at 'index' can be partitioned according to the words dictionary. """
+        """ Return true if the substring starting at 'index' can be partitioned according to the words' dictionary. """
         if index == n:
             return True
         for i in range(index, n):  # Try all the possible chopping indices
-            if s[index:i+1] in word_dict and dfs(i+1):  # If the substring up to index i can be found in the
-                # dictionary and the rest of the string can be partitioned the same way, then we're done.
+            if s[index:i+1] in word_dict and dfs(i+1):
+                # If the prefix up to index i can be found in the dictionary and the rest of the string can be
+                # partitioned the same way, then we're done.
                 return True
         return False
 
