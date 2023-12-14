@@ -11,21 +11,20 @@ class ListNode:
         self.val = x
         self.next = None
 
+
 # Video explanation: https://www.youtube.com/watch?v=ptYUCjfNhJY
-
-
 def merge_k_lists_v1(lists):
-    """ Compare every k nodes (head of every linked list) and get the node with the smallest value. We then extend the
-        final sorted linked list with the selected nodes.
+    """ The idea is to compare every k nodes (head of every linked list) and get the node with the smallest value.
+         We then extend the final sorted linked list with the selected nodes.
 
-        Optimize the comparison process using a priority queue to find the next element to add. To make the
-        implementation simpler, we define the __lt__ method of the ListNode class to make ListNode objects comparable.
+         We can optimize the comparison process using a priority queue to find the next element to add. To make the
+         implementation simpler, we define the __lt__ method of the ListNode class to make ListNode objects comparable.
 
-        Note that simply using the tuple trick pushing (node.val, node) to the priority queue will not work because the
-        lists can have equal values.
+         Note that simply using the tuple trick pushing (node.val, node) to the priority queue will not work because the
+         lists can have equal values.
 
-        Algorithm invariant: The priority queue holds a single node from each list at a time which has the smallest
-        value. Since the lists are sorted, simply advancing to the next of each popped node maintains this property.
+         Algorithm invariant: The priority queue holds a single node from each list at a time which has the smallest
+         value. Since the lists are sorted, simply advancing to the next of each popped node maintains this property.
 
     Time complexity: O(N logK), where N is the total number of nodes across the lists. The comparison cost will be
     reduced to O(logK) for every pop and insertion into the priority queue
