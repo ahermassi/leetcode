@@ -83,6 +83,7 @@ def merge_k_lists_v3(lists):
     logK, and in each level we need to merge N nodes. The time complexity for each level is O(N) (e.g. if we have 4
     lists with 10, 20, 30, 40 nodes, to merge list 1 and list 2 we need 30x operations while to merge list 3 and 4 we
     need 70x operations, and 100x in total)
+
             sort   l1, l2, l3, l4
                    /              \
       sort l1, l2            sort l3, l4
@@ -92,6 +93,7 @@ def merge_k_lists_v3(lists):
         merge(l1, l2)    merge(l3, l4)
                     \             /
                 merge(l1, l2, l3, l4)
+
     Sort stage: We call sort 1 + 2 + 4 (+ ...) times; Time complexity is O(N).
     Merge stage: K =4 (four lists), and merge recursion tree has two levels (i.e. log(4)). In merge(l1, l2) and
     merge(l3, l4), we go over every single element in all four lists. In the final step merge(l1, l2, l3, l4), we still
@@ -99,18 +101,27 @@ def merge_k_lists_v3(lists):
     each level of the merge states recursion tree, time complexity is O(N). Moreover, we have total of logK levels of
     merge recursion tree. Therefore, total Time Complexity: Sort stage (O(N)) + Merge stage (O(N logK)) = O(N + NlogK)
     = O(N logK).
-    Space complexity: O(logK)
+    The divide-and-conquer approach for merging K sorted linked lists is often O(N log k) due to the way the merge
+    operations are organized. Here's why:
+    Divide Stage: We have K sorted linked lists, and we divide them into pairs. We keep doing this until each pair is
+    merged into a single sorted list. The total number of lists is halved in each iteration. The number of times we can
+    halve K until we get to 1 is logK (base 2).
+    Conquer (Merge) Stage: In each of these logK stages, we are performing merge operations. Each merge operation for
+    two lists with a total of N elements would be O(N).
+    The total time complexity for these operations is, therefore, logK stages of O(N) merge operations, resulting in a
+    time complexity of O(N logK).
+    Space complexity: O(logK), for the recursion stack
     """
 
     def merge(left, right):
-        # This function returns the head of the merged lists[left:right+1]
-        if left == right:
-            return lists[left]
+        # This function returns the head of the merged linked lists lists[left:right+1]
         if left > right:
             return None
+        if left == right:
+            return lists[left]
         mid = (left + right) // 2
-        left, right = merge(left, mid), merge(mid + 1, right)
-        return merge_two_lists(left, right)
+        left_half, right_half = merge(left, mid), merge(mid + 1, right)
+        return merge_two_lists(left_half, right_half)
 
     def merge_two_lists(list1, list2):
         dummy_head = dummy_tail = ListNode(0)
