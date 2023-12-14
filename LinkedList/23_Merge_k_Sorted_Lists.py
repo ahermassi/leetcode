@@ -139,8 +139,9 @@ def merge_k_lists_v3(lists):
     return merge(0, len(lists) - 1)
 
 
+# Video explanation: https://youtu.be/q5a5OiGbT6Q
 def merge_k_lists_v4(lists):
-    """  We can convert the merge of K lists into the merge of 2 lists (K-1) times with the help of a queue.
+    """  We can convert merging K lists into merging 2 lists (K-1) times with the help of a queue.
 
     Time complexity: O(N * K), where N is the total number of nodes across the lists
     Space complexity: O(N), for the queue
