@@ -4,28 +4,70 @@ has the largest product. """
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/lXVy6YWFcRM
 def max_product_v1(nums):
-    """ This is very similar to the 53- Maximum Sub-array problem. Here we keep 2 values: the max cumulative
-        product UP TO current element starting from SOMEWHERE in the past, and the minimum cumulative product UP TO
-        current element. At each new element, we could either add the new element to the existing product, or start
-        fresh the product from current index (wipe out previous results), hence the 2 max() lines.
-        The max result from A[0] to A[i] can only come from:
-            Decision 1: discard previous result, restart at A[i]
-            Decision 2: take A[i], MAX[i] = MAX[i-1] * A[i]
-            Decision 3: this is the trickiest part: A[i] can be negative, then MAX[i-1] * A[i] can be smaller than
-            MAX[i-1]
+    """ This problem can be seen as a problem of getting the highest combo chain. The way combo chains work is that
+         they build on top of the previous combo chains that we have acquired.
+
+         The simplest case is when the numbers in nums are all positive numbers. In that case, we would only need to
+         keep on multiplying the accumulated result to get a bigger and bigger combo chain as we progress.
+
+         However, two things can disrupt the combo chain: zeroes and negative numbers.
+         Let's have a 'result' placeholder that records the highest score we have achieved.
+
+         Zeroes will reset the combo chain. We will have to restart the combo chain after zero. If we encounter another
+         combo chain which is higher than the recorded high score in 'result', we just need to update 'result'.
+
+         Negative numbers are a bit tricky. A single negative number can flip the largest combo chain to a very small
+         number. This may sound like the combo chain has been completely disrupted but if we encounter another
+         negative number, the combo chain can be saved. Unlike zero, we still have a hope of saving the combo chain
+         as long as we have another negative number lying ahead (think of this second negative number as an antidote
+         for the poison that we just consumed).
+
+         For these reasons, while going through the numbers in nums, we will have to keep track of the maximum product
+         up to the current number (we will call it 'max_so_far') and the minimum product up to the current number (we will
+          call it 'min_so_far').
+
+          'max_so_far' is used to keep track of the accumulated product of positive numbers.
+          'min_so_far' is used to properly handle negative numbers.
+
+          'max_so_far' is updated by taking the maximum value among:
+
+            1- Current number: this value will be picked if the accumulated product has been bad (even compared to the
+                 current number). This can happen when the current number has a preceding zero (e.g. [0,4]) or is
+                 preceded by a single negative number (e.g. [-3,5]).
+
+            2- Product of last 'max_so_far' and current number: this value will be picked if the accumulated product has
+                 been steadily increasing (all positive numbers).
+
+            3- Product of last 'min_so_far' and current number: this value will be picked if the current number is
+                 negative and the combo chain has been disrupted by a single negative number before.
+
+        'min_so_far' is updated the same way except that we are taking minimum among the above three numbers.
+
+        In other words, at each new element, we could either add the new element to the existing product, or start fresh
+        the product from the current index (wipe out previous results).
+
+        The max result from nums[0] to nums[i] can only come from:
+
+                Decision 1: discard previous result, restart at nums[i]
+                Decision 2: take nums[i], max[i] = max[i-1] * nums[i]
+                Decision 3: this is the trickiest part: nums[i] can be negative, then max[i-1] * nums[i] can be smaller
+                than nums[i-1], and this is the reason we need to keep track of min[i] as well ('min_so_far')
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    n = len(nums)
-    max_so_far = min_so_far = global_max = nums[0]  # max_so_far/min_so_far store the max/min product of sub-array
-    # that ends with the current element nums[i]
-    for i in range(1, n):
-        candidates = (nums[i], max_so_far * nums[i], min_so_far * nums[i])  # These values are the candidates of
-        # maximum product and minimum product up to ith index: start a new product with nums[i], multiply the previous
-        # min product with nums[i], or multiply the previous max product with nums[i]
-        max_so_far = max(candidates)
-        min_so_far = min(candidates)
+    # max_so_far/min_so_far store the max/min product of subarray that ends with the current element nums[i]
+    max_so_far = min_so_far = 1
+    global_max = nums[0]
+    for num in nums:
+        # These values are the candidates of maximum product and minimum product up to the current element in
+        # the array: start a new product with nums[i], multiply the previous min product by nums[i], or multiply
+        # the previous max product by nums[i]
+        min_max_prod_candidates = (num, min_so_far * num, max_so_far * num)
+        max_so_far = max(min_max_prod_candidates)
+        min_so_far = min(min_max_prod_candidates)
         global_max = max(global_max, max_so_far)
     return global_max
 
