@@ -73,27 +73,31 @@ def max_product_v1(nums):
 
 
 def max_product_v2(nums):
-    """ Same logic but in a different manner.
-        What do we need to know to calculate maximum product at i? Recall what we did in Maximum Sub-array Sum
-        (Kadane's algorithm), only known maximum ending at i-1 is not enough for this one.
-        Due to negative numbers, we need max and min ending at i-1. In case of a negative number at i, we then swap
-        min an max. Therefore, we maintain two local optimal variables, update them at each iteration and the global
-        maximum as well.
-        Takeaway: If we see a negative number, the 'candidate' for max should instead become the previous min product,
-        because a bigger number multiplied by negative becomes smaller, hence the swap (same for min).
+    """ Same intuition as the previous solution.
+
+         What do we need to know to calculate the maximum product at index i? The logic sounds similar to Kadane's
+         algorithm, except that knowing only the maximum ending at index (i-1) is not enough for this problem.
+
+         Due to negative numbers, we need the maximum and minimum ending at index (i-1). In case of a negative
+         number at index i, we can swap min and max.
+
+        Takeaway: If the current number is negative, the candidate for max should instead become the previous min
+        product, because a bigger number multiplied by negative becomes smaller, hence the swap.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    n = len(nums)
-    max_so_far = min_so_far = global_max = nums[0]
-    for i in range(1, n):
-        if nums[i] < 0:  # Multiplying by a negative makes big number smaller and small number bigger, so we redefine
+    max_so_far = min_so_far = 1
+    global_max = nums[0]
+    for num in nums:
+        if num < 0:
+            # Multiplying by a negative makes a big number smaller and a small number bigger, so we redefine
             # min and max by swapping them
             max_so_far, min_so_far = min_so_far, max_so_far
         # max/min product for the current index is either the current number itself or the max/min of the previous
         # index times the current number
-        max_so_far = max(nums[i], max_so_far * nums[i])
-        min_so_far = min(nums[i], min_so_far * nums[i])
+        max_so_far = max(num, max_so_far * num)
+        min_so_far = min(num, min_so_far * num)
         global_max = max(global_max, max_so_far)
     return global_max
 
