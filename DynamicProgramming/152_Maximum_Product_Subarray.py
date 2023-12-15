@@ -102,35 +102,87 @@ def max_product_v2(nums):
     return global_max
 
 
-def max_product_v3(A):
-    """ Calculate prefix product in A. Calculate suffix product in A. Return the max.
-        It turns out that the only reason we'd ever need to use a sub-array is if there was an odd number of negative
+def max_product_v3(nums):
+    """ We can derive the maximum product from the prefix and suffix products.
+
+        It turns out that the only reason we'd ever need to use a subarray is if there was an odd number of negative
         numbers in the array or a 0.
-        If the number of negative values is even, the result is the total product, can be reached from start and end
-        of array.
-        If the number of negative values is odd, the result can be reached from either start or end of array, split by
-        that negative value.
-        This approach handles the first case by multiplying from both ends of array. It handles the second with the
-        'or 1' clause that resets the product to 1 any time A[i - 1] or B[i - 1] are 0.
-        In other words:
+
+        If the number of negative values is even, the result is the product of all numbers in the array.
+        However, If the number of negative values is odd, the result can be reached from either start or end of the
+        array, split by that negative value.
+
         Given an array of integers, the max product ignoring sign (i.e., absolute value) is simply the product of all
         the elements, as long there is no 0. Put another way, the more elements, the bigger the product.
-        But we have to consider the sign, so if product is negative then we have an odd number of negatives. Therefore,
-        the max product is the biggest of:
+        But we have to consider the sign, so if the product is negative then we have an odd number of negatives.
+
+        Therefore, the max product is the maximum of:
+
             1- Product of all excluding elements on the left, up to the first negative element
             2- Product of all excluding elements on the right, up to the last negative element
+
         So the solution is to calculate the running product, first from left to right, then from right to left. During
-        the process, we are guaranteed to encounter the max product, and whenever 0 is encountered we reset product
-        to 1 and continue.
+        the process, we are guaranteed to encounter the max product, and whenever 0 is encountered we reset the
+        product to 1 and continue.
+
+        If we have an even number of negative numbers, then the solution is the product of the entire array.
+        If we have an odd number of negative numbers, then the solution is the product of numbers from left till the
+        last negative number or the other way around. We cannot exclude a negative number that is not the first or the
+        last, because if by doing so we will need to exclude all other negative nums following that negative number
+        (because we are breaking the product at this point) and then that wouldn't result in the maximum product.
+
+        So the idea is we are excluding only one negative number so that we are able to make the number of negative
+        elements even.
+
+        Assume the array has an odd number of negative numbers. The first negative number is -2 and the last negative
+        number is -3. So the array looks like .....-2.......-3.......
+        The maximum product can either be made of all numbers from the beginning of the array to the first non-zero
+        number just before -3, or from the end of the array to the first non-zero number just after -2.
+
+        The best subarray in terms of product will definitely not contain zeroes, and it will definitely contain an EVEN
+        number of negatives. iIf w have an odd number of negatives, what do we do? It's best to shave off one from the
+        left or one from the right. It doesn't benefit us to take one out the middle, since we could always extend more
+        to the other side and get a bigger product.
+
+        We only need to consider sub-arrays without 0. If an array has 0 in it, then the array should be divided into
+        two parts on either side of 0 because 0 cannot ever be included in the product (hence resetting the product
+        to 1). Example: [1,2,0,3,4,5]. Maximum product should be on either side of 0.
+
+        Also, the maximum product subarray cannot ever be in the middle of an array. It has to be anchored to either
+        ends of the array.
+
+        Example case 1: -ve, Max Subarray, -ve
+        In this case, we can include both negative numbers and get a larger product.
+
+        Example case 2: +ve, Max Subarray, +ve
+        This case is trivial as both positive numbers need to be included in the product.
+
+        Example case 3: -ve, Max Subarray, +ve
+        Example case 4: +ve, Max Subarray, -ve
+        In both the above cases we can extend max subarray to cover the positive element to get a larger product and
+        thus anchor the array to the right or left end.
+
+        Now the problem is reduced to calculating the product of numbers from left, and then doing the same from right,
+        and then calculating the max product.
+
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(1)
     """
-    B = A[::-1]
-    n = len(A)
-    for i in range(1, n):
-        A[i] *= A[i - 1] or 1
-        B[i] *= B[i - 1] or 1
-    return max(A + B)
+    n = len(nums)
+    max_prod = nums[0]
+    cur_prod = 1
+    for num in nums:
+        cur_prod *= num
+        max_prod = max(max_prod, cur_prod)
+        if cur_prod == 0:
+            cur_prod = 1
+    cur_prod = 1
+    for i in reversed(range(n)):
+        cur_prod *= nums[i]
+        max_prod = max(max_prod, cur_prod)
+        if cur_prod == 0:
+            cur_prod = 1
+    return max_prod
 
 
 class Test(unittest.TestCase):
