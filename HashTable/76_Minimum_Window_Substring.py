@@ -97,6 +97,7 @@ def min_window_v1(s, t):
     return s[min_left:min_left + min_length] if min_length != float('inf') else ''
 
 
+# Video explanation: https://youtu.be/jSto0O4AJbM
 def min_window_v2(s, t):
     """ If the previous algorithm looks confusing, we can also use a second hash map to represent the current
          sliding window in s.
