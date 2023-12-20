@@ -13,16 +13,20 @@ def is_valid_v1(s):
          us look at a simpler version of the problem that consists of just one type of parenthesis.
 
          We process the expression one bracket at a time starting from the left.
+
          Suppose we encounter an opening bracket i.e. (, it may or may not be an invalid expression because there can
          be a matching ending bracket somewhere in the remaining part of the expression. Here, we simply increment the
          counter keeping track of left parenthesis till now: left += 1
          If we encounter a closing bracket, this has two meanings:
+
             - One, there was no matching opening bracket for this closing bracket and in that case we have an invalid
                expression. This is the case when left == 0 i.e. when there are no unmatched left brackets available.
             - We had some unmatched opening bracket available to match this closing bracket. This is the case when
                left > 0 i.e. we have unmatched left brackets available.
+
         If we encounter a closing bracket i.e. ) when left == 0, then we have an invalid expression on our hands.
         Else, we decrement left thus reducing the number of unmatched left parenthesis available.
+
         Continue processing the string until all parenthesis have been processed.
         If in the end we still have unmatched left parenthesis available, this implies an invalid expression.
 
@@ -51,7 +55,7 @@ def is_valid_v1(s):
         If we encounter an opening bracket, we simply push it onto the stack. This means we will process it later, let
         us simply move onto the sub-expression ahead.
 
-        If we encounter a closing bracket, then we check the element on top of the stack. If the element at the top of
+        If we encounter a closing bracket, then we check the element at top of the stack. If the element at the top of
         the stack is an opening bracket of the same type, then we pop it off the stack and continue processing. Else,
         this implies an invalid expression.
 
