@@ -15,8 +15,10 @@ def is_valid_v1(s):
          We process the expression one bracket at a time starting from the left.
 
          Suppose we encounter an opening bracket i.e. (, it may or may not be an invalid expression because there can
-         be a matching ending bracket somewhere in the remaining part of the expression. Here, we simply increment the
-         counter keeping track of left parenthesis till now: left += 1
+         be a matching ending bracket somewhere in the remaining part of the expression. Therefore, starting from the
+         left, every time we see a left parenthesis, we store it. Each time we see a right parenthesis, we match it with
+         a stored left parenthesis. Since there are no brackets or braces, we can simply keep a count of the number of
+         unmatched left parentheses.: left += 1
          If we encounter a closing bracket, this has two meanings:
 
             - One, there was no matching opening bracket for this closing bracket and in that case we have an invalid
@@ -37,10 +39,13 @@ def is_valid_v1(s):
         opening [ available or not.
 
         Why not maintain a separate counter for the different types of parenthesis?
-        This doesn't work because the relative placement of the parenthesis also matters here. e.g.: [{]
-        If we simply keep counters here, then as soon as we encounter the closing square bracket ], we would know
-        there is an unmatched opening square bracket available as well. But, the closest unmatched opening bracket
-        available is a curly bracket { and not a square bracket [ and hence the counting approach breaks here.
+
+        For the general case, we do the same, except that we need to explicitly store the unmatched left characters,
+        i.e., left parenthesis, left brackets, and left braces. We cannot use three counters, because that will not tell
+        us the last unmatched one. The relative placement of the parenthesis also matters here. e.g.: [{]. If we simply
+        keep counters here, then as soon as we encounter the closing square bracket ], we would know there is an
+        unmatched opening square bracket available as well. But, the closest unmatched opening bracket available is a
+        curly bracket { and not a square bracket [ and hence the counting approach breaks here.
 
         An interesting property about a valid parenthesis expression is that a sub-expression of a valid expression
         should also be a valid expression. (Not every sub-expression)
