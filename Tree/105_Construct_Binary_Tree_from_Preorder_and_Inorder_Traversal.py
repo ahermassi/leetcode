@@ -62,7 +62,7 @@ def build_tree_v1(preorder, inorder):
 
     def build_tree(left, right):
         # These boundaries are only used to check if the subtree is empty
-        if not left > right:
+        if left > right:
             # There are no elements to construct the tree
             return None
         root = TreeNode(preorder.popleft())
