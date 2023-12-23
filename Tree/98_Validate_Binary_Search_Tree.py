@@ -50,6 +50,11 @@ def is_valid_bst_v2(root):
         the root of the current subtree with these two values. Then, recursively check the left and right subtrees of
         the current one and update limits accordingly.
 
+        This idea generalizes: if all nodes in a tree must have keys in the range [lower,upper] and the key at the root
+        is w (which itself must be between [lower, upper], otherwise the requirement is violated at the root itself),
+        then all keys in the left subtree must be in the range [lower, w], and all keys stored in the right subtree
+        must be in the range [w, upper]
+
     Time complexity: O(N), since we visit each node exactly once
     Space complexity: O(N), worst case to hold the function call stack if the tree is skewed
     """
