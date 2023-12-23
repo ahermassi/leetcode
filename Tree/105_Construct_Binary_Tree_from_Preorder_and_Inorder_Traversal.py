@@ -39,6 +39,11 @@ def build_tree_v1(preorder, inorder):
             - Inorder traversal follows Left -> Root -> Right, therefore if we know the position of root in the inorder
                list, we can recursively split the entire array into two subtrees.
 
+        A preorder traversal sequence consists of the root, followed by the preorder traversal sequence of the left
+        subtree, followed by the preorder traversal sequence of the right subtree. We know the number k of nodes in the
+        left subtree from the location of the root in the inorder traversal sequence. Therefore, the subsequence of k
+        nodes after the root in the preorder traversal sequence is the preorder traversal sequence for the left subtree.
+
         Now the idea should be clear enough. We will design a recursive function that will set the first element of
         preorder as the root, and then construct the entire tree. To find the left and right subtrees, it will look for
         the index of root in inorder list, so that everything on the left should be the left subtree, and everything on
