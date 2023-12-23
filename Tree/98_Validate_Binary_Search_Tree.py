@@ -12,11 +12,16 @@ class TreeNode(object):
 
 
 def is_valid_bst_v1(root):
-    """ Iterative in-order traversal.
+    """ Iterative inorder traversal.
 
-        Do we need to keep the whole in-order traversal list? Actually, no. The last added in-order element is enough
-        to ensure that at each step the tree is BST (or not). At each iteration, 'prev' is the node value that
-        should've been inserted into the in-order traversal list if 'prev' was a list.
+         We can use the fact that an inorder traversal visits keys in sorted order. Furthermore, if an inorder
+         traversal of a binary tree visits keys in sorted order, then that binary tree must be a BST. (This follows
+         directly from the definition of a BST and the definition of an inorder walk.)
+
+         Thus, we can check the BST property by performing an inorder traversal, recording the key stored at the last
+         visited node. Each time a new node is visited, its key is compared with the key of the previously visited node.
+         If at any step in the walk the key at the previously visited node is greater than the node currently being
+         visited, we have a violation of the BST property.
 
     Time complexity: O(N), in the worst case when the tree is BST or the 'bad' element is a rightmost leaf
     Space complexity: O(N), to keep the stack in the worst case of a skewed BST
