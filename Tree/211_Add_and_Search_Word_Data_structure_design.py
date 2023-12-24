@@ -74,15 +74,15 @@ class WordDictionaryV1(object):
             if index == n:
                 return node.end_of_word
             c = word[index]
-            if c == '.':
-                # Can we find the REST of the string in any of the children?
-                for child in node.children:
-                    if dfs(node.children[child], index + 1):
-                        return True
-                return False
-            if c not in node.children:
-                return False
-            return dfs(node.children[c], index + 1)  # Start of the prefix was found, so keep following that path
+            if c != '.':
+                if c not in node.children:
+                    return False
+                return dfs(node.children[c], index + 1)  # Start of the prefix was found, so keep following that path
+            # Can we find the REST of the string in any of the children?
+            for child in node.children.values():
+                if dfs(child, index + 1):
+                    return True
+            return False
 
         n = len(word)
         return dfs(self.root, 0)
