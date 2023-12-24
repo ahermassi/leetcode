@@ -7,9 +7,8 @@ operations. """
 from collections import defaultdict
 import unittest2 as unittest
 
+
 # Video explanation: https://www.youtube.com/watch?v=gqXU1UyA8pk
-
-
 def character_replacement_v1(s, k):
     """ Given a substring, we want to find out if it can be converted into a string with the same letters. Because
          we are allowed only k operations to do so, we would want to MINIMIZE the number of operations.
@@ -90,6 +89,18 @@ def character_replacement_v1(s, k):
         When the situation described earlier happens, notice that the most frequent char is removed from both the
         max_frequency count AND the window_size count. In other words, "the number of chars that need to be replaced"
         becomes (window_size - 1) - (max_frequency - 1). The two -1s cancel each other out.
+
+        This is our equation: size of window - frequency of the most frequent letter in the window <= k
+        The same equation can be rewritten as:
+                        size of window <= frequency of the most frequent letter in the window + k
+
+        If max_frequency increases, we then understand that the size can also increase as well, therefore we need to
+        update it.
+        If max_frequency decreases, it does not matter because we already recorded the result when the max_frequency
+        was maximum.
+        Put abstractly, an increase of a valid window size depends on max_frequency increasing because k is fixed.
+        A decrease in max_frequency value will only decrease the window size and that will not help us get a better
+        result.
 
         Example:
         s = C A A A B C B A B B A; k = 2
