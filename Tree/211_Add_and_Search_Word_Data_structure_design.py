@@ -110,17 +110,17 @@ class WordDictionaryV2(object):
                 # If any word is found there should be an end of word mark in the dictionary of current node
                 return '#' in node
             c = word[index]
-            if c == '.':
-                # Search for any sub-string starting with current character
-                # Why exclude '#' ? Since '#' is not a 'real' character and only a placeholder (and we know it won't
-                # have any children, since the word finished here), we don't want to traverse down this path.
-                for child in node:
+            if c != '.':
+                if c not in node:
+                    return False
+                return dfs(node[c], index + 1)
+            # Search for any substring starting with current character.
+            # Why exclude '#' ? Since '#' is not a 'real' character and only a placeholder (and we know it won't
+            # have any children, since the word finished here), we don't want to traverse down this path.
+            for child in node:
                     if child != '#' and dfs(node[child], index + 1):
                         return True
-                return False
-            if c not in node:
-                return False
-            return dfs(node[c], index + 1)
+            return False
 
         n = len(word)
         return dfs(self.root, 0)
