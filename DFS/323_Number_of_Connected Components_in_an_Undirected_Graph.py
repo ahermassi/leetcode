@@ -28,11 +28,10 @@ def count_components_v1(n, edges):
     """
 
     def dfs(vertex):
-        if vertex in visited:
-            return
         visited.add(vertex)
         for neighbor in graph[vertex]:
-            dfs(neighbor)
+            if neighbor not in visited:
+                dfs(neighbor)
 
     graph = defaultdict(list)
     for src, dest in edges:
