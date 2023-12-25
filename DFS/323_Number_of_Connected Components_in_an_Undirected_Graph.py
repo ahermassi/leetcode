@@ -57,13 +57,13 @@ def count_components_v2(n, edges):
         graph[src].append(dest)
         graph[dest].append(src)
     components, visited = 0, set()
-    for i in range(n):
-        if i not in visited:
-            queue = deque([i])
+    for vertex in range(n):
+        if vertex not in visited:
+            queue = deque([vertex])
             while queue:
-                vertex = queue.popleft()
-                visited.add(vertex)
-                for neighbor in graph[vertex]:
+                node = queue.popleft()
+                visited.add(node)
+                for neighbor in graph[node]:
                     if neighbor not in visited:
                         queue.append(neighbor)
             components += 1
