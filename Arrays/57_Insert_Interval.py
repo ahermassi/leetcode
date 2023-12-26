@@ -28,16 +28,17 @@ def insert_v1(intervals, new_interval):
     Space complexity: O(N)
     """
     n, res = len(intervals), []
+    start, end = new_interval
     i = 0
     # Add all the intervals that start before newInterval
-    while i < n and intervals[i][0] < new_interval[0]:
+    while i < n and intervals[i][0] < start:
         res.append(intervals[i])
         i += 1
     # Add newInterval. If there is no overlap, just add the interval. Otherwise, merge with the last interval.
-    if not res or new_interval[0] > res[-1][1]:
+    if not res or start > res[-1][1]:
         res.append(new_interval)
     else:
-        res[-1][1] = max(res[-1][1], new_interval[1])
+        res[-1][1] = max(res[-1][1], end)
     # Add remaining intervals and merge if needed
     while i < n:
         if intervals[i][0] > res[-1][1]:
