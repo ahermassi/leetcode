@@ -92,8 +92,8 @@ def min_meeting_rooms_v1(intervals):
 
 # Video explanation: https://youtu.be/FdzJmTCVyJU
 def min_meeting_rooms_v2(intervals):
-    """ The meeting timings given to us define a chronological order of events throughout the day. We are given the
-         start and end timings for the meetings which can help us define this ordering.
+    """ The meeting times given to us define a chronological order of events throughout the day. We are given the
+         start and end times for the meetings which can help us define this ordering.
 
          Arranging the meetings according to their start times helps us know the natural order of meetings throughout
          the day. However, simply knowing when a meeting starts doesn't tell us much about its duration.
@@ -119,11 +119,11 @@ def min_meeting_rooms_v2(intervals):
         We consider two pointers: 'start_pointer' and 'end_pointer'. The start pointer simply iterates over all the
         meetings and the end pointer helps us track if a meeting has ended and if we can reuse a room.
 
-        When considering a specific meeting pointed to by 'start_pointer', we check if this start timing is greater
-        than the meeting pointed to by 'end_pointer'. If this is the case, then that would mean some meeting has ended
-        by the time the meeting at 'start_pointer' had to start. So we can reuse one of the rooms. Otherwise, we have
-        to allocate a new room.
-        If a meeting has indeed ended i.e. if start_timings[start_pointer] >= end_timings[end_pointer], then we advance
+        When considering a specific meeting pointed to by 'start_pointer', we check if this start time is greater than
+        the end time of the meeting pointed to by 'end_pointer'. If this is the case, then that would mean some meeting
+        has ended by the time the meeting at 'start_pointer' had to start. So we can reuse one of the rooms. Otherwise,
+        we have to allocate a new room.
+        If a meeting has indeed ended i.e. if start_times[start_pointer] >= end_times[end_pointer], then we advance
         'end_pointer'.
 
         Repeat this process until 'start_pointer' processes all the meetings.
@@ -135,7 +135,7 @@ def min_meeting_rooms_v2(intervals):
         2) We only check the room with the earliest ending time for global vacancy. If there is no vacant room, we
             create one.
 
-        Since we iterate intervals by starting time, there is no better choice than the current interval as the
+        Since we iterate over the intervals by starting time, there is no better choice than the current interval as the
         remaining intervals would all request one more room if current one does. And we also need to track the ending
         time since we need to determine whether there exists a vacant room at a specific time. We only track the
         earliest ending time as we only check this room for vacancy. If this room is not vacant, there is no need to
@@ -145,7 +145,7 @@ def min_meeting_rooms_v2(intervals):
         previous meeting ended, which is why we check start with the first end. When the start is bigger than end, it
         means at this time one of the previous meeting ended, and we can take and reuse that room. Then, the next
         meeting needs to compare with the second end because the first end's room is already taken.
-        The reason why we sort end points is that we have to find the meeting room which will end earliest for reuse.
+        The reason we sort end points is that we have to find the meeting room which will end earliest for reuse.
         So as long as we have a meeting whose start time is earlier than the earliest ending meeting finish time, we
         add a new room.
 
@@ -154,12 +154,12 @@ def min_meeting_rooms_v2(intervals):
     for the end times
     """
     n = len(intervals)
-    start_timings = sorted([i[0] for i in intervals])
-    end_timings = sorted(i[1] for i in intervals)
+    start_times = sorted([i[0] for i in intervals])
+    end_times = sorted(i[1] for i in intervals)
     used_rooms = 0
     start_pointer = end_pointer = 0
     while start_pointer < n:  # Until all the meetings have been processed
-        if start_timings[start_pointer] < end_timings[end_pointer]:
+        if start_times[start_pointer] < end_times[end_pointer]:
             # If the earliest ending meeting hasn't ended by the time the meeting at 'start_pointer' starts
             used_rooms += 1  # Allocate a new room for the current meeting
         else:
