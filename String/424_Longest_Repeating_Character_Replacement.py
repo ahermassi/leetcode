@@ -76,8 +76,8 @@ def character_replacement_v1(s, k):
         max_frequency INCREASES past the max_frequency of the last seen valid window/substring.
         Since we only care about max_frequency increasing past the max_frequency of the last seen valid window, we
         don't need to care when a window is invalidated and the most frequent char was removed as it only decreases
-        max_frequency. Any update to max_frequency that increases it is accurate as counter[ s[right]] is always
-        updated.
+        max_frequency. Any update to max_frequency that increases its value is always captured as counter[ s[right]] is
+        always updated.
 
         Shifting our start pointer means we have reached the limit (k), and a next/future interval must have a greater
         max_frequency to replace our current longest.
@@ -107,11 +107,11 @@ def character_replacement_v1(s, k):
                     ^          ^
                     |           |
                 left=2    right=6
-        counter = {'A': 2, 'B': 2, 'C: 1}, HOWEVER  max_frequency = 3 from a previous valid window.
+        counter = {'A': 2, 'B': 2, 'C: 1}, HOWEVER max_frequency = 3 from a previous valid window.
         If we recalculate max_frequency in the current window, it will be 2 (of A or B), which actually makes the
         substring invalid, because we can't convert all 5 characters into A or B with at most k=2 replacements.
         But we've previously seen a valid window of size 5. We don't want to decrease the size of the window, and
-        max_frequency helps us achive that.
+        max_frequency helps us achieve that.
 
     Time complexity: O(N), we access each index of the string at most two times, when it is added to the sliding window
     and when it is removed from the sliding window.
