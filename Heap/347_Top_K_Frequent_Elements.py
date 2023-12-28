@@ -154,15 +154,15 @@ def top_k_frequent_v4(nums, k):
     # Similarly, kth most frequent element is (n - k + 1)th less frequent.
     # Since indexing is 0-based, kth most frequent is at index (n - k) in the frequency-sorted array.
     k = n - k
-    left, right = 0, len(unique_nums) - 1
+    left, right = 0, n - 1
     while True:
-        pivot_index = partition(left, right)
-        if pivot_index == k:
+        index = partition(left, right)
+        if index == k:
             return unique_nums[k:]
-        if pivot_index < k:
-            left = pivot_index + 1
+        if index < k:
+            left = index + 1
         else:
-            right = pivot_index - 1
+            right = index - 1
 
 
 class Test(unittest.TestCase):
