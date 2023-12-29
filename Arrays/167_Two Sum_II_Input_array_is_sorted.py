@@ -26,6 +26,7 @@ def two_sum_v2(numbers, target):
         target, we found the solution. If it is less than target, we increase the smaller index by one. If it is
         greater than target, we decrease the larger index by one. Move the indices and repeat the comparison until the
         solution is found.
+
     Time complexity: O(N), each of the N elements is visited at most once
     Space complexity: O(1)
     """
