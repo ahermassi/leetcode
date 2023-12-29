@@ -4,6 +4,7 @@ rules:
     Each column must contain the digits 1-9 without repetition.
     Each of the 9 3x3 sub-boxes of the grid must contain the digits 1-9 without repetition. """
 
+from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -72,34 +73,33 @@ def is_valid_sudoku_v1(board):
 
     return is_valid_rows() and is_valid_cols() and is_valid_squares()
 
-# Video explanation: https://www.youtube.com/watch?v=TjFXEUCMqI8
 
-
+# Video explanation: https://youtu.be/TjFXEUCMqI8
 def is_valid_sudoku_v2(board):
-    """ We can create a hash set for each row. For board[i][j], we check if the number already exists in the hash set
-        corresponding to ith row. If it does, this row contains a duplicate value, therefore the sudoku is not valid.
-        Otherwise, we will proceed to check the next position until we finish scanning the whole sudoku board.
+    """ One-pass solution.
+
+        We can create a hash set for each row. For board[i][j], we check if the cell value already exists in the hash
+        set corresponding to ith row. If it does, this row contains a duplicate value, therefore the sudoku is not
+        valid. Otherwise, we proceed to check the next position until we finish scanning the whole sudoku board.
         The same logic can be applied to each column.
 
-        The tricky part is when we check the validity of each box. The question is, given row index i and column index j,
-        how to assign the position to one of the 9 boxes correctly? The first observation is that, in each column,
-        rows 0, 1, and 2 belong to the same box, as do rows 3, 4, and 5, and rows 6, 7, and 8.
+        The tricky part is when we check the validity of each box. The question is, given row index i and column
+        index j, how to assign the position to one of the 9 boxes correctly?
 
-        What do they have in common? Every group of three belonging to the same box has the same outcome when we perform
+        The first observation is that, in each column, rows 0, 1, and 2 belong to the same box, as do rows 3, 4, and 5,
+        and rows 6, 7, and 8.
+
+        What do they have in common? Every group of three belonging to the same box has the same value when we perform
         integer division by 3. Therefore, we can use i/3 to ensure that the rows are grouped as expected and use j/3 to
         ensure that the columns are grouped correctly. Then, (i/3, j/3) can uniquely mark each box, and we can directly
         use the tuple as the hash key if we want to create a hash set for each box.
 
-        Alternatively, we can use the numbers 0 through 8 to represent these boxes, where (i/3) * 3 + (j/3) is used
-        to calculate a number in the range from 0 to 8. i.e. the square located at (i, j) belongs to the box
-        (i/3) * 3 + (j/3).
-
     Time complexity: O(1)
     Space complexity: O(1)
     """
-    rows = [set() for _ in range(9)]
-    cols = [set() for _ in range(9)]
-    boxes = [set() for _ in range(9)]
+    rows = defaultdict(set)
+    cols = defaultdict(set)
+    squares = defaultdict(set)
     for i in range(9):
         for j in range(9):
             cell = board[i][j]
@@ -107,12 +107,12 @@ def is_valid_sudoku_v2(board):
                 continue
             if cell in rows[i] or cell in cols[j]:
                 return False
+            square_key = (i // 3, j // 3)
+            if cell in squares[square_key]:
+                return False
             rows[i].add(cell)
             cols[j].add(cell)
-            box_index = (i // 3) * 3 + j // 3
-            if cell in boxes[box_index]:
-                return False
-            boxes[box_index].add(cell)
+            squares[square_key].add(cell)
     return True
 
 
