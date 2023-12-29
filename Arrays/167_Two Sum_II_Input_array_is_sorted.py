@@ -43,18 +43,19 @@ def two_sum_v2(numbers, target):
 
 def two_sum_v3(numbers, target):
     """ For each element x in the array, try to find its complement (target - x) using binary search.
+
     Time complexity: O(N logN), array pass + binary search
     Space complexity: O(1)
     """
     n = len(numbers)
-    for i in range(n):
+    for i in range(n - 1):
+        complement = target - numbers[i]
         left, right = i + 1, n - 1
-        temp = target - numbers[i]
         while left <= right:
             mid = (left + right) // 2
-            if numbers[mid] == temp:
+            if numbers[mid] == complement:
                 return [i + 1, mid + 1]
-            if numbers[mid] < temp:
+            if numbers[mid] < complement:
                 left = mid + 1
             else:
                 right = mid - 1
