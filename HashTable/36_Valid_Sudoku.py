@@ -9,15 +9,16 @@ import unittest2 as unittest
 
 def is_valid_sudoku_v1(board):
     """ Iterate three times over the board to ensure that:
-            1- There is no rows with duplicates
-            2- There is no columns with duplicates
-            3- There is no sub-boxes with duplicates
+
+            1- There is no row with duplicates
+            2- There is no column with duplicates
+            3- There is no sub-box with duplicates
 
         In order to check 9 rows, 9 columns, and 9 boxes, we need to distinguish each of these entities. It is
-         comparatively intuitive to check for duplicates in each row and column, given the row index i and column
-         index j.
+        comparatively intuitive to check for duplicates in each row and column, given the row index i and column
+        index j.
 
-    Time complexity: O(1), as the number of iterations is known in advance (9 X 9 board)
+    Time complexity: O(1), as the number of iterations is fixed (9 X 9 board)
     Space complexity: O(1)
     """
 
@@ -28,10 +29,8 @@ def is_valid_sudoku_v1(board):
         return True
 
     def is_valid_cols():
-        for col in zip(*board):
-            # >>> a = [[1,2,3],[4,5,6],[7,8,9]]
-            # >>> list(zip(*a))
-            # [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
+        for j in range(9):
+            col = [board[i][j] for i in range(9)]
             if not is_valid_unit(col):
                 return False
         return True
@@ -39,21 +38,34 @@ def is_valid_sudoku_v1(board):
     def is_valid_unit(unit):
         values = set()
         for cell in unit:
-            if cell != '.' and cell in values:
+            if cell == '.':
+                continue
+            if cell in values:
                 return False
             values.add(cell)
         return True
 
     def is_valid_squares():
-        # Row 0: i = 0; j takes values 0,3,6 to create: box0(x=0..2, y=0..2), box1(x=0..2, y=3..5), box2(x=0..2, y=6..8)
+        # square1(x=0..2, y=0..2)
+        # square2(x=0..2, y=3..5)
+        # square3(x=0..2, y=6..8)
         # -> x = 0..2 = i..i+3, y = j..j+3
-        # Row 1: i = 3; j takes values 0,3,6 to create: box0(x=3..5, y=0..2), box1(x=3..5, y=3..5), box2(x=3..5, y=6..8)
-        # -> x = 3..5 = i..i+3, y = j..j+3
-        # Row 2: i = 6; j takes values 0,3,6 to create: box0(x=6..8, y=0..2), box1(x=6..8, y=3..5), box2(x=6..8, y=6..8)
+        #
+        # square4(x=3..5, y=0..2)
+        # square5(x=3..5, y=3..5)
+        # square6(x=3..5, y=6..8)
+        # -> x =3..5 = i..i+3, y = j..j+3
+        #
+        # square7(x=6..8, y=0..2)
+        # square8(x=6..8, y=3..5)
+        # square9(x=6..8, y=6..8)
         # -> x = 6..8 = i..i+3, y = j..j+3
         for i in (0, 3, 6):
             for j in (0, 3, 6):
-                square = [board[x][y] for x in range(i, i + 3) for y in range(j, j + 3)]
+                square = []
+                for x in range(i, i + 3):
+                    for y in range(j, j + 3):
+                        square.append(board[x][y])
                 if not is_valid_unit(square):
                     return False
         return True
