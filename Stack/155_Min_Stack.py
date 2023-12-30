@@ -9,15 +9,23 @@ import unittest2 as unittest
 
 
 class MinStackV1(object):
-    """ An important invariant of a Stack is that when a new number, which we'll call x, is placed on a Stack, the
-        numbers below it will not change for as long as number x remains on the Stack. So, whenever number x is the top
-        of the Stack, the minimum will always be the same, as it's simply the minimum out of x and all the numbers
-        below it.
+    """ We're told that all the MinStack operations must run in constant time, i.e. O(1) time. For this reason, we can
+         immediately rule out the use of a Binary Search Tree or Heap. While these data structures are often great for
+         keeping track of a minimum, their core operations (find, add, and remove) are O(logN), which isn't good enough
+         here. We will need to explore better ways.
 
-        Therefore, in addition to putting a number on an underlying Stack inside our MinStack, we could also
-        put its corresponding minimum value alongside it.
+        An important invariant of a stack is that when a new number, which we'll call x, is placed on a stack, the
+        numbers below it will not change for as long as number x remains on the stack. Numbers could come and go above
+        x for the duration of x's presence, but never below.
 
-        Therefore, when we put a new number on the underlying Stack, we need to decide whether the minimum at that
+        So, whenever number x is the top of the stack, the minimum will always be the same, as it's simply the minimum
+        out of x and all the numbers below it.
+
+        Therefore, in addition to putting a number on an underlying stack inside our MinStack, we could also put its
+        corresponding minimum value alongside it. Then whenever that particular number is at the top of the underlying
+        stack, the getMin() operation of MinStack is as simple as retrieving its corresponding minimum value.
+
+        Therefore, when we put a new number on the underlying stack, we need to decide whether the minimum at that
         point is the new number itself, or whether it's the minimum before. It makes sense that it would always be the
         smallest of these two values.
 
@@ -35,7 +43,8 @@ class MinStackV1(object):
         if not self.stack:
             self.stack.append((x, x))
         else:
-            self.stack.append((x, min(x, self.stack[-1][1])))  # self.stack[-1][1] will always hold the min value
+            # self.stack[-1][1] will always hold the min value
+            self.stack.append((x, min(x, self.stack[-1][1])))
 
     def pop(self):
         self.stack.pop()
