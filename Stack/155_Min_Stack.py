@@ -58,30 +58,33 @@ class MinStackV1(object):
 
 class MinStackV2:
     """ There's another, somewhat different approach to implementing a MinStack. Approach 1 required storing two values
-        in each slot of the underlying Stack. Sometimes though, the minimum values are very repetitive. Do we actually
-        need to store the same minimum value over and over again?
+         in each slot of the underlying stack. Sometimes though, the minimum values are very repetitive. Do we actually
+         need to store the same minimum value over and over again?
 
-        We could instead have two Stacks inside our MinStack. The main Stack should keep track of the order numbers
-        arrived (a standard Stack), and the second Stack should keep track of the current minimum.
+         We could instead have two stacks inside our MinStack. The main stack should keep track of the order numbers
+         arrived (a standard stack), and the second stack should keep track of the current minimum.
 
         The push method for this implementation of MinStack is straightforward. Items should always be pushed onto the
-        main Stack, but they should only be pushed onto the min_stack if they are smaller than or equal to the
+        main stack, but they should only be pushed onto the min stack if they are smaller than or equal to the
         current top of it.
 
         Well, that's mostly correct. There's one potential pitfall here.
 
-        For pop() method, the value we actually need to pop is always on the top of the main underlying Stack. However,
-        if we simply popped it from there, the min_stack could become incorrect if its top value had been removed from
-        the main Stack during this pop operation.
+        For pop() method, the value we actually need to pop is always on the top of the main stack. However, if we
+        simply popped it from there, the min stack could become incorrect if its top value had been removed from the
+        main stack during this pop operation.
 
-        A logical solution would be to do the following additional check and modification to the min_stack when pop()
+        A logical solution would be to do the following additional check and modification to the min stack when pop()
         method is called:
 
-        If top of main_stack == top of min_stack:
-            min_stack.pop()
+                    If top of main_stack == top of min stack:
+                        min_stack.pop()
 
-        Instead of only pushing numbers to min_stack if they are less than the current minimum, we should push them
-        if they are less than or equal to it. This way, the new minimum would now be the top of the min_stack.
+        This way, the new minimum would now be the top of the min stack.
+
+        Note that instead of only pushing numbers to min stack if they are less than the current minimum, we have to
+        push them if they are less than or equal to it. This is because the current minimum value could be pushed
+        (and popped) multiple times to/from the main stack.
 
     Time complexity: O(1)
     Space complexity: O(N)
