@@ -35,31 +35,31 @@ def copy_random_list_v1(head):
         cur = cur.next
     return clones[head]
 
+
 # Video explanation: https://www.youtube.com/watch?v=OvpKeraoxW0
-
-
 def copy_random_list_v2(head):
-    """ When we are iterating over the list, we can create new nodes via the random pointer or the next pointer,
-        whichever points to a node that doesn't exist in our old --> new dictionary.
+    """ One-pass approach.
 
-        1- Traverse the linked list starting at head of the linked list.
-        2- Random Pointer:
-            - If the random pointer of the current node i points to node j, and a clone of j already exists in
-              the 'clones' dictionary, we will simply use the cloned node reference from the 'clones' dictionary.
-            - If the random pointer of the current node i points to node j which has not been created yet, we create a
-              new node corresponding to j and add it to the 'clones' dictionary.
-        3- Same goes for next pointer
-        4- We repeat steps 2 and 3 until we reach the end of the linked list.
+         When we are iterating over the list, we can create new nodes via the random pointer or the next pointer,
+         whichever points to a node that doesn't exist in our old --> new dictionary.
+
+            1- Traverse the linked list starting at the head
+            2- Random Pointer:
+                - If the random pointer of the current node i points to node j, and a clone of j already exists in
+                   the 'clones' dictionary, we will simply use the cloned node reference from the 'clones' dictionary.
+                - If the random pointer of the current node i points to node j which has not been cloned yet, we
+                   create j's clone and add it to the 'clones' dictionary.
+            3- Same goes for next pointer
+            4- We repeat steps 2 and 3 until we reach the end of the linked list.
 
     Time complexity: O(N), we make one pass over the original linked list
     Space complexity: O(N), we have a dictionary containing mapping from old list nodes to new list nodes
     """
-
-    clones = {None: None}  # To avoid constantly checking if next/random is null
+    if not head:
+        return None
+    clones = {None: None, head: Node(head.val)}  # None: None to avoid checking if next/random is null
     cur = head
     while cur:
-        if cur not in clones:
-            clones[cur] = Node(cur.val)
         if cur.next not in clones:
             clones[cur.next] = Node(cur.next.val)
         if cur.random not in clones:
