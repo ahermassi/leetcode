@@ -6,25 +6,22 @@ import unittest2 as unittest
 
 
 # Video explanation: https://www.youtube.com/watch?v=FOa55B9Ikfg
-
 def search_matrix_v1(matrix, target):
-    """ We notice that the input matrix n x m could be considered as a sorted array of length n x m.
+    """ We notice that the input matrix N x M could be considered as a sorted array of length N x M.
 
         Sorted array is a perfect candidate for the binary search because the element index in this virtual array could
         be easily transformed into the row and column in the original matrix:
 
-            row = idx // m
-            col = idx % m
+                row = idx // m
+                col = idx % m
 
     Another way to took at it is: Let's say we have a matrix M with 4 rows and 3 columns. When we want to access
     M[2][1], the way the memory address is calculated is 2*3+1 = 7. So, we are just reversing the calculation, where row
     number is given by 7/3 = 2, and column is the offset in that row so for 7th element it is 7%3 = 1.
 
-    Time complexity: O(log(mn)) = O(log(m) + log(n))
+    Time complexity: O(log(N*M)) = O(logN + logM)
     Space complexity: O(1)
     """
-    if not matrix:
-        return False
     n, m = len(matrix), len(matrix[0])
     left, right = 0, n * m - 1
     while left <= right:
