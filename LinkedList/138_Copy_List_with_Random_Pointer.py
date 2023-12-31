@@ -17,12 +17,13 @@ def copy_random_list_v1(head):
 
         1st pass: We map the original nodes to their clones.
         2nd pass: Give all clones their next and random pointer assignments. Our hash map lets us reach an original
-        node's clone in O(1) time.
+        node's clone in constant time.
 
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    clones, cur = {None: None}, head
+    clones = {None: None}
+    cur = head
     while cur:
         clones[cur] = Node(cur.val)
         cur = cur.next
