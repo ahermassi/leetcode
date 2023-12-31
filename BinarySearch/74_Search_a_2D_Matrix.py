@@ -35,14 +35,13 @@ def search_matrix_v1(matrix, target):
             right = mid - 1
     return False
 
+
 # Video explanation: https://www.youtube.com/watch?v=Ber2pi2C0j0
-
-
 def search_matrix_v2(matrix, target):
     """ We can also perform two binary searches. The first binary search helps us locate the row that could contain
         the target value. The second is a regular binary search on that row to check if the target value exists.
 
-    Time complexity: O(log(n) + log(m))
+    Time complexity: O(log(N) + log(M))
     Space complexity: O(1)
     """
     n, m = len(matrix), len(matrix[0])
@@ -57,7 +56,7 @@ def search_matrix_v2(matrix, target):
             break
     if top_row > bottom_row:
         return False
-    search_row = (top_row + bottom_row) // 2
+    search_row = (top_row + bottom_row) // 2 # search_row is the last value of 'mid_row' before exiting the loop
     left, right = 0, m - 1
     while left <= right:
         mid = (left + right) // 2
