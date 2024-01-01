@@ -12,9 +12,17 @@ class ListNode(object):
         self.next = None
 
 
-def add_two_numbers_v1(l1, l2):
-    """ Keep track of the carry using a variable and simulate digits-by-digits sum starting from the head of list,
-        which contains the least-significant digit.
+# Video explanation: https://youtu.be/wgFPrzTjm7s
+def add_two_numbers(l1, l2):
+    """ A singly linked list whose nodes contain digits can be viewed as an integer, with the least significant digit
+         coming first. Such a representation can be used to represent unbounded integers.
+
+         Note that we cannot simply convert the lists to integers, since the integer word length is fixed by the machine
+         architecture, and the lists can be arbitrarily long. Instead, we mimic the grade-school algorithm, i.e., we
+         compute the sum of the digits in corresponding nodes in the two lists.
+
+        A key nuance of the computation is handling the carry-out. Keep track of the carry using a variable and simulate
+        digits-by-digits sum starting from the head of list, which contains the least-significant digit.
 
         Just like how we would sum two numbers on a piece of paper, we begin by summing the least-significant digits,
         which is the head of l1l1 and l2l2. Since each digit is in the range of 0…9, summing two digits may "overflow".
@@ -24,25 +32,7 @@ def add_two_numbers_v1(l1, l2):
         Note that we use a dummy head to simplify the code. Without a dummy head, we would have to write extra
         conditional statements to initialize the head's value.
 
-    Time complexity: O(max(N, M)), where N and M are the length of l1 and l2 respectively
-    Space complexity: O(1)
-    """
-    dummy = tail = ListNode(0)
-    carry = 0
-    while l1 or l2:
-        s = (l1.val if l1 else 0) + (l2.val if l2 else 0) + carry
-        tail.next = ListNode(s % 10)
-        tail, carry = tail.next, s // 10
-        l1 = l1.next if l1 else None
-        l2 = l2.next if l2 else None
-    if carry:
-        tail.next = ListNode(carry)
-    return dummy.next
-
-
-def add_two_numbers_v2(l1, l2):
-    """ A more fancy way of writing the solution. We can get rid of the check at the end of the while loop by making it
-        part of the loop.
+        The algorithm continues processing input until both lists are exhausted and there is no remaining carry.
 
     Time complexity: O(max(N, M)), where N and M are the length of l1 and l2 respectively
     Space complexity: O(1)
@@ -50,11 +40,13 @@ def add_two_numbers_v2(l1, l2):
     dummy = tail = ListNode(0)
     carry = 0
     while l1 or l2 or carry:
-        s = (l1.val if l1 else 0) + (l2.val if l2 else 0) + carry
+        val1, val2 = l1.val if l1 else 0, l2.val if l2 else 0
+        s = val1 + val2 + carry
         tail.next = ListNode(s % 10)
-        tail, carry = tail.next, s // 10
+        carry = s // 10
         l1 = l1.next if l1 else None
         l2 = l2.next if l2 else None
+        tail = tail.next
     return dummy.next
 
 
@@ -67,7 +59,7 @@ class Test(unittest.TestCase):
     l2.next.next = ListNode(4)
 
     def test_add_two_numbers(self):
-        l = add_two_numbers_v2(self.l1, self.l2)
+        l = add_two_numbers(self.l1, self.l2)
         self.assertEqual(7, l.val)
         self.assertEqual(0, l.next.val)
         self.assertEqual(8, l.next.next.val)
