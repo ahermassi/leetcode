@@ -91,25 +91,24 @@ def right_side_view_v3(root):
 
 def right_side_view_v4(root):
     """ Do a reverse pre-order traversal where the right child is always visited after the root is processed. The idea
-        is that this order guarantees that the FIRST node to be seen at each level is the one that is visible from the
-        right side view. We use the level as index of the result list.
+         is that this order guarantees that the FIRST node to be seen at each level is the one that is visible from the
+         right side view. We use the level as index of the result list.
 
-        We will push one element at each level. So, the size of the res array will actually be equal to the number of
-        levels we have already stored the result. If the level of some element is equal to the size of result list,
-        that means this will be a new level for which we have not pushed anything in the res array. So, we will push
-        this element in the result list.
+         We push one element at each level. So, the size of the res array will actually be equal to the number of levels
+         we have already stored in the result list. If the level of some element is equal to the size of result list,
+         that means this will be a new level for which we have not pushed anything in the output array.
 
     Time complexity: O(N)
-    Space complexity: O(N) worst case, O(logN) average case
+    Space complexity: O(N) worst case, O(logN) average case, to keep the recursion stack
     """
     def dfs(root, depth):
-        if not root:
-            return
-        if depth == len(res):  # When we meet this depth for the first time, let's add the first node as the
-            # rightmost node
+        if depth == len(res):
+            # When we meet this depth for the first time, we add the first node as the rightmost node
             res.append(root.val)
-        dfs(root.right, depth + 1)
-        dfs(root.left, depth + 1)
+        if root.right:
+            dfs(root.right, depth + 1)
+        if root.left:
+            dfs(root.left, depth + 1)
 
     res = []
     dfs(root, 0)
