@@ -5,9 +5,9 @@ A mapping of digit to letters (just like on the telephone buttons) is given. Not
 from collections import deque
 import unittest2 as unittest
 
+
 # Video explanation: https://www.youtube.com/watch?v=a-sMgZ7HGW0
-
-
+# Video explanation: https://www.youtube.com/watch?v=0snEunUacZY
 def letter_combinations_v1(digits):
     """ Whenever we have a problem where we need to generate all combinations/permutations of some group of
          letters/numbers, the first thought we should have is backtracking.
@@ -29,7 +29,7 @@ def letter_combinations_v1(digits):
          all the first letters too - it's the 1-digit case which we already solved to be ["a", "b", "c"].
 
         As we can see, solving the 1-digit case is trivial, and solving the 2-digit case is just solving the 1-digit case
-        twice. The same reasoning can be extended to n digits. For the 3-digit case, solve the 2-digit case to generate
+        twice. The same reasoning can be extended to N digits. For the 3-digit case, solve the 2-digit case to generate
         all combinations of the first 2 letters, and then solve the 1-digit case for the final digit.
 
         As mentioned previously, we need to lock-in letters when we generate new letters. The easiest way to save state
@@ -42,9 +42,11 @@ def letter_combinations_v1(digits):
                 - Append the current letter to the current combination: path = path + letter
                 - Proceed to check next digits : dfs(index + 1, path + letter)
 
-    Time complexity: O(3^N + 4^M), where N is the number of digits in the input that map to 3 letters (e.g. 2, 3, 4,
-    5, 6, 8) and M is the number of digits in the input that map to 4 letters (e.g. 7, 9), and N+M is the total number
-    of digits in the input. So overall, O(4^N) worst case where N is the length of digits.
+    Time complexity: O((3^N + 4^M) * (N+M)) ~= O(4^T * T), where N is the number of digits in the input that map to 3
+    letters (e.g. 2, 3, 4, 5, 6, 8), M is the number of digits in the input that map to 4 letters (e.g. 7, 9), and T=N+M
+    is the total number of digits in the input. The worst-case is where the input consists of only 7s and 9s. In that
+    case, we have to explore 4 additional paths for every extra digit. Each base case entails making a copy of a string
+    and adding it to the result. Since each such string has length T, each base case takes time O(T).
     Space complexity: O(N), occupied by the recursion call stack. It will only go as deep as the number of digits in the
     input since whenever we reach that depth, we backtrack. As the hash map does not grow as the inputs grows, it
     occupies O(1) space.
@@ -52,17 +54,17 @@ def letter_combinations_v1(digits):
 
     def dfs(index, path):
         if index == n:
-            res.append(path)
+            res.append(''.join(path))
             return
         # Get the letters that the current digit maps to, and loop through them
         for c in mapping[digits[index]]:
-            dfs(index + 1, path + c)
+            dfs(index + 1, path + [c])
 
     if not digits:
         return None
     mapping = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
     n, res = len(digits), []
-    dfs(0, '')
+    dfs(0, [])
     return res
 
 
