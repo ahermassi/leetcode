@@ -101,9 +101,9 @@ def letter_combinations_v2(digits):
 
 
 def letter_combinations_v3(digits):
-    """ Iterative, BFS fashion using an actual queue.
+    """ BFS using an actual queue.
 
-        For each digit added, remove and copy every element in the queue and add the possible letter to that partial
+        For each digit added, remove and copy every element in the queue and add the possible letter to the partial
         combination, then add the updated elements back into queue. Repeat this until all the digits are processed.
 
     Time complexity: O(3^N + 4^M)
