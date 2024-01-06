@@ -1,17 +1,44 @@
 """ Given a collection of distinct integers, return all possible permutations. """
 
+
 # Video explanation: https://www.youtube.com/watch?v=GCm7m5671Ps
-
-
 def permute_v1(nums):
     """ Backtracking is an algorithm for finding all solutions by exploring all potential candidates. If the solution
          candidate turns to be not a solution (or at least not the last one), backtracking algorithm discards it by
-         making some changes on the previous step, i.e. backtracks and then try again.
+         making some changes on the previous step, i.e. backtrack and then try again.
 
-        Here we use a backtracking function which takes the index of the first integer to consider as an argument.
+         In backtracking, we generate all solutions one element at a time. This problem is asking us to generate all
+         possible permutations, so we will generate permutations one element at a time.
 
-            - If the current integer to consider has an index n, that means that the current permutation is done.
-            - Otherwise, iterate over the integers from current index to index n - 1.
+         To generate a permutation one element at a time, we will use an array 'path' that represents the current
+         permutation we are building. To start, we add the first element in nums. We have path = [nums[0]]. We are
+         LOCKING in this first value, and we will now find all permutations that start with nums[0].
+
+        To find all permutations that start with nums[0], we start by adding the next element, which is nums[1]. We now
+        have path = [nums[0], nums[1]]. We are LOCKING in this second element, and we will now find all permutations
+         that start with [nums[0], nums[1]].
+
+        This continues until we use all elements, i.e. path.length == nums.length. Let's say that we have finished
+        finding all permutations that start with [nums[0], nums[1]]. Now what? We backtrack by removing nums[1], and we
+        have path = [nums[0]] again. Now, we add the second element that comes after nums[0], which is nums[2]. We have
+        path = [nums[0], nums[2]], and now we need to find all permutations that start with [nums[0], nums[2]].
+
+        Once we find all the permutations that start with [nums[0]], we backtrack by removing nums[0] from path and
+        adding the next element. We have path = [nums[1]], and now we need to find all permutations that start with
+        nums[1].
+
+        This process is recursive in nature. Each time we add an element, we solve a new version of the problem (find
+        all permutations that start with 'path'). The initial version of the problem is to find all permutations that
+        start with [], which represents all possible permutations.
+
+        To summarize: try all numbers in the first position. For each number in the first position, try all other
+        numbers in the second position. For each pair of numbers in the first and second positions, try all other
+        numbers in the third position, and so on.
+
+        We use a backtracking function which takes as argument the index of the first integer to consider.
+
+            - If the current integer has an index n, that means that the current permutation is finished.
+            - Otherwise, iterate over the integers from the current index to index (n - 1).
                 - Place ith integer first in the permutation, i.e. swap(nums[index], nums[i]).
                 - Proceed to create all permutations which starts from ith integer : backtrack(index + 1).
                 - Now backtrack, i.e. swap(nums[index], nums[i]) back.
