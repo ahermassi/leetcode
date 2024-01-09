@@ -34,41 +34,49 @@ def jump_v1(nums):
 
 
 # Video explanation: https://www.youtube.com/watch?v=dJ7sWiOoK7g
-
-
 def jump_v2(nums):
     """  Imagine that we are at index i in the array. The element in the current position defines the maximum distance
-         that we can jump. Therefore, our next step will fall somewhere in the range [start, end], where start is the
-         place right next to us and end is (i + nums[i]). Then the question is, where to jump?
+          that we can jump. Therefore, our next step will fall somewhere in the range [start, end], where start is the
+          next index (i + 1) and end is (i + nums[i]). Then the question is, where to jump?
 
-         If we greedily jump as far as we can, we may end up in a place with small jump power.
-         If we choose to only jump 1, we may have a strong jump power for the next jump.
+          If we greedily jump as far as we can, we may end up in a place with small jump power.
+          If we choose to only jump 1, we may have a strong jump power for the next jump.
 
-         Let's think about it in the following way. Our next move will fall somewhere between [start, end], and to find
-         the minimum number of jumps to reach the end of the array, we must determine which place will take us the
-         farthest in the next jump.
+          Let's think about it in the following way. Our next move will fall somewhere between [start, end], and to find
+          the minimum number of jumps to reach the end of the array, we must determine which place will take us the
+          farthest in the next jump.
 
-         As you may notice, we are using a greedy approach: Always jump to the place that will take us the farthest.
+         As we can notice, we are using a greedy approach: always jump to the index that will take us the farthest.
 
-         The idea is to maintain two pointers 'start' and 'end', initially set to 0. So points between 0 and nums[0] are
-         the ones we can reach by using just 1 jump.
+         The idea is to maintain two pointers 'start' and 'end', initially set to 0, such as indices between 0 and
+         nums[0] are the ones we can reach by making only 1 jump from the first index.
 
-         Next, we want to find points we can reach using 2 jumps, so our new 'start' will be set equal to (end + 1),
-         and our new 'end' will be set equal to the farthest point we can reach by two jumps. which is:
+         Next, we want to find the indices we can reach making 2 jumps, so new 'start' will be set to (end + 1) and new
+         'end' will be set equal to the farthest index we can reach by making two jumps, which is:
 
                     end = max(i + nums[i] for i in range(start, end + 1)
 
-        This problem has a nice BFS structure.
+        Why do we set start = end + 1?
+        Suppose the starting indices of jump 0 are in the range [0, 2]. When looking for the starting indices of the
+        next jump, do we still consider the range [0, 2]? The answer is NO! We want to reach the ending position by
+        using the least number of jumps possible, so there is no reason in reaching an index using more jumps.
+        Therefore, we shall take a greedy approach that tries to reach each index using the least number of jumps and
+         ignore updates that are destined to end in more jumps.
 
-        Let's illustrate it using the example nums = [2, 3, 1, 1, 4] in the problem statement.
+         Back to the example, even if we can move to [0, 2] in jump 1, we would not consider doing so since we already
+         covered that range with jump 0. If, for instance, nums[1] = 3, the valid range of reachable indices for jump 1
+         is [3, 4] instead of [0, 4].
 
-        We are initially at position 0. Then we can move at most nums[0] steps from it. So, after one move, we may reach
-        nums[1] = 3 or nums[2] = 1. So these nodes are reachable in 1 move. From these nodes, we can further move to
+        This problem has a nice BFS structure. Let's illustrate it using the example nums = [2, 3, 1, 1, 4] in the
+        problem statement.
+
+        We are initially at position 0. Then we can move at most nums[0] steps from there. So, after one move, we may
+        reach nums[1] = 3 or nums[2] = 1. These nodes are reachable in 1 move. From there, we can further move to
         nums[3] = 1 and nums[4] = 4. Now we can see that the target nums[4] = 4 is reachable in 2 moves.
 
         Putting these into code, we keep two pointers 'start' and 'end' that record the current range of the starting
-        nodes. Each time after we make a move, update 'start' to be (end + 1) and 'end' to be the farthest index that
-        can be reached in 1 move from the current [start, end].
+        nodes. Each time after we make a jump, update 'start' to (end + 1) and 'end' to be the farthest index that
+        can be reached in 1 jump from the current [start, end].
 
     Time complexity: O(N), we visit each element in the array only once
     Space complexity: O(1)
@@ -76,10 +84,13 @@ def jump_v2(nums):
     n, jumps = len(nums), 0
     start = end = 0
     while end < n - 1:
-        farthest_reach = 0
+        farthest_reachable_index = 0
         for i in range(start, end + 1):
-            farthest_reach = max(farthest_reach, i + nums[i])
-        start, end = end + 1, farthest_reach
+            farthest_reachable_index = max(farthest_reachable_index, i + nums[i])
+        # Once we have finished iterating over the range of the current jump (we reach 'end'), the next step
+        # is to continue iterating over the reachable indices that are beyond farthest_reachable_index, which are
+        # represented by the range [end + 1, farthest_reachable_index]
+        start, end = end + 1, farthest_reachable_index
         jumps += 1
     return jumps
 
