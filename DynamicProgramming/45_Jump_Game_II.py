@@ -12,8 +12,8 @@ def jump_v1(nums):
 
          Let dp[i] be the minimum number of jumps required to reach the last index if we're positioned at index i.
 
-         We start from the last index. We need 0 jumps from nums[n-1] to reach the end. We store this as dp[n - 1] = 0
-         and then iteratively solve this for each previous index till the 0th index.
+         We start from the last index. We need 0 jumps from nums[n-1] to reach the end. We store this as dp[n-1] = 0
+         and then iteratively solve for each previous index till the 0th index.
 
          For each index, we explore all the possible jump sizes available to us.
 
@@ -24,9 +24,12 @@ def jump_v1(nums):
     dp = [float('inf')] * n
     dp[n - 1] = 0
     for i in reversed(range(n - 1)):
-        max_index_to_jump = min(i + nums[i], n - 1)  # The maximum index we can jump to starting at index i
-        for j in range(i + 1, max_index_to_jump + 1):
-            dp[i] = min(dp[i], dp[j] + 1)  # Jump to j and take it from there. Add +1 to account for current jump to j.
+        farthest_reachable_index = min(i + nums[i], n - 1)  # The maximum index we can jump to starting at index i
+        min_jumps_from_next_indexes = float('inf')
+        for j in range(i + 1, farthest_reachable_index + 1):
+            # Jump to j and take it from there
+            min_jumps_from_next_indexes = min(min_jumps_from_next_indexes, dp[j])
+        dp[i] = 1 + min_jumps_from_next_indexes
     return dp[0]
 
 
