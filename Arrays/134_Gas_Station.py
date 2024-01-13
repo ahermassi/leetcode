@@ -129,12 +129,12 @@ def can_complete_circuit_v2(gas, cost):
     if sum(gas) < sum(cost):
         return -1
     n = len(gas)
-    current_tank = start = 0
+    tank = start = 0
     for i in range(n):
-        current_tank += gas[i] - cost[i]
-        if current_tank < 0:
+        tank += gas[i] - cost[i]
+        if tank < 0:
             start = i + 1
-            current_tank = 0
+            tank = 0
     return start
 
 
