@@ -6,9 +6,8 @@ return -1. """
 
 import unittest2 as unittest
 
+
 # Video explanation: https://www.youtube.com/watch?v=lJwbPZGo05A
-
-
 def can_complete_circuit_v1(gas, cost):
     """ The first idea is to check every single station :
 
@@ -32,43 +31,41 @@ def can_complete_circuit_v1(gas, cost):
         current_tank is less than 0, that means we couldn't reach next station. Next step is to mark next station as a
         new starting point, and reset current_tank to zero since we start with no gas in the tank.
 
+        The gas stations in the problem are characterized by two attributes, namely, gas[i] and cost[i], The net change
+        in the amount of gas in our tank when moving from station i to (i + 1) is given by gas[i] - cost[i].
+
         Now the algorithm is straightforward:
 
             - Initiate total_gas and current_tank as zero, and choose station 0 as a starting station.
 
             - Iterate over all stations:
-
                 - Update total_gas and current_tank at each step, by adding gas[i] and subtracting cost[i].
                 - If current_tank < 0 at station i, make station (i + 1) a new starting point and reset current_tank = 0
                    to start with an empty tank.
 
             - Return starting station if total_gas >= 0 and -1 otherwise.
 
-        We visit gas stations in series of stages one station at a time. At each stage we select the best station to
-        start our trip from . The best station to start our trip from is the station that can get us to the next gas
-        station. if there is no best station at given stage, we do not make a selection and move on to the next stage.
+        We visit the gas stations in series of stages one station at a time. At each stage we select the best station to
+        start our trip, which is the one that can get us to the next gas station. The car can only get to the next
+        station if the tank has enough gas. if there is no good station at a given stage, we do not make a selection
+        and move on to the next stage.
 
-        Suppose at stage 0 we have to make the decision of whether we select station 0 as the best station thus far.
-        We defined the best station as the station that can get our car to the next station. The car can only get to the
-        next station if the car has enough gas.
+        It's crucial to understand why when we run out of fuel at station i, we start from station (i + 1).
 
-        When we run out of fuel at station i, why start from station i+1 ?
-
-        If car starts at A and can not reach B, then any station between A and B can not reach B.
+        If the car starts at A and can't reach B, then any station between A and B can't reach B either.
         Proof: Let's assume that:
-
             - A cannot reach B
             - There are C1,C2, ..., Ck between A and B
             - A can reach C1, C2, ..., Ck
-
         A --- C1 --- C2  --- ... Ck --- B
-
         Assume that C1 can reach B.
         => A can reach C1 (by Fact 3) & C1 can reach B
         => A can reach B (contradiction with Fact1 !)
         => Assumption is wrong; C1 cannot reach B
         Same proof by contradiction could be applied to C2 ~ Ck
         => Any station between A and B that A can reach cannot reach B
+
+        !!! IMPORTANT !!!
 
         When the algorithm returns N_s as a starting station, it directly ensures that it's possible to go from N_s to
         the station 0. But what about the last part of the round trip from the station 0 to the station N_s? How could
@@ -79,16 +76,20 @@ def can_complete_circuit_v1(gas, cost):
 
         At the end of the iteration, current_tank contains the total amount of fuel collected from the last updated
         start index till the end of tha array:
+
                     current_tank = (gas[k] - cost[k]) + (gas[k + 1] - cost[k + 1]) + ... + (gas[n - 1] - cost[n - 1])
 
-        This current_tank must be able to offset the net fuel consumption before the kth index so that we are able to
-        circle back and finish at the index k.
+        current_tank must be able to offset the net fuel consumption before the kth index so that we are able to
+        circle back and finish at the index k:
+
                     Net Fuel Consumption Before k = (gas[0] - cost[0]) + (gas[1] - cost[1]) + ... + (gas[k - 1] - cost[k - 1])
 
-        Now, total_gas contains the total fuel collected from the 0th to the (n-1)th index:
+        Now, total_gas is the total fuel collected from the 0th to the (n-1)th index:
+
                     total_gas = (gas[0] - cost[0]) + (gas[1] - cost[1]) + ... (gas[n - 1] - cost[n -1]);
 
-        This means that: Net Fuel Consumption Before k = total_gas - current_tank
+        This means that: total_gas = Net Fuel Consumption Before k +  current_tank
+                                   --> Net Fuel Consumption Before k = total_gas - current_tank
 
         This implies that if (current_tank + (total_gas - current_tank)) >= 0 then the current start index is the
         correct answer. (current_tank + (total_gas - current_tank)) >= 0 is the same as total_gas >= 0.
@@ -102,13 +103,13 @@ def can_complete_circuit_v1(gas, cost):
     Space complexity: O(1)
     """
     n = len(gas)
-    total_gas = current_tank = start = 0
+    total_gas = tank = start = 0
     for i in range(n):
         total_gas += gas[i] - cost[i]
-        current_tank += gas[i] - cost[i]
-        if current_tank < 0:  # If we couldn't get to station (i + 1)
-            start = i + 1  # Pick up the next station as the starting position
-            current_tank = 0  # Start with an empty tank
+        tank += gas[i] - cost[i]
+        if tank < 0:  # If we can't get to station (i + 1)
+            start = i + 1  # Pick the next station as the starting position
+            tank = 0  # Start with an empty tank
     return start if total_gas >= 0 else -1
 
 
