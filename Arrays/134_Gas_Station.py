@@ -153,15 +153,15 @@ def can_complete_circuit_v3(gas, cost):
     Space complexity: O(1)
     """
     n = len(gas)
-    current_tank = start = 0
+    tank = start = 0
     gas_deficit = 0
     for i in range(n):
-        current_tank += gas[i] - cost[i]
-        if current_tank < 0:
-            gas_deficit += current_tank
+        tank += gas[i] - cost[i]
+        if tank < 0:
+            gas_deficit += tank
             start = i + 1
-            current_tank = 0
-    return start if current_tank + gas_deficit >= 0 else -1
+            tank = 0
+    return start if tank + gas_deficit >= 0 else -1
 
 
 class Test(unittest.TestCase):
