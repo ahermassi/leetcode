@@ -8,7 +8,30 @@ import unittest2 as unittest
 
 
 def is_happy_v1(n):
-    """ There are 2 parts to the algorithm we'll need to design and code:
+    """ After working through some examples, we'd expect continually following links to end in one of three ways:
+
+            - It eventually gets to 111.
+            - It eventually gets stuck in a cycle.
+            - It keeps going higher and higher, up towards infinity.
+
+        That 3rd option sounds really annoying to detect and handle. How would we even know that it is going to
+        continue going up, rather than eventually going back down, possibly to 1? Luckily, it turns out we don't need
+        to worry about it. Think carefully about what the largest next number we could get for each number of digits is.
+
+        Digits	Largest	    Next
+            1	        9	        81
+            2	        99	    162
+            3	        999	    243
+            4	        9999	324
+            13	    9999999999999	1053
+
+        For a number with 3 digits, it's impossible for it to ever go larger than 243. This means it will have to either
+        get stuck in a cycle below 243 or go down to 1. Numbers with 4 or more digits will always lose a digit at each
+        step until they are down to 3 digits. So we know that at worst, the algorithm might cycle around all the numbers
+        under 243 and then go back to one it's already been to (a cycle) or go to 1. But it won't go on indefinitely,
+        allowing us to rule out the 3rd option.
+
+        There are 2 parts to the algorithm we'll need to design and code:
 
             1- Given a number n, what is its next number?
             2- Follow a chain of numbers and detect if we've entered a cycle.
@@ -23,17 +46,21 @@ def is_happy_v1(n):
     Time complexity: O(log n), we are processing each digit in the number, and the number of digits in a number is given
     by log(n). Think about what would happen if we had a number with 1 million digits in it. The first step of the
     algorithm would process those million digits, and then the next value would be, at most (pretend all the digits
-    are 9), be 81 * 1,000,000 = 81,000,000. In just one step, we've gone from a million digits, down to just 8.
+    are 9), 81 * 1,000,000 = 81,000,000. In just one step, we've gone from a million digits, down to just 8.
     The largest possible 8-digit number we could get is 99,999,999, which then goes down to 81 * 8 = 648. And then from
     here, the cost will be the same as if we'd started with a 3-digit number. Starting with 2 million digits
     (a massively larger number than one with a 1 million digits) would only take roughly twice as long, as again, the
     dominant part is summing the squares of the 2 million digits, and the rest is tiny in comparison.
-    What is the maximum number of loops?
-    Imagine the input has x digits, so the first sum of squares is not bigger than 81x (with all digits equals 9).
-    And we can prove that when x > 2, sum of squares of the input will be definitely smaller than input itself
-    (compare a * a and a*10^x with a in one digit), which means the next sum of squares will be smaller than the first
-    one, which means the maximum square sum is not bigger than 81x. So in the worst case, suppose x is bigger than 2,
-    the maximum number of loops should be at most 81x times (from 1 to 81x, which is clearly not reachable).
+    The time complexity analysis is broken up into two steps, based off of the insight that once a
+    number reaches the <= 243 threshold it cannot get above it again: 1) the amount of time it takes a number to
+    reach 243, and 2) once a number reaches the <= 243 threshold, the amount of time it takes to either discover a cycle
+    or get to 1.
+    For 1) we argue that the time to reach 243 is O(log n) + O(log log n) + ..., but we disregard the terms after
+    O(log n) because they are insignificant compared with O(log n). So the time complexity for 1) is O(log n).
+    For 2) we argue that once a number reaches the <= 243 threshold, it will take, at absolute worst case, 243 more
+    getNext() calls before we reach a cycle or get to 1. So each getNext call is O(log N) or O(d), where d is number of
+    digits. So each getNext call here is O(3), or just 3, resulting in O(243 * 3) time complexity.
+    Adding the two steps together we get O(log n) + O(243 * 3) ~= O(log n) is the time complexity.
     Space complexity: O(log n) ?
     """
 
@@ -45,12 +72,12 @@ def is_happy_v1(n):
             n = n // 10
         return total_sum
 
-    seen = set()
+    square_sums = set()
     while n != 1:
         n = digit_square_sum(n)
-        if n in seen:
+        if n in square_sums:
             return False
-        seen.add(n)
+        square_sums.add(n)
     return True
 
 
