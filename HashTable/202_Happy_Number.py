@@ -81,11 +81,12 @@ def is_happy_v1(n):
     return True
 
 
+# Video explanation: https://www.youtube.com/watch?v=ljz85bxOYJ0
 def is_happy_v2(n):
     """ The chain we get by repeatedly calling digit_square_sum(n) is an implicit linked list. Implicit means we don't
         have actual nodes and pointers, but the data does still form a linked list structure. The starting number is
         the head node of the list, and all the other numbers in the chain are nodes. The next pointer is obtained with
-        our digit_square_sum(n) function.
+        the digit_square_sum(n) function.
 
         We can therefore use Floyd's Cycle-Finding Algorithm here. This algorithm is based on 2 runners running around
         a circular racing track, a fast runner (hare) and a slow runner (tortoise). At each step of the algorithm, the
