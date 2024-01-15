@@ -3,18 +3,24 @@
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/g9YQyYi4IQQ
 def my_pow_v1(x, n):
-    """ Assuming we have got the result of (x^n), how can we get (x^2n) ? Obviously, we do not need to multiply x
-        for another n times. Using the formula (x^n)^2 = x^2n, we can get (x^2n) at the cost of only one computation.
+    """ Recursive Fast Power.
 
-        Using this optimization, we can reduce the time complexity of our algorithm.
+         We know (x^n) means we multiply x with itself n-times. The most naive way to solve this problem is to simply
+         multiply x n-times. This method of multiplying will lead to a linear time complexity and is not efficient.
+
+         Assuming we have the result of (x^n), how can we get (x^2n) ? Obviously, we do not need to multiply x for
+         another n times. Using the formula (x^n)^2 = x^2n, we can get (x^2n) at the cost of only one computation.
+
+         Using this optimization, we can reduce the time complexity of the algorithm.
 
             - If n is even, x^2n = x^n * x^n
 
             - If n is odd, x^2n = x * x^n * x^n
 
-        This approach can be easily implemented using recursion. We call this method 'Fast Power', because we only need
-        at most O(log n) computations to get (x^n).
+        This approach can be easily implemented using recursion. We call this method 'Fast Power' or
+        'Binary Exponentiation', because we only need at most O(log n) computations to get (x^n).
 
         Example: x = 5, n = 100
         x^100 = x^50 * x^50 = x^(50*2)
@@ -27,9 +33,9 @@ def my_pow_v1(x, n):
         x^0 = 1: base case
         So we went from calculating x^100 to: 100 -> 50 -> 25 -> 12 -> 6 -> 3 -> 1 -> 0, giving log n time complexity.
 
-    Time complexity: O(log n), each time we apply the formula (x ^ n) ^ 2 = x ^ 2n, n is reduced by half. Thus we
+    Time complexity: O(log n), each time we apply the formula (x ^ n) ^ 2 = x ^ 2n, n is reduced by half. Thus, we
     need at most O(log n) computations to get the result
-    Space complexity: O(log n)
+    Space complexity: O(log n), used by the recursive call stack
     """
 
     def get_power(x, n):
