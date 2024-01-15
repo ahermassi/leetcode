@@ -26,15 +26,15 @@ def rotate_v1(nums, k):
 
 def rotate_v2(nums, k):
     """ Use a stack to push the elements involved in rotation.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    stack, k, res = [], k % len(nums), []
+    k = k % len(nums)
+    stack = []
     for _ in range(k):
         stack.append(nums.pop())
-    while stack:
-        res.append(stack.pop())
-    nums[:] = res + nums
+    nums[:] = stack[::-1] + nums
 
 
 def rotate_v3(nums, k):
