@@ -12,10 +12,11 @@ import unittest2 as unittest
 
 def rotate_v1(nums, k):
     """ If the number of rotations is greater than the length of the array, every n rotations bring the array back to
-        its initial state (where n is the length of array). Thus, depending on k, we either perform k % n rotations
-        or do a straightforward slicing.
-    Time complexity: O(k * N) == O(N)
-    Space complexity: O(N) for the slicing
+         its initial state (where n is the length of array). Thus, depending on the value of k, we either perform
+         (k % n) rotations or do a straightforward slicing.
+
+    Time complexity: O(N)
+    Space complexity: O(N), for the slicing
     """
     if not k:
         return nums
