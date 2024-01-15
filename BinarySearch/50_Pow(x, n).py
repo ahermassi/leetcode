@@ -59,35 +59,21 @@ def my_pow_v2(x, n):
 
         For the ith bit, if b_i = 1 it means we need to multiply the result by x ^ 2i.
 
-        Using the formula (x ^ n) ^ 2 = x ^ 2n, initially x ^ 1 = x, and for each i > 1, we can use the result
-        of x ^ (2 ^ (i - 1)) to get x ^ 2i in one step. After that, for every i that satisfies b_i = 1, we can
-        multiply x ^ (2 ^ i) to the result.
-
-        For example, let's say n = 9 = 2 ^ 3 + 2 ^ 0 = 1001 in binary. Then:
-        x ^ 9 = x ^ (2 ^ 3 + 2 ^ 0) = x ^ (2 ^ 3) * x ^ (2 ^ 0)
-
-        We can see that every time we encounter a 1 in the binary representation of n, we need to multiply the answer
-        by x ^ (2 ^ i), where i is the ith bit of the exponent. Thus, we can keep a running total of repeatedly
-        squaring x - (x, x ^ 2, x ^ 4, x ^ 8, etc) and multiply it by the answer when we see a 1 in the binary
-        representation of n.
-
-        In other words, for each bit that is right shifted, x becomes square of itself. And for
-        each bit, the result is multiplied by x only if the bit is turned on.
-
+        Let's say n = 9 = 2 ^ 3 + 2 ^ 0. Then: x ^ 9 = x ^ (2 ^ 3 + 2 ^ 0) = x ^ (2 ^ 3) * x ^ (2 ^ 0)
         Let's assume that n =13, so we can say pow(x, 13) == pow(x, 1) * pow(x, 4) * pow(x, 8).
         Looks familiar? We basically decomposed 13 in its binary digits (1101).
         Okay, then: why would we care? Because that is how a computer efficiently gets powers: at each step we multiply
-        x by itself, so we will get x(^1), x^2, x^4, x^8, x^16 and so on.
+        x by itself, so we will get x^1, x^2, x^4, x^8, x^16 and so on.
 
         Starting to see the bits of the puzzle coming together now? We can decompose n as a binary number and then keep
-        multiplying for x raised to some power of 2 value as we go along and - boom, the magic is done!
+        multiplying for x raised to some power of 2 value as we go along.
 
         Example: x = 2, n = 10
-                                    res               = 1,          x = 2,      n = 10
-        n % 2 == 1 ? No;  res               = 1,          x = 4,      n = 5
-        n % 2 == 1 ? Yes; res = 1 * 4   = 4,          x = 16,    n = 2
-        n % 2 == 0 ? No;  res               = 4,          x = 256,  n = 1
-        n % 2 == 1 ? Yes; res = 4 * 256 = 1024,  x = - ,     n = 0
+                                        res               = 1,          x = 2,      n = 10
+        n % 2 == 1 ? No;      res               = 1,          x = 4,      n = 5
+        n % 2 == 1 ? Yes;     res = 1 * 4   = 4,          x = 16,    n = 2
+        n % 2 == 0 ? No;      res               = 4,          x = 256,  n = 1
+        n % 2 == 1 ? Yes;     res = 4 * 256 = 1024,  x = - ,     n = 0
 
     Time complexity: O(log n)
     Space complexity: O(1)
@@ -96,8 +82,16 @@ def my_pow_v2(x, n):
         x, n = 1 / x, -n
     res = 1
     while n:
-        if n & 1 == 1:  # n & 1 gets the value of the least significant bit of n.
-            # n = 100101, n & 1 = 1  ;  n = 100100, n & 1 = 0
+        if n & 1 == 1:
+            # n & 1 gets the value of the Least Significant Bit of n.
+            # Dividing n by 2 and getting the LSB processes the bits of n in order from right to left and acts on the
+            # bits that are "turned on" (i.e. equal to 1).
+            # Every time we encounter a 1 in the binary representation of n, we need to multiply the answer by
+            # x ^ (2 ^ i), where i is the ith bit of the exponent.
+            # Example: n = 11 = (1 0 1 1)
+            #                                8 4 2 1 <-- Corresponding place values of each bit
+            # x^n = 7^8 × 7^2 × 7^1 = 7^(8 + 2 + 1).
+            # We don't consider 7^4 as the bit is OFF.
             res *= x
         x *= x
         n /= 2
