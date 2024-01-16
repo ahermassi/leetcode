@@ -37,17 +37,24 @@ def rotate_v2(nums, k):
     nums[:] = stack[::-1] + nums
 
 
+# Video explanation: https://youtu.be/BHr381Guz3Y
 def rotate_v3(nums, k):
-    """ The idea is the following:
-        1- Reverse the first (n - k) elements
-        2- Reverse the rest of the elements
-        3- Reverse the entire array
+    """ When we rotate the array k times, k elements from the back end of the array come to the front and the rest of
+         the elements from the front shift backwards.
+
+        The idea of this algorithm is the following:
+
+            1- Reverse the first (n - k) elements
+            2- Reverse the remaining k elements
+            3- Reverse the entire array
+
         nums = "----->-->"; k =3
         result = "-->----->";
 
-        reverse "----->" we can get "<------->"
-        reverse "-->" we can get "<-----<--"
-        reverse "<-----<--" we can get "-->----->"
+        reverse "----->" to get "<------->"
+        reverse "-->" to get "<-----<--"
+        reverse "<-----<--" to get "-->----->"
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
