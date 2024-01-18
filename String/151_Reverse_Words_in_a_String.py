@@ -46,17 +46,17 @@ def reverse_words_v2(s):
     def trimSpaces():
         left, right = 0, len(s) - 1
         # Remove leading spaces
-        while left <= right and s[left] == ' ':
+        while left <= right and s[left] == '  ':
             left += 1
             # Remove trailing spaces
-        while left <= right and s[right] == ' ':
+        while left <= right and s[right] == '  ':
             right -= 1
         chars = []
         while left <= right:
-            if s[left] != ' ':
+            if s[left] != '  ':
                 chars.append(s[left])
             # Reduce multiple spaces to a single one
-            elif chars[-1] != ' ':
+            elif chars[-1] != '  ':
                 chars.append(s[left])
             left += 1
         return chars
@@ -73,7 +73,7 @@ def reverse_words_v2(s):
     i = 0
     while i < n:
         j = i
-        while j < n and s[j] != ' ':
+        while j < n and s[j] != '  ':
             j += 1
         reverse(i, j - 1)
         i = j + 1
@@ -81,24 +81,26 @@ def reverse_words_v2(s):
 
 
 def reverse_words_v3(s):
-    """ Reversing the individual words in the string without reversing the string itself.
-        Read the original string backwards and construct the reversed words. Each reversed word is appended to 'res'
+    """ Reverse the individual words in the string without reversing the string itself.
+
+        Process the string backwards and construct the reversed words. Each reversed word is appended to the output
         list. Finally, join the reversed words together and return the final reversed string.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
     s = s.strip()
+    words = []
     i = len(s) - 1
-    res, word = [], ''
     while i >= 0:
-        while i >= 0 and not s[i].isspace():
-            word = s[i] + word
-            i -= 1
-        res.append(word)
-        word = ''
-        while i >= 0 and s[i].isspace():
-            i -= 1
-    return ' '.join(res)
+        j = i
+        while j >= 0 and s[j] != '  ':
+            j -= 1
+        words.append(s[j + 1:i + 1])
+        while j >= 0 and s[j] == ' ':
+            j -= 1
+        i = j
+    return ' '.join(words)
 
 
 class Test(unittest.TestCase):
@@ -110,7 +112,7 @@ class Test(unittest.TestCase):
     def test_reverse_words(self):
         for test_string, result in self.data:
             self.assertEqual(result, reverse_words_v1(test_string))
-            # self.assertEqual(result, reverse_words_v2(test_string))
+            self.assertEqual(result, reverse_words_v2(test_string))
 
 
 if __name__ == '__main__':
