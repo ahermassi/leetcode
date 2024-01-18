@@ -114,27 +114,37 @@ def game_of_life_v2(board):
 # cause problems when the active area encroaches the border of the array. How would you address these problems?
 
 def game_of_life_v3(board):
-    """ If we have an extremely sparse matrix, it would make much more sense to actually save the location of only
-        the live cells and then apply the 4 rules accordingly using only these live cells.
-        We have the coordinates of all living cells in a set. Then we count the living neighbors of all cells by going
-        through the living cells and increasing the counter of their neighbors (thus cells without living neighbor will
-        not be in the counter). Afterwards, we just collect the new set of living cells by picking those with the right
-        amount of neighbors.
+    """ If the board becomes infinitely large, there are multiple problems the current solution would run into:
+
+            1- It would be computationally impossible to iterate a matrix that large.
+            2- It would not be possible to store that big a matrix entirely in memory. We have huge memory capacities
+               these days i.e. of the order of hundreds of GBs. However, it still wouldn't be enough to store such a
+               large matrix in memory.
+            3- We would be wasting a lot of space if such a huge board only has a few alive cells and the rest of them
+                 are all dead. In such a case, we have an extremely sparse matrix, and it wouldn't make sense to save
+                 the board as a "matrix".
+
+         If we have an extremely sparse matrix, it would make much more sense to actually save the location of only
+         the alive cells and then apply the 4 rules accordingly using only these alive cells.
+
+         We have the coordinates of all alive cells in a set. Then we count the alive neighbors of all cells by going
+         through the alive cells and incrementing the counter of their neighbors (thus cells without alive neighbors
+         will not be in the counter). Afterwards, we just collect the new set of alive cells by picking those with the
+         right amount of neighbors.
     """
     n, m = len(board), len(board[0])
-    live = {(i, j) for i in range(n) for j in range(m) if board[i][j]}
-    all_live, new_live = defaultdict(int), set()
-    for i, j in live:
-        for neighbor in (i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1):
-            if 0 <= neighbor[0] < n and 0 <= neighbor[1] < m:
-                all_live[neighbor] += 1
-    for cell in all_live:
-        if (cell in live and all_live[cell] in {2, 3}) or (cell not in live and all_live[cell] == 3):  # If the cell
-            # is initially alive and has 2 or 3 live neighbors, or the cell is initially dead and has 3 live neighbors
-            new_live.add(cell)
+    alive = {(i, j) for i in range(n) for j in range(m) if board[i][j]}
+    alive_neighbors_counter = defaultdict(int)
+    for i, j in alive:
+        for cell in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j - 1), (i - 1, j + 1), (i + 1, j - 1), (i + 1, j + 1):
+            if 0 <= cell[0] < n and 0 <= cell[1] < m:
+                alive_neighbors_counter[cell] += 1
     for i in range(n):
         for j in range(m):
-            board[i][j] = int((i, j) in new_live)
+            if (i, j) not in alive and alive_neighbors_counter[(i, j)] == 3:
+                board[i][j] = 1
+            elif (i, j) in alive and alive_neighbors_counter[(i, j)] not in {2, 3}:
+                board[i][j] = 0
 
 # The only problem with this solution would be when the entire board cannot fit into memory. If that is indeed the case,
 # then we would have to approach this problem in a different way.
