@@ -37,22 +37,46 @@ def reverse_words_v1(s):
 
 
 def reverse_words_v2(s):
-    """ In-place transformation. Same idea but reversing the words of the reversed string itself.
+    """ The same algorithm but removes leading, trailing, and consecutive whitespaces without the use of split().
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    s = list(' '.join(s.split()))[::-1]
-    n, right = len(s), 0
-    while right < n:
-        left = right  # Left end of the word to reverse
-        while right < n and s[right] != ' ':
-            right += 1
-        r = right - 1  # Right end of the word to reverse
-        while left < r:  # The actual reversing
-            s[left], s[r] = s[r], s[left]
+
+    def trimSpaces():
+        left, right = 0, len(s) - 1
+        # Remove leading spaces
+        while left <= right and s[left] == ' ':
             left += 1
-            r -= 1
-        right += 1  # Advance to the beginning of next word
+            # Remove trailing spaces
+        while left <= right and s[right] == ' ':
+            right -= 1
+        chars = []
+        while left <= right:
+            if s[left] != ' ':
+                chars.append(s[left])
+            # Reduce multiple spaces to a single one
+            elif chars[-1] != ' ':
+                chars.append(s[left])
+            left += 1
+        return chars
+
+    def reverse(left, right):
+        while left < right:
+            s[left], s[right] = s[right], s[left]
+            left += 1
+            right -= 1
+
+    s = trimSpaces()
+    n = len(s)
+    reverse(0, n - 1)
+    i = 0
+    while i < n:
+        j = i
+        while j < n and s[j] != ' ':
+            j += 1
+        reverse(i, j - 1)
+        i = j + 1
     return ''.join(s)
 
 
