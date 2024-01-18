@@ -6,12 +6,32 @@ from collections import defaultdict
 
 
 def game_of_life_v1(board):
-    """ The first approach could be as easy as having a copy of the board. The copy is never mutated.
-        So, we never lose the original value for a cell. Whenever a rule is applied to any of the cells, we look at its
-        neighbors in the hash map and change the original board accordingly. Here we keep the copy unmodified since the
-        problem asks us to make the changes to the original array in-place.
+    """ The problem might look very easy at first, however, the most important catch in this problem is to realize
+         that if we update the original array with the given rules, we won't be able to perform simultaneous updates as
+         is required in the question. We might end up using the updated values for some cells to update the values of
+         other cells. But the problem requires applying the given rules simultaneously to every cell.
+
+         Thus, we cannot update some cells first and then use their updated values to update other cells. An update to
+         a cell can impact the other neighboring cells. If we use the updated value of a cell while updating its
+         neighbors, then we are not applying rules to all cells simultaneously.
+
+         Here, "simultaneously" isn't about parallelism but using the original values of the neighbors instead of the
+         updated values while applying rules to any cell. Hence, the first approach could be as easy as having a copy
+         of the board. The copy is never mutated, so we never lose the original value for a cell.
+
+         Whenever a rule is applied to any of the cells, we look at its neighbors and change the original board
+         accordingly. We keep the copy unmodified since the problem asks us to make the changes to the original
+         board in-place.
+
+                1- Make a copy of the original board which will remain unchanged throughout the process.
+
+                2- Iterate over the cells of the board one by one.
+
+                3- While computing the results of the rules, use the copy board and apply the result in the original
+                     board.
+
     Time complexity: O(N * M), where N is the number of rows and M is the number of columns of the board
-    Space complexity: O(N * M), this is the space occupied by the copy board we created initially
+    Space complexity: O(N * M), this is the space occupied by the board copy
     """
     n, m = len(board), len(board[0])
     copy = [[board[row][col] for col in range(m)] for row in range(n)]
@@ -21,7 +41,7 @@ def game_of_life_v1(board):
             for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1):
                 if 0 <= x < n and 0 <= y < m and copy[x][y]:
                     live_neighbors += 1
-            if copy[i][j] and (live_neighbors < 2 or live_neighbors > 3):
+            if copy[i][j] == 1 and (live_neighbors < 2 or live_neighbors > 3):
                 board[i][j] = 0
             elif live_neighbors == 3:
                 board[i][j] = 1
