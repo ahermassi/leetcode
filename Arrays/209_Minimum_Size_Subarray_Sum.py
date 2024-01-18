@@ -7,25 +7,30 @@ import unittest2 as unittest
 # Refer to this thread for a summary of sliding windows techniques:
 # https://leetcode.com/problems/minimum-window-substring/discuss/26808/Here-is-a-10-line-template-that-can-solve-most-'substring'-problems
 
-def min_sub_array_len_v1(s, nums):
-    """ Keep 2 pointers, one for the start and another for the end of the current sub array (window) and make optimal
-        moves so as to keep the sum greater than s as well as maintain the lowest size possible.
+# Video explanation: https://www.youtube.com/watch?v=aYqYMIqZx5s
+def min_sub_array_len_v1(target, nums):
+    """ Use 2 pointers, one for the start and another for the end of the current subarray (window) and make optimal
+         moves as to keep the sum greater than 'target' as well as maintain the smallest subarray size possible.
+
         Initialize the left pointer 'left', the right pointer 'right', and the window sum 'cur_sum' to 0 .
         Iterate over nums array:
-            - Add nums[right] to current 'cur_sum'
-            - While 'cur_sum' is greater than or equal to s:
-                * Update res = min(res ,right - left + 1), where (right - left + 1) is the size of current window
-                * It means that the first index can safely be incremented, since the minimum sub array starting with
-                  this index with sum ≥ s has been achieved
-                * Subtract nums[left] from 'cur_sum' and increment 'left' to make the window smaller
-        Since the given array contains only positive integers, the sub-array sum can only increase by including more
-        elements. Therefore, we don't have to include more elements once the current sub-array already has a sum large
-        enough.
-        The essential idea is if a sub-array starts at 'left', then try to get min length sub-array by adding elements
-        into it. Once the sum is over s, then it means we just found the min sub-array starting at 'left'. In this case,
-        instead of moving forward 'left' one step, we can just subtract any elements starting from first element of the
-        current min sub-array till the sum is less than s. Min length of sub-arrays starting at the updating 'left'
-        index are updated during the subtraction.
+
+            - Add nums[right] to 'cur_sum'
+            - While 'cur_sum' is greater than or equal to 'target':
+                - Update res = min(res ,right - left + 1), where (right - left + 1) is the size of the current window
+                - It means that the element pointed at by the first index can safely be discarded, since the minimum
+                   subarray starting with this index with sum ≥ target has been found
+                - Subtract nums[left] from 'cur_sum' and increment 'left' to make shrink the window
+
+        Since the given array contains only positive integers, the subarray sum can only increase by including more
+        elements. Therefore, we don't have to include more elements once the current subarray reached a large
+        enough sum.
+
+        The essential idea is if a subarray starts at 'left', then try to get min length subarray by adding elements
+        into it. Once the sum is over 'target', then it means we just found the min subarray starting at 'left'.
+        In this case, instead of moving 'left' forward one step, we can just discard any elements starting from leftmost
+        element of the current min subarray till the sum is less than 'target'.
+
     Time complexity: O(N), each element can be visited at most twice, once by the right pointer and (at most) once by
     the left pointer.
     Space complexity: O(1)
@@ -34,7 +39,7 @@ def min_sub_array_len_v1(s, nums):
     left = right = cur_sum = 0
     while right < n:
         cur_sum += nums[right]
-        while cur_sum >= s:
+        while cur_sum >= target:
             res = min(res, right - left + 1)
             cur_sum -= nums[left]
             left += 1
