@@ -83,8 +83,8 @@ def reverse_words_v2(s):
 def reverse_words_v3(s):
     """ Reverse the individual words in the string without reversing the string itself.
 
-        Process the string backwards and construct the reversed words. Each reversed word is appended to the output
-        list. Finally, join the reversed words together and return the final reversed string.
+        Process the string backwards and extract the words. Each word is appended to the output. Finally, join the
+        words together and return the final reversed string.
 
     Time complexity: O(N)
     Space complexity: O(N)
@@ -97,7 +97,7 @@ def reverse_words_v3(s):
         while j >= 0 and s[j] != '  ':
             j -= 1
         words.append(s[j + 1:i + 1])
-        while j >= 0 and s[j] == ' ':
+        while j >= 0 and s[j] == '  ':
             j -= 1
         i = j
     return ' '.join(words)
