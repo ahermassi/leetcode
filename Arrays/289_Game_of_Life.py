@@ -48,16 +48,45 @@ def game_of_life_v1(board):
 
 
 def game_of_life_v2(board):
-    """ O(N * M) space complexity could be too expensive when the board is very large. We only have two states live (1)
-        or dead (0) for a cell. We can use some dummy cell value to signify previous state of the cell along with the
-        new changed value.
-        For example, if the value of the cell was 1 originally but it has now become 0 after applying the rule, then we
-        can change the value to 2. Also, if the value of the cell was 0 originally but it has now become 1 after
-        applying the rule, then we can change the value to 3. Hence:
-            0, 3 are 'dead' and 'dead->live'
-            1, 2 are 'live' and 'live->dead'
-        We iterate over the board again and change the value of a cell to a 0 if its value currently is 2 and change
-        the value to a 1 if its current value is 3.
+    """  O(N * M) space complexity could be too expensive when the board is very large. Whenever we are asked to do
+         something in-place, we are mostly given the luxury of modifying the input data structure itself. Even though a
+         cell can only be in one of two states (dead or alive), we are given an integer matrix, where a bool matrix
+         would obviously have been sufficient. But we can exploit that.
+
+         For this, we introduce two new states for a cell: 2: newly alive, and 3: newly dead.
+         For example, if the cell value was 1 originally, but it has now become 0 after applying the rule, then we can
+         change the value to 2. Also, if the cell value was 0 originally, but it has now become 1 after applying the
+         rule, then we can change the value to 3. Hence:
+
+                {0, 3} --> {'dead',  'dead->live'}
+                {1, 2} --> {'live',  'live->dead'}
+
+        For our intents and purposes (i.e. checking the neighbors of a cell), the newly died cell is still alive, since
+        the changes made by us have not been enforced right now, hence the check (board[x][y] == 1) becomes
+         (board[x][y] in {1, 2}).
+
+                1- Iterate the cells of the board one by one.
+
+                2- The rules are computed and applied on the original board. The updated values signify both previous
+                     and updated states.
+
+                3- The updated rules can be seen as this:
+                     Rule 1: Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+                     Hence, change the value of cell to 2. This means the cell was live before but now is dead.
+                     Rule 2: Any live cell with two or three live neighbors lives on to the next generation. Hence, no
+                     change in the value.
+                     Rule 3: Any live cell with more than three live neighbors dies, as if by over-population. Hence,
+                     change the value of cell to 2. This means the cell was live before but now dead. Note that we
+                     don't need to differentiate between rules 1 and 3. The start and end values are the same. Hence,
+                     we use the same dummy state value.
+                     Rule 4: Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+                     Hence, change the value of cell to 3. This means the cell was dead before but now live.
+
+                4- Apply the new rules to the board.
+
+                5- Iterate over the board again and change the value of a cell to a 0 if its current value is 2 and,
+                     change the value to a 1 if its current value is 3.
+
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
@@ -66,12 +95,13 @@ def game_of_life_v2(board):
         for j in range(m):
             live_neighbors = 0
             for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1):
-                if 0 <= x < n and 0 <= y < m and board[x][y] in {1, 2}:  # 1 means now alive, 2 means was alive
+                # 1 means now alive, 2 means was alive
+                if 0 <= x < n and 0 <= y < m and board[x][y] in {1, 2}:
                     live_neighbors += 1
             if board[i][j] and (live_neighbors < 2 or live_neighbors > 3):
-                board[i][j] = 2
+                board[i][j] = 2 # The cell is now dead but originally was alive
             elif board[i][j] == 0 and live_neighbors == 3:
-                board[i][j] = 3
+                board[i][j] = 3 # The cell is now live but was originally dead
     for i in range(n):
         for j in range(m):
             if board[i][j] == 2:  # 2 means was previously alive
