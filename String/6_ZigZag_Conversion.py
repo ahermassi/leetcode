@@ -13,34 +13,69 @@ import unittest2 as unittest
 
 def convert(s, num_rows):
     """ Construct the final string line by line and then join the lines.
-        We start with variable 'line' with the value 0, 'direction' with the value 1. Each consequent character is
-        added to a specific line. When we are in the first row, the direction should move down, i.e. direction = +1.
-        When it's the last row, the direction should go up, i.e. direction = -1.
+
+         We start with variable 'row_index' with the value 0, 'direction' with the value 1. Each consequent character is
+         added to a specific line. When we are in the first row, the direction should move down, i.e. direction = 1.
+         When it's the last row, the direction should go back up, i.e. direction = -1.
+
         Take the string "PAYPALISHIRING" for example:
-        We start with variable 'line' with the value 0, 'direction' with the value 1.
-        Each character is added to the following line. If we reach the bottommost row, we need to turn to the next
-        above row, so we change the 'direction' value to -1 so we can start moving up. We keep the 'direction' value
-        until we reach topmost row. DON'T CHANGE IT!
-        Again, if we reach the topmost row, we need to reset the 'direction' value to 1 so we can start moving down.
+
+        We start with variable 'row_index' with the value 0, 'direction' with the value 1.
+        Each character is appended to the line pointed to by 'row_index'. If we reach the bottom row, we need to go
+        back up to the next above row, so we change 'direction' value to -1 and start moving up. We keep 'direction'
+        value unchanged until we reach the top row.
+
+        Again, if we reach the top row, we need to reset 'direction' value to 1 and start moving down.
+
         What we need to remember is: the zigzag pattern is just a pictorial image for us to have a better understanding.
-        What the trick of algorithm is actually add the next char of the given string to different rows.
+        The trick of algorithm is actually adding the next character of the string to different rows.
         Don't really think how to move the cursor in the matrix. It's really a misleading way of thinking. Even it
         works, it's not efficient.
+
+        This can be better understood by looking at the contents of 'rows' list in each iteration:
+
+            P ['P', '', '']
+            A ['P', 'A', '']
+            Y ['P', 'A', 'Y']
+            P ['P', 'AP', 'Y']
+            A ['PA', 'AP', 'Y']
+            L ['PA', 'APL', 'Y']
+            I ['PA', 'APL', 'YI']
+            S ['PA', 'APLS', 'YI']
+            H ['PAH', 'APLS', 'YI']
+            I ['PAH', 'APLSI', 'YI']
+            R ['PAH', 'APLSI', 'YIR']
+            I ['PAH', 'APLSII', 'YIR']
+            N ['PAHN', 'APLSII', 'YIR']
+            G ['PAHN', 'APLSIIG', 'YIR']
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
     if num_rows == 1 or num_rows >= len(s):
         return s
-    ans = [''] * num_rows  # This list will hold the num_rows rows that will be joined together to form the final result
-    line, direction = 0, 1
+    rows = [''] * num_rows # This list will hold the num_rows rows that will be joined together to form the final result
+    row_index = 0
+    # 'direction' is initially set to -1 (go up) so that it's reset to 1 (go down) the first time the loop runs. If we
+    # want to initialize direction = 1, we would need to have 2 checks:
+    # if row_index == 0: direction = 1
+    # elif row_index == num_rows - 1: direction = -1
+    direction = -1
     for c in s:
-        ans[line] += c  # Append character to current line
-        if line == 0:  # If we are at the first line, move down (append to following (+1) line in the next iteration)
-            direction = 1
-        elif line == num_rows - 1:   # If we are in the last line, move up (append to prev line in the next iteration)
-            direction = -1  # Moving backwards
-        line += direction  # This is what determines which line to append to next: following (+1) or previous (-1)
-    return ''.join(ans)
+        rows[row_index] += c # Append the current character to the current line
+        if row_index == num_rows - 1 or row_index == 0:
+            # If we are at the first line, move down (append to following (+1) line in the next iteration).
+            # # If we are at the last line, move up (append to previous line in the next iteration)
+            direction *= -1
+        row_index += direction # This is what determines which line to append to next: following (+1) or previous (-1)
+    return ''.join(rows)
+    # Note: Python string is immutable and appending a character to it can cause a new allocation of the whole string.
+    # Therefore, 'rows' list can be a list of character lists.
+    # rows = [[] for _ in range(numRows)]
+    # rows[row_index].append(c)
+    # chars = [c for row in rows for c in row]
+    # return ''.join(chars)
+    # Or simply return ''.join(''.join(row) for row in rows)
 
 
 class Test(unittest.TestCase):
