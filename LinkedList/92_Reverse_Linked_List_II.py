@@ -81,43 +81,21 @@ def reverse_between_v1(head, left, right):
 def reverse_between_v2(head, left, right):
     """ Another iterative version using a dummy head.
 
-        The difference between the 2 solutions is that the previous one makes (right - left + 1) reversals starting from
-        the head of the sublist and reversing ALL the nodes of the sublist, while this algorithm makes (right - left)
-        reversals starting from the second node of the sublist and reversing (right - left) nodes.
-
-        The invariants of this algorithm are the following:
-
-            - pre.next always points to the last node that's been just reversed
-            - cur.next always points to the node to reverse in the following iteration
-
-        During the execution, pre.next keeps pointing to the last reversed node until the entire sublist is
-        reversed. At this point, pre.next points to the head of the new reversed sublist. This is equivalent to
-        connector.next = pre in the previous solution where we connect the node before the head of the sublist
-        (before reversal) to the head of the new reversed sublist.
-
-        During the execution, cur.next keeps pointing to the next node to reverse until the entire sublist is reversed.
-        At this point, cur.next points to the node right after the tail of the old sublist. This is equivalent
-        to tail.next = cur in the previous solution.
-
     Time complexity: O(N)
     Space complexity: O(1)
     """
     dummy = ListNode(0)
     dummy.next = head
-    pre = dummy  # Make a pointer 'pre' as a marker for the node before reversing
+    prev, cur = dummy, dummy.next
     for _ in range(left - 1):
-        pre = pre.next
-    cur = pre.next  # Pointer to the beginning of the sublist to reverse
-    node_to_reverse = cur.next  # Pointer to the node that will be reversed
-    # 1 - 2 -3 - 4 - 5 ; m=2; n =4 ---> pre = 1, cur = 2, node_to_reverse = 3
-    # dummy-> 1 -> 2 -> 3 -> 4 -> 5
-    for _ in range(right - left):
-        cur.next = node_to_reverse.next  # cur.next always points to the node to reverse in the following iteration
-        node_to_reverse.next = pre.next
-        pre.next = node_to_reverse  # pre.next always points to the node that's been just reversed
-        node_to_reverse = cur.next  # Move on and reverse the next node
-    # First reversing : dummy->1 -> 3 -> 2 -> 4 -> 5; pre = 1, cur = 2, node_to_reverse = 4
-    # Second reversing: dummy->1 -> 4 -> 3 -> 2 -> 5; pre = 1, cur = 2, node_to_reverse = 5 (finish)
+        prev, cur = prev.next, cur.next
+    connector, tail = prev, cur
+    for _ in range(right - left + 1):
+        nxt = cur.next
+        cur.next = prev
+        prev, cur = cur, nxt
+    connector.next = prev
+    tail.next = cur
     return dummy.next
 
 
