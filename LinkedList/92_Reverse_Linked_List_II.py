@@ -51,23 +51,29 @@ def reverse_between_v1(head, left, right):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    pre, cur = None, head
+    prev, cur = None, head
     for _ in range(left - 1):
         # Move the two pointers until they reach the proper starting point in the list
-        pre = cur
+        prev = cur
         cur = cur.next
-    connector, tail = pre, cur  # The two pointers that will fix the final connections
+    connector, tail = prev, cur  # The two pointers that will fix the final connections
     for _ in range(right - left + 1):
         # Iteratively reverse the nodes
-        node_to_reverse = cur.next
-        cur.next = pre
-        pre = cur
-        cur = node_to_reverse
+        nxt = cur.next
+        cur.next = prev
+        prev, cur = cur, nxt
     # Adjust the final connections
     if connector:
-        connector.next = pre
+        # 'connector' always points to the node preceding the leftmost node of the sublist before reversal.
+        # At the end of reversal, 'prev' points to the head of the reversed sublist (the node at 'right' position)
+        connector.next = prev
     else:
-        head = pre
+        # The case where the head of the linked list is the leftmost node of the sublist to reverse. We have 2 facts:
+        # 1- 'connector' always points to the node preceding the leftmost node of the sublist before reversal.
+        # 2- At the end of reversal, 'prev' points to the head of the reversed sublist (the node at 'right' position)
+        # 1- and 2- combined mean that if the head of the linked list is the leftmost node of the sublist to reverse,
+        # then the final linked list to return should have 'prev' as head.
+        head = prev
     tail.next = cur
     return head
 
