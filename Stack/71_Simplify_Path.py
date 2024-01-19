@@ -6,7 +6,7 @@ import unittest2 as unittest
 
 
 # Video explanation: https://youtu.be/qYlHrAKJfyA
-def simplify_path(path):
+def simplify_path_v1(path):
     """  Let's work our way through the problem to understand why a stack fits in here. Suppose that to a path like
          '/a/b/c', we add another component like '/a/b/c/..' Now, this is interesting because the '..' is no longer a
          subdirectory name. It has a special meaning and an indication to the operating system to move up one level in
@@ -51,12 +51,37 @@ def simplify_path(path):
     return '/' + '/'.join(stack)
 
 
+def simplify_path_v2(path):
+    """  We can get rid of the splitting part and just stitch together the characters and form directory names.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    n = len(path)
+    stack, i = [], 0
+    while i < n:
+        if path[i] == '/':
+            i += 1
+            continue
+        directory = ''
+        while i < n and path[i] != '/':
+            directory += path[i]
+            i += 1
+        if directory == '..':
+            if stack:
+                stack.pop()
+        elif directory != '.':
+            stack.append(directory)
+    return '/' + '/'.join(stack)
+
+
 class Test(unittest.TestCase):
     data = [('/home/', '/home'), ('/../', '/'), ('/home//foo/', '/home/foo'), ('/a/./b/../../c/', '/c')]
 
     def test_simplify_path(self):
         for test_path, result in self.data:
-            self.assertEqual(result, simplify_path(test_path))
+            self.assertEqual(result, simplify_path_v1(test_path))
+            self.assertEqual(result, simplify_path_v2(test_path))
 
 
 if __name__ == '__main__':
