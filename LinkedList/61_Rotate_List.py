@@ -12,33 +12,47 @@ class ListNode(object):
         self.next = None
 
 
+# Video explanation: https://youtu.be/UcGtPs2LE_c
 def rotate_right(head, k):
     """ The nodes in the list are already linked, and hence the rotation basically means:
-            1- To close the linked list into the ring
+
+            1- To close the linked list into a ring
             2- To break the ring after the new tail and just in front of the new head
-        Note that k may be larger than list length n. If so, it is equivalent to shifting by k mod n.
-        Use the fact that linked lists can be cut and the sub-lists reassembled very efficiently.
-        First we find the tail node t. Since the successor of the tail is the original head, we update t's successor.
-        The original head is to become the kth node from the start of the new list. Therefore, the new head is the
-        (n - k)th node in the initial list.
+
+         Where is the new head?
+         In the position (n - k), where n is the number of nodes in the list. The new tail is just before, in the
+         position (n - k - 1).
+
+        Note that k may be larger than list length n. If so, it is equivalent to shifting by (k mod n).
+        The algorithm is quite straightforward:
+
+            - Find the old tail and connect it with the head to close the ring. Compute the length of the list n at the
+               same time.
+
+            - Find the new tail which is the (n - k - 1)th node from the original head, and the new head which is the
+               (n - k)th node.
+
+            - Break the ring and return the new head.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
     if not head or not head.next:
         return head
     length, cur = 1, head
-    while cur.next:
+    while cur.next: # start length at 1 and stop at cur.next=None instead of cur=None to be able to form a ring
         length += 1
         cur = cur.next
     k = k % length
     if not k:
         return head
-    cur.next = head  # Make a cycle by connecting the tail to the head
-    temp = head
+    cur.next = head  # Make a cycle by connecting the tail to the original head
+    new_tail = head
+    # Find the new tail : (n - k - 1)th node
     for _ in range(length - k - 1):
-        temp = temp.next
-    new_head = temp.next
-    temp.next = None
+        new_tail = new_tail.next
+    new_head = new_tail.next
+    new_tail.next = None # Break the ring
     return new_head
 
 
