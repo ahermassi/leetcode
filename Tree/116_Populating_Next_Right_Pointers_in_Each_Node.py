@@ -61,17 +61,28 @@ def connect_v1(root):
 
 
 def connect_v2(root):
-    """ We need to link all the nodes together which lie on the same level and the level order or the breadth first
-        traversal gives us access to all such nodes. At each step, we record the size of the queue and that always
-        corresponds to all the nodes on a particular level. Once we have this size, we only process these many elements
-        and no more. By the time we are done processing size number of elements, the queue would contain all the nodes
-        on the next level.
-        When we pop a node, we add its children at the back of the queue. Also, the element at the head of the queue is
-        the next element in order, on the current level. So, we can easily establish the new pointers.
-    Time complexity: O(N), since we process each node exactly once
+    """ We need to link all the nodes together which lie at the same level. The level order or the breadth-first
+         traversal gives us access to all such nodes.
+
+         At each step, we record the size of the queue and that always corresponds to all the nodes at the current
+         level. Once we have this size, we only establish the next pointers of this many elements and no more.
+         By the time we are done processing these elements, the queue would contain all the nodes of the next level.
+
+            - We start off by adding the root of the tree in the queue. Since there is just one node at level 0, we
+               don't need to establish any connections and can move onto the while loop.
+
+            - The while loop essentially iterates over each level one by one and the inner for loop iterates over all
+               the nodes at the particular level. Since we have access to all the nodes at the same level, we can
+               establish the next pointers easily.
+
+            - When we pop a node, we add its children at the back of the queue. Also, the element at the head of the
+               queue is the next element in order, at the current level. So, we can easily establish the new pointers.
+
+    Time complexity: O(N), since we process each node exactly once. Note that processing a node in this context means
+    popping the node from the queue and then establishing the next pointers.
     Space complexity: O(N), this is a perfect binary tree which means the last level contains N/2 nodes. The space
-    complexity for breadth first traversal is the space occupied by the queue which is dependent upon the maximum
-    number of nodes in particular level.
+    complexity for breadth-first traversal is the space occupied by the queue which is dependent upon the maximum
+    number of nodes at a particular level.
     """
     if not root:
         return None
@@ -80,9 +91,10 @@ def connect_v2(root):
         n = len(queue)
         for i in range(n):
             node = queue.popleft()
-            if i < n - 1:  # This check is important. We don't want to establish any wrong connections. The queue will
-                # contain nodes from 2 levels at most at any point in time. This check ensures we only don't establish
-                # next pointers beyond the end of a level
+            if i < n - 1:
+                # This check is important. We don't want to establish any wrong connections. The queue will contain
+                # nodes from 2 levels at most at any point in time. This check ensures we don't establish next pointers
+                # beyond the end of the current level.
                 node.next = queue[0]
             queue.extend([child for child in (node.left, node.right) if child])
     return root
