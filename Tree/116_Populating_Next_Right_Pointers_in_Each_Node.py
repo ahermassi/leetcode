@@ -101,14 +101,22 @@ def connect_v2(root):
 
 
 def connect_v3(root):
-    """ Doing it recursively. We use the fact that the tree is a perfect binary tree in the base case of recursion.
+    """ We can also populate the next pointers recursively using DFS. This is a slightly different logic than above but
+         relies on the fact that the given tree is a perfect binary tree.
+
+         In the above solution, we had access to right nodes since we traversed in level-order. But in DFS, once we go
+         to the next level, we can't get access to right node. So, we must update next pointers of the child of each
+         node from its parent's level itself.
+
+
+
     Time complexity: O(N)
-    Space complexity: O(logN) as recursion tree can go as deep as height of the tree
+    Space complexity: O(logN), as recursion tree can go as deep as the height of the tree
     """
     if not root or not root.left:
         return root
     root.left.next = root.right
     root.right.next = root.next.left if root.next else None
-    root.left = connect_v3(root.left)
-    root.right = connect_v3(root.right)
+    connect_v3(root.left)
+    connect_v3(root.right)
     return root
