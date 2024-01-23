@@ -207,35 +207,39 @@ def flatten_v2(root):
 
 
 def flatten_v3(root):
-    """ There is a well known tree traversal out there that doesn't use any additional space at all. It's known as
-        Morris Traversal. With recursion, we only re-wire the connections for the current nod" once we are already done
-        processing the left and the right subtrees completely. However, the postponing of rewiring of connections on
-        the current node until the left subtree is done is basically what recursion is. Recursion is all about
-        postponing decisions until something else is completed. So, we will have to come up with a greedy way that will
-        be costlier in terms of time, but will be space efficient in achieving the same results.
+    """ There is a well-known tree traversal that doesn't use any additional space at all, known as Morris Traversal.
+         With recursion, we only rewire the connections for the current node once we are already done processing the
+         left and the right subtrees completely. However, the postponing of rewiring of connections of the current node
+         until the left subtree is done is basically what recursion is.
 
-            For a current node, we will check if it has a left child or not. If it does, we will find the last node in
-            the rightmost branch of the subtree rooted at this left child. Once we find this rightmost node, we will
-            hook it up with the right child of the current node.
+         Recursion is all about postponing decisions until something else is completed. So, we will have to come up with
+         a greedy way that will be costlier in terms of time, but will be space efficient in achieving the same results.
 
-        By doing this operation for every node, we are simply trying to move stuff to the right hand side one step at
-        a time.
+                For a current node, we will check if it has a left child or not. If it does, we will find the last node
+                in the rightmost branch of the subtree rooted at this left child. Once we find this rightmost node,
+                we will hook it up with the right child of the current node.
+
+         By doing this operation for every node, we are simply trying to move stuff to the right-hand side one step at
+         a time.
+
     Time complexity: O(N), since we process each node of the tree at most twice. If you think about it, we process the
-    nodes once when we actually run our algorithm on them as the current node 'cur'. The second time when we come
-    across the nodes is when we are trying to find our rightmost node
+    nodes once when we actually run the algorithm as the current node 'cur', and s second time we come across the
+    nodes is when we are trying to find the rightmost node.
     Space complexity: O(1)
     """
     cur = root
     while cur:
         if cur.left:
             rightmost = cur.left
-            while rightmost.right:  # Find the rightmost node that will link to current node's right subtree
+            while rightmost.right:
+                # Find the rightmost node that will link to current node's right subtree. This is the first node in
+                # the rightmost branch of the left subtree which doesn't have a right child.
                 rightmost = rightmost.right
             # Rewire the connections
             rightmost.right = cur.right
             cur.right = cur.left  # Use current node's left subtree to replace its right subtree
             cur.left = None
-        cur = cur.right  # If the current node has no left child, we simply move on to the right hand side
+        cur = cur.right  # If the current node has no left child, we simply move on to the right-hand side
 
 
 
