@@ -73,16 +73,18 @@ def flatten_v1(root):
 
 
 def flatten_v2(root):
-    """ In the flattened tree, each node's right child points to the next node of a pre-order traversal. So we're
-        basically performing a reverse post-order traversal. 'pre' is the next (right) node of current node, pointing
-        initially to None.
-        Example:
+    """ In the flattened tree, each node's right child is the node's successor in the preorder traversal. So we're
+         basically performing a reverse postorder traversal (right -> left -> root).
+         In this implementation, 'pre' is the next (right) node of the current node,  pointing initially to None.
+
+         Example:
             1
            / \
           2   5
          / \   \
         3  4   6
-        Basically, the traversing order after flattening is pre-order traversal in (root, left, right), like:
+
+        Basically, the traversal order after flattening is preorder traversal in (root, left, right), like:
             1
              \
               2
@@ -94,12 +96,16 @@ def flatten_v2(root):
                     5
                      \
                       6
-        If we traverse the flattened tree in the reverse way, we would notice that [6 -> 5 -> 4 -> 3 -> 2 -> 1] is in
+
+        If we traverse the flattened tree in the reverse order, we would notice that [6 -> 5 -> 4 -> 3 -> 2 -> 1] is in
         (right, left, root) order of the original tree:
-            The reverse post-order traversal of the original tree is the reverse order of the flattened tree
-        The idea is to traverse the original tree in reverse post-order and then set each node's right pointer as the
-        previous one in [6 -> 5 -> 4 -> 3 -> 2 -> 1] and set the left child as null. It turns out that the previous
-        node that needs to be set as the current node's right is the root node of the previous recursion.
+
+                The reverse postorder traversal of the original tree is the reverse order of the flattened tree
+
+        The idea is to traverse the original tree in reverse postorder and then set each node's right pointer to the
+        previous node in the traversal and the left child to null. It turns out the afore mentioned previous node is the
+        root node of the previous recursion.
+
             1
            / \
           2   5
@@ -107,7 +113,7 @@ def flatten_v2(root):
         3  4   6
         -----------
         pre = None
-        root = 6
+        root = 6 (first node in reverse postorder)
 
             1
            / \
@@ -182,6 +188,7 @@ def flatten_v2(root):
                     5
                      \
                       6
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -191,11 +198,11 @@ def flatten_v2(root):
             return
         reverse_post_order(root.right)
         reverse_post_order(root.left)
-        root.right = pre[0]
+        root.right = prev[0]
         root.left = None
-        pre[0] = root
+        prev[0] = root
 
-    pre = [None]
+    prev = [None]
     reverse_post_order(root)
 
 
