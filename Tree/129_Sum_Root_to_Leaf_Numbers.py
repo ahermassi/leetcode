@@ -42,19 +42,35 @@ def sum_numbers_v1(root):
 
 
 def sum_numbers_v2(root):
-    """ DFS but without the use of a "global" variable to store the result.
+    """ DFS but without the use of the global variable. Each time we visit a node, we compute the integer it encodes
+         using the number for its parent. If the node is a leaf, we return its integer. If it is not a leaf, we return
+         the sum of the results from its left and right subtrees.
+
+         Example:
+                1
+	        /    \
+	      2       3
+		          /
+		        4
+
+        dfs(1, 0) = dfs(2, 1) + dfs(3, 1)
+        dfs(2, 1) = 10 + 2 = 12     // base case
+        dfs(3, 1) = dfs(4, 10 + 3) + 0 = dfs(4, 13)
+        dfs(4, 13) = 130 + 4 = 134    // base Case
+        => dfs(1) = 12 + 134 = 146
+
     Time complexity: O(N)
     Space complexity: O(h)
     """
 
-    def dfs(root, cur_sum):
+    def dfs(root, number):
         if not root:
             return 0
-        cur_sum = cur_sum * 10 + root.val
+        number = number * 10 + root.val
         if not root.left and not root.right:
-            return cur_sum
-        left_sum = dfs(root.left, cur_sum)
-        right_sum = dfs(root.right, cur_sum)
+            return number
+        left_sum = dfs(root.left, number)
+        right_sum = dfs(root.right, number)
         return left_sum + right_sum
 
     return dfs(root, 0)
