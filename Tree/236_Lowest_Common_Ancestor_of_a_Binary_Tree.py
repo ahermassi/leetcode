@@ -17,26 +17,26 @@ class TreeNode(object):
 
 def lowest_common_ancestor_v1(root, p, q):
     """ If we have parent pointers for each node, we can traverse back from p and q to get their ancestors. The first
-        common node we get during this traversal would be the LCA node.
+         common node we get during this traversal would be the LCA node.
 
-        We can save the parent pointers in a dictionary as we traverse the tree. Once we have found both p and q, we
-        get all the ancestors of p using the parent dictionary and add to a set called 'p_ancestor'.
+         We can save the parent pointers in a dictionary as we traverse the tree. Once we have found both p and q, we
+         get all the ancestors of p using the parent dictionary and add to a set called 'p_ancestors'.
 
-        Similarly, we traverse through the ancestors of node q. If the ancestor is present in the ancestors set for p,
-        this means this is the first ancestor common between p and q (while traversing UPWARDS) and hence this is the
-        LCA node.
+         Similarly, we traverse through the ancestors of node q. If the ancestor is present in the ancestors set of p,
+         this means this is the first ancestor common between p and q (while traversing UPWARDS) and hence this is the
+         LCA node.
 
-        Note that this algorithm can benefit from the optimization implemented in 236- Lowest Common Ancestor with
-        Parent Pointers.
+         Note that this algorithm can benefit from the optimization implemented in 236- Lowest Common Ancestor with
+         Parent Pointers.
 
     Time complexity: O(N), in the worst case we might be visiting all the nodes of the binary tree
-    Space complexity: O(N), in the worst case space utilized by the stack, the parent pointer dictionary and the
+    Space complexity: O(N), in the worst case the space used by the stack, the parent pointer dictionary and the
     ancestor set, would be N each, since the height of a skewed binary tree could be N
     """
-    parent= {}
+    parent = {}
     stack = [(root, None)]
     # The following loop is nothing but the iterative version of the recursive annotate(node, par) method with a slight
-    # change: We keep storing the parent pointers in a dictionary until we find p and q both. No need to annotate the
+    # change: We keep storing the parent pointers in a dictionary until we find both p and q. No need to annotate the
     # entire tree.
     while p not in parent or q not in parent:
         node, par = stack.pop()
