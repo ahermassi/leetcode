@@ -40,31 +40,6 @@ def zigzag_level_order_v1(root):
          We use a 'direction' flag to indicate whether to add the child nodes to the next level in left->right or
          right->left order.
 
-         Note that this implementation uses a stack to mimic the queue.
-
-    Time complexity: O(N)
-    Space complexity: O(N)
-    """
-    if not root:
-        return None
-    level, direction, res = [root], 1, []
-    while level:
-        values, next_level, n = [], [], len(level)
-        for _ in range(n):
-            node = level.pop()
-            values.append(node.val)
-            if direction == 1:
-                next_level.extend([child for child in (node.left, node.right) if child])
-            else:
-                next_level.extend([child for child in (node.right, node.left) if child])
-        res.append(values)
-        direction, level = -direction, next_level
-    return res
-
-
-def zigzag_level_order_v2(root):
-    """ This version uses an explicit queue to implement BFS.
-
          direction==1 means process the nodes of the CURRENT level from left to right.
          direction==-1 means process the nodes of the CURRENT level from right to left.
 
@@ -95,6 +70,32 @@ def zigzag_level_order_v2(root):
             values.append(node.val)
         res.append(values)
         direction = -direction
+    return res
+
+
+def zigzag_level_order_v2(root):
+    """ The same BFS approach, but we use a queue to hold the values of the popped nodes of the current level which
+         makes it easier to append to either end.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    if not root:
+        return None
+    res = []
+    direction = 1
+    queue = deque([root])
+    while queue:
+        n, values = len(queue), deque()
+        for _ in range(n):
+            node = queue.popleft()
+            if direction == 1:
+                values.append(node.val)
+            else:
+                values.appendleft(node.val)
+            queue.extend([kid for kid in (node.left, node.right) if kid])
+        res.append(values)
+        direction *= -1
     return res
 
 
