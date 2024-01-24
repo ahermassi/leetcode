@@ -7,20 +7,31 @@ Calling next() will return the next smallest number in the BST. """
 class BSTIteratorV1(object):
 
     """ Usually, an iterator simply goes over each of the elements of the container one by one. For the BST, we want
-        the iterator to return elements in an ascending order.
-        We will be using additional memory and we will flatten the binary search tree into an array. Since we need the
-        elements to be in a sorted order, we will do an in-order traversal over the tree and store the elements in a
-        new array and then build the iterator functions using this new array.
+         the iterator to return elements in ascending order.
+
+         An important property of the binary search tree is that the inorder traversal of a BST gives us the elements in
+         a sorted order. Thus, the inorder traversal will be the core of the solution.
+
+         Naturally, the easiest way to implement an iterator would be on an array like container interface. So, if we had an array, all we would need is a pointer or an index and we could easily implement the two required functions next() and hasNext().
+
+         We will be using additional memory and will flatten the binary search tree into an array. Since we need the
+         elements to be in a sorted order, we will do an inorder traversal over the tree and store the elements in a
+         new array and then build the iterator functions using this new array.
+
+         Whenever there's a call to hasNext, we simply check if the index has reached the end of the array. For the call
+         to next function, we simply return the element pointed by the index. Also, after the next function call is
+         made, we have to move the index one step forward to simulate the progress of the iterator.
+
     Time complexity: O(N) is the time taken by the constructor for the iterator as we have to visit each node once.
     next() and hasNext() are both O(1)
-    Space complexity: O(N) occupied by values array, and O(logN) occupied by the recursion stack for in-order traversal.
-    So overall, space complexity is O(N)
+    Space complexity: O(N) occupied by values array, and O(h) occupied by the recursion stack for inorder traversal,
+    where h is the height of the tree. So overall, space complexity is O(N)
     """
 
     def __init__(self, root):
         self.values = []
         self.index = 0  # Pointer to the next smallest element in the BST
-        self.inorder(root)  # Call to flatten the input binary search tree
+        self.inorder(root)  # Flatten the input binary search tree
 
     def next(self):
         """ Return the next smallest number """
