@@ -63,27 +63,38 @@ def zigzag_level_order_v1(root):
 
 
 def zigzag_level_order_v2(root):
-    """ The previous solution uses a stack to mimic the queue. This version uses an actual deque.
-        If zigzag = 1, pop_back, push_front, left then right
-        If zigzag = -1, pop_front, push_back, right then left
-    Time complexity: O(N)
-    Space complexity: O(N)
+    """ This version uses an explicit queue to implement BFS.
+
+         direction==1 means process the nodes of the CURRENT level from left to right.
+         direction==-1 means process the nodes of the CURRENT level from right to left.
+
+         For the ordering of left-to-right of the NEXT level (current direction==-1), we append the new elements to the
+         tail of the queue, so that the element that comes late would get out late as well.
+
+         For the ordering of right-to-left of the NEXT level (current direction==1), we insert the new element to the
+         head of the queue, so that the element that comes late would get out first.
+
+    Time complexity: O(N), we visit each node once and only once. In addition, the insertion operation on either end of
+    the queue takes a constant time
+    Space complexity: O(N), the queue would hold the nodes that are at most across two levels. Therefore, at most, the
+    size of the queue would be no more than 2⋅L, where L is the maximum number of nodes that might reside on the
+    same level. Since we have a binary tree, the level that contains the most nodes is the one that has all the leave
+    nodes in a full binary tree, which is roughly N/2. As a result, we have the space complexity of 2 * N/2 = N
     """
     if not root:
         return None
-    res, queue, zigzag = [], deque([root]), 1
+    res, queue, direction = [], deque([root]), 1
     while queue:
         n, values = len(queue), []
         for _ in range(n):
-            if zigzag == 1:
-                node = queue.pop()
+            node = queue.pop() if direction == 1 else queue.popleft()
+            if direction == 1:
                 queue.extendleft([kid for kid in (node.left, node.right) if kid])
             else:
-                node = queue.popleft()
                 queue.extend([kid for kid in (node.right, node.left) if kid])
             values.append(node.val)
         res.append(values)
-        zigzag = -zigzag
+        direction = -direction
     return res
 
 
