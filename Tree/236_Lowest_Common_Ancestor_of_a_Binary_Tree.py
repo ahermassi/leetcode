@@ -52,19 +52,18 @@ def lowest_common_ancestor_v1(root, p, q):
     return q
 
 
-# Check this out: https://www.youtube.com/watch?v=py3R23aAPCA
-
+# Video explanation: https://www.youtube.com/watch?v=py3R23aAPCA
 def lowest_common_ancestor_v2(root, p, q):
-    """ Recursive approach.
+    """ The recursive approach is pretty intuitive. The key is that we want to root ourselves at a node and then search
+         left and then right for either of the 2 given nodes. The moment we encounter either of the nodes p or q, return
+         some boolean flag. The flag helps determine if we found the required nodes in any of the paths. The least
+         common ancestor would then be the node for which both the subtree recursions return a True flag. It can also be
+         the node which itself is one of p or q and for which one of the subtree recursions returns a True flag.
 
-        The approach is pretty intuitive. The key is that we want to root ourselves at a node and then search left and
-        then right for either of the 2 nodes given. If we see either node, we will return it. If we do not find the node
-        in a subtree, the value of null will be returned and bubbled up.
-
-        After we search both left and right, we ask ourselves what our results mean.
+        After we search both left and right subtrees, we ask ourselves what our results mean:
 
             - If we found nothing to the left, we just bubble up what is on the right (whatever that search result may
-               be). This node we sit at cannot be the LCA since the left and right did not yield the 2 nodes we want.
+               be). The node we sit at cannot be the LCA since the left and right did not yield the 2 nodes we want.
 
             - If we found nothing to the right, we just bubble up what is on the left (whatever that search result may
                be). This node we sit at cannot be the LCA since the left and right did not yield the 2 nodes we want.
@@ -78,22 +77,25 @@ def lowest_common_ancestor_v2(root, p, q):
     """
     # It is crucial to define what lowest_common_ancestor(root, p, q) means: What is the LCA of p and q in the tree
     # ROOTED AT current 'root' node
-    if not root or root == p or root == q:  # If the current root is one of p or q, return ourselves to the caller
+    if not root or root == p or root == q:
+        # If the current root is one of p or q, return ourselves to the caller
         return root
-    # 'root' doesn't satisfy any of our base cases. Search left and then search right
+    # 'root' doesn't satisfy any of our base cases. Search left and then search right.
     left_search = lowest_common_ancestor_v2(root.left, p, q)
     right_search = lowest_common_ancestor_v2(root.right, p, q)
     if left_search and right_search:
-        # We got something back on the left AND right. That means this node is the LCA because our recursion
-        # returns from bottom to top, so we return what we hold: 'root'.
-        # In other words, if left subtree contains one of descendant (p or q) and right subtree contains the
-        # remaining descendant (q or p),  then the root is their LCA
+        # We got something back from the left AND right. That means this node is the LCA because our recursion
+        # returns from bottom to top, and we have found both p and q in different subtrees of the current root, so we
+        # return what we hold: 'root'.
+        # In other words, if the left subtree contains one of the descendants (p or q), and the right subtree
+        # contains the remaining descendant (q or p),  then the root is their LCA
         return root
     # Either one of the children returned a node, meaning either p or q found on left or right branch.
-    # If left subtree contains both p and q then return left as their LCA.
-    # If right subtree contains both p and q then return right as their LCA.
-    # Example: Assume p was found in left subtree, right child returned None. This means q is somewhere below node
-    # where p was found. We don't need to search all the way, because in such scenario, node where p was found is LCA.
+    # If the left subtree contains both p and q then return left as their LCA.
+    # If the right subtree contains both p and q then return right as their LCA.
+    # Example: Assume p was found in the left subtree, right child returned None. This means q is somewhere below the
+    # node where p was found. We don't need to search all the way, because in such scenario the node where p was found
+    # is the LCA.
     return left_search or right_search
 
 
