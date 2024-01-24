@@ -29,24 +29,36 @@ class TreeNode(object):
 
 
 def zigzag_level_order_v1(root):
-    """ Simple BFS traversal. Use 'zigzag' flag to indicate whether to append nodes to the next level in zigzag or not.
+    """ The most intuitive solution would be the BFS approach through which we traverse the tree level-by-level.
+         The default ordering of BFS within a single level is from left to right. As a result, we should adjust the BFS
+         algorithm a bit to generate the desired zigzag ordering.
+
+         There are several ways to implement the BFS algorithm. One way would be to run a two-level nested loop, with
+         the outer loop iterating each level on the tree, and with the inner loop iterating each node within a single
+         level.
+
+         We use a 'direction' flag to indicate whether to add the child nodes to the next level in left->right or
+         right->left order.
+
+         Note that this implementation uses a stack to mimic the queue.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
     if not root:
         return None
-    level, zigzag, res = [root], 1, []
+    level, direction, res = [root], 1, []
     while level:
         values, next_level, n = [], [], len(level)
         for _ in range(n):
             node = level.pop()
             values.append(node.val)
-            if zigzag == 1:
+            if direction == 1:
                 next_level.extend([child for child in (node.left, node.right) if child])
             else:
                 next_level.extend([child for child in (node.right, node.left) if child])
         res.append(values)
-        zigzag, level = -zigzag, next_level
+        direction, level = -direction, next_level
     return res
 
 
