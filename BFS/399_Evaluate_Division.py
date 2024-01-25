@@ -85,41 +85,31 @@ def calc_equation_v1(equations, values, queries):
 
 
 def calc_equation_v2(equations, values, queries):
-    """ Binary relationship is usually represented as a graph.
-        Does the direction of an edge matter? Yes. Take a / b = 2 for example, it indicates a --2--> b as well
-        as b --1/2--> a. Thus, it is a directed weighted graph.
-        In this graph, how do we evaluate division?
-        Take a / b = 2, b / c = 3, a / c = ? for example:
-        a --2--> b --3--> c
-        Visualize a/b = k as a link between node a and b, the weight from a to b is k, the reverse link is 1/k. Query
-        is to find a path between two nodes.
-        We simply find a path using BFS from node 'a' to node 'c' and multiply the weights of edges, node.e. 2 * 3 = 6.
-    Time complexity: O(V ** 3), where V is the number of vertices
+    """ We can also apply BFS. However, the essence of the solution remains the same, i.e. we are searching for a path
+         in a graph.
     Space complexity: O(V)
     """
-
-    def bfs(src, dest):
-        if src not in graph or dest not in graph:  # If either source or destination node is not in the graph, the
-            # answer doesn't exist
-            return -1
-        if src == dest:
-            return 1
-        queue, visited = deque([(src, 1.0)]), set()  # A separate 'visited' set for each query
+    divisions = defaultdict(list)
+    for numbers, result in zip(equations, values):
+        x, y = numbers
+        divisions[x].append((y, result))
+        divisions[y].append((x, 1 / result))
+    res = []
+    for x, y in queries:
+        queue = deque([(x, y, 1)])
+        visited, result = set(), -1
         while queue:
-            node, cur_prod = queue.popleft()
-            if node == dest:
-                return cur_prod
-            visited.add(node)
-            for neighbor in graph[node]:
+            origin, destination, running_prod = queue.popleft()
+            if origin not in divisions or destination not in divisions:
+                break
+            if origin == destination:
+                result = running_prod
+                break
+            visited.add(origin)
+            for neighbor, val in divisions[origin]:
                 if neighbor not in visited:
-                    queue.append((neighbor, cur_prod * graph[node][neighbor]))
-        return -1
-
-    graph = defaultdict(dict)
-    for (src, dest), coef in zip(equations, values):
-        graph[src][dest] = coef
-        graph[dest][src] = 1 / coef
-    res = [bfs(src, dest) for src, dest in queries]
+                    queue.append((neighbor, destination, running_prod * val))
+        res.append(result)
     return res
 
 
