@@ -113,23 +113,44 @@ def find_order_v1(num_courses, prerequisites):
 
 
 def find_order_v2(num_courses, prerequisites):
-    """ Kahn's algorithm for Topological Sort.
+    """ Kahn's algorithm for Topological Sorting.
+
+         The problem is to find a global ordering for all nodes in a DAG (Directed Acyclic Graph) with regard to their
+         dependencies.
+
+         Kahn’s algorithm works by keeping track of the number of outgoing edges from each node (outdegree). It works by
+         repeatedly visiting the nodes with an outdegree of zero and deleting all the edges associated with it leading
+         to a decrement of outdegree for the nodes whose outgoing edges are deleted. This process continues until no
+         elements with zero outdegree can be found.
+
+         In our case, the nodes with zero outdegree correspond to the nodes which do not have any prerequisites:
+         These can be started immediately.
+
+         The algorithm terminates when we can no longer remove edges from the graph. There are two possible outcomes:
+
+            1- If there are still some edges left in the graph, then these edges must have formed certain cycles, which
+                 is similar to the deadlock situation. It is due to these cyclic dependencies that we cannot remove them
+                 during the above processes.
+            2- Otherwise, we have removed all the edges from the graph, and we got ourselves a topological order of the
+                 graph.
 
         The first node in the topological ordering will be the node that doesn't have any outcoming edges. Essentially,
         any node that has an outdegree of 0 can start the topological sort. If there are multiple such nodes,
         their relative order doesn't matter, and they can appear in any order.
 
-        We first process all the nodes/courses with 0 outdegree implying no prerequisite courses required. If we remove
-        all these courses from the graph, along with their ingoing edges, we can find out the courses/nodes that should
-        be processed next. These would again be the nodes with 0 outdegree. We can continuously do this until
-        all the courses have been accounted for.
-
-    Time complexity: O(|V| + |E|)
-    Space complexity: O(N), where N is the number of courses, since we use an intermediate queue to keep all the nodes
-    with 0 outdegree
+    Time complexity: O(|V| + |E|), where V is the number of vertices/courses and E is the number of edges/prerequisites.
+    It would take ∣E∣ time complexity to build the graph. Each queue operation takes O(1) time, and a single node will
+    be pushed once, leading to O(|V|) operations. We iterate over the neighbors of each node that is popped out of the
+    queue iterating over all the edges once. Since there are total of |E| edges, it would take O(|E|) time to iterate
+    over the edges.
+    Space complexity: O(|V| + |E|), the graph takes O(|E|) space. The outdegree array takes O(|V|) space. We use an
+    intermediate queue data structure to keep all the nodes with 0 outdegree. In the worst case, there won't be any
+    prerequisite relationship and the queue will contain all the vertices initially since all of them will have
+    0 outdegree, which gives O(|V|).
     """
     courses_that_depend_on, outdegree = defaultdict(list), [0] * num_courses
     for course, prereq in prerequisites:
+        # (courses_that_depend_on[prerq] = course) means 'prereq' is a prerequisite of 'course'
         courses_that_depend_on[prereq].append(course)
         outdegree[course] += 1  # Record the number of prerequisites each course has
     # Iterate the outdegree list and find the nodes that have 0 in-degree, which maps to 0 prerequisites. If none is
@@ -140,8 +161,11 @@ def find_order_v2(num_courses, prerequisites):
         course = queue.popleft()
         res.append(course)
         for neighbor in courses_that_depend_on[course]:
+            # Iterate over the courses that have 'course' as prerequisite. This is equivalent to removing the edge
+            # neighbor -> course, which in other words means taking 'course' and 'course' is no longer in the list
+            # of prerequisite of 'neighbor'
             outdegree[neighbor] -= 1
-            if outdegree[neighbor] == 0:
+            if outdegree[neighbor] == 0: # We've taken all the prerequisites of course 'neighbor'
                 queue.append(neighbor)
     return res if len(res) == num_courses else []
 
