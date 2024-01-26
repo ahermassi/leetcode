@@ -4,15 +4,41 @@ from collections import deque
 import unittest2 as unittest
 
 
-def snakes_and_ladders_v1(board):
-    """ As we are looking for a shortest path, a breadth-first search is ideal. The main difficulty is to handle
-        enumerating all possible moves from each square.
-        Suppose we are on a square with number s. We would like to know all final destinations with number s2 after
-        making one move. This requires knowing the coordinates get(s2) of square s2. This is a small puzzle in itself.
-        We know that the row changes every N squares, and so is only based on quot = (s2-1) / N; also the column is
-        only based on rem = (s2-1) % N and what row we are on (forwards or backwards)
-        From there, we perform a breadth first search, where the nodes are the square numbers s.
-    Time complexity: O(N ** 2)
+# Video explanation: https://youtu.be/6lH4nO3JfLk
+def snakes_and_ladders(board):
+    """ We can model the grid as a graph. Each square is a node. There are edges between squares within 6 of each other,
+         and the snakes and ladders add new edges.
+
+         The problem is asking us for the minimum number of moves, which suggests this is a shortest-path problem:
+
+                Given an unweighted directed graph, the shortest path problem is the problem of finding a path from one
+                vertex to another, such that the number of edges is the minimum possible.
+
+        We can consider the input as an unweighted directed graph. The edges are moves corresponding to the results of
+        a 6-sided die roll.
+
+        Breadth-first search is an algorithm for finding the shortest path in unweighted graphs (directed or
+        undirected). It maintains a queue of vertices (nodes). It starts with only the starting vertex (cell 1 in this
+        problem). Then it processes the vertices one by one in the queue. Let's say we are processing some vertex.
+        There are (possibly zero) outgoing edges from this vertex. If these edges lead to unvisited vertices, push these
+        vertices to the queue. The algorithm terminates when it has visited all vertices.
+
+            - Maintain a queue of cells and distances to all cells from the first one. By distance to the cell, we mean
+               the least number of moves required to reach it. The distance from the first cell to itself is 0. Push the
+               first cell to the queue.
+
+            - While the queue is not empty:
+                    * Pop a cell from the queue. Let's say its label is cur. For each square next_square with a label in
+                       the range (cur+1) to min(curr+6,n^2), if next_square has a snake or a ladder, set next_square to
+                       the destination of that snake or ladder.
+                    * If next_square has not been visited yet, increment the number of moves and push it along
+                       next_square on to the queue.
+
+            - Return the distance to cell n^2 if it is reachable, otherwise return −1.
+
+    Time complexity: O(N^2), we run BFS on a graph whose vertices are the board cells, and the edges are moves between
+    them. There are N^2 vertices and no more than 6 * N^2=O(N^2) edges. The time complexity of BFS is O(∣V∣+∣E∣).
+    We have ∣V∣= N^2 and ∣E∣ <6 * N^2, thus the total time complexity for BFS is O(7 * N^2)=O(N^2).
     Space complexity: O(N)
     """
 
@@ -22,50 +48,20 @@ def snakes_and_ladders_v1(board):
         col = rem if quot % 2 == 0 else n - 1 - rem
         return row, col
 
-    n = len(board)
-    distance, queue = {1: 0}, deque([1])  # distance[a] = b means we arrived at cell #a with b moves
+    n, m = len(board), len(board[0])
+    queue = deque([(1, 0)])
+    visited = set()
     while queue:
-        num = queue.popleft()
-        if num == n * n:
-            return distance[n * n]
-        for i in range(num + 1, num + 7):  # Try all the 6 possible moves
-            if i > n * n:  # We landed outside the board
-                break
-            row, col = get_coordinates(i)
-            if board[row][col] != -1:  # There is a snake or ladder in this square
-                i = board[row][col]  # So this move takes us straight to cell #board[row][col]
-            if i not in distance:
-                distance[i] = distance[num] + 1  # This means we've arrived to cell #i with 1 move from cell #num
-                queue.append(i)  # Continue exploring from there
-    return -1
-
-
-def snakes_and_ladders_v2(board):
-    """ Transform the board to a 1D array then perform BFS. This way, we don't need to figure out the corresponding
-        row and column for every move we take.
-    Time complexity: O(N ** 2)
-    Space complexity: O(N ** 2)
-    """
-    n = len(board) ** 2
-    visited, queue = set(), deque([1])
-    moves = 0
-    arr = [0]
-    for i, row in enumerate(board[::-1]):
-        arr += row[::-1] if i % 2 else row
-    while queue:
-        new_queue = []
-        for num in queue:
-            if num == n:
-                return moves
-            for i in range(num + 1, num + 7):
-                if i > n:
-                    break
-                if arr[i] != -1:
-                    i = arr[i]
-                if i not in visited:
-                    visited.add(i)
-                    new_queue.append(i)
-        queue, moves = new_queue, moves + 1
+        square, steps = queue.popleft()
+        for next_square in range(square + 1, min(square + 6, n * n) + 1):
+            x, y = get_coordinates(next_square)
+            if board[x][y] != -1:
+                next_square = board[x][y]
+            if next_square == n * n:
+                return steps + 1
+            if next_square not in visited:
+                queue.append((next_square, steps + 1))
+                visited.add(next_square)
     return -1
 
 
@@ -80,8 +76,7 @@ class Test(unittest.TestCase):
 
     def test_snakes_and_ladders(self):
         for test_board, result in self.data:
-            self.assertEqual(result, snakes_and_ladders_v1(test_board))
-            self.assertEqual(result, snakes_and_ladders_v2(test_board))
+            self.assertEqual(result, snakes_and_ladders(test_board))
 
 
 if __name__ == '__main__':
