@@ -69,10 +69,25 @@ def combine_v1(n, k):
 
 def combine_v2(n, k):
     """ Optimized version of the previous algorithm.
-        In fact, we should not continue exploring when we know that there won't be enough numbers left between 'index'
-        and n to fill the needed k slots. If n = 10, k = 5, and we're in the outermost level of recursion, we choose
-        only i = 1...6 , because if we pick i = 7 and call dfs() we only have 8, 9, 10 to pick from, so at most we will
-        get [7, 8, 9, 10] although we need 5 elements.
+
+         In fact, we should not continue exploring when we know that there won't be enough numbers left between 'index'
+         and n to reach a path length of k. We should avoid paths like these as they are a waste of time.
+
+         For example, if n = 10, k = 5, and we're in the outermost level of recursion, we choose only i = 1...6 ,
+         because if we pick i = 7 and call dfs() we only have 8, 9, 10 to choose from, so at most we will get
+         [7, 8, 9, 10] although we need 5 elements.
+
+         At each node, we have path.length elements so far. We need to reach k elements. Therefore, we can calculate
+         needed = k - curr.length as the number of elements we still need to add.
+
+         The range of numbers we are considering in the subtree is [index, n]. The size of this range is
+         remaining = n - index + 1.
+
+         Finally, we can calculate available = remaining - needed. This value represents the count of numbers available
+          to us as children. We should only consider children in the range [index, index + available] instead of the
+          range [index, n]. If we moved to a child outside this range, like index + available + 1, then we will run out
+          of numbers to use before reaching a length of k.
+
     Time complexity: O(choose(n, k))
     Space complexity: O(k)
     """
@@ -81,9 +96,10 @@ def combine_v2(n, k):
         if len(path) == k:
             res.append(path)
             return
-        remaining = k - len(path)
-        i = index
-        while i <= n and remaining <= n - i + 1:  # (n - i + 1) is the number of possible integers between i and n
+        needed = k - len(path)
+        remaining = n - index + 1
+        available = remaining - needed
+        for i in range(index, index + available + 1):
             dfs(i + 1, path + [i])
             i += 1
 
