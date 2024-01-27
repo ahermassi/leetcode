@@ -126,16 +126,16 @@ def generate_parenthesis_v2(n):
     Time complexity: O(4^n)
     Space complexity: O(n)
     """
-    def dfs(open, close, path):
-        if open == close == n:
+    def dfs(left, right, path):
+        if left == right == n:
             res.append(''.join(path))
-        if open < n:
+        if left < n:
             path.append('(')
-            dfs(open + 1, close, path)
+            dfs(left + 1, right, path)
             path.pop()
-        if open > close:
+        if left > right:
             path.append(')')
-            dfs(open, close + 1, path)
+            dfs(left, right + 1, path)
             path.pop()
 
     res = []
