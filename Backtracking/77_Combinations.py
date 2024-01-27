@@ -50,15 +50,9 @@ def combine_v1(n, k):
         Solving this problem is equivalent to "traversing" this tree. The easiest way to perform the traversal is by
         using recursion and passing path as an argument.
 
-        Here is a backtrack function which takes a first integer to add 'index' and a current combination 'path'
-        as arguments.
-            - If the current combination is done, add it to output
-            - Iterate over the integers from 'index' to n
-                - Add integer i into the current combination
-                - Proceed to add more integers into the combination
-                - Backtrack by removing i from 'path' (while implicit here, it can be made explicit)
-    Time complexity: O(choose(n, k)), the umber of combinations to build
-    Space complexity: O(k), for call stack
+    Time complexity: O(choose(n, k)), the number of combinations to build. The number of combinations of length k
+    from a set of n elements is equal to the binomial coefficient, also known as "n choose k": n!/(k! * (n-k)!)
+    Space complexity: O(k), for the call stack
     """
 
     def dfs(index, path):
