@@ -68,16 +68,23 @@ def sort_list_v1(head):
 
 def sort_list_v2(head):
     """ The Top-Down Approach for merge sort uses O(logN) extra space due to recursive call stack. We can implement
-        merge sort with constant extra space using the Bottom-Up approach.
-        The Bottom-Up approach for merge sort starts by splitting the problem into the smallest sub-problems and
-        iteratively merges the result to solve the original problem.
-        First, the list is split into sub-lists of size 1 and merged iteratively in sorted order. The merged list is
-        solved similarly. The process continues until we sort the entire list.
-        Start with splitting the list into sub-lists of size 1. Each adjacent pair of sub-lists of size 1 is merged in
-        sorted order. After the first iteration, we get the sorted lists of size 2. A similar process is repeated for
-        a sublist of size 2. In this way, we iteratively split the list into sub-lists of size 1, 2, 4, 8.. and so on
-        until we reach N.
+         merge sort with constant extra space using the bottom-up approach.
+
+         The bottom-up approach for merge sort starts by splitting the problem into the smallest sub-problems and
+         iteratively merges the result to solve the original problem.
+
+            - The list is split into sub-lists of size 1 and merged iteratively in sorted order. The merged list is
+               solved similarly.
+
+            - The process continues until we sort the entire list.
+
+         Start with splitting the list into sub-lists of size 1. Each adjacent pair of sub-lists of size 1 is merged in
+         sorted order. After the first iteration, we get sorted lists of size 2. A similar process is repeated for
+         sub-lists of size 2. In this way, we iteratively split the list into sub-lists of size 1, 2, 4, 8,... and so on
+         until we reach N.
+
         http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/7-Sort/merge-sort5.html
+
     Time complexity: O(N logN)
     Space complexity: O(1)
     """
@@ -104,11 +111,14 @@ def sort_list_v2(head):
     def split(sublist_head, sublist_size):
         i = 1
         while i < sublist_size and sublist_head:
-            sublist_head = sublist_head.next  # Move the sublist head for a window of size 'sublist_size'
+            # Move the sublist head for a window of size 'sublist_size'
+            sublist_head = sublist_head.next
             i += 1
-        second = sublist_head.next if sublist_head else None  # If head is null, then the head of the second sublist is
+        # If head is null, then the head of the second sublist is null
+        second = sublist_head.next if sublist_head else None
         if head:
-            head.next = None  # Disconnect the first and second lists
+            # Disconnect the first and second lists
+            head.next = None
         return second
 
     if not head or not head.next:
@@ -122,18 +132,20 @@ def sort_list_v2(head):
     step = 1  # At each step, merge every two consecutive lists of size 2^(step-1)
     while step < size:
         tail = dummy
-        cur = dummy.next  # At the start of every iteration, 'cur' points to the head of the original list. During
-        # the iteration, 'tail' is the pointer whose preceding the 2 merged consecutive lists
+        # At the start of every iteration, 'cur' points to the head of the original list. During the iteration, 'tail'
+        # is the pointer whose preceding the 2 merged consecutive lists.
+        cur = dummy.next
         while cur:
             first_sublist_head = cur
-            second_sublist_head = split(first_sublist_head, step)  # Remember that the return value of split() is the
-            # head of the second list after splitting the list at the node at index 'step'
+            # Remember that the return value of split() is the head of the second list after splitting the list at
+            # the node at index 'step'
+            second_sublist_head = split(first_sublist_head, step)
             cur = split(second_sublist_head, step)  # After this call, the second sublist whose head is
             # 'second_sublist_head' has the same size as the first sublist after splitting at index 'step' again.
             # 'cur' points to the head of the rest of the list on which we'll apply the same procedure in the next
             # iteration
-            tail = merge(first_sublist_head, second_sublist_head, tail)  # We connect 'tail' to the head of the two
-            # merged lists.
+            tail = merge(first_sublist_head, second_sublist_head, tail)
+            # We connect 'tail' to the head of the two merged lists.
             # tail.next = head_of_merged_lists has the same effect as dummy.next = tail_of_merged_lists the first time
             # this statement is executed in every iteration. After that, 'tail' can move freely as dummy.next is taking
             # the stripe of the first two merged lists. merge() returns the tail of the two merged lists, to which
