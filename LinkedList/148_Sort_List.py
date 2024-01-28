@@ -10,14 +10,25 @@ class ListNode(object):
         self.next = None
 
 
+# Video explanation: https://youtu.be/TGveA1oFhrc
 def sort_list_v1(head):
-    """ The Top-Down approach for merge sort recursively splits the original list into sub-lists of equal sizes, sorts
+    """ Merge sort is one of the efficient sorting algorithms that is popularly used for sorting linked lists. The merge
+         sort algorithm runs in O(N logN) time in all the cases. Quicksort is also one of the efficient algorithms with
+         the average time complexity of O(N logN), but the worst-case time complexity is O(N^2). Also, variations of the
+         quick sort like randomized quicksort are not efficient for the linked list because unlike arrays, random access
+         in the linked list is not possible in O(1) time.
+
+        The top-down approach for merge sort recursively splits the original list into sub-lists of equal sizes, sorts
         each sublist independently, and eventually merges the sorted lists.
-        Recursively split the original list into two halves. The split continues until there is only one node in the
-        linked list (Divide phase). To split the list into two halves, we find the middle of the linked list using the
-        Fast and Slow pointer approach.
-        Recursively sort each sublist and combine it into a single sorted list. (Merge Phase)
+
+            - Recursively split the original list into two halves. The split continues until there is only one node in
+               the linked list (divide phase). To split the list into two halves, we find the middle of the linked list
+               using the Fast and Slow pointer approach.
+
+            - Recursively sort each sublist and combine it into a single sorted list (merge phase).
+
         The process continues until we get the original list in sorted order.
+
     Time complexity: O(N logN), the recursion tree expands in form of a complete binary tree, splitting the list into
     two halves recursively. The number of levels in a complete binary tree is given by logN. At each level, we merge N
     nodes which takes O(N) time. For N=16, we perform merge operation on 16 nodes in each of the 4 levels. So the time
@@ -27,7 +38,7 @@ def sort_list_v1(head):
     """
 
     def merge(head1, head2):
-        head = tail = ListNode(0)
+        dummy = tail = ListNode(0)
         while head1 and head2:
             if head1.val < head2.val:
                 tail.next = head1
@@ -37,16 +48,19 @@ def sort_list_v1(head):
                 head2 = head2.next
             tail = tail.next
         tail.next = head1 or head2
-        return head.next
+        return dummy.next
 
-    if not head or not head.next:  # This is the recursion base case: a single node list or empty list. When both
-        # left and right halves are at this base case, it's easy to merge them
+    if not head or not head.next:
+        # This is the recursion base case: a single node list or empty list. When both left and right halves
+        # are at this base case, it's easy to merge them
         return head
-    slow, fast = head, head.next
+    prev, slow, fast = None, head, head
+    # 'prev' is the node preceding 'slow'. When the while loop exits, 'prev' will point to the node preceding the head
+    # of the second half of the list
     while fast and fast.next:
-        slow, fast = slow.next, fast.next.next
-    left, right = head, slow.next
-    slow.next = None  # Cut the link so left and right halves are no longer connected
+        prev, slow, fast = slow, slow.next, fast.next.next
+    left, right = head, slow
+    prev.next = None  # Cut the link so left and right halves are no longer connected
     left = sort_list_v1(left)
     right = sort_list_v1(right)
     return merge(left, right)
