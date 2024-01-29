@@ -43,63 +43,80 @@ def find_peak_element_v1(nums):
 
 def find_peak_element_v2(nums):
     """ We can view any given sequence in nums array as alternating ascending and descending sequences. By making
-        use of this, and the fact that we can return any peak as the result, we can make use of Binary Search to find
-        the required peak element.
-        In case of simple Binary Search, we work on a sorted sequence of numbers and try to find out the required
-        number by reducing the search space at every step. In this case, we use a modification of this simple Binary
-        Search to our advantage. We start off by finding the middle element 'mid' from the given nums array. If
-        this element happens to be lying in a descending sequence of numbers, or a local falling slope (found by
-        comparing nums[i] to its left neighbour), it means that the peak will always lie towards the left of this
-        element. Thus, we reduce the search space to the left of 'mid' (including itself) and perform the same process
-        on left sub-array.
-        If the middle element 'mid' lies in an ascending sequence of numbers, or a rising slope (found by comparing
-        nums[i] to its right neighbour), it obviously implies that the peak lies towards the right of this element.
-        Thus, we reduce the search space to the right of 'mid' and perform the same process on the right sub-array.
-        In this way, we keep on reducing the search space till we eventually reach a state where only one element is
-        remaining in the search space. This single element is the peak element.
-        Binary search works here because we need to return any local peak, not necessarily the global peak.
-        If the number to its right is higher than the middle value, then somewhere on the right there must be a peak -
-        either the numbers ascend and then descend, in which case there would be a peak where the change from ascent
-        to descent happens, or the numbers continue to ascend until the end of the array, in which case the last value
-        in the array would be a local peak (because nums[n] = -∞)
-        The same with the other way. If the value on the left of the middle value is bigger than the middle value, then
-        it must be that either the middle value itself is a peak or that there is definitely a peak on the left side
-        of the middle value. This is because if the number on the left is bigger than the middle value, there are two
-        options: either the numbers continue ascending in the left direction until the end, in which case the first
-        value of the array would be a peak (because nums[0] = -∞), or the values increase to the left until a point at
-        which they start decreasing, and that point would be a peak.
-        So by seeing what happens at the middle and choosing the continuation accordingly, we can be sure to eventually
-        arrive at a peak.
-        What is helpful is the following statement in the question description:
-        "You may imagine that nums[-1] = nums[n] = -∞"
-        This means a peak will always exist. Example: 3 is peak in following two arrays:
-        -∞ | 0,1,2,3|-∞
-        -∞ | 3,2,1,0|-∞
-        So all we need to do is find the end of any increasing slope in the input array.
-        Lets say we have a mid number at index x, nums[x]. If nums[x+1] > nums[x], that means a peak element HAS to
-        exist on the right half of that array, because (since every number is unique):
+         use of this, and the fact that we can return any peak as the result, we can make use of binary search to find
+         the peak element.
+
+         In the case of simple binary search, we work on a sorted sequence of numbers and try to find out the required
+         number by reducing the search space at every step. In this case, we use a modification of this simple binary
+         search to our advantage.
+
+         We start off by finding the middle element 'mid' from the given nums array.
+
+            - If mid happens to be lying in a descending sequence of numbers, or a local falling slope (found by
+               comparing nums[i] to its left neighbor), it means that the peak will always lie towards the left of mid.
+               Thus, we reduce the search space to the left of mid (including itself) and perform the same process on
+               the left subarray.
+
+            - If mid lies in an ascending sequence of numbers, or a rising slope (found by comparing nums[i] to its
+               right neighbor), it obviously implies that the peak lies towards the right of this element. Thus, we
+               reduce the search space to the right of mid and perform the same process on the right subarray.
+
+         In this way, we keep on reducing the search space till we eventually reach a state where only one element is
+         remaining in the search space. This single element is the peak element.
+
+         Binary search works here because we need to return any local peak, not necessarily the global peak. If the
+         number to its right is higher than the middle value, then somewhere on the right there must be a peak - either
+         the numbers ascend and then descend, in which case there would be a peak where the change from ascent to
+         descent happens, or the numbers continue to ascend until the end of the array, in which case the last value in
+         the array would be a local peak (because nums[n] = -∞).
+         The same with the other way. If the value to the left of the middle element is bigger than the middle value,
+         then it must be that either the middle value itself is a peak or that there is definitely a peak on the left
+         side of the middle value. This is because if the number on the left is bigger than the middle value, there are
+         two options: either the numbers continue ascending in the left direction until the end, in which case the first
+         element of the array would be a peak (because nums[0] = -∞), or the values increase to the left until a point
+         at which they start decreasing, and that point would be a peak.
+
+         So binary search works because as long as we follow the slopes upward, we will for sure encounter a peak.
+         Yes, we may miss some peaks during binary cuts, but there is at least 1 that will be encountered since beyond 0
+         and (n - 1) are negative infinities. If it keeps going up, then it has to have a peak turn or reach either end
+         of the array which by the definition are peaks.
+
+         What is helpful is the following statement in the question description:
+            "You may imagine that nums[-1] = nums[n] = -∞"
+         This means a peak will always exist.
+
+         Example: 3 is peak in following two arrays:
+         -∞ | 0,1,2,3|-∞
+         -∞ | 3,2,1,0|-∞
+         So all we need to do is find the end of any increasing slope in the input array.
+
+         Let's say we have a mid at index x, nums[x]. If nums[x] < nums[x+1], that means a peak element HAS TO exist at
+         the right half of the array, because (since every number is unique):
+
             - If the numbers keep increasing on the right side, then the peak will be the last element.
             - If the numbers stop increasing and there is a 'dip', or there exists somewhere a number such that
-              nums[y] < nums[y-1], which means number[x] is a peak element.
-        This same logic can be applied to the left hand side (nums[x] < nums[x-1]).
-        Example:
+               nums[y] < nums[y-1], it means number[x] is a peak element.
+
+         This same logic can be applied to the left-hand side (nums[x] < nums[x-1]).
+
+         Example:
         | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
-        |---|---|---|---|---|---|---|---|---|
+        |---|---|---|---|---|---|---|
         | l | _ | _ | _ | m | _ | _ | _ | r |
-        a[m] > a[m+1] -> r=m (Not m-1 since m is larger and it itself can be the answer)
+        nums[mid] > nums[mid+1] -> r=mid (Not mid-1 since mid can be the answer)
 
         | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
-        |---|---|---|---|---|---|---|---|---|
+        |---|---|---|---|---|---|---|
         | l | _ | m | _ | r | X | X | X | X |
-        a[m] < a[m+1] -> l = m+1 (Since a[m] is smaller than a[m+1], m will for sure not be the answer)
+        nums[mid] < nums[m+1] -> l = mid+1 (Since nums[mid] < nums[mid+1], mid can't  be the answer)
 
         | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
-        |---|---|---|---|---|---|---|---|---|
+        |---|---|---|---|---|---|---|
         | X | X | X |l,m | r | X | X | X | X |
-        a[m] < a[m+1] -> l = m+1 (Since a[m] is smaller than a[m+1], m will for sure not be the answer)
+        nums[mid] < nums[m+1] -> l = mid+1 (Since nums[mid] < nums[mid+1], mid can't be the answer)
 
         | 1 | 2 | 3 | 4 | 5   | 4 | 3 | 2 | 1 |
-        |---|---|---|---|-----|---|---|---|---|
+        |---|---|---|---|-----|---|---|
         | X | X | X | X | l,r | X | X | X | X |
         l is the answer
 
