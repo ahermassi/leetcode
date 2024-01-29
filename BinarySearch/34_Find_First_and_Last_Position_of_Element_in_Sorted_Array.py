@@ -111,30 +111,30 @@ def search_range_v2(nums, target):
     return [find_first_position(), find_last_position()]
 
 
-def search_range_v3(nums, target):
-    """ We can use a single binary search helper method to find both first and last insertion positions of target.
-        Here, find_first_occurrence(target) is a simple binary search, telling the first index where we could insert a
-        number 'target' into 'nums' to keep it sorted. Thus, if 'nums' contains 'target', we can find the first
-        occurrence with find_first_occurrence(target). We do that, and if target isn't actually there, then we return
-        [-1, -1]. Otherwise, we ask find_first_occurrence(target + 1), which tells us the first index where we could
-        insert (target + 1), which of course is one index behind the last index containing target, so all we have left
-        to do is subtract 1.
-    Time complexity: O(logN)
-    Space complexity: O(1)
-    """
-
-    def find_first_occurrence(target):
-        left, right = 0, len(nums) - 1
-        while left <= right:
-            mid = (left + right) // 2
-            if nums[mid] < target:
-                left = mid + 1
-            else:
-                right = mid - 1
-        return left
-
-    left, right = find_first_occurrence(target), find_first_occurrence(target + 1) - 1
-    return [left, right] if left <= right else [-1, -1]
+# def search_range_v3(nums, target):
+#     """ We can use a single binary search helper method to find both first and last insertion positions of target.
+#         Here, find_first_occurrence(target) is a simple binary search, telling the first index where we could insert a
+#         number 'target' into 'nums' to keep it sorted. Thus, if 'nums' contains 'target', we can find the first
+#         occurrence with find_first_occurrence(target). We do that, and if target isn't actually there, then we return
+#         [-1, -1]. Otherwise, we ask find_first_occurrence(target + 1), which tells us the first index where we could
+#         insert (target + 1), which of course is one index behind the last index containing target, so all we have left
+#         to do is subtract 1.
+#     Time complexity: O(logN)
+#     Space complexity: O(1)
+#     """
+#
+#     def find_first_occurrence(target):
+#         left, right = 0, len(nums) - 1
+#         while left <= right:
+#             mid = (left + right) // 2
+#             if nums[mid] < target:
+#                 left = mid + 1
+#             else:
+#                 right = mid - 1
+#         return left
+#
+#     left, right = find_first_occurrence(target), find_first_occurrence(target + 1) - 1
+#     return [left, right] if left <= right else [-1, -1]
 
 
 class Test(unittest.TestCase):
@@ -144,7 +144,6 @@ class Test(unittest.TestCase):
         for test_array, test_target, result in self.data:
             self.assertEqual(result, search_range_v1(test_array, test_target))
             self.assertEqual(result, search_range_v2(test_array, test_target))
-            self.assertEqual(result, search_range_v3(test_array, test_target))
 
 
 if __name__ == '__main__':
