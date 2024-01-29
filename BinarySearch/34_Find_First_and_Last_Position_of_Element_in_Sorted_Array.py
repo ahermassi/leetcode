@@ -57,50 +57,58 @@ def search_range_v1(nums, target):
     return [left, right] if left <= right else [-1, -1]
 
 
+# Video explanation: https://youtu.be/4sQL7R5ySUU
 def search_range_v2(nums, target):
     """ The fundamental idea of binary search is to maintain a set of candidate solutions. To find the first index, if
-        we see the element at index i equals 'target', although we do not know whether i is the first element equal to
-        'target', we do know that no subsequent elements can be the first one. Therefore we remove all elements with
-        index (i + 1) or more from the candidates.
-        Let's apply the above logic to the array [-14, -10, 2, 108, 108, 243, 285, 285, 285, 401], with target = 108.
-        We start with all indices as candidates, i.e., with [0, 9].
-        The midpoint index, 4 contains target. Therefore we can now update the candidate set to [0, 3], and record 4 as
-        an occurrence of 'target'.
+         we see the element at index i equals 'target', although we do not know whether i is the first element equal to
+         'target', we do know that no subsequent element can be the first position. Therefore, we discard all elements
+         beyond index (i + 1) from the set of candidates.
+
+         Let's apply the above logic to the array [-14, -10, 2, 108, 108, 243, 285, 285, 285, 401], with target = 108.
+         We start with all indices as candidates, i.e., with [0, 9].
+
+         The mid index is 4, which contains target. Therefore, we can update the candidate set to [0, 3], and record 4
+         as an occurrence of 'target'.
+
         The next midpoint is 1, and this index contains -10. We update the candidate set to [2,3].
+
         The value at the midpoint is 2, so we update the candidate set to [3, 3].
+
         Since the value at this midpoint is 108, we update the first seen occurrence of 'target' to 3.
-        Now the interval is [3, 2], which is empty, terminating the search.
-        The result is 3.
+
+        Now the interval is [3, 2], which is empty, terminating the search. The first position of target is 3.
+
         Using the same logic, we can find the last occurrence index.
+
     Time complexity: O(logN)
     Space complexity: O(1)
     """
 
-    def find_first_index():
-        left, right, res = 0, len(nums) - 1, -1
+    def find_first_position():
+        left, right, index = 0, len(nums) - 1, -1
         while left <= right:
             mid = (left + right) // 2
             if nums[mid] < target:
                 left = mid + 1
             else:
                 right = mid - 1
-            if nums[mid] == target:
-                res = mid
-        return res
+                if nums[mid] == target:
+                    index = mid
+        return index
 
-    def find_last_index():
-        left, right, res = 0, len(nums) - 1, -1
+    def find_last_position():
+        left, right, index = 0, len(nums) - 1, -1
         while left <= right:
             mid = (left + right) // 2
             if nums[mid] > target:
                 right = mid - 1
             else:
                 left = mid + 1
-            if nums[mid] == target:
-                res = mid
-        return res
+                if nums[mid] == target:
+                    index = mid
+        return index
 
-    return [find_first_index(), find_last_index()]
+    return [find_first_position(), find_last_position()]
 
 
 def search_range_v3(nums, target):
