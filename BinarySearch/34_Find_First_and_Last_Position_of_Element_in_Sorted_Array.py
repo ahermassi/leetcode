@@ -8,12 +8,13 @@ import unittest2 as unittest
 
 def search_range_v1(nums, target):
     """ The problem can be simply broken down as two binary searches for the beginning and end of the range,
-        respectively. The tricky part is handling left and right pointers when a match is found.
-        Example:
-                0  1  2  3  4  5  6  7  8  9  10 11 12
-        nums = [1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7, 9, 9], target = 5
+         respectively. The tricky part is handling the left and right pointers when a match is found.
 
-        left = 0, right = 12, mid = 6: notice here that nums[mid] == target. However, right = mid - 1. By doing that
+         Example:
+                      0  1  2  3  4  5  6  7  8  9  10 11 12
+        nums = [1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7,  9,  9], target = 5
+
+        left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, right = mid - 1. By doing that
         and narrowing down the search range, we're essentially locating the first element LESS than target, similar to
         bisect_left. When 'left' steps over 'right', nums[left] is the first occurrence of target.
         left = 0, right = 5, mid = 2
@@ -21,7 +22,7 @@ def search_range_v1(nums, target):
         left = 5, right = 5, mid = 5
         left = 6, right = 5 -> return left = 6
 
-        left = 0, right = 12, mid = 6: notice here that nums[mid] == target. However, left = mid + 1. By doing that
+        left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, left = mid + 1. By doing that
         and narrowing down the search range, we're essentially locating the first element GREATER than target, similar
         to bisect_right. When 'right' steps over 'left', nums[right] is the first occurrence of target.
         left = 7, right = 12, mid = 9
@@ -32,7 +33,7 @@ def search_range_v1(nums, target):
     Time complexity: O(logN)
     Space complexity: O(1)
     """
-    def binary_search_left():
+    def find_first_position():
         left, right = 0, len(nums) - 1
         while left <= right:
             mid = (left + right) // 2
@@ -42,7 +43,7 @@ def search_range_v1(nums, target):
                 right = mid - 1
         return left
 
-    def binary_search_right():
+    def find_last_position():
         left, right = 0, len(nums) - 1
         while left <= right:
             mid = (left + right) // 2
@@ -52,7 +53,7 @@ def search_range_v1(nums, target):
                 left = mid + 1
         return right
 
-    left, right = binary_search_left(), binary_search_right()
+    left, right = find_first_position(), find_last_position()
     return [left, right] if left <= right else [-1, -1]
 
 
