@@ -7,26 +7,23 @@ import unittest2 as unittest
 
 
 def merge_v1(nums1, m, nums2, n):
-    """ The straightforward implementation would be to set pointer p1 in the beginning of nums1, p2 in the beginning
-        of nums2, and push the smallest value in the output array at each step.
-        Since nums1 is an array used for output, keep first m elements of nums1 somewhere aside.
+    """ The simplest implementation would be to make a copy of the values in nums1, called nums1_copy, and then use two
+         read pointers and one write pointer to read values from nums1_copy and nums2 and write them into nums1.
+
     Time complexity: O(n + m)
-    Space complexity: O(m) for nums1_copy
+    Space complexity: O(m), for nums1_copy
     """
     nums1_copy = nums1[:m]
     i = j = write_index = 0
     while i < m and j < n:
-        if nums1_copy[i] <= nums2[j]:
+        if nums1_copy[i] < nums2[j]:
             nums1[write_index] = nums1_copy[i]
             i += 1
         else:
             nums1[write_index] = nums2[j]
             j += 1
         write_index += 1
-    if i < m:
-        nums1[write_index:] = nums1_copy[i:]
-    elif j < n:
-        nums1[write_index:] = nums2[j:]
+    nums1[write_index:] = nums1_copy[i:] if i < m else nums2[j:]
 
 
 def merge_v2(nums1, m, nums2, n):
@@ -88,7 +85,7 @@ class Test(unittest.TestCase):
 
     def test_merge(self):
         for test_array1, m, test_array2, n, result in self.data:
-            merge_v2(test_array1, m, test_array2, n)
+            merge_v1(test_array1, m, test_array2, n)
             self.assertEqual(result, test_array1)
 
 
