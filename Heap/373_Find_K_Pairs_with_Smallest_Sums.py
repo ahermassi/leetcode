@@ -7,7 +7,7 @@ import unittest2 as unittest
 
 
 def k_smallest_pairs(nums1, nums2, k):
-    """ It is helpful to visualize the input as an nxm matrix of sums, for example nums1= [1, 7, 11], nums2 = [2, 4, 6]:
+    """ It is helpful to visualize the input as a N x M matrix of sums, for example nums1= [1, 7, 11], nums2 = [2, 4, 6]:
 
             2   4   6
             +------------
@@ -15,45 +15,64 @@ def k_smallest_pairs(nums1, nums2, k):
           7 |  9  11  13
          11 | 13  15  17
 
-        Of course the smallest pair overall is in the top left corner, the one with sum 3. We don't even need to look
-        anywhere else. After including that pair in the output, the next smaller pair must be the next on the right
-        (sum = 5) or the next below (sum = 9). We can keep a "horizon" of possible candidates, implemented as a heap /
-        priority-queue, and roughly speaking we'll grow from the top left corner towards the right/bottom.
-        We start off only with the very first pairs of the first column of the matrix, and we expand from there as
-        needed. Whenever a pair at cell (i,j) is chosen into the output result, the next pair in the row at cell (i,j+1)
-        gets added to the priority queue of current options.
-        We know that each row and each column is sorted, and we want to expand to the right and down.
-        When popping off the heap, we know we can just keep going rightward in the same row. The heap obviously
-        guarantees that we only get the min element. It's impossible for sum(i + 1, j) < sum(i, j) or for
-        sum(i + 1, j + 1) < sum(i + 1, j).
-        For every numbers in nums1, its best partner (yields min sum) always starts from nums2[0] since arrays are
-        sorted. For a specific number in nums1, its next candidate should be:
-            [this specific number] + nums2[current_associated_index + 1]
-        unless out of boundary.
-        It is actually the same as how we merge k sorted lists, where in this question the following are the k sorted
-        lists:
-        (1,2) -> (1,4) -> (1,6)
-        (7,2) -> (7,4) -> (7,6)
-        (11,2) -> (11,4) -> (11,6)
-        Remember how we do to merge k sorted lists? We simply add the head of the list into the heap, and when a node
-        is popped, we just add the node.next.
-    Time complexity: O(K logK), heap size <= k and we do at most k heappop
-    Space complexity: O(N), where N is the length of nums1
+         Because the arrays are sorted, the pair with the smallest sum is undoubtedly the one in the top left corner,
+         with sum 3. The next pair with a sum that is just greater than (or equal to) the sum of the previous pair would
+         be formed by selecting either the first element of nums1 and the second element of nums2, (1, 4), or the second
+         element of nums1 and the first element of nums2, (7, 2), whichever has smaller sum. We only need to look at
+         these two pairs because the sum of all the other pairs will be greater than this pair.
+
+         We can keep a "horizon" of possible candidates, implemented as a heap / priority-queue, and roughly speaking
+         we'll grow from the top left corner towards the right/bottom. We must store the information of the indices of
+         nums1 and nums2 that lead to the formation of a particular sum in the heap in order to return the pair of
+         integers.
+
+         In the heap, we would store a triplet of integers: the pair's sum, the first element's index in nums1, and the
+         second element's index in nums2.
+
+         We start off only with the very first pairs of the first column of the matrix, consisting of the combinations
+         of every number in nums1 and the first number in nums2, and we expand from there as needed.
+
+         To obtain the minimum sum of a pair among all the pairs under consideration, the top of the heap is popped out.
+         We save the triplet in _, i and j. We add the pair (nums1[i], nums2[j]) to the output. The next pair in the row
+         at cell (i, j+1) gets added to the priority queue of current options.
+
+         We know that each row and each column is sorted, and we want to expand to the right and down. When popping off
+         the heap, we know we can just keep going rightward in the same row. The heap obviously guarantees that we only
+         get the min element. It's impossible that sum(i + 1, j) < sum(i, j) or that sum(i + 1, j + 1) < sum(i + 1, j).
+
+         For every number in nums1, its best partner (yields min sum) always starts from nums2[0] since arrays are
+         sorted. For a specific number in nums1, its next candidate should be:
+
+                [this specific number] + nums2[current_associated_index + 1]
+
+         unless out of boundary.
+
+         The logic in this implementation is actually similar to how we merge k sorted lists, where in this question the
+         following are the k sorted lists:
+         (1,2) -> (1,4) -> (1,6)
+         (7,2) -> (7,4) -> (7,6)
+         (11,2) -> (11,4) -> (11,6)
+
+         Remember what we do to merge k sorted lists? We simply add the head of the list into the heap, and when a node
+         is popped, we just add node.next.
+
+    Time complexity: O(K logN), where N is the size of nums1. We do at most k heap pops.
+    Space complexity: O(N), where N is the size of nums1
     """
-    if not nums1 or not nums2 or not k:
-        return None
-    heap, res, n, m = [], [], len(nums1), len(nums2)
-    for i in range(n):
-        heappush(heap, (nums1[i] + nums2[0], nums1[i], nums2[0], 0))
+    n, m = len(nums1), len(nums2)
+    heap, res = [], []
+    for i, num in enumerate(nums1):
+        heappush(heap, (num + nums2[0], i, 0))
     while k and heap:
-        s, num1, num2, index = heappop(heap)
-        res.append([num1, num2])
-        k -= 1
-        if index < m - 1:
-            heappush(heap, (num1 + nums2[index + 1], num1, nums2[index + 1], index + 1))  # Offer potential better pair.
-            # Next better pair could with be A: [after(num1), num2] or B: [num1, after(num2)]
+        _, i, j = heappop(heap)
+        res.append([nums1[i], nums2[j]])
+        if j < m - 1:
+            # Offer a potential better pair.
+            # The next better pair could with be A: [after(num1), num2] or B: [num1, after(num2)]
             # For A, we've already added top possible k into queue, so A is either in the queue already, or not
-            # qualified. For B, it might be a better choice, so we offer it into queue
+            # qualified. For B, it might be a better choice, so we add it to queue.
+            heappush(heap, (nums1[i] + nums2[j + 1], i, j + 1))
+        k -= 1
     return res
 
 
