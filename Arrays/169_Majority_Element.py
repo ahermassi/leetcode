@@ -26,7 +26,10 @@ def majority_element_v1(nums):
 
 def majority_element_v2(nums):
     """ If the elements are sorted in monotonically increasing (or decreasing) order, the majority element can be found
-        at index len(nums) // 2
+         at index ⌊N/2⌋. In other words, if the array was rearranged such that all the occurrences of the majority
+         element were put together, this sequence of occurrences will occupy more than half of the array's size, and so
+         the ⌊N/2⌋th element will always be the majority element.
+
     Time complexity: O(N logN), for sorting
     Space complexity: O(N), for sorting
     """
