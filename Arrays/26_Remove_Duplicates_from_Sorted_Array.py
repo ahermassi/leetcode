@@ -4,6 +4,7 @@ Do not allocate extra space for another array, you must do this by modifying the
 memory. """
 
 
+# Video explanation: https://youtu.be/DEJAZBq0FDA
 def remove_duplicates(nums):
     """ The problem would have been simpler if we are allowed to use extra space. We can create a hashmap which stores
          all unique array elements as the key and element frequency as the value. After populating the map, we get all
