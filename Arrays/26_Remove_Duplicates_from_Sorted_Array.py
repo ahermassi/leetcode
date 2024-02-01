@@ -5,18 +5,34 @@ memory. """
 
 
 def remove_duplicates(nums):
-    """ The goal is not to remove the elements, but to swap to the end. Since the array is already sorted, we can keep
-        two pointers i and write_index, where write_index is the slow-runner and i is the fast-runner.
-        As long as nums[i] == nums[write_index] , we increment i to skip the duplicates. When we encounter the first
-        nums[i] != nums[write_index], the duplicate run has ended so we must copy its value to nums[write_index+1].
-        write_index is then incremented and we repeat the same process again until i reaches the end of array.
-        The invariant of this algorithm is:
-            All elements up to write_index (included) are unique. All elements between write_index and i are duplicate
-            of nums[write_index].
+    """ The problem would have been simpler if we are allowed to use extra space. We can create a hashmap which stores
+         all unique array elements as the key and element frequency as the value. After populating the map, we get all
+         the unique elements from the array. We then iterate the map and push all the keys in the input array.
+         However, without using extra space it makes it a bit tricky as we have to modify the existing input array.
+
+         Since the array is sorted, repeated elements must appear one after another, so we do not need an auxiliary
+         data structure to check if an element has appeared already. Therefore, if we know the position of one of the
+         elements, we also know the positioning of all the duplicate elements.
+
+         We need to modify the array in-place and the size of the final array would potentially be smaller than the size
+         of the input array. The goal is not to remove the elements, but to swap to the end. So, we ought to use a
+         two-pointer approach here. One, called i, that would keep track of the current element in the original array
+         and another one, called write_index, that represents the tail of the sequence of unique elements and is used to
+         bypass the duplicates.
+
+         As long as nums[i] == nums[write_index] , we increment i to skip the duplicates. When we encounter the first
+         nums[i] != nums[write_index], it means the duplicate run has ended, so we must copy nums[i] to
+         nums[write_index+1]. We repeat the same process until i reaches the end of the array.
+
+         The invariant of this algorithm is:
+
+                    All elements up to write_index (included) are unique. All elements between write_index and i are
+                    duplicate of nums[write_index].
+
     Time complexity: O(N) where N is the length of array nums
     Space complexity: O(1)
     """
-    write_index = 0  # This variable is the tail of the sequence of unique elements
+    write_index = 0  # write_index is the tail of the sequence of unique elements
     n = len(nums)
     for i in range(n):
         if nums[i] != nums[write_index]:
