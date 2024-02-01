@@ -8,15 +8,19 @@ import unittest2 as unittest
 
 
 def majority_element_v1(nums):
-    """ Basic hash map solution with one pass.
-    Time complexity: O(N / 2) in the best case where all instances of the majority element appear at the beginning of
-    nums. O(N) in the worst case
-    Space complexity: O(N) in the worst case, O(1) in the best case.
+    """ We know that the majority element occurs more than ⌊N/2⌋ times, and a hashmap allows us to count element
+         occurrences efficiently.
+
+    Time complexity: O(N/2) in the best case where all instances of the majority element appear at the beginning of
+    the input, and O(N) in the worst case
+    Space complexity: O(N), at most the hashmap can contain N−⌊N/2⌋ associations, so it occupies O(N) space. This is
+    because an arbitrary array of length N can contain N distinct values, but nums is guaranteed to contain a majority
+    element, which will occupy (at minimum) ⌊N/2⌋+1 array indices.
     """
-    n, count = len(nums), defaultdict(int)
+    n, counter = len(nums), defaultdict(int)
     for num in nums:
-        count[num] += 1
-        if count[num] > n // 2:
+        counter[num] += 1
+        if counter[num] > n // 2:
             return num
 
 
