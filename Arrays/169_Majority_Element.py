@@ -37,18 +37,52 @@ def majority_element_v2(nums):
     return nums[len(nums) // 2]
 
 
+# Video explanation: https://youtu.be/7pnhv842keE
 def majority_element_v3(nums):
-    """ This is Boyer-Moore voting algorithm.
-        We can group entries into two subgroups: Those containing the majority element, and those that do not hold the
-        majority element. Since the first subgroup is given to be larger in size than the second, if we see two entries
-        that are different, at most one can be the majority element. By discarding both, the difference in size of the
-        first subgroup and second subgroup remains the same, so the majority of the remaining entries remains unchanged.
-        We maintain a counter, which is incremented whenever we see an instance of our current candidate for majority
-        element (first subgroup) and decremented whenever we see anything else (second subgroup). Whenever the counter
-        drops to 0, we effectively forget about everything in nums up to the current element and consider the current
-        number as the candidate for majority element. Eventually, a suffix will be found for which count does not hit 0,
-        and the majority element of that suffix will necessarily be the same as the majority element of the overall
-        array.
+    """ Boyer-Moore voting algorithm.
+
+         If we had some way of counting instances of the majority element as +1 and instances of any other element
+         as −1, summing them would make it obvious that the majority element is indeed the majority element.
+
+         Essentially, what Boyer-Moore does is look for a suffix of nums where suf[0] is the majority element in that
+         suffix. To do this, we maintain a count, which is incremented whenever we see an instance of the current
+         candidate for majority element and decremented whenever we see anything else. Whenever the count drops to 0, we
+         effectively forget about everything in nums up to the current index and consider the current number as the
+         candidate for majority element.
+
+         It is not immediately obvious why we can get away with forgetting prefixes of nums - consider the following
+         examples (pipes are inserted to separate runs of non-zero count):
+
+         Example 1: [7, 7, 5, 7, 5, 1 | 5, 7 | 5, 5, 7, 7 | 7, 7, 7, 7]
+
+         Here, the 7 at index 0 is selected to be the first candidate for majority element. count will eventually reach
+         0 after index 5 is processed, so the 5 at index 6 will be the next candidate. In this case, 7 is the true
+         majority element, so by disregarding this prefix, we are ignoring an equal number of majority and minority
+         elements - therefore, 7 will still be the majority element in the suffix formed by throwing away the first
+         prefix.
+
+         Example 2: [7, 7, 5, 7, 5, 1 | 5, 7 | 5, 5, 7, 7 | 5, 5, 5, 5]
+
+         Now, the majority element is 5 (we changed the last run of the array from 7s to 5s), but the first candidate is
+         still 7. In this case, the candidate is not the true majority element, but we still cannot discard more
+         majority elements than minority elements (this would imply that count could reach -1 before we reassign
+         a candidate, which is obviously false).
+
+         Therefore, given that it is impossible (in both cases) to discard more majority elements than minority
+         elements, we are safe in discarding the prefix and attempting to solve the majority element problem for the
+         suffix. Eventually, a suffix will be found for which count does not hit 0, and the majority element of that
+         suffix will necessarily be the same as the majority element of the overall array.
+
+         The intuition is that we can group entries into two subgroups: Those containing the majority element, and those
+         that do not hold the majority element. Since the first subgroup is given to be larger in size than the second,
+         if we see two entries that are different, at most one can be the majority element. By discarding both, the
+         difference in size of the first subgroup and second subgroup remains the same, so the majority of the
+         remaining entries remains unchanged.
+
+         Looking at the idea of this algorithm, it first assumes candidates and then performs verification. There is a
+         strong assumption that there must be a number with more than half of the count. This assumption guarantees that
+         even if the count is reset to 0 by other elements, the majority element will eventually regain the lead.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
