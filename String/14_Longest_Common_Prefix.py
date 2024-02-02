@@ -70,15 +70,18 @@ def longest_common_prefix_v2(strings):
 
 
 def longest_common_prefix_v3(strings):
-    """ This solution uses zip() in a rather elegant way. Use zip() to look at respective characters in order.
-    Time complexity: O(S * N), where S is the length of the shortest string in the array and N is the number of strings
+    """ This solution uses zip() in a rather elegant way. Use zip() to process respective characters in order.
+         This is also known as vertical scanning.
+
+    Time complexity: O(N * S), where N is the number of strings and S is the length of the shortest string in the list
     Space complexity: O(L), where L is the length of the longest string
     """
     prefix = []
-    for letters in zip(*strings):
-        if len(set(letters)) > 1:  # If not all respective characters are the same
+    for chars in zip(*strings):
+        if len(set(chars)) > 1:
+            # If not all respective characters are the same
             break
-        prefix.append(letters[0])  # If all characters are the same, append that character
+        prefix.append(chars[0])  # If all characters are the same, append that character
     return ''.join(prefix)
 
 
