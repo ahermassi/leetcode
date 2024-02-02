@@ -54,13 +54,13 @@ def longest_common_prefix_v1(strings):
 
 def longest_common_prefix_v2(strings):
     """ Now we use the fact that the longest common prefix can only be as long as the shortest string in the list.
-        For each character in the shortest string, we check if the other strings have the same character at the
-        corresponding index. Return the string up to the valid index.
-    Time complexity: O(S * L), where S is the length of the shortest string and L is the length of the longest string
-    Space complexity: O(S), where S is the length of the shortest string in the array
+
+         For each character in the shortest string, we check if the other strings have the same character at the
+         corresponding index. Return the string up to the valid index.
+
+    Time complexity: O(N * M), where N is the length of the shortest string and M is the length of the longest string
+    Space complexity: O(1)
     """
-    if not strings:
-        return ''
     shortest = min(strings, key=len)
     for i, c in enumerate(shortest):
         for other in strings:
