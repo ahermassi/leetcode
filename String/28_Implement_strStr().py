@@ -42,41 +42,93 @@ def str_str_v1(haystack, needle):
 
 def str_str_v2(haystack, needle):
     """ Rabin-Karp algorithm.
-        The idea is simple: move along the string, generate a hash of substring in the sliding window, and compare it
-        with the reference hash of the needle string.
-        The Rabin-Karp algorithm is very similar to the brute-force algorithm, but it does not require the second loop.
-        Instead, it uses the concept of a 'fingerprint'. Specifically, let m be the length of needle. It computes hash
-        codes of each substring whose length is m. These are the fingerprints. The key to efficiency is using an
-        incremental hash function, such as a function with the property that the hash code of a string is an additive
-        function of each individual character. Such a hash function is sometimes referred to as a rolling hash.
-        A rolling hash (also known as recursive hashing or rolling checksum) is a hash function where the input is
-        hashed in a window that moves along the input. For such a function, getting the hash code of a sliding window
-        of characters is very fast for each shift.
-        We consider the string 'abcd' -> [ord('a'), ord('b'), ord('c'), ord('d')] as a number in a numeral system with
-        the base 26. Hence 'abcd' -> [ord('a'), ord('b'), ord('c'), ord('d')] could be hashed as:
+
+         This algorithm is based on the concept of hashing. We can hash any string to a numeric value. For this purpose,
+         we can use different hashing algorithms.
+
+         One example is to define the hash function as sum of mapped values of all the characters in the string. The
+         mapped value of 'a' is 1, the mapped value of 'b' is 2, and so on. Using this, 'abb' will be mapped to 1+2+2=5.
+         If two strings are equal, then their hash values will be equal. However, using this hashing approach, the
+         reverse will not necessarily be True. If two hash values are equal, we can't say that the strings are also
+         equal. 'aca' will also map to 5, however, 'aca' and 'abb' are not equal. Thus, we can have lots of collisions
+         (also called spurious hits).
+
+         To overcome spurious hits, we can assign position weight to each index of the string. For example, the last
+         character of the string is assigned a weight of 1, the second last character of the string is assigned a weight
+         of 10, the third last character of the string is assigned a weight of 10^2, and so on.
+
+         In this way, 'aca' will be mapped to 1*10^2 + 3*10^1 + 1*10^0 = 100 + 30 + 1 = 131, while 'abb' will be mapped
+         to 1*10^2 + 2*10^1 + 2*10^0 = 100 + 20 + 2 = 122. Thus, both strings, which were being mapped to 5 using
+         traditional hash, are now being mapped to different values, thereby reducing the number of spurious hits.
+
+         However, the approach is still not fool-proof. 'aal' will also be mapped to 1*10^2 + 1*10^1 + 12*10^0 =
+         100 + 10 + 12 = 122. Thus, we still can have spurious hits. The reason being our chosen position weight 10 is
+         not enough to overcome spurious hits.
+
+         Mathematically, it turns out that to have a unique hash value for every M-substring, positional weight should
+         be greater than or equal to the number of characters in the set, which is 26 in our case. Any number
+         (preferably, a prime number) no less than 26 is a workable base.
+
+         The Rabin-Karp algorithm is very similar to the brute-force algorithm, but it does not require the second loop.
+         Let M be the length of needle. It computes hash codes of each substring whose length is M. The key to
+         efficiency is using an incremental hash function, such as a function with the property that the hash code of a
+         string is an additive function of each individual character. Such a hash function is sometimes referred to as
+         a rolling hash.
+
+         A rolling hash (also known as rolling checksum) is a hash function where the input is hashed in a window that
+         moves along the input. For such a function, getting the hash code of a sliding window of characters is very
+         fast for each shift.
+
+         We never explicitly need to compute the hash value of every M-substring. We only need to compute the hash
+         value of the first M-substring of haystack and needle. For the remaining M-substrings of haystack, we can:
+
+            - Multiply the hash value of the previous M-substring by radix 26.
+            - Subtract the value of the first character of the previous M-substring, since we are moving the window
+               forward by one character, and that character is now out of the window.
+            - Add the value of the last character of the current M-substring.
+
+        This can be simplified as:
+
+                        H[i+1]= H[i] * b − S[i] * b^m + S[i+m]
+
+        The three terms can be interpreted as:
+
+            - H[i] * b is left shifting one radix
+            - S[i] * b^m is the leftmost character with modified weightage which is now out of the window, hence
+               subtracted.
+            - S[i+m] is the rightmost character with weight 1, which is now in the window, hence added.
+
+        Thus, from the previous hash value, we can compute the next hash value in O(1) time. If the hash value of the
+        current haystack window matches with the hash value of needle, then return window start index.
+
+        Example: consider the string 'abcd' -> [ord('a'), ord('b'), ord('c'), ord('d')] as a number in a numeral system
+        with the base 26. Hence, 'abcd' could be hashed as:
             h = ord('a') * 26^3 + ord('b') * 26^2 + ord('c') * 26^1 + ord('d') * 26^0
-        Now let's consider the slice 'abcd' -> 'bcde' (sliding window). For the array that means:
+        Now let's consider the substring 'abcd' -> 'bcde' (sliding window). For the array that means:
         [ord('a'), ord('b'), ord('c'), ord('d')] -> [ord('b'), ord('c'), ord('d'), ord('e')]
             h = h * 26 - ord('a') * 26^4 + ord('e') * 26^0
-        Now hash regeneration is perfect and fits in a constant time.
-    Time complexity: O(N + M)
+        Hash regeneration is perfect and fits in a constant time.
+
+    Time complexity: O(N), for computing hashes of haystack and needle, we have to do O(M) work, and for checking for a
+    match we have to iterate (N-M+1) times and do O(1) work.
     Space complexity: O(1)
     """
-    if not needle:
-        return 0
     if len(needle) > len(haystack):
         return -1
     n, m = len(haystack), len(needle)
     base = 26
     needle_hash = rolling_hash = 0
-    for i in range(m):  # Compute the hash of haystack[:m] and reference hash of the needle
+    # Compute the hash of haystack[:m] and the reference hash of the needle
+    for i in range(m):
         needle_hash = needle_hash * base + ord(needle[i])
         rolling_hash = rolling_hash * base + ord(haystack[i])
-    if needle_hash == rolling_hash:  # Needle occurs at the first character of haystack
+    if needle_hash == rolling_hash:
+        # Needle occurs at the first character of haystack
         return 0
-    for i in range(1, n - m + 1):  # Iterate over the start position of possible match
-        # Compute rolling hash based on the previous hash value: multiply previous hash by base, subtract the leftmost
-        # element of the window, and add the hash of the rightmost (new) element of the window
+    for i in range(1, n - m + 1):
+        # Iterate over the start position of every possible match.
+        # Derive the rolling hash based on the previous hash value: multiply previous hash by base, subtract the
+        # leftmost element of the window, and add the hash of the rightmost (new) element of the window.
         rolling_hash = rolling_hash * base - ord(haystack[i - 1]) * pow(base, m) + ord(haystack[i + m - 1])
         if needle_hash == rolling_hash:
             return i
