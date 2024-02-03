@@ -136,7 +136,9 @@ def str_str_v2(haystack, needle):
 
 
 # Check out: https://leetcode.com/problems/implement-strstr/discuss/12883/KMP-in-C%2B%2B-explanation-included
-
+# Check out: https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/solutions/535326/java-python-kmp-solution-o-m-n-clean-code/
+# Video explanation: https://youtu.be/JoF0Z7nVSrA
+# Video explanation: https://youtu.be/BXCEFAzhxGY
 def str_str_v3(haystack, needle):
     """ KMP (Knuth–Morris–Pratt) algorithm.
         The key behind KMP is that it takes advantage of the successful character checks during an unsuccessful pattern
