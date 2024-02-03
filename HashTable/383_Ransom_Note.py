@@ -3,7 +3,7 @@ function that will return true if the ransom note can be constructed from the ma
 false.
 Each letter in the magazine string can only be used once in your ransom note. """
 
-from collections import Counter, defaultdict
+from collections import defaultdict
 import unittest2 as unittest
 
 
@@ -27,24 +27,27 @@ def can_construct_v1(ransomNote, magazine):
 
 
 def can_construct_v2(ransomNote, magazine):
-    """ Make a single pass over the ransom note, storing the character counts in a single hash map. Next, we make a
-        pass over the magazine. When processing a character c, if c appears in the hash table, we reduce its count
-        by 1; we remove it from the hash when its count goes to zero. If the hash becomes empty, we return true. If we
-        reach the end of the ransom note and the hash is nonempty, we return false: Each of the characters remaining in
-        the hash occurs more times in the ransom note than the magazine.
+    """ Make a single pass over the ransom note, storing the character counts in a hashmap. Next, we make a pass over
+         the magazine. When processing a character, if it appears in the hashmap, we reduce its count by 1; we remove it
+         from the hashmap if its count drops to zero.
+
+         If the hashmap becomes empty, we return true. If we reach the end of the ransom note and the hashmap is
+         not empty, we return false: Each of the characters remaining in the hashmap occurs more times in the ransom
+         note than the magazine.
+
     Time complexity: O(N + M)
     Space complexity: O(1)
     """
-    if not ransomNote and not magazine:
-        return True
-    counter = Counter(ransomNote)
+    counter = defaultdict(int)
+    for c in ransomNote:
+        counter[c] += 1
     for c in magazine:
         if c in counter:
             counter[c] -= 1
             if counter[c] == 0:
                 del counter[c]
-        if len(counter) == 0:
-            return True
+                if len(counter) == 0:
+                    return True
     return False
 
 
