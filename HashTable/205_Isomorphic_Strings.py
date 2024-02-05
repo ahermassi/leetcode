@@ -7,7 +7,7 @@ import unittest2 as unittest
 
 
 # Video explanation: https://youtu.be/7yF-U1hLEqQ
-def is_isomorphic(s, t):
+def is_isomorphic_v1(s, t):
     """ Matching the order will be easy. Since we will iterate over the two strings and do some sort of comparison from
          left to right, the task of ensuring that the character order is the same in both strings will take care of
          itself.
@@ -51,6 +51,42 @@ def is_isomorphic(s, t):
     return True
 
 
+def is_isomorphic_v2(s, t):
+    """ This approach is based on the idea that the two given strings, if isomorphic, will in some way be exactly the
+         same. If we have two isomorphic strings, we can replace the characters in the first string with the
+         corresponding mapped characters to get the second string. The idea we explore here is the following:
+
+                    Is there any string transformation we can apply to both the strings such that to check for
+                    isomorphism, we simply check if their modified versions are exactly the same?
+
+        For each character in the given string, we replace it with the index of that character's first occurrence in the
+        string. For a string like 'paper', the transformed string will be '01034'. The character 'p' occurs first at the
+        index 0; so we replace future occurrences of 'p' with the index 0. Similar modifications are made for the other
+        characters. Now let's look at 'title'. The transformed string would be '01034' which is the same as that for
+        'paper'. This confirms the isomorphic nature of both the strings.
+
+        However, we should be mindful of transformations that use both one and two-digit numbers. Under these
+        circumstances, the transformed strings can be misinterpreted. For example, 'stenographic's and 'logarithmsxox'
+        both transform to '123456789110', yet they are not isomorphic. Therefore, to avoid confusion we can add a
+        delimiter to help differentiate the transformed digits.
+
+        Note that this solution is more scalable if we want to form groups of isomorphic strings given a list of strings.
+
+    Time complexity: O(N), where N is the length of s and t
+    Space complexity: O(1), the hash maps can't store more than the size of the alphabet characters
+    """
+
+    def encode(string):
+        indices, values = {}, []
+        for i, c in enumerate(string):
+            if c not in indices:
+                indices[c] = i
+            values.append(str(indices[c]))
+        return ' '.join(values)
+
+    return encode(s) == encode(t)
+
+
 class Test(unittest.TestCase):
     data = [
         ('egg', 'add', True),
@@ -60,7 +96,8 @@ class Test(unittest.TestCase):
 
     def test_is_isomorphic(self):
         for test_string1, test_string2, result in self.data:
-            self.assertEqual(result, is_isomorphic(test_string1, test_string2))
+            self.assertEqual(result, is_isomorphic_v1(test_string1, test_string2))
+            self.assertEqual(result, is_isomorphic_v2(test_string1, test_string2))
 
 
 if __name__ == '__main__':
