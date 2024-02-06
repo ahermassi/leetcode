@@ -4,28 +4,49 @@ import unittest2 as unittest
 
 
 def summary_ranges(nums):
-    """ A range covers consecutive elements. If two adjacent elements have difference larger than 11, the two elements
-        does not belong to the same range.
-        To summarize the ranges, we need to know how to separate them. The array is sorted and without duplicates.
-        In such array, two adjacent elements have difference either 1 or larger than 1. If the difference is 1, they
-        should be put in the same range; otherwise, separate ranges.
-        We also need to know the start index of a range so that we can put it in the result list. Thus, we keep two
-        indices 'start' and 'end' representing the two boundaries of current range. For each new element, we check if
-        it extends the current range. If not, we put the current range into the list.
-    Time complexity: O(N)
+    """ Because the nums array is sorted, two consecutive elements in nums with a difference greater than 1 cannot
+         belong to the same range. Also, if the difference between two consecutive elements in nums is 1, they should
+         be put in the same range.
+
+         We also need to know the start index of a range so that we can put it in the result list. Thus, we keep two
+         indices representing the two boundaries of the current range. For each new element, we check if it extends the
+         current range. If not, we put the current range into the list.
+
+            - Create a list of strings 'ranges' that contains the final output.
+
+            - Iterate over all the elements in nums with the pointer i = 0.
+
+            - Each iteration of the outermost loop represents finding one range. To start, save the current range's
+               beginning index i.
+
+            - Check whether the next element in nums at index (i + 1) differs from nums[i] by 1 or more. If the next
+               element differs by 1, we increase i by 1 to include the (i+1)th element in this range and move ahead to
+               check the next element. We keep adding elements in this range as long as the successive elements differ
+               by 1.
+
+            - Otherwise, if the next element differs by more than 1, or we have covered all the elements in nums, we
+               check whether start is equal to nums[i] or not. If start == nums[i], we only add start as a string to
+               ranges as we just have a single element in this range. Otherwise, if start != nums[i], we add the string
+               start->nums[i] to ranges and start a new range.
+
+    Time complexity: O(N), we iterate over each nums element once, either including it in the current range or creating
+    a new range from it, which takes O(N) time for N elements. We also add all the ranges to the ranges list. In the
+    worst-case situation, N elements could be added to the list if each consecutive element in nums differs by more
+    than 1, requiring O(N) time to insert all the required ranges
     Space complexity: O(1)
     """
-    n, res, start = len(nums), [], 0
-    while start < n:
-        end = start
-        while end < n - 1 and nums[end + 1] == nums[end] + 1:
-            end += 1
-        if end != start:
-            res.append(str(nums[start]) + '->' + str(nums[end]))
+    n, ranges = len(nums), []
+    i = 0
+    while i < n:
+        j = i
+        while j < n - 1 and nums[j + 1] == nums[j] + 1:
+            j += 1
+        if j != i:
+            ranges.append(str(nums[i]) + '->' + str(nums[j]))
         else:
-            res.append(str(nums[start]))
-        start = end + 1
-    return res
+            ranges.append(str(nums[i]))
+        i = j + 1
+    return ranges
 
 
 class Test(unittest.TestCase):
