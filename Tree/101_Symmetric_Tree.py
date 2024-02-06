@@ -43,16 +43,15 @@ def is_symmetric_v1(root):
 
 
 def is_symmetric_v2(root):
-    """ Level order traversal using BFS.
-        Each two consecutive nodes in the nodes list should be equal. The algorithm works similarly to BFS, with some
-        key differences. Each time, two nodes are extracted and their values compared. Then, the right and left
-        children of the two nodes are inserted in the queue in opposite order.
+    """ Iterative implementation of the previous algorithm using a stack.
+
+         Each two consecutive nodes in the stack should be equal. The algorithm works similarly to BFS, with some
+         key differences. Each time, two nodes are extracted and their values compared. Then, the right and left
+         children of the two nodes are inserted in the queue in opposite order.
+
     Time complexity: O(N)
-    Space complexity: O(N), a full binary tree of N nodes has roughly half of those nodes at the lowest level, hence
-    O(N) space
+    Space complexity: O(N), in the worst case we have to insert O(N) nodes in the stack
     """
-    if not root:
-        return True
     nodes = [root.left, root.right]
     while nodes:
         left_node, right_node = nodes.pop(), nodes.pop()
