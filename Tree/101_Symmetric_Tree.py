@@ -12,7 +12,37 @@ class TreeNode(object):
         self.right = None
 
 
+# Video explanation: https://youtu.be/XV7Sg2hJO3Q
 def is_symmetric_v1(root):
+    """ A tree is symmetric if the left subtree is a mirror reflection of the right subtree.
+
+         Two trees are a mirror reflection of each other if:
+
+            1- Their two roots have the same value
+            2- The right subtree of each tree is a mirror reflection of the left subtree of the other tree
+
+         This is like a person looking in a mirror. The reflection in the mirror has the same head, but the reflection's
+         right arm corresponds to the actual person's left arm, and vice versa.
+
+     Time complexity: O(N), we traverse the entire input tree once, the total run time is O(N), where N is the total
+     number of nodes in the tree
+     Space complexity: O(N), the number of recursive calls is bound by the height of the tree. In the worst case,
+     the tree is skewed and the height is N
+     """
+    def is_mirror(left, right):
+        if not left and not right:
+            return True
+        if not left or not right:
+            # As soon as a pair fails the test, we can short circuit the check to false
+            return False
+        if left.val != right.val:
+            return False
+        return is_mirror(left.left, right.right) and is_mirror(left.right, right.left)
+
+    return is_mirror(root.left, root.right)
+
+
+def is_symmetric_v2(root):
     """ Level order traversal using BFS.
         Each two consecutive nodes in the nodes list should be equal. The algorithm works similarly to BFS, with some
         key differences. Each time, two nodes are extracted and their values compared. Then, the right and left
@@ -35,30 +65,6 @@ def is_symmetric_v1(root):
         nodes.extend([left_node.left, right_node.right])
         nodes.extend([right_node.left, left_node.right])
     return True
-
-
-def is_symmetric_v2(root):
-    """ Two trees are a mirror reflection of each other if:
-        1- Their two roots have the same value.
-        2- The right subtree of each tree is a mirror reflection of the left subtree of the other tree.
-        This is like a person looking at a mirror. The reflection in the mirror has the same head, but the reflection's
-        right arm corresponds to the actual person's left arm, and vice versa.
-     Time complexity: O(N)
-     Space complexity: O(N), the number of recursive calls is bound by the height of the tree. In the worst case,
-     the tree is skewed and the height is N
-     """
-    def is_mirror(left, right):
-        if not left and not right:
-            return True
-        if not left or not right:  # As soon as a pair fails the test, we can short circuit the check to false
-            return False
-        if left.val == right.val:
-            return is_mirror(left.left, right.right) and is_mirror(left.right, right.left)
-        return False
-
-    if not root:
-        return True
-    return is_mirror(root.left, root.right)
 
 
 class Test(unittest.TestCase):
