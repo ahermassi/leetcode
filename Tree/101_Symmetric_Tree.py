@@ -42,6 +42,7 @@ def is_symmetric_v1(root):
     return is_mirror(root.left, root.right)
 
 
+# Video explanation: https://youtu.be/Mao9uzxwvmc
 def is_symmetric_v2(root):
     """ Iterative implementation of the previous algorithm using a stack.
 
