@@ -48,24 +48,27 @@ def has_path_sum_v1(root, target_sum):
     # return dfs(root, 0)
 
 
+def has_path_sum_v2(root, target_sum):
+    """ We could also convert the above recursion into iteration, with the help of stack.
 
-def has_path_sum_v2(root, sum):
-    """ We start from a stack which contains the root node and the corresponding remaining sum which is
-        (sum - root.val). Then we proceed to the iterations: pop the current node out of the stack and return True if
-        the remaining sum is 0 and we're on the leaf node. If the remaining sum is not zero or we're not on the leaf
-        yet, then we push the child nodes and corresponding remaining sums into stack.
+         We start from a stack which contains the root node and the corresponding remaining sum, which is initially
+         target_sum. Then we proceed to the iterations: pop the current node out of the stack and return True if
+         the node's value is equal to the remaining sum, and we're on a leaf node. If the remaining sum is not zero, or
+         if we're not at a leaf node, then we push the children nodes and corresponding remaining sums into the stack.
+
     Time complexity: O(N)
-    Space complexity: in the worst case, the tree is completely unbalanced and we would keep all N nodes in the stack
+    Space complexity: in the worst case, the tree is completely unbalanced, and we would keep all N nodes in the stack
     so O(N); in the best case (the tree is completely balanced), it is O(logN) which is the height of the tree
     """
     if not root:
         return False
-    stack = [(root, sum)]
+    stack = [(root, target_sum)]
     while stack:
-        node, cur_sum = stack.pop()
-        if not node.left and not node.right and node.val == cur_sum:
+        node, remaining_sum = stack.pop()
+        if not node.left and not node.right and node.val == remaining_sum:
             return True
-        stack.extend([(kid, cur_sum - node.val) for kid in (node.left, node.right) if kid])
+        remaining_sum -= node.val
+        stack.extend([(kid, remaining_sum) for kid in (node.left, node.right) if kid])
     return False
 
 
