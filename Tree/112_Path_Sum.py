@@ -11,19 +11,42 @@ class TreeNode(object):
         self.right = None
 
 
-def has_path_sum_v1(root, sum):
-    """ Do it recursively. If the base case is not valid, subtract current node's value from sum and try to find its
-        complement in either left or right subtree.
+# Video explanation: https://youtu.be/LSKQyOz_P8I
+def has_path_sum_v1(root, target_sum):
+    """ The most intuitive way is to use recursion. We go through the tree by considering at each step the node itself
+         and its children.
+
+            - If the node is not a leaf, we call recursively hasPathSum method for its children with a sum
+               decreased by the current node's value.
+
+            - If the node is a leaf, we check if the current sum is zero, i.e. if the initial sum was found.
+
+        Traverse the tree, keeping track of difference of the root-to-node path sum and the target value. As soon as we
+        encounter a leaf and the remaining sum is equal to the leaf 's value, we return true. Short circuit evaluation
+        of the check ensures that we do not process additional leaves.
+
     Time complexity: O(N), in the worst case we visit each node exactly once
-    Space complexity: in the worst case, the tree is completely unbalanced and the recursion call would occur N times
-    so O(N); in the best case (the tree is completely balanced), it is O(logN) which is the height of the tree
+    Space complexity: in the worst case, the tree is completely unbalanced and the recursion call would occur N times,
+    therefore the storage to keep the call stack would be O(N); in the best case (the tree is completely balanced), it
+    is O(logN) which is the height of the tree
     """
     if not root:
         return False
-    if not root.left and not root.right and root.val == sum:
+    if not root.left and not root.right and root.val == target_sum:
         return True
-    sum -= root.val
-    return has_path_sum_v1(root.left, sum) or has_path_sum_v1(root.right, sum)
+    target_sum -= root.val
+    return has_path_sum_v1(root.left, target_sum) or has_path_sum_v1(root.right, target_sum)
+    # Could also be written:
+    # def dfs(node, cur_sum):
+    #     if not node:
+    #         return False
+    #     cur_sum += node.val
+    #     if not node.left and not node.right:
+    #         return cur_sum == targetSum
+    #     return dfs(node.left, cur_sum) or dfs(node.right, cur_sum)
+    #
+    # return dfs(root, 0)
+
 
 
 def has_path_sum_v2(root, sum):
