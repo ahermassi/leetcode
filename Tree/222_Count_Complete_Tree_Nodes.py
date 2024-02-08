@@ -21,19 +21,20 @@ class TreeNode(object):
 
 def count_nodes_v1(root):
     """ Iterative solution. Perform a BFS on the tree and record each level and add the number of nodes to final count.
+
     Time complexity: O(N)
-    Space complexity: O(2^h) = O(2^logN), since the maximum number of nodes at each level is 2 ^ height of level, and
+    Space complexity: O(2^h) = O(2^logN), since the maximum number of nodes at each level is 2^height of level, and
     height == logN
     """
     if not root:
         return 0
-    queue, count = deque([root]), 1
+    queue, count = deque([root]), 0
     while queue:
         n = len(queue)
+        count += n
         for _ in range(n):
             node = queue.popleft()
             queue.extend([kid for kid in (node.left, node.right) if kid])
-        count += len(queue)
     return count
 
 
