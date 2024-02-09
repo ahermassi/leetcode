@@ -5,46 +5,41 @@ You may assume no duplicates in the array. """
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/K-RYzDZkzCI
 def search_insert(nums, target):
-    """ Based on the description of the problem, we can see that it could be a good match for binary search.
+    """ Based on the description of the problem, we can see that it could be a good match for binary search. Usually,
+         within binary search, we compare the target value to the middle element of the array at each iteration.
 
-        Usually, within binary search, we compare the target value to the middle element of the array at each iteration.
+            - If the target value is equal to the middle element, the job is done.
+            - If the target value is less than the middle element, continue to search on the left by moving the right
+               pointer: right = mid - 1.
+            - If the target value is greater than the middle element, continue to search on the right by moving the
+               left pointer: left = mid + 1.
 
-        If the target value is equal to the middle element, the job is done.
+        What if the target value is not found? In this case, the loop will stop when left > right and the proper
+        position to insert the target is at the left index.
 
-        If the target value is less than the middle element, continue to search on the left by moving the right pointer:
-        right = mid - 1.
-
-        If the target value is greater than the middle element, continue to search on the right by moving the left pointer:
-        left = mid + 1.
-
-        What if the target value is not found?
-        In this case, the loop will be stopped at the moment when right < left and the proper position to insert the
-        target is at the index left.
-
-        Why return left? It actually boils down to analyzing the edge case where left == right, i.e. a one-element array.
+        Why return left? It boils down to analyzing the edge case where left == right, i.e. a one-element array.
 
         Example1: nums = [5], target = 3
         left = 0, right = 0, mid = 0; since target < nums[mid] --> right = mid - 1
                               [5]
-                  ^           ^
-              r=-1        l=0
+                       ^      ^
+                    r=-1   l=0
         left = 0 is the insertion index after which nums = [3, 5]
 
         Example2: nums = [5], target = 7
         left = 0, right = 0, mid = 0; since target > nums[mid] --> left = mid + 1
                               [5]
-                               ^        ^
-                             r=0     l=1
+                               ^      ^
+                             r=0   l=1
         left = 1 is the insertion index after which nums = [5, 7]
 
         In other words: In the case where we need to insert (target not found), left and right must have narrowed down
-        to the same element - call it X. Following regular binary search, if we go left, meaning target is smaller
-        than X, the algorithm changes right and leaves left untouched. This is desired, because left, untouched and used
-        as insertion index, inserts the element to the left of X. On the other hand, if we go right, left is changed to
+        to the same element - call it X. Following regular binary search, if we go left, meaning target is smaller than
+        X, the algorithm changes right and leaves left untouched. This is desired, because left, untouched and used as
+        insertion index, inserts the element to the left of X. On the other hand, if we go right, left is changed to
         left + 1, which indeed inserts target to the right of X.
-
-        Video explanation: https://youtu.be/K-RYzDZkzCI?t=678
 
     Time complexity: O(log N)
     Space complexity: O(1)
@@ -52,15 +47,17 @@ def search_insert(nums, target):
     left, right = 0, len(nums) - 1
     while left <= right:  # Invariant: the desired index is between [left, right+1]
         mid = (left + right) // 2
-        if target > nums[mid]:
+        if nums[mid] == target:
+            return mid
+        if nums[mid] < target:
             left = mid + 1
         else:
             right = mid - 1
-    # (1) At this point, left > right. That is, left >= right+1.
-    # (2) From the invariant, we know that the index is between [left, right+1], so left <= right+1. Following from (1),
-    # now we know that left == right+1.
+    # (1) At this point, left > right. That is, left >= right + 1
+    # (2) From the invariant, we know that the index is between [left, right+1], so left <= right + 1.
+    # Following from (1), now we know that left == right + .
     # (3) Following from (2), the index is between [left, right+1] = [left, left], which means that left is the desired
-    # index Therefore, we return left as the answer.
+    # index. Therefore, we return left as the answer.
     return left
 
 
