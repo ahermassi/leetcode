@@ -52,24 +52,31 @@ def is_palindrome_v2(x):
 
 
 def is_palindrome_v3(x):
-    """ What if we only revert half of the int number? After all, the reverse of the last half of the palindrome should
-        be the same as the first half of the number, if the number is a palindrome.
-        Now the question is, how do we know that we've reached the half of the number?
-        Since we divided the number by 10, and multiplied the reversed number by 10, when the original number is less
-        than the reversed number, it means we've processed half of the number digits.
+    """ What if we revert only half of the number? After all, the reverse of the last half of the palindrome should be
+         the same as the first half of the number, if the number is a palindrome.
+
+         For example, if the input is 1221, if we can revert the last part of the number 1221 from 21 to 12 and compare
+         it with the first half of the number 12, and since 12 is the same as 12, we know that the number is a
+         palindrome.
+
+         Now the question is, how do we know that we've reached the half of the number?
+         Since at each iteration we divide the number by 10 and multiply the reversed number by 10, when the original
+         number becomes less than the reversed number, it means we've processed half of the number's digits.
+
     Time complexity: O(log10 x)
     Space complexity: O(1)
     """
-    if x < 0 or (x % 10 == 0 and x):  # When x < 0, x is not a palindrome. Also if the last digit of the number is 0,
-        # in order to be a palindrome, the first digit of the number also needs to be 0. Only 0 satisfies this property.
+    if x < 0 or (x % 10 == 0 and x):
+        # When x < 0, x is not a palindrome. Also, if the last digit of the number is 0, in order to be a palindrome,
+        # the first digit of the number also needs to be 0. Only 0 satisfies this property.
         return False
     reverse = 0
     while reverse < x:
         reverse = reverse * 10 + x % 10
-        x = x // 10
-    # When the length is an odd number, we can get rid of the middle digit by reverse // 10. For example, when the
+        x //= 10
+    # When the length of the number is odd, we can get rid of the middle digit by reverse // 10. For example, when the
     # input is 12321, at the end of the while loop we get x = 12, reverse = 123. Since the middle digit doesn't matter
-    # in palindrome (it will always be equal to itself), we can simply get rid of it.
+    # in a palindrome (it will always be equal to itself), we can simply get rid of it.
     return reverse == x or reverse // 10 == x
 
 
