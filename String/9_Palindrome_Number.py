@@ -21,16 +21,33 @@ def is_palindrome_v1(x):
 
 
 def is_palindrome_v2(x):
-    """ Reverse the number and see if it is equal to the original number.
+    """ First note that if the input is negative, then its representation as a decimal string cannot be palindromic,
+         since it begins with a '-'.
+
+         We can avoid the O(N) space complexity used by the string representation by directly extracting the digits from
+         the input. By doing so, we can reverse the entire input number and check if the reversed number is equal to
+         the original number. If they are the same, then the number is a palindrome.
+
+            - Initialize two variables:
+               reverse: This variable will store the reversed value of the number x.
+               temp: This variable is a temporary placeholder to manipulate the input number without modifying the
+               original value.
+
+            - Extract the last digit of temp using the modulo operator %
+
+            - To reverse the number, multiply the current value of reversed by 10 and add the extracted digit.
+
+            - Divide temp by 10 to remove the last digit and move on to the next iteration.
+
     Time complexity: O(log10 x), since we divide the input by 10 in every iteration
     Space complexity: O(1)
     """
     if x < 0:
         return False
-    p, reverse = x, 0
-    while p:
-        reverse = reverse * 10 + p % 10
-        p = p // 10
+    temp, reverse = x, 0
+    while temp:
+        reverse = reverse * 10 + temp % 10
+        temp //= 10
     return reverse == x
 
 
