@@ -5,7 +5,8 @@ import unittest2 as unittest
 
 
 def is_palindrome_v1(x):
-    """ Convert x to a string and verify if it's a palindrome. Pretty straightforward.
+    """ Convert x to a string and check if it's a palindrome using two pointers.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
