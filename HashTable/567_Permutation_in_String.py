@@ -7,27 +7,38 @@ import unittest2 as unittest
 
 def check_inclusion_v1(s1, s2):
     """ One string will be a permutation of another string only if both of them contain the same characters with the
-        same frequency. We can consider every possible substring in the long string s2 of the same length as that of s1
-        and check the frequency of occurrence of the characters appearing in the two. If the frequencies of every
-        letter match exactly, then only s1's permutation can be a substring of s2.
-        We make use of a hash map 'counter' which stores the frequency of occurrence of all the characters in the short
-        string s1. We consider every possible substring of s2 of the same length as that of s1, find its corresponding
-        frequency map as well. But instead of generating the hash map afresh for every window considered in s2,
-        we just need to maintain a sliding window with length of s1, move from beginning to the end of s2.
-        When a character moves in from right of the window, we add 1 to that character count.
-        When a character moves out from left of the window, we subtract 1 from that character count from the map.
-        We can maintain the window by deleting the value of s2[i - len(s1)]. After, we only need to check if the two
-        frequency maps are equal.
-    Time complexity: O(N + N * M) ~= O(N * M), where N is the length of string s1 and M is the length of string s2.
-    We could argue that comparing the frequency maps is O(1) since they contain at most 26 key-value pairs, which
-    results in an O(N + M) time complexity
+         same frequency.
+
+         We can consider every possible substring in the long string s2 of the same length as that of s1 and check the
+         frequency of occurrence of the characters appearing in the two. If the frequencies of all letters match exactly,
+         then s1's permutation can be a substring of s2.
+
+         We make use of a hash map 'counter' which stores the frequency of occurrence of all the characters in the short
+         string s1. Then, we consider every possible substring of s2 of the same length as that of s1 and construct its
+         corresponding frequency map as well.
+
+         Instead of generating the hashmap afresh for every window in s2, we just need to maintain a sliding window of
+         length of s1 and move it from the beginning to the end of s2.
+
+         When a character enters the window, we increment that character's count. When a character is dropped from the
+         window, we decrement that character's count. We maintain a valid window by decrementing the count of the
+         character at index (i - len(s1)). After, we only need to check if the two frequency maps are equal.
+
+         Thus, the substrings considered can be viewed as a window of length as that of s1 iterating over s2.
+
+    Time complexity: O(N + N * M) ~= O(N * M), where N is the length of s1 and M is the length of s2. We could argue
+    that comparing the frequency maps is O(1) since they contain at most 26 key-value pairs, which results in an
+    O(N + M) time complexity.
     Space complexity: O(1)
     """
     if len(s1) > len(s2):
         return False
     n, m = len(s1), len(s2)
-    counter, window = Counter(s1), Counter(s2[:n])
-    if window == counter:
+    counter, window = defaultdict(int), defaultdict(int)
+    for i in range(n):
+        counter[s1[i]] += 1
+        window[s2[i]] += 1
+    if counter == window:
         return True
     for i in range(n, m):
         window[s2[i]] += 1
