@@ -105,20 +105,27 @@ def check_inclusion_v2(s1, s2):
 
 
 def check_inclusion_v3(s1, s2):
-    """ Same solution as 438- Find All Anagrams in a String. No hash map comparison is involved.
-        Find the frequency of characters in the string s1 using 'counter' hash map, two variables 'left' and 'right' to
-        represent the left and right boundaries of the sliding window, and a variable 'matches' to represent the number
-        of characters in the string s1 that we matched in the sliding window so far.
-        If the character on the right boundary is already in the hash table, indicating that the character appears in
-        s1, then 'need' is incremented by 1, and then the entry of the current character in the hash table is also
-        decremented by 1 anyway. If 'need' is equal to s2's length at any time, it means that the characters in s1 are
-        matched in the current window, so we return true.
-        If the window size (right - left + 1) is equal to the length of s1, it means that the leftmost character should
-        be removed from the window. If after removal (corresponding entry in the frequency map is incremented by 1)
-        the count of the left character is greater than 0, it means that the character exists in s1. Why ?
-        Well, because each character is decremented by 1 above, and if it is not a character in s1, then the character's
-        frequency in the hash table should be 0, and it will be -1 after decrementing by 1, so that we know whether
-        the character exists in s1. So if the leftmost character we removed exists in s1, 'need' is decremented by 1.
+    """ Same as 438- Find All Anagrams in a String. No hashmap comparison is needed.
+
+         Find the frequency of characters in s1 using 'counter' hashmap, two variables 'left' and 'right' represent
+         the left and right boundaries of the sliding window, and a variable 'matches' represents the number of
+         characters in s1 that matched in the sliding window so far.
+
+         If the rightmost (current) character is already in the hashmap, indicating that the character appears in s1,
+         then 'matches' is incremented, and the count of the current character in the hashmap is also decremented in all
+         cases.
+
+         If at any point in time 'matches' becomes equal to s2's length, it means that all the characters in s1 were
+         matched in the current window, so we return true.
+
+         If the window size (right - left + 1) is equal to the length of s1, it means that the leftmost character should
+         be removed from the window. If after removal (corresponding count in the frequency map is incremented by 1)
+         the count of the leftmost character is greater than 0, it means that the character exists in s1. Why?
+         Because each character count is decremented in all cases, and if it is not a character of s1, then the
+         character's count in the hashmap should be 0, and it would become -1 after decrementing, so that way we know
+         whether the character exists in s1. So if the leftmost character we removed exists in s1, 'matches' is
+         decremented.
+
     Time complexity: O(N + M)
     Space complexity: O(1)
     """
@@ -129,14 +136,16 @@ def check_inclusion_v3(s1, s2):
         cur_char = s2[right]
         if counter[cur_char] > 0:  # The current character is in s1
             matches += 1  # One more character is matched
-        counter[cur_char] -= 1  # Decrement the count of current character anyway, so when it is not part of s1 it gets
-        # a negative entry in the map
+        # Decrement the count of current character in all cases, so when it is not part of s1 it gets a negative
+        # count in the map.
+        counter[cur_char] -= 1
         if matches == n:
             return True
         if right - left + 1 == n:  # Current window size is equal to s1's length
-            counter[s2[left]] += 1  # Discard the leftmost character
-            if counter[s2[left]] > 0:  # If the discarded character was part of s1, then it would have an entry equal to
-                # 0 at least, and if it's the case it would be > 0 after being incremented
+            counter[s2[left]] += 1  # Exclude the leftmost character
+            if counter[s2[left]] > 0:
+                # If the discarded character was part of s1, then it would have an entry equal to 0 at least, and if
+                # it's the case it would be > 0 after being incremented
                 matches -= 1
             left += 1
         right += 1
