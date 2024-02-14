@@ -89,35 +89,36 @@ class TimeMapV2(object):
 
 
 class TimeMapV3(object):
-    """ This solution uses bisect() to search in the ordered list of timestamps. """
+    """ This implementation uses bisect() to search the ordered list of timestamps. """
 
     def __init__(self):
-        self.store = defaultdict(list)
+        self.values = defaultdict(list)
 
     def set(self, key, value, timestamp):
-        self.store[key].append((timestamp, value))
+        self.values[key].append((timestamp, value))
 
     def get(self, key, timestamp):
         """ Use bisect() to find the insertion index of the timestamps.
         Time complexity: O(logN)
         Space complexity: O(1)
         """
-        if key not in self.store or timestamp < self.store[0][0]:
+        values = self.values[key]
+        if not values or timestamp < values[0][0]:
             return ''
-        values = self.store[key]
-        if timestamp >= values[-1][0]:  # This optimization results in 30 - 60ms less in execution time
-            return self.store[key][-1][1]
-        idx = bisect.bisect(values, (timestamp, chr(127)))  # chr(127) is the char #127 in ASCII table. It is larger
-        # than all the commonly used characters. It is helpful because, in tuple comparison, Python will compare
-        # element by element, and in case of equal timestamps it returns the index after the last found tuple.
-        # Example: values = self.data[key] = [(1, 'a'),(1, 'b'),(2, 'c')] and we do get(key, 1).
-        # bisect(values, (timestamp, chr(127))) will try to find the insertion index of timestamp = 1 in values as
+        if timestamp >= values[-1][0]:
+            return values[-1][1]
+        index = bisect.bisect(values, (timestamp, chr(127)))
+        # chr(127) is the char #127 in ASCII table. It is larger than all the commonly used characters. It is helpful
+        # because, in tuple comparison, Python will compare element by element, and in case of equal timestamps
+        # it returns the index after the last found tuple.
+        # Example: values = [(1, 'a'),(1, 'b'),(2, 'c')] and we call get(key, 1).
+        # bisect(values, (timestamp, chr(127))) will try to find the insertion index of timestamp = 1 in values list as
         # to keep the list sorted. Since all elements of the list are tuples, we need to provide a tuple comparison
         # basis. (timestamp, chr(127)) means if timestamps are equal, compare based on the string 'value'. chr(127) is
         # larger than all the common ASCII characters, so this guarantees that, in case of timestamp equality, bisect
         # returns the index just after the last tuple, which is a requirement of the problem.
         # In this example, bisect will return index 2, so we need to return values[index-1][1].
-        return values[idx - 1][1]
+        return values[index - 1][1]
 
 
 class Test(unittest.TestCase):
