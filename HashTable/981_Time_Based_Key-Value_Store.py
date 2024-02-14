@@ -44,9 +44,8 @@ class TimeMapV1(object):
                 break
         return res
 
+
 # Video explanation: https://www.youtube.com/watch?v=fu2cD_6E8Hw
-
-
 class TimeMapV2(object):
     """ In the previous approach, the set function is efficient, but in the get function we iterate linearly over the
          time range. However, we can apply binary search on the ordered list of timestamps.
