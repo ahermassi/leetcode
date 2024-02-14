@@ -6,33 +6,41 @@ import unittest2 as unittest
 
 
 class TimeMapV1(object):
-    """ Use the fact that the timestamps for all TimeMap.set() operations are strictly increasing. """
+    """ We can think of making some buckets for each given key, then in each bucket, we can store
+         (timestamp, value) pairs in a list.
+
+         In the problem statement, it is mentioned that "all the timestamps of set are strictly increasing", thus even
+         if we use an array to store the timestamps, they will be pushed in sorted order.
+    """
 
     def __init__(self):
-        self.store = defaultdict(list)
+        self.values = defaultdict(list)
 
     def set(self, key, value, timestamp):
-        self.store[key].append((value, timestamp))
+        self.values[key].append((timestamp, value))
 
     def get(self, key, timestamp):
         """
         Time complexity: O(N)
         Space complexity: O(1)
         """
-        res = ''
-        if timestamp < self.store[key][0][1]:  # If the timestamp we're looking for is smaller than the first timestamp
-            # inserted, then it's not possible to find a valid value.
+        values = self.values[key]
+        if timestamp < values[0][0]:
+            # If the timestamp we're looking for is smaller than the first stored timestamp, then it's not possible
+            # to find a valid value.
             return ''
-        if timestamp >= self.store[key][-1][1]:  # If the timestamp we're looking for is greater than or equal to  the
-            # last timestamp inserted, then return the value associated with that timestamp since the timestamps are
-            # in increasing order.
-            return self.store[key][-1][0]
-        # Search for the largest timestamp less than or equal to 'timestamp'
-        for value, ts in self.store[key]:
+        if timestamp >= values[-1][0]:
+            # If the timestamp we're looking for is greater than or equal to the last stored timestamp, then return the
+            # value associated with that timestamp since the timestamps are sorted in increasing order.
+            return values[-1][1]
+        res = ''
+        # Linearly search for the largest timestamp less than or equal to 'timestamp'
+        for ts, value in values:
             if ts <= timestamp:
                 res = ts
-            else:  # Break when we reach a timestamp greater than the one we're looking for since all the following
-                # are also greater (timestamps are in increasing order)
+            else:
+                # Break when we find a timestamp greater than the one we're searching for since all the following
+                # timestamps are also greater (sorted in increasing order)
                 break
         return res
 
