@@ -48,45 +48,44 @@ class TimeMapV1(object):
 
 
 class TimeMapV2(object):
-    """ We can apply binary search on the ordered list of timestamps during TimeMap.set() operations.
-        In this implementation, we separate the values from the timestamps to simplify the binary search.
+    """ In the previous approach, the set function is efficient, but in the get function we iterate linearly over the
+         time range. However, we can apply binary search on the ordered list of timestamps.
     """
 
     def __init__(self):
-        self.store = defaultdict(list)  # Each key will have a list of values associated to it
-        self.timestamps = defaultdict(list)  # Each key will have a (sorted) list of timestamps associated to it
+        self.values = defaultdict(list)
 
     def set(self, key: str, value: str, timestamp: int) -> None:
-        self.store[key].append(value)
-        self.timestamps[key].append(timestamp)
+        self.values[key].append([value, timestamp])
 
     def get(self, key: str, timestamp: int) -> str:
         """ Use binary search to find the insertion index of the timestamp.
         Time complexity: O(logN)
         Space complexity: O(1)
         """
-        timestamps = self.timestamps[key]
-        if not timestamps or timestamp < timestamps[0]:
+        values = self.values[key]
+        if not values or timestamp < values[0][1]:
             return ''
-        # Review 35- Search Insert Position
-        left, right = 0, len(timestamps) - 1
+        if timestamp >= values[-1][1]:
+            return values[-1][0]
+        left, right = 0, len(values) - 1
+        index = 0
         while left <= right:
             mid = (left + right) // 2
-            if timestamps[mid] <= timestamp:
+            if values[mid][1] <= timestamp:
+                index = mid
                 left = mid + 1
             else:
                 right = mid - 1
-        return self.store[key][left - 1]
-        # Could also be re-written as:
-        # res = None
+        return values[index][0]
+        # Could also be written as:
         # while left <= right:
         #     mid = (left + right) // 2
         #     if timestamps[mid] <= timestamp:
-        #         res = self.store[key][mid]
         #         left = mid + 1
         #     else:
         #         right = mid - 1
-        # return res
+        # return values[left-1][0]
 
 
 class TimeMapV3(object):
