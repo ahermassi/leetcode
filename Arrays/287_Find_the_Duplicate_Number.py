@@ -28,11 +28,11 @@ def find_duplicate_v1(nums):
 
 def find_duplicate_v2(nums):
     """ As we traverse the array, we need a way to "remember" values that we've seen. If we come across a number that
-        we've seen before, we've found the duplicate. An efficient way to record the seen values is by adding each
-        number to a set as we iterate over the nums array.
+         we've seen before, we've found the duplicate.
 
-        This approach does not use constant space, and hence does not meet the problem constraints. However, it utilizes
-        a fundamental concept that can help solve similar problems.
+         In order to achieve linear time complexity, we need to be able to insert elements into a data structure and
+         look them up in constant time. An efficient way to record the seen values is by adding each number to a set as
+         we iterate over the nums array.
 
     Time complexity: O(N)
     Space complexity: O(N)
