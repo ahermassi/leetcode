@@ -45,35 +45,35 @@ def find_duplicate_v2(nums):
 
 
 def find_duplicate_v3(nums):
-    """  Negative Marking
+    """ Negative Marking
 
-        This approach temporarily modifies individual elements and thus does not satisfy the problem constraints.
-        However, this approach is intuitive and utilizes a technique that is useful to know. Furthermore,
-        the underlying concept lends itself to solving similar problems. As such, we can further practice this
-        technique on other problems such as 41- First Missing Positive.
+         This approach temporarily modifies individual elements and thus does not satisfy the problem constraints.
+         However, this approach is intuitive and utilizes a technique that is useful to know. Furthermore, the
+         underlying concept lends itself to solving similar problems. As such, we can further practice this technique on
+         other problems such as 41- First Missing Positive.
 
-        There are (n + 1) positive numbers in the array nums, all in the range [1, n]. Since the array
-        only contains positive integers, we can track each number num that has been seen before by flipping the
-        sign of the number located at index |num|, where || denotes absolute value.
+         There are (n + 1) positive integers in the array, all in the range [1, n]. Since the array contains only
+         positive integers, we can track each number num that has been seen before by flipping the sign of the number
+         located at index |num|, where || denotes absolute value.
 
-        For example, if the input array is [1, 3, 3, 2], then for 1, flip the number at index 1, making the array
-        [1, -3, 3, 2]. Next, for -3 flip the number at index 3, making the array [1,-3, 3, -2]. Finally, when we reach
-        the second 3, we'll notice that nums[3] is already negative, indicating that 3 has been seen before and hence
-        is the duplicate number.
+         For example, if the input array is [1, 3, 3, 2], then for 1 flip the number at index 1, making the array
+         [1, -3, 3, 2]. Next, for -3 flip the number at index 3, making the array [1,-3, 3, -2]. Finally, when we reach
+         the second 3, we'll notice that nums[3] is already negative, indicating that 3 has been seen before and hence
+         is the duplicate number.
 
-        Iterate over the array, evaluating each element (let's call the current element cur).
+            - Iterate over the array, evaluating each number. Let's call the current number cur.
 
-        Since we use negative marking, we must ensure that the current element cur is positive (i.e. if cur is
-        negative, then use its absolute value).
+            - Since we use negative marking, we must ensure that cur is positive (i.e. if cur is negative, then use its
+               absolute value).
 
-        Check if nums[cur] is negative.
-        If it is, then we have already performed this operation for the same number, and hence cur is the duplicate
-        number.
-        Otherwise, flip the sign of nums[cur] (i.e. make it negative). Move to the next element and repeat.
+            - Check if nums[cur] is negative.
+               If it is, then we have already performed this operation for the same number, and hence cur is the
+               duplicate number.
+               Otherwise, flip the sign of nums[cur] (i.e. make it negative). Move to the next element and repeat.
 
-        Once we've identified the duplicate, we could just return the duplicate number. However, even though we were
-        not able to meet the problem constraints, we can show that we are mindful of the constraints by restoring the
-        array. This is done by changing all negative numbers to positive (not done here).
+         Once we've identified the duplicate, we could just return it. However, even though we were not able to meet the
+         problem constraints, we can show that we are mindful of the constraints by restoring the array. This is done
+         by changing all negative numbers to positive (not done here).
 
     Time complexity: O(N)
     Space complexity: O(1)
