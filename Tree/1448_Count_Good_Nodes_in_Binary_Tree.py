@@ -101,10 +101,10 @@ def good_nodes_v3(root):
 
 def good_nodes_v4(root):
     """ As stated in the previous approach, the order in which we perform DFS does not matter, because the extra state
-         we pass along on each iteration will be correct regardless of traversal order. For this same reason, BFS and
+         we pass along at each iteration will be correct regardless of traversal order. For this same reason, BFS and
          DFS are both valid approaches.
 
-        The algorithm is identical to the iterative DFS approach, except we are using a queue instead of a stack.
+         The algorithm is identical to the iterative DFS approach, except we are using a queue instead of a stack.
 
     Time complexity: O(N)
     Space complexity: O(N), the worst case scenario for space with BFS is when the tree is full. In this scenario, the
@@ -116,6 +116,6 @@ def good_nodes_v4(root):
         node, cur_path_max = queue.popleft()
         if node.val >= cur_path_max:
             res += 1
-            cur_path_max = node.val
+        cur_path_max = max(cur_path_max, node.val)
         queue.extend([(child, cur_path_max) for child in (node.left, node.right) if child])
     return res
