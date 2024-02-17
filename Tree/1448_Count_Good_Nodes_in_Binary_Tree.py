@@ -74,12 +74,12 @@ def good_nodes_v2(root):
 def good_nodes_v3(root):
     """ DFS can also be implemented iteratively. You may be thinking at this point: What kind of DFS should we use,
          preorder, postorder, or inorder? The answer is that, for this problem, it doesn't matter. For each node, there
-         is only one path from the root to that node, so regardless of the order of our traversal, the integer we use to
+         is only one path from the root to that node, so regardless of the order of the traversal, the integer we use to
          track the greatest value will always be the largest value between the current node and the root.
 
-         The algorithm works the same as in the previous approach, but we will be using our own stack instead of
+         The algorithm works the same as in the previous approach, but we will be using an explicit stack instead of
          recursion. We can implement the tracking integer by pairing the nodes with the integer when we push elements
-         onto the stack.
+         to the stack.
 
          At each node, first check if node.val is greater than or equal to cur_path_max. If it is, then increment the
          result. Next, push the children onto the stack, along with the greater value between cur_path_max and node.val.
@@ -94,7 +94,7 @@ def good_nodes_v3(root):
         node, cur_path_max = stack.pop()
         if node.val >= cur_path_max:
             res += 1
-            cur_path_max = node.val
+        cur_path_max = max(cur_path_max, node.val)
         stack.extend([(child, cur_path_max) for child in (node.left, node.right) if child])
     return res
 
