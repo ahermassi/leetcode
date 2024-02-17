@@ -98,11 +98,19 @@ def is_balanced_v2(root):
 
 def is_balanced_v3(root):
     """ Notice that the height of a tree is always >= 0, and we do not care about the height when the subtree is already
-         confirmed imbalanced. So we can use -1 to represent imbalanced.
+         confirmed not height-balanced. Therefore,  we can use a sentinel value such as -1 to represent a not
+         height-balanced subtree.
 
          When the subtree of the current node (inclusive) is balanced, the function height() returns a non-negative
-         value as the height. According to the left height and right height of the two children, the parent node could
-         check if the subtree is balanced, and decides its return value.
+         value corresponding to the height. Depending on the heights of the left and right subtrees, the parent node
+         could determine if the subtree is balanced and decide its return value.
+
+         Sentinel values are very common in programming and production code, but we must take careful consideration to
+         ensure clean and proper design. Being able to encapsulate two pieces of information in a single integer value
+         is very efficient and can be (dependent on context) easier to maintain and interpret than it would be if we
+         used some arbitrary object or error state defined by the developer who wrote it. This height method has a
+         single job, to return the height of a tree in the form of an integer. It's understood that -1 is an invalid
+         height, so it can be used to communicate an edge case or failure case.
 
     Time complexity: O(N)
     Space complexity: O(N)
@@ -110,15 +118,15 @@ def is_balanced_v3(root):
     def height(root):
         if not root:
             return 0
-        left_height = height(root.left)
-        if left_height == -1:
+        left_height, right_height = height(root.left), height(root.right)
+        if left_height == -1 or right_height == -1 or abs(left_height - right_height) > 1:
             return -1
-        right_height = height(root.right)
-        if right_height == -1:
-            return -1
-        if abs(left_height - right_height) > 1:
-            return -1
-        return max(left_height, right_height) + 1
+        # We could also short-circuit using early termination. Specifically, if any left subtree is not height-balanced
+        # we do not need to visit the corresponding right subtree.
+        # left_height = height(root.left)
+        # if left_height == -1:
+        #     return -1
+        return 1 + max(left_height, right_height)
 
     return height(root) != -1
 
