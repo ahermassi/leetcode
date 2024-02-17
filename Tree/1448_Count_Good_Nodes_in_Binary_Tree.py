@@ -25,15 +25,16 @@ def good_nodes_v1(root):
          For this problem, we're concerned about the greatest value seen, so instead of the recursive function only
          taking nodes as an input, such as dfs(node), let's also have each call take an integer as well, like
          dfs(node, integer). This integer will represent the greatest value on the path from the root to the associated
-         node. This means that at each node, we can simply check if it is "good" by comparing this integer to the node's value.
+         node. This means that at each node, we can simply check if it is "good" by comparing this integer to the
+         node's value.
 
-        How do we calculate this number? For the root, the path from the root contains no other nodes, so we can
-        initially set this value to the value of root itself. For every call afterwards, we should compare this number to
-        the current node's value. If the current node's value is greater, then set this value equal to the current
-        node's value before visiting this node's children.
+         How do we calculate this number? For the root, the path from the root contains no other nodes, so we can
+         initially set this value to the value of root itself. For every call afterwards, we should compare this number
+         to the current node's value. If the current node's value is greater, then set this value equal to the current
+         node's value before visiting this node's children.
 
-        As we continue to traverse downwards through the tree, the number that we pass along with each node will
-        increase every time it finds a new max value, which allows us to easily check when a node is "good".
+         As we continue to traverse downwards through the tree, the number that we pass along with each node will
+         increase every time it finds a new max value, which allows us to easily check when a node is "good".
 
     Time complexity: O(N), where N is the number of nodes in the tree. We visit every node exactly once and do a
     constant amount of work each time.
@@ -45,7 +46,7 @@ def good_nodes_v1(root):
             return
         if root.val >= cur_path_max:
             res[0] += 1
-            cur_path_max = root.val
+        cur_path_max = max(cur_path_max, root.val)
         dfs(root.left, cur_path_max)
         dfs(root.right, cur_path_max)
 
