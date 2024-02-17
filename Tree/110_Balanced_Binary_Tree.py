@@ -16,15 +16,20 @@ class TreeNode(object):
 
 
 def is_balanced_v1(root):
-    """ "Top-Down" DFS.
+    """ "Top-Down" or Preorder DFS.
 
-        Check whether the tree is height-balanced strictly according to the definition: The difference between the
-        heights of the two subtrees is not greater than 1, and both the left subtree and right subtree
-        are also height-balanced. Therefore, we can compare the two child subtrees' heights then recurse on each one.
+         The balanced subtree definition hints at the fact that we should treat each subtree as a sub-problem.
+
+         Check whether the tree is height-balanced strictly according to the definition: A tree is height-balanced if
+         and only if the height of its two children subtrees are within 1 of each other and the subtrees at each child
+         are also height-balanced. Therefore, we can compare the two child subtrees' heights then recurse on each one.
 
     Time complexity: O(N^2), for the current root node, calling height() for its left and right children actually has
     to access all of its children, thus the complexity is O(N). We do this for each node in the tree, so the overall
-    complexity is O(N logN) because there are logN levels, but in the worst case of skewed tree the complexity is O(N^2)
+    complexity is O(N logN) because there are logN levels, but in the worst case of skewed tree the complexity is
+    O(N^2). However, it is important to note that we stop recursion as soon as the height of a node's children are not
+    within 1. In fact, in the skewed-tree case the algorithm is bounded by O(N), as it only checks the height of the
+    first two subtrees.
     Space complexity: O(N), in the worst case
     """
 
