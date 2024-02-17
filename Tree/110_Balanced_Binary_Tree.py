@@ -47,34 +47,35 @@ def is_balanced_v1(root):
     return is_balanced_v1(root.left) and is_balanced_v1(root.right)
 
 
-# Video explanations:
-# https://www.youtube.com/watch?v=LU4fGD-fgJQ
-# https://www.youtube.com/watch?v=QfJsau0ItOY
-
-
+# Video explanation: https://www.youtube.com/watch?v=LU4fGD-fgJQ
+# Video explanation: https://www.youtube.com/watch?v=QfJsau0ItOY
 def is_balanced_v2(root):
-    """ "Bottom-Up" DFS.
+    """ "Bottom-Up" or Postorder DFS.
 
-        In the previous approach, we perform redundant calculations when computing height. In each call to height(), we
-        require that the subtree's heights also be computed. Therefore, when working top-down we will compute the height
-        of a subtree once for every parent.
+         In the previous approach, we perform redundant calculations when computing height. In each call to height(), we
+         require that the subtrees heights also be computed. Therefore, when working top-down we will compute the height
+         of a subtree once for every parent.
 
-        We can remove the redundancy by first recursing on the children of the current node and then using their
-        computed heights to determine whether the current node is balanced. This bottom-up approach is a reverse of the
-        logic of the top-down approach since we first check if the child subtrees are balanced before comparing their
-        heights.
+         We can remove the redundancy by first recursing on the children of the current node and then using their
+         computed heights to determine whether the current subtree rooted at the current node is height-balanced.
+         This bottom-up approach is different from the logic of the top-down approach since we first check if the
+         children  subtrees are height-balanced before comparing their heights.
 
-        Check if the child subtrees are balanced. If they are, use their heights to determine if the current subtree is
-        balanced as well as to calculate the current subtree's height.
+         Check if the child subtrees are height-balanced. If they are, use their heights to determine if the current
+         subtree is height-balanced as well as to calculate the current subtree's height.
 
-        The key difference between the two approaches is that this second optimized approach refuses to do any
-        processing/work until the left child recursion and right child recursion are done. The key here is that this
-        allows us to reuse old results and do everything only once. This is called bottom-up strictly because we need
-        to get answers from nodes at height n-1 beforehand, in order to get answers at height n. The first approach will
-        make nodes do the processing/work FIRST, and then make its left and right children go through the same exact
-        burden. Nothing is reused, a lot of work is repeated. This is a problematic ordering given the nature of this
-        problem, where results at the lower levels of the tree will definitely prove to be useful to get results at
-        higher levels of the tree.
+         The key difference between the two approaches is that this second optimized approach refuses to do any
+         processing/work until the left child recursion and right child recursion are done. The key here is that this
+         allows us to reuse old results and do everything only once. This is called bottom-up strictly because we need
+         to get answers from nodes at height n-1 beforehand, in order to get answers at height n. The first approach will
+         make nodes do the processing/work FIRST, and then make its left and right children go through the same exact
+         burden. Nothing is reused, a lot of work is repeated. This is a problematic ordering given the nature of this
+         problem, where results at the lower levels of the tree will definitely prove to be useful to get results at
+         higher levels of the tree.
+
+         "Bottom" in recursion simply means the end of some recursive depth. Top-down implies we are doing work to find
+         the solution as we reach this recursive depth. Bottom-up implies that we are doing work to find the solution
+         only once we hit the recursive depth, and we propagate the results upwards to previous recursive calls.
 
         Instead of saying top-down and bottom-up, it would be better to just call it one-pass or multiple-pass.
 
@@ -83,17 +84,14 @@ def is_balanced_v2(root):
     """
 
     def check_balanced(root):
-        # First member of the return value indicates if tree is balanced, and if balanced the
-        # second member of the return value is the height of the subtree rooted at 'root'
+        # First member of the return value is the height of the subtree rooted at 'root', and the second member of
+        # the return value indicates if the tree is balanced
         if not root:
             return 0, True
         left_height, left_balanced = check_balanced(root.left)
-        if not left_balanced:
-            return 0, False
         right_height, right_balanced = check_balanced(root.right)
-        if not right_balanced:
-            return 0, False
-        return max(left_height, right_height) + 1, abs(left_height - right_height) <= 1
+        height_balanced = abs(left_height - right_height) <= 1
+        return 1 + max(left_height, right_height), height_balanced and left_balanced and right_balanced
 
     return check_balanced(root)[1]
 
