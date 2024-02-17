@@ -14,7 +14,6 @@ class TreeNode:
         self.right = right
 
 
-# Video explanation: https://www.youtube.com/watch?v=7cp5imvDzl4
 def good_nodes_v1(root):
     """ In this first approach, we'll be using recursion. A powerful idea for any tree or graph problem involving
          BFS/DFS is that instead of just adding nodes to the stack or stack, we can store extra data to represent state.
@@ -52,6 +51,7 @@ def good_nodes_v1(root):
     return res[0]
 
 
+# Video explanation: https://www.youtube.com/watch?v=7cp5imvDzl4
 def good_nodes_v2(root):
     """ We can also make every dfs() call return the number of good nodes in the subtree rooted at that node.
          This eliminates the need for a global count variable.
@@ -63,10 +63,10 @@ def good_nodes_v2(root):
     def dfs(root, cur_path_max):
         if not root:
             return 0
-        good = 1 if root.val >= cur_path_max else 0
+        good_nodes = 1 if root.val >= cur_path_max else 0
         cur_path_max = max(cur_path_max, root.val)
-        good += dfs(root.left, cur_path_max) + dfs(root.right, cur_path_max)
-        return good
+        good_nodes += dfs(root.left, cur_path_max) + dfs(root.right, cur_path_max)
+        return good_nodes
 
     return dfs(root, root.val)
 
