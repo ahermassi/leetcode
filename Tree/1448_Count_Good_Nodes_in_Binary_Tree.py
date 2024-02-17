@@ -3,9 +3,10 @@ a value greater than X.
 
 Return the number of good nodes in the binary tree. """
 
+from collections import deque
+
+
 # Definition for a binary tree node.
-
-
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -13,11 +14,7 @@ class TreeNode:
         self.right = right
 
 
-from collections import deque
-
 # Video explanation: https://www.youtube.com/watch?v=7cp5imvDzl4
-
-
 def good_nodes_v1(root):
     """ In this first approach, we'll be using recursion. A powerful idea for any tree or graph problem involving
          BFS/DFS is that instead of just adding nodes to the stack or stack, we can store extra data to represent state.
