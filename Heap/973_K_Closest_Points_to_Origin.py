@@ -6,24 +6,27 @@ from heapq import heappush, heappop
 from random import randint
 
 
+# Video explanation: https://youtu.be/rI2EBUEMfTk
 def k_closest_v1(points, K):
-    """ While we must iterate over all elements in the points array, we only need to keep track of the K closest points
-        encountered so far. We could therefore choose to store them in a separate data structure. In order to keep this
-        data structure capped at K elements, we will need to keep track of the point that is the farthest away from the
-        origin and thus the next point to be removed when a closer point is found.
+    """ Intuitively, we only care about points close to the origin. Therefore, we can keep a set of candidates, and
+         iteratively update the candidate set. The candidates are the k closest points we have seen so far.
 
-        We maintain a max-heap with size K. Then for each point, we add it to the heap. Once the size of the heap is
-        greater than K, we are supposed to extract one from the max heap to ensure the size of the heap is always K.
-        Thus, the max heap is always maintaining top K smallest elements from the first one to current one. Once the
-        size of the heap is over its maximum capacity, it will exclude the maximum element in it, since it can not be
-        the proper candidate anymore. At the end of iteration, we would only be left with K smallest elements
-        (since we popped off larger distanced elements whenever number of elements in heap exceeded K).
-        Since Python's standard heap is a min heap, push negative values to make it a max heap.
-        Note that another way to use heap would be to construct a min-heap and pop the min elements k times.
+         When we examine a new point, we want to see if it should be added to the candidates. This entails comparing
+         the candidate that is furthest from origin with the new point. To find this candidate efficiently, we should
+         store the candidates in a container that supports efficiently extracting the maximum and adding a new member.
+
+         We maintain a max-heap of size K. Then for each point, we add it to the heap. Once the size of the heap is
+         greater than K, we are supposed to extract one element from the max heap to ensure the size of the heap is
+         always K. Thus, the max heap is always maintaining the top K smallest elements seen so far. Once the size of
+         the heap is over its maximum capacity, it will pop/expel its maximum element, since it can not be a proper
+         candidate anymore. At the end of iteration, we are only left with the K smallest elements, aka K closest
+         points to origin.
+
+         Since Python's standard heap is a min heap, push negative values to make it a max heap.
 
     Time complexity: O(N logK): inserting an item to a heap of size K takes O(logK) time, and we do this for each item
-    in points. So runtime is O(N logK) where N is the length of points.
-    Space complexity: O(K) for the heap
+    in points list. So runtime is O(N logK) where N is the length of points.
+    Space complexity: O(K), for the heap
     """
     heap = []
     for x, y in points:
@@ -31,7 +34,7 @@ def k_closest_v1(points, K):
         heappush(heap, (-distance, x, y))
         if len(heap) > K:
             heappop(heap)
-    return [[x, y] for d, x, y in heap]
+    return [[x, y] for _, x, y in heap]
 
 
 def k_closest_v2(points, K):
