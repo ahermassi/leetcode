@@ -7,17 +7,17 @@ largest element in the stream. """
 import unittest2 as unittest
 from heapq import heappush, heappop
 
-# Video explanation: https://www.youtube.com/watch?v=hOjcdrqMoQ8
 
-
+# Video explanation: https://youtu.be/hOjcdrqMoQ8
 class KthLargest(object):
 
-    """ Create a min heap (priority queue), keep it only having the k largest elements by popping off small elements.
-        With only k largest elements, the smallest item (heap[0]) will always be the kth largest.
+    """ Create a min heap and maintain its size at k. That way, the smallest element in the heap will always be the kth
+         largest. When adding a number to the heap with add(), if the heap size exceeds k, then we pop from the heap.
     """
 
     def __init__(self, k, nums):
         """ Build a min heap from the initial stream.
+
         Time complexity: O(N logN), where N is the length of nums
         Space complexity: O(N)
         """
@@ -28,13 +28,15 @@ class KthLargest(object):
 
     def add(self, val):
         """ Push the new value into the heap and make sure the heap's size doesn't exceed k.
+
         Time complexity: O(logK)
         Space complexity: O(1)
         """
         heappush(self.heap, val)
         while len(self.heap) > self.k:
             heappop(self.heap)
-        return self.heap[0]  # Because the heap contains the k largest elements, the one at index 0 is the kth largest
+        # Because the heap contains the k largest elements, the smallest of those is the kth largest
+        return self.heap[0]
 
 
 class Test(unittest.TestCase):
