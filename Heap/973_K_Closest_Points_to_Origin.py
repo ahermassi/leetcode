@@ -38,74 +38,90 @@ def k_closest_v1(points, K):
 
 
 def k_closest_v2(points, K):
-    """ This solution is based on QuickSort, we can also call it QuickSelect. In the QuickSort, we will always
-        choose a pivot to compare with other elements. This solution is a modified version of QuickSort meant
-        to be used when we need to find K (or Kth) smallest (or largest) elements (based on some comparator)
-        but NOT IN ANY PARTICULAR ORDER.
+    """ This solution is based on QuickSort, also known as QuickSelect. In the QuickSort, we always choose a pivot to
+         compare with other elements. This solution is a modified version of QuickSort meant to be used when we need to
+         find K (or Kth) smallest (or largest) elements (based on some comparator) but NOT IN ANY PARTICULAR ORDER.
 
-        A typical QuickSelect function starts with two pointers (left, right) that define the entire range of indices
-        in the given array. The function will iteratively apply a partitioning helper function (partition()) which will
-        return the index of the borderline between the two subsequent partitions.
+         QuickSelect was developed by Tony Hoare and is also known as Hoare's selection algorithm. The approach is the
+         same as for quicksort:
 
-        Inside the partition() helper function, the first step is to find a suitable pivot value. The efficiency of the
-        QuickSelect algorithm relies heavily upon picking a good pivot candidate; the closer the pivot is to the
-        median value, the more likely each successive partitioning is to suitably narrow the range of values.
+                    Choose a pivot and define its position in a sorted array in a linear time using the so-called
+                                                            partition algorithm
 
-        After choosing a pivot value, the partition function will swap the values of the elements in the range until
-        it is partitioned into two sides with values less than the pivot value on one side and the remaining values
-        on the other. Like finding the pivot, there are multiple methods available to accomplish this, but we'll use
-        a basic version in which we start with pointers at left end of its range and move inward, swapping elements
-        with values less than the pivot value to the left side.
+         A typical QuickSelect function starts with two pointers (left, right) that define the entire range of indices
+         in the given array. The function iteratively applies a partitioning helper function (partition()) which returns
+         the index of the border between the two subsequent partitions.
 
-        Now here we are finding Kth smallest element. After partition cases are:
+         Inside the partition() routine, the first step is to find a suitable pivot index. The efficiency of the
+         QuickSelect algorithm relies heavily upon picking a good pivot candidate; the closer the pivot is to the
+         median value, the more likely each successive partitioning is to suitably narrow the range of values.
 
-            1- K == pivot, then we have already found Kth smallest. This is because the way partition is working.
-                There is exactly (K - 1) elements that are smaller than the Kth smallest element.
-            3- pivot < K, then we now have 'pivot' elements which are closest to origin (although they aren't sorted in
+         After choosing a pivot value, the partition function will swap the values of the elements in the range until
+         it is partitioned into two sides with values less than the pivot value on one side and the remaining values
+         on the other.
+
+         There are different partition algorithms. The most simple one is Lomuto's Partition Scheme, and so is what
+         we will use. Here is how it works:
+
+            - Move pivot at the end of the array using swap.
+            - Set the store pointer i and scan pointer j at the beginning of the array: i = j = left.
+            - Iterate over the array and move all elements that are closer to origin than the pivot element to the left
+            - Move i one step to the right after each swap.
+            - Once the entire array scanned, move the pivot to its original place and return this index.
+
+        After partitioning, we have the following cases:
+
+            1- pivot == K, then we have found the Kth smallest. This is because the way partitioning works: there is
+                 exactly (K - 1) elements that are closer to the origin than the Kth closest element.
+
+            2- pivot < K, then we now have 'pivot' elements which are closest to origin (although they aren't sorted in
                  any particular order) but we still need some more elements to get K points in total. Thus, we iterate
                  again and partition the array from indices [pivot+1, right] till we find K elements (by getting pivot at
                  Kth index)
-            2- pivot > K, then we now have more than K elements with us that are closest to origin. But we are sure
-                 that any element to the right of pivot won't be ever in our answer. So we iterate again and partition
-                 just the range [left, pivot-1] till we find K elements.
 
-    Time complexity: the average time complexity is O(N) because it halves (roughly) the remaining elements
-    needing to be processed at each iteration. This results in N + N/2 + N/4 + N/8 + ... + ... = 2N total processes,
-    yielding an average time complexity of O(N). But just like QuickSort, in the worst case, there's still a chance
-    (although very low) that we choose the worst pivot at each partition and this leads to
-    N + N-1 + N-2 + ... + 1 = N^2 total iterations leading to time complexity of O(N^2)
+            3- pivot > K, then we now have more than K elements that are closest to origin. But we are sure that any
+                 element to the right of pivot won't ever be in the answer. So we iterate again and partition the range
+                 [left, pivot-1] until we find K elements.
+
+    Time complexity: the average time complexity is O(N) because it halves (roughly) the remaining elements at each
+    iteration. This results in N + N/2 + N/4 + N/8 + ... + ... = 2N total processes, yielding an average time complexity
+    of O(N). But just like QuickSort, in the worst case, there's still a possibility (although very low) that we choose
+    the worst pivot at each partition and this leads to N + N-1 + N-2 + ... + 1 = N^2 total iterations, or a time
+    complexity of O(N^2)
     Space complexity: O(1)
     """
 
     def partition(left, right):
-        pivot_index = randint(left, right)  # Select a random pivot index between left and right, so that even when
-        # the worst case input would be provided the algorithm wouldn't be affected
+        # Select a random pivot index between left and right, so that even when the worst case input is provided
+        # the algorithm wouldn't be affected
+        pivot_index = randint(left, right)
         pivot = points[pivot_index]
         points[pivot_index], points[right] = points[right], points[pivot_index]
         pivot_distance = distance(pivot[0], pivot[1])
-        i = j = left  # i will keep track of the 'tail' of the section of items less than the pivot so that
-        # at the end we can 'sandwich' the pivot between the section less than it and the section greater than it.
+        i = j = left
+        # i will keep track of the 'tail' of the section of items less than the pivot so that at the end we can
+        # 'sandwich' the pivot between the section less than it and the section greater than it.
         # j will scan for us. All the elements before i (excluding i) are less than or equal to the pivot
         while j < right:
-            if distance(points[j][0], points[j][1]) <= pivot_distance:  # If this point's distance from origin is less
-                # than the pivot's distance, it needs to be moved to the section of items less than the pivot
+            if distance(points[j][0], points[j][1]) <= pivot_distance:
+                # If this point's distance from origin is less than the pivot's distance, it needs to be moved to the
+                # section of items less than the pivot
                 points[i], points[j] = points[j], points[i]  # Perform the swap
                 i += 1
             j += 1
-        points[i], points[right] = points[right], points[i]  # Bring the pivot back after the section of items less
-        # than the pivot. i keeps the tail of this section
+        # Bring the pivot back after the section of elements less than the pivot. i keeps track of the tail of that
+        # section.
+        points[i], points[right] = points[right], points[i]
         return i  # Return the pivot's final resting position
 
     distance = lambda x, y: x * x + y * y
-    n = len(points)
-    left, right = 0, n - 1
-    pivot = n
-    while pivot != n :
-        pivot = partition(left, right)
-        if pivot == K:
+    left, right = 0, len(points) - 1
+    while left <= right :
+        index = partition(left, right)
+        if index == K:
             break
-        if pivot < K:
-            left = pivot + 1
+        if index < K:
+            left = index + 1
         else:
-            right = pivot - 1
+            right = index - 1
     return points[:K]
