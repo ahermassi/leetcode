@@ -17,14 +17,13 @@ from heapq import heappush, heappop
 
 
 class TwitterV1:
-    """  Use a hash map to track the tweets for each user. When we need to generate news feed, merge the
-        news feeds for all the followees in a min heap of size 10 which will allow us to retrieve the 10 most
-        recent tweets.
+    """  Use a hashmap to track the tweets of each user. When we need to generate the news feed, we merge the
+          news feeds of all the users we're following in a min heap of size 10.
     """
 
     def __init__(self):
-        self.followers = defaultdict(set)
         self.tweets = defaultdict(list)
+        self.followees = defaultdict(set)
         self.timestamp = 1
 
     def postTweet(self, user_id, tweet_id):
@@ -34,7 +33,7 @@ class TwitterV1:
 
     def getNewsFeed(self, user_id):
         """ Time complexity: O(#followees * #tweets) """
-        followees = self.followers[user_id]
+        followees = self.followees[user_id]
         followees.add(user_id)   # Add myself to the list of my followees
         heap, res = [], []
         for followee in followees:  # O(#followees)
@@ -48,12 +47,12 @@ class TwitterV1:
 
     def follow(self, follower_id, followee_id):
         """ Time complexity: O(1) """
-        self.followers[follower_id].add(followee_id)
+        self.followees[follower_id].add(followee_id)
 
     def unfollow(self, follower_id, followee_id):
         """ Time complexity: O(1) """
-        if followee_id in self.followers[follower_id]:
-            self.followers[follower_id].remove(followee_id)
+        if followee_id in self.followees[follower_id]:
+            self.followees[follower_id].remove(followee_id)
 
 
 class TwitterV2:
