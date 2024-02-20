@@ -57,14 +57,15 @@ class TwitterV1:
 
 class TwitterV2:
     """ There is no need to store more than 10 tweets for each user because the function getNewsFeed() is already
-        bounded by that constraint. Therefore, we can use a deque to save the 10 most recent tweets per user.
-        Every new tweet is appended to the end of the queue, and when the deque's size exceeds 10 we pop
-        the least recent tweet from the front.
+         bounded by that constraint. Therefore, we can use a deque to save the 10 most recent tweets per user.
+
+         Every new tweet is appended to the end of the queue, and when the queue's size exceeds 10 we pop
+         the least recent tweet from the front.
     """
 
     def __init__(self):
-        self.followers = defaultdict(set)
         self.tweets = defaultdict(deque)
+        self.followees = defaultdict(set)
         self.timestamp = 1
 
     def postTweet(self, user_id, tweet_id):
@@ -76,7 +77,7 @@ class TwitterV2:
 
     def getNewsFeed(self, user_id):
         """ Time complexity: O(#followees) """
-        followees = self.followers[user_id]
+        followees = self.followees[user_id]
         followees.add(user_id)
         heap = []
         for followee in followees:
@@ -91,9 +92,9 @@ class TwitterV2:
 
     def follow(self, follower_id, followee_id):
         """ Time complexity: O(1) """
-        self.followers[follower_id].add(followee_id)
+        self.followees[follower_id].add(followee_id)
 
     def unfollow(self, follower_id, followee_id):
         """ Time complexity: O(1) """
-        if followee_id in self.followers[follower_id]:
-            self.followers[follower_id].remove(followee_id)
+        if followee_id in self.followees[follower_id]:
+            self.followees[follower_id].remove(followee_id)
