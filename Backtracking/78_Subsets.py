@@ -46,7 +46,6 @@ def subsets_v1(nums):
     return all_subsets
 
 
-# Video explanation: https://youtu.be/REOH22Xwdkk
 def subsets_v2(nums):
     """ Backtracking.
 
@@ -131,6 +130,7 @@ def subsets_v3(nums):
     return res
 
 
+# Video explanation: https://youtu.be/REOH22Xwdkk
 def subsets_v4(nums):
     """ Good ol' backtracking without the use of a for loop.
 
