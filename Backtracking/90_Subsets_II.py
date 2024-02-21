@@ -118,7 +118,7 @@ def subsets_with_dup_v2(nums):
 
 
 def subsets_with_dup_v3(nums):
-    """  If we store the last added subsets in a list, the previous solution might be slightly easier to understand.
+    """  If we store the last created subsets in a list, the previous solution might be slightly easier to understand.
     """
     nums.sort()
     all_subsets = [[]]
