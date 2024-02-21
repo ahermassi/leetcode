@@ -45,57 +45,59 @@ def subsets_v1(nums):
         all_subsets.extend(extension)
     return all_subsets
 
-# Video explanation: https://www.youtube.com/watch?v=REOH22Xwdkk
 
-
+# Video explanation: https://youtu.be/REOH22Xwdkk
 def subsets_v2(nums):
-    """ Backtracking. Recursive DFS.
+    """ Backtracking.
 
-        At each index i, add the current element to the current subset, recursively find the subsets that include
-        nums[i], and finally retract nums[i] from the current subset to explore other possibilities.
+         The power set is all possible combinations of all possible lengths, from 0 to n.
+         Given the definition, the problem can also be interpreted as finding the power set from a sequence.
 
-        We define a backtracking function named compute_subsets_at_index(index, subset) which takes the index of first
-        element to add to the subset that's being constructed which is the second argument 'subset'.
+         At each index i, add the current number to the current subset, recursively find the subsets that include
+         nums[i], and finally retract nums[i] from the current subset to explore other possibilities.
 
-            - If the current combination is done, we add the combination to the final output
+         We define a backtracking function named compute_subsets_at_index(index, subset) which takes the index of the
+         current number and the subset that's being created.
 
-            - Otherwise, we iterate over the indices from 'index' to the length of the entire sequence n.
-               At each index i:
-                - Add nums[i] to the current combination 'subset'
-                - Proceed recursively to add more elements to the combination : compute_subsets_at_index(i + 1, subset).
-                - Backtrack by removing nums[i] from 'subset'
+             - If the current subset is complete, we add it to the final output
 
-        Example: nums = [1. 2, 3]
-        compute_subsets_at_index(index = 0, path = []), res = []
+              - Otherwise, we iterate over all the indices from 'index' to the length of the entire sequence n.
+                 At each index i:
+                  * Add nums[i] to the current subset
+                  * Proceed recursively to add more numbers to the subset : compute_subsets_at_index(i + 1, subset).
+                  * Backtrack by removing nums[i] from the subset
+
+        Example: nums = [1, 2, 3]
+        compute_subsets_at_index(index = 0, subset = []), res = []
         |
-        |__ compute_subsets_at_index(index = 1 , path = [1]),                       res = [[]]
-        |    |__ compute_subsets_at_index(index = 2 , path = [1,2]),               res = [[],[1]]
-        |    |    |__ compute_subsets_at_index(index = 3, path = [1,2,3]),        res = [[],[1],[1,2]]
-        |    |                                                                                                    res = [[],[1],[1,2],[1,2,3]]
+        |__ compute_subsets_at_index(index = 1 , subset = [1]),                       res = [[]]
+        |    |__ compute_subsets_at_index(index = 2 , subset = [1,2]),               res = [[],[1]]
+        |    |    |__ compute_subsets_at_index(index = 3, subset = [1,2,3]),        res = [[],[1],[1,2]]
+        |    |                                                                                                        res = [[],[1],[1,2],[1,2,3]]
         |    |         // for loop will not be executed because index=n=3
         |    |
-        |    |__ compute_subsets_at_index(index = 3 , path = [1,3]),               res = [[],[1],[1,2],[1,2,3]]
-        |    	  	                                                                                              res = [[],[1],[1,2],[1,2,3],[1,3]]
+        |    |__ compute_subsets_at_index(index = 3 , subset = [1,3]),               res = [[],[1],[1,2],[1,2,3]]
+        |    	  	                                                                                                  res = [[],[1],[1,2],[1,2,3],[1,3]]
         |    	  	   // for loop will not be executed because index=n=3
         |
-        |__ compute_subsets_at_index(index = 2, path = [2]),                        res = [[],[1],[1,2],[1,2,3],[1,3]]
-        |    |__ compute_subsets_at_index(index = 3 , path = [2,3]),               res = [[],[1],[1,2],[1,2,3],[1,3],[2]]
-        |    	  	                                                                                              res =  [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3]]
+        |__ compute_subsets_at_index(index = 2, subset = [2]),                        res = [[],[1],[1,2],[1,2,3],[1,3]]
+        |    |__ compute_subsets_at_index(index = 3 , subset = [2,3]),               res = [[],[1],[1,2],[1,2,3],[1,3],[2]]
+        |    	  	                                                                                                  res =  [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3]]
         |    	  	   // for loop will not be executed because index=n=3
         |
-        |__ compute_subsets_at_index(index = 3, path = [3]),                        res =  [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3]]
-     	  	                                                                                                      res =  [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3],[3]]
+        |__ compute_subsets_at_index(index = 3, subset = [3]),                        res =  [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3]]
+     	  	                                                                                                          res =  [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3],[3]]
      	  	   // for loop will not be executed because index=n=3
 
     Time complexity: O(2^N), there are 2^N subsets to generate. The recursive function is called 2^N times, since we
-    have 2 choices at each iteration in nums array: Either we include nums[i] in the current set, or we exclude nums[i].
-    Space complexity: O(N), for call stack
+    have 2 choices at each iteration in nums array: either include nums[i] in or exclude it from the current subset.
+    Space complexity: O(N), for the call stack
     """
 
     def compute_subsets_at_index(index, subset):
         res.append(subset)
         for i in range(index, n):
-            # Find all subsets that include nums[i] with the rest of input elements
+            # Find all subsets that include nums[i] with the rest of the numbers
             compute_subsets_at_index(i + 1, subset + [nums[i]])
 
     n, res = len(nums), []
