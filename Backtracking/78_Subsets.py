@@ -153,13 +153,13 @@ def subsets_v4(nums):
 def subsets_v5(nums):
     """ The idea of this solution originated from Donald E. Knuth.
 
-        We map each subset to a bitmask of length n, where 1 in the ith position in bitmask means the presence of
-        nums[i] in the subset, and 0 means its absence.
+         We map each subset to a bitmask of length n, where 1 in the ith position of the bitmask means the presence of
+         nums[i] in the subset, and 0 means its absence.
 
-        For instance, the bitmask 0..00 (all zeros) corresponds to an empty subset, and the bitmask 1..11 (all ones)
-        corresponds to the entire input array nums.
+         For instance, the bitmask 0..00 (all zeroes) corresponds to an empty subset, and the bitmask 1..11 (all ones)
+         corresponds to the entire input array nums.
 
-        Hence, to solve the initial problem, we just need to generate 2^n bitmasks from 0..00 to 1..11.
+         Hence, to generate the power set, we just need to generate 2^n bitmasks from 0..00 to 1..11.
 
     Time complexity: O(N * 2^N)
     Space complexity: O(1)
