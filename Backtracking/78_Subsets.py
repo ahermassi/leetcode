@@ -5,45 +5,44 @@ import unittest2 as unittest
 
 
 def subsets_v1(nums):
-    """ Let's start from empty subset in output list. While iterating over the numbers, for each new number, we can
-         either pick it or not pick it.
+    """ Let's start from an empty subset in the output list. While iterating over the numbers, for each new number, we
+         can either pick it or not pick it.
 
-            1- If picked, add current number to every existing subset
+             1- If picked, add the current number to every existing subset
 
-            2- If not picked, leave all existing subsets as they are
+             2- If not picked, leave all existing subsets unchanged
 
-        We just combine both into our result.
+         We just combine both into our result.
 
-        Here's an example to help understand the code. The set to iterate over/generate the power set for is
-        input_set = [1, 2, 3].
-        Subset initially only has the empty set (empty list), []
-        In each iteration, concatenate each element/list in all_subsets with the list[n], then extend the results into
-        all_subsets.
+         Here's an example to help understand the code. The set to iterate over/generate the power set for is
+         [1, 2, 3].
+         The power set initially has only the empty subset (empty list), [].
+         In each iteration, append the current number to each previously generated subset, then extend the power set.
 
             all_subsets = [[]]
-            element     ->      all_subsets after each iteration
+            number      ->      all_subsets after each iteration
             num = 1    ->      [[], [1]]
             num = 2    ->      [[], [1], [2], [1, 2]]
             num = 3    ->      [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
 
-        The solution comes from the observation that the subsets are 'nested', meaning it is easy to construct a subset
-        of n numbers if we already know what is the subset of the first (n - 1) numbers, where the base case for n = 0
-        is an empty subset S = {}. Then we can obtain S_n from S_(n-1) in the following way:
+         The solution comes from the observation that the subsets are 'nested', meaning it is easy to construct a subset
+         of n numbers if we already have the subset of the first (n - 1) numbers, where the base case for n = 0 is the
+         empty subset S = {}. Then we can obtain S_n from S_(n-1) in the following way:
 
-            S_n = {S_(n-1), S_(n-1) + n)}
+                    S_n = {S_(n-1), S_(n-1) + n)}
 
-        S_(n-1) + n is obtained by appending n to each element in S_(n-1).
-        For example, S_(1) = {{}, {1}}, then S_(2) = {S_(1), S_(1) + 2} = {S_(1), {2}, {1,2}} = {{}, {1}, {2}, {1,2}}.
+         S_(n-1) + n is obtained by appending n to each element in S_(n-1).
+         For example, S_(1) = {{}, {1}}, then S_(2) = {S_(1), S_(1) + 2} = {S_(1), {2}, {1,2}} = {{}, {1}, {2}, {1,2}}.
 
     Time complexity: O(N * 2^N), to generate all subsets and then copy them into output list
     Space complexity: O(N * 2^N)
     """
     all_subsets = [[]]
     for num in nums:
-        temp = []
+        extension = []
         for subset in all_subsets:
-            temp.append(subset + [num])
-        all_subsets.extend(temp)
+            extension.append(subset + [num])
+        all_subsets.extend(extension)
     return all_subsets
 
 # Video explanation: https://www.youtube.com/watch?v=REOH22Xwdkk
