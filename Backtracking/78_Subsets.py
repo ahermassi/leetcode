@@ -175,7 +175,7 @@ def subsets_v5(nums):
 
 
 def subsets_v6(nums):
-    """ Simplified version of previous solution.
+    """ Simplified version of the previous solution.
 
     Time complexity: O(N * 2^N)
     Space complexity: O(1)
@@ -184,10 +184,12 @@ def subsets_v6(nums):
     p, res = 1 << n, []
     for i in range(p):
         # generate bitmask, from 0..00 to 1..11
-        bitmask = bin(i | p)[3:]  # If i = 3 = 011 -> i|p = 0011|1000 = 0011 -> bin(i|p) = 0b0011 -> bin(i|p)[3:] = 011
-        # So each bitmask ends up being a string representing the binary format of i
-        res.append([nums[j] for j in range(n) if bitmask[j] == '1'])  # Map a subset to each bitmask: 1 on the jth
-        # position in bitmask means the presence of nums[j] in the subset, and 0 means its absence.
+        # If i = 3 = 011 -> i|p = 0011|1000 = 0011 -> bin(i|p) = 0b0011 -> bin(i|p)[3:] = 011
+        # So each bitmask ends up being the string representation of the binary format of i
+        bitmask = bin(i | p)[3:]
+        # Map a subset to each bitmask: 1 at the jth position in the bitmask means the presence of nums[j] in the
+        # subset, and 0 means its absence.
+        res.append([nums[j] for j in range(n) if bitmask[j] == '1'])
     return res
     # Similar to:
     # for i in range(2**n, 2**(n + 1)):
