@@ -3,41 +3,49 @@
 The solution set must not contain duplicate subsets. Return the solution in any order. """
 
 
+# Video explanation: https://youtu.be/Vn2v6ajA7U0
 def subsets_with_dup_v1(nums):
-    """ This problem is a successor to 78- Subsets. The key to this problem is figuring out how to avoid duplicate
-         subsets.
+    """ This problem is a successor of 78- Subsets. We'll focus our attention on generating all unique subsets while
+         efficiently omitting all duplicate subsets.
 
-         When designing our recursive function, there are two main points that we need to consider at each function call:
+          When designing the recursive function, there are two main points that we need to consider at each call:
 
-            - Whether the element under consideration has duplicates or not.
-            - If the element has duplicates, which element among the duplicates should be considered while creating a
-               subset.
+             - Whether the number under consideration has duplicates or not
+             - If the number has duplicates, which number among the duplicates should be considered while creating a
+                subset.
 
-        First, sort the array in ascending order. Then, start with an empty list and the starting index set to 0.
+         Note that the order of the subsets in the result is the preorder traversal of the recursion tree.
 
-        At each function call, add a new subset to the output list of subsets.
+            - First, sort the array in ascending order. Then, start with an empty subset and the starting index 0.
 
-        Scan through all the elements in the nums array from the starting index to the end. Consider
-        one element at a time and decide whether to keep it or not. If we haven't seen the current element before, then
-        add it to the current list and make a recursive function call with the starting index incremented by one.
-        Otherwise, the subset is a duplicate, and so we ignore it. Thus, if in a particular function call we scan
-        through k distinct elements, there will be k different branches.
+            - At each function call, add a new subset to the final output list.
 
-        Sorting is required to ensure all the generated subsets will also be sorted. This helps to identify duplicates
-        and remove them and ensures all the generated subsets will also be sorted. For example, subsets {3, 1, 3},
-        {1, 3, 3}, {3, 3, 1} will become {1, 3, 3}.
+            - Scan through all the numbers in the nums array from the starting to the ending index. Consider one number
+               at a time and decide whether to keep it or exclude it.
+                    * If we haven't seen the current number before, then add it to the current subset and make a
+                       recursive call with the starting index incremented by one.
+                    * Otherwise, the number is a duplicate, so we skip it as it will generate a duplicate subset.
+                       Thus, if in a particular call we scan through k distinct elements, there will be k different
+                       branches.
+
+         Sorting the input is required to ensure all the generated subsets are also sorted. It also helps identify
+         potential duplicate subsets. For example, without sorting nums = [2,1,2] the algorithm will generate subsets
+         { [], [2], [1], [2], [2, 1], [2,2], [1, 2], [2, 1, 2] }. Here, subset [1, 2] should be considered a duplicate
+         of subset [2, 1]. To detect such duplicate subsets, prior sorting of the input list is needed.
 
 
-    Time complexity: O(N* 2^N), in the worst case when the array consists of N distinct elements. There are 2^N subsets
+    Time complexity: O(2^N), in the worst case when the array consists of N distinct elements. There are 2^N subsets
     to generate. The recursive function is called 2^N times, since we have 2 choices at each iteration in nums array:
-    Either we include nums[i] in the current set, or we exclude nums[i].
+    either include nums[i] in or exclude it from the current subset.
     Space complexity: O(N), for sorting and call stack
     """
 
     def compute_subsets_at_index(index, subset):
         res.append(subset)
         for i in range(index, n):
-            if i != index and nums[i] == nums[i - 1]:  # If the current element is a duplicate, ignore.
+            if i != index and nums[i] == nums[i - 1]:
+                # If the current element is a duplicate, ignore the subset (this skips duplicates except in the
+                # first iteration)
                 continue
             compute_subsets_at_index(i + 1, subset + [nums[i]])
 
