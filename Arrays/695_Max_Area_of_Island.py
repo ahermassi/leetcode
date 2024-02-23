@@ -4,9 +4,8 @@ Find the maximum area of an island in the given 2D array. (If there is no island
 
 import unittest2 as unittest
 
+
 # Video explanation: https://www.youtube.com/watch?v=iJGr1OtmH0c
-
-
 def max_area_of_island_v1(grid):
     """ We want to know the area of each connected shape in the grid, then take the maximum of these.
 
@@ -20,8 +19,8 @@ def max_area_of_island_v1(grid):
 
                     1 + areas of immediate neighbors (and their neighbors, and so on)
 
-         To ensure we don't count squares in a shape more than once, let's use a 'visited' set to keep track of squares
-         we visited previously. It will also prevent us from counting the same shape more than once.
+         To ensure we don't count squares in a shape more than once, we use a 'visited' set to keep track of squares we
+         visited previously. It will also prevent us from counting the same shape more than once.
 
     Time complexity: O(N * M), where N is the number of rows in the given grid and M is the number of columns. We visit
     every square once.
