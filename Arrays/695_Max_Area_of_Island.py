@@ -49,12 +49,12 @@ def max_area_of_island_v1(grid):
 def max_area_of_island_v2(grid):
     """ We can try the same approach using a stack-based, or iterative, DFS.
 
-         Here, 'visited' set will represent squares that have either been visited or are added to our list of squares
-         to visit (stack). For every starting land square that hasn't been visited, we will explore 4-directionally
-         around it, adding land squares that haven't been added to 'visited' to our stack.
+         'visited' set represents squares that have either been visited or added to the list of squares to visit
+         (stack). For every starting land square that hasn't been visited, we explore 4-directionally around it, adding
+         land squares that haven't been visited to the stack.
 
-         On the side, we'll keep a count 'area' of the total number of squares seen during the exploration of this
-         shape. We'll want the running max of these counts.
+         On the side, we keep a count 'area' of the total number of squares seen during the exploration of this shape.
+         We'll want the running max of these counts.
 
     Time complexity: O(N * M)
     Space complexity: O(N * M), the space used by 'visited' to keep track of visited squares and the space used by the
@@ -66,13 +66,14 @@ def max_area_of_island_v2(grid):
         for j in range(m):
             if grid[i][j]:
                 stack, area = [(i, j)], 0
+                visited.add((i, j))
                 while stack:
                     x, y = stack.pop()
-                    if not 0 <= x < n or not 0 <= y < m or not grid[x][y] or (x, y) in visited:
-                        continue
-                    visited.add((x, y))
                     area += 1
-                    stack.extend([(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)])
+                    for a, b in (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1):
+                        if 0 <= a < n and 0 <= b < m and grid[a][b] and (a, b) not in visited:
+                            visited.add((a, b))
+                            stack.append((a, b))
                 res = max(res, area)
     return res
 
