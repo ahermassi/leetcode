@@ -93,7 +93,7 @@ def oranges_rotting_v2(grid):
                     fresh_oranges.remove((x, y))
                     queue.append((x, y))
         time += 1
-    # Return -1 if there are fresh oranges left in the grid (there were no adjacent rotten oranges to make them rotten)
+    # Return -1 if there are fresh oranges left in the grid (there were no adjacent rotten oranges to contaminate them)
     return time if not fresh_oranges else -1
 
 
