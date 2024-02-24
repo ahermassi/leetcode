@@ -83,33 +83,31 @@ def find_redundant_connection_v2(edges):
          if there's an undirected edge between node A and node B, a detected cycle will include A → B → A. This is
          because an undirected edge is actually 2 edges in the adjacency list, and so forms a trivial cycle.
 
-         We keep track of the "parent" node that we got to a node from. Then, when we iterate through the neighbours
-         of a node, we ignore the "parent" node as otherwise it'll be detected as a trivial cycle (and we know that the
-         parent node has already been visited by this point anyway).
+         We can keep track of the "parent" of the current node. Then, when we iterate over the neighbors of the node,
+         we ignore the "parent" node as otherwise it would lead to the detection of a trivial cycle (and we know that
+         the parent node has already been visited at this point anyway).
 
-         Note that we no longer need to use a visited set because, with the introduction of parent parameter, we're
-         dealing with a 'directed' graph, and we already know that no cycle exists yet before each call to path_exists().
+         Note that we no longer need to use a visited set because, with the introduction of parent, we're working with
+         a "directed" graph, and we already know that no cycle exists yet before each call to path_exists().
 
     Time complexity: O(N^2)
     Space complexity: O(N)
     """
 
-    def path_exists(src, dest, parent):
-        if src == dest:
+    def path_exists(src, target, parent):
+        if src == target:
             return True
         for neighbor in graph[src]:
-            if neighbor == parent:
-                continue
-            if path_exists(neighbor, dest, src):
+            if neighbor != parent and path_exists(neighbor, target, src):
                 return True
         return False
 
     graph = defaultdict(list)
-    for src, dest in edges:
-        if path_exists(src, dest, 0):  # 0 is a non-existent node, so we use it as a parent
-            return [src, dest]
-        graph[src].append(dest)
-        graph[dest].append(src)
+    for a, b in edges:
+        if path_exists(a, b, 0):  # 0 is a non-existent node, so we use it as parent
+            return [a, b]
+        graph[a].append(b)
+        graph[b].append(a)
 
 
 class Test(unittest.TestCase):
