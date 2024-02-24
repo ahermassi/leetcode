@@ -41,30 +41,12 @@ def walls_and_gates_v1(rooms):
 
 
 # Video explanation: https://www.youtube.com/watch?v=e69C6xhiSQE
-
 def walls_and_gates_v2(rooms):
     """ Multi-source BFS.
 
-        Instead of searching from an empty room to the gates, how about searching the other way round ? In other words,
-         we initiate a BFS from all gates. Since BFS guarantees that we search all rooms of distance d before searching
+        We initiate a BFS from all gates. Since BFS guarantees that we search all rooms of distance d before searching
         rooms of distance d+1, the distance to an empty room must be the shortest. So whenever an empty room is
         reached, it must be from the closest gate.
-
-        Each gate only looks at the areas within 1 space (immediate neighbors) before we check the next gate. So each
-        area within 1 space of the gates is checked for rooms and these rooms are marked, then added to the queue.
-        Once all gates are checked, each new space is checked, and so forth. So, once a room is reached, it has to be
-        from the closest gate.
-
-        We can understand it by level-order BFS. First, we enqueue all 0s, and let's say these 0s are in level 1.
-        Then from each 0 of the queue, we will go up, down, left and right, all these positions that are rooms are at
-        level 1, and so forth. So assume we only have Gate A and Gate B, and we have a room C and all the other
-        positions are walls. Assume that distance AC is 3 and distance BC is 4. So for Gate A, room C is at its level 3,
-        and for Gate B room C is at its level 4. Since we are doing level-order BFS, C will always first be accessed by
-        the gate that is closer to it which is A.
-
-        Imagine that all the gates are "competing" against each other "at the same time". Once a gate reaches an empty
-        room and marks it with the distance, that room must be closest to that gate (compared to the rest of the gates)
-        because that gate is the 1st gate (think of it as a 1st prize winner) to reach that room.
 
         We are starting BFS from each of the gates by enqueuing the coordinates into the queue. Since Queue is FIFO, the
         first gate is processed first. While doing a BFS from the first gate, we check the coordinates at distance 1
@@ -72,30 +54,46 @@ def walls_and_gates_v2(rooms):
         i.e. rooms[x][y] = rooms[row][col] + 1.
         Then we enqueue the adjacent nodes of this coordinate, but since it is a queue, those coordinates are at the
         back of the queue. So next to be processed is the 2nd gate which was added, and so on. Since we spread out from
-        each gate in BFS manner for a single step only each time and evaluate the distance, we have to get the shortest
-        distance from each room to a gate.
+        each gate in a BFS manner for a single step only each time and evaluate the distance, we have to get the
+        shortest distance from each room to a gate.
+
+        Each gate looks only at the areas within 1 space (immediate neighbors) before we check the next gate. So each
+        area within 1 space of the gate is checked for rooms and these rooms are marked then added to the queue.
+        Once all gates are checked, each new space is checked, and so on. So, once a room is reached, it has to be from
+        the closest gate.
+
+        We can understand it by level-order BFS. First, we enqueue all 0s, and let's say these 0s are in level 1.
+        Then from each 0 of the queue, we will go up, down, left and right, all these positions that are rooms are at
+        level 1, and so on. So assume we only have Gate A and Gate B, and we have a room C and all the other
+        positions are walls. Assume that distance A-C is 3 and distance B-C is 4. So for Gate A, room C is at its
+        level 3, and for Gate B room C is at its level 4. Since we are doing level-order BFS, C will always first be
+        reached from the gate that is closer to it which is A.
+
+        Imagine that all the gates are "competing" against each other "at the same time". Once a gate reaches an empty
+        room and marks it with the distance, that room must be closest to that gate (compared to the rest of the gates)
+        because that gate is the 1st gate (think of it as a 1st prize winner) to reach that room.
 
         Consider this linear grid: [[GATE] [INF] [INF] [INF] [GATE]]
         queue: [ (gate_0,0), (gate_0,4) ]
 
         Iteration 1: (updating distances from (gate_0,0)) : [[GATE] [1] [INF] [INF] [GATE]]
-        queue: [ (gate_0,0), (gate_0,4), (room_0,1) ]
+        queue: [ (gate_0,4), (room_0,1) ]
 
         Iteration 2: (updating distances from (gate_0,4) not from (room_0,1)) : [[GATE] [1] [INF] [1] [GATE]]
-        queue: [ (gate_0,0), (gate_0,4), (room_0,1), (room_0,3) ]
+        queue: [ (room_0,1), (room_0,3) ]
 
         Iteration 3: (updating distances from (room_0,1)) : [[GATE] [1] [2] [1] [GATE]]
-        queue: [ (gate_0,0), (gate_0,4), (room_0,1), (room_0,3), (room_0,2) ]
+        queue: [ (room_0,3), (room_0,2) ]
 
     Time complexity: O(N * M). Let us start with the case with only one gate. The breadth-first search takes at most
     N * M steps to reach all rooms, therefore the time complexity is O(N * M). But what if we are doing BFS from
-    k gates? Once we set a room's distance, we are basically marking it as visited, which means each room is visited at
-    most once. Therefore, the time complexity does not depend on the number of gates and is O(N * M)
+    k gates? Once we set a room's distance, we are basically marking it as visited/done processing, which means each
+    room is visited at most once. Therefore, the time complexity does not depend on the number of gates and is O(N * M).
     Space complexity: O(N * M), the space complexity depends on the queue's size. We insert at most N * M points into
     the queue
     """
     n, m = len(rooms), len(rooms[0])
-    queue = deque([(i, j) for i in range(n) for j in range(m) if rooms[i][j] == 0])  # Enqueue all gates
+    queue = deque((i, j) for i in range(n) for j in range(m) if rooms[i][j] == 0)  # Enqueue all gates
     while queue:
         i, j = queue.popleft()
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
