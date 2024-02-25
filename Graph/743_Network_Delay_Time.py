@@ -169,26 +169,27 @@ def network_delay_time_v2(times, n, k):
 def network_delay_time_v3(times, n, k):
     """ Slight improvement of the previous solution.
 
-         In fact, we don't have to pop all the elements from the heap, and we can terminate early when n = 0,
-         since n = 0 means we have visited all the nodes along the shortest path from the source node.
+         In fact, we don't have to pop all the elements from the heap, and we can terminate early when we have visited
+         all the nodes along the shortest path from the source node.
 
     Time complexity: O(E logV)
     Space complexity: O(N + E)
     """
     graph = defaultdict(list)
-    for source, destination, time in times:
-        graph[source].append((destination, time))
+    for a, b, time in times:
+        graph[a].append((b, time))
     signal_received_at = [float('inf')] * (n + 1)
     signal_received_at[0] = 0
     queue = [(0, k)]
+    visited = 0
     while queue:
-        cur_time, vertex = heappop(queue)
+        travel_time, vertex = heappop(queue)
         if signal_received_at[vertex] != float('inf'):
             continue
         # If we arrive at a node, we're sure we got here in the least amount of time because we use a min heap
-        signal_received_at[vertex] = cur_time
-        n -= 1
-        if not n:
+        signal_received_at[vertex] = travel_time
+        visited += 1
+        if visited == n:
             return max(signal_received_at)
         for neighbor, time in graph[vertex]:
             heappush(queue, (signal_received_at[vertex] + time, neighbor))
