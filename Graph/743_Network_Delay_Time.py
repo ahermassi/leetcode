@@ -69,8 +69,8 @@ def network_delay_time_v1(times, n, k):
         broadcast signals from this node. To speed things up, at each visited node we'll consider signals exiting the
         node that are faster first, by sorting the edges.
 
-    Time complexity: O(N^N + E * logE), where N is the number of nodes and and E is the length of times. We can only
-    fully visit each node up to N-1 times, one per each other node. Also, we sort the edges corresponding to each node.
+    Time complexity: O(N^N + E * logE), where N is the number of nodes and E is the length of times. We can only fully
+    visit each node up to N-1 times, one per each other node. Also, we sort the edges corresponding to each node.
     Space complexity: O(N + E), building the adjacency list will take O(E) space and the runtime stack for DFS can have
     at most N active functions calls
     """
@@ -97,7 +97,6 @@ def network_delay_time_v1(times, n, k):
 
 # Video explanation: https://www.youtube.com/watch?v=EaphyqKU4PQ
 # Excellent Dijkstra's explanation: https://www.youtube.com/watch?v=pVfj6mxhdMw
-
 def network_delay_time_v2(times, n, k):
     """ Dijkstra's Algorithm.
 
