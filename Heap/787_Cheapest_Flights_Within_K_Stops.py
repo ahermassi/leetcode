@@ -2,12 +2,98 @@
 Now given all the cities and flights, together with starting city src and the destination dst, your task is to find the
 cheapest price from src to dst with up to k stops. If there is no such route, output -1. """
 
-from collections import defaultdict
+from collections import defaultdict, deque
 from heapq import heappop, heappush
 import unittest2 as unittest
 
 
 def find_cheapest_price_v1(flights, src, dst, k):
+    """ We can treat this as a graph problem where:
+
+         - Cities can be thought of as nodes in a graph
+         - The connections between each of the cities can be treated as the edges
+         - The cost of going from one city to another would be the weight of the edges in the graph.
+
+        The problem is to find the shortest path from a source to a destination with a constraint of k stops.
+
+        Breadth-first search is a good algorithm to use if we want to find the shortest path in an unweighted graph.
+        The property of BFS is that the first time a node is reached during the traversal, it is reached at the minimum
+        distance from the source.
+
+        The same cannot be said for a weighted graph. For a weighted graph, a path having more edges does not
+        necessarily mean the path is more expensive. Thus, we cannot employ a normal breadth-first search for weighted
+        graphs.
+
+        A breadth-first search has no way of knowing if the discovery of a particular node would give us the cheapest
+        path to that node. The only possible way for BFS (or DFS) to find the shortest path in a weighted graph is to
+        search the entire graph and keep recording the minimum distance from the source to the destination node.
+
+        However, this problem limits the number of stops to k. As a result, we need not search the paths with lengths
+        greater than (k + 1). A breadth-first search can be used for this problem because the number of levels to be
+        explored by the algorithm is bounded by k.
+
+        In this approach, we perform a level-order iteration over the nodes. We explore all the nodes at the current
+        level before moving on to the nodes at the next level. The current level would correspond to the number of stops
+        that is limited by k. When we move from one level to the next, we increase the stops by 1. We are allowed a
+        maximum of k stops, which means we could go up to a maximum of (k + 1) levels from the source node, trying to
+        reach the destination at the minimum price.
+
+        We can maintain a costs array which stores the minimum price to reach each node. When we want to move to a node,
+        we only consider edges where the total price after traversing the edge is less than the currently calculated
+        costs[node]. This optimization helps avoid TLE.
+
+            - Create an adjacency list where graph[a] contains all the neighbors of node a and the corresponding price
+               it takes to move to a neighbor.
+
+            - Initialize costs array, storing the minimum price to reach a node from the source node. Initialize it with
+               large values.
+
+            - Initialize a queue storing {node, total cost} pairs. Initially, the queue should have only (src, 0).
+
+            - Perform BFS until the queue is empty or k >= 0 (alternatively, we can create a variable to keep track of
+               the number of BFS "layers" if we don't want to modify the input parameter k):
+
+                    * Iterate over all the nodes at a particular level. This will be done by starting a nested loop and
+                       visiting all the nodes currently present in the queue.
+
+                    * At each pair {node, total cost}, iterate over all the neighbors of the node. For each neighbor,
+                       check if costs[neighbor] is greater than total cost + the price of the edge. If it is, then
+                       update cost[neighbor] and push (neighbor, costs[neighbor]) to the queue.
+
+                    * After iterating over all the nodes at the current level, decrement k. We visited all the nodes at
+                    the current level and are ready to visit the next level of nodes.
+
+            - Once we reach a condition where either the queue is empty or k < 0, we have our answer as costs[dst].
+            If costs[dst] hasn't changed from the initial large value, then we never reached it, so return -1.
+
+    Time complexity: O(V + E*k), where E is the number of flights and V is the number of cities. Depending on
+    improvements in the shortest distance for each node, we may process each edge multiple times. However, the maximum
+    number of times an edge can be processed is limited to k because that is the number of levels the BFS runs. In the
+    worst case, this takes O(E*k) time. We also need O(E) to initialize the adjacency list and O(V) to initialize the
+    costs array.
+    Space complexity: O(V + E*k), we process at most E*k edges, so the queue takes up O(E*k) space in the worst case. We
+    also need O(E) space for the adjacency list and O(V) space for the costs array.
+    """
+    n = len(flights)
+    graph = defaultdict(list)
+    for source, destination, cost in flights:
+        graph[source].append((destination, cost))
+    costs = [float('inf')] * n
+    costs[src] = 0
+    queue = deque([(src, 0)])
+    while queue and k >= 0:
+        size = len(queue)
+        for _ in range(size):
+            node, total_cost = queue.popleft()
+            for neighbor, cost in graph[node]:
+                if costs[neighbor] > total_cost + cost:
+                    costs[neighbor] = total_cost + cost
+                    queue.append((neighbor, costs[neighbor]))
+        k -= 1
+    return costs[dst] if costs[dst] != float('inf') else -1
+
+
+def find_cheapest_price_v2(flights, src, dst, k):
     """ Dijkstra's algorithm using priority queue.
 
         If we forget about the part where the number of stops is limited, then the problem simply becomes the shortest
@@ -129,7 +215,7 @@ def find_cheapest_price_v1(flights, src, dst, k):
 # Video explanation: https://www.youtube.com/watch?v=5eIK3zUdYmE
 
 
-def find_cheapest_price_v2(flights, src, dst, k):
+def find_cheapest_price_v3(flights, src, dst, k):
     """ Bellman-Ford
 
          Like Dijkstra's algorithm, Bellman-Ford proceeds by relaxation, in which approximations to the correct distance
@@ -210,6 +296,7 @@ class Test(unittest.TestCase):
         for test_flights, test_src, test_dst, test_k, result in self.data:
             self.assertEqual(result, find_cheapest_price_v1(test_flights, test_src, test_dst, test_k))
             self.assertEqual(result, find_cheapest_price_v2(test_flights, test_src, test_dst, test_k))
+            self.assertEqual(result, find_cheapest_price_v3(test_flights, test_src, test_dst, test_k))
 
 
 if __name__ == '__main__':
