@@ -13,17 +13,18 @@ def isNStraightHand_v1( hand, group_size):
          frequency and check if the numbers from start to (start + k) exist. If they do, we then keep removing them from
          the numbers we have, and if there is a case where it's not possible then we return false.
 
-            - Count the number of different cards counter in a map 'counter'
-            - Loop from the smallest card number 'start' that has a nonzero frequency
+            - Create a hashmap 'counter' to count the frequency of each card in the hand
+
+            - Loop from the smallest card value 'start' that has a non-zero frequency
+
             - Try to find 'group_size' cards with consecutive values starting from 'start' card
 
-         If we know the first number in one of the groups,we know the whole group. That is to say, we just need to find
+         If we know the first number in one of the groups, we know the whole group. That is to say, we just need to find
          all starting numbers of each group, then go check if all the other numbers in the group can be found in the
          given hand.
 
-         Still, there might be groups with the same starting number. This can be easily solved by storing each number's
-         time of appearances in a hash table. Each time we use a number, we decrease its count, and once its counts
-         reaches 0, we know the number is no longer available for future use.
+         Since there might be groups with the same starting number, each time we use a card we decrement its count, and
+         once its count drops to 0 we know the number is no longer available for future use.
 
     Time complexity: O(N logN + N), where N is the total number of cards. We sort the input array, which costs O(N logN),
     then we try to build a group of cards of size group_size which we can do N times in the worst case of group_size=1.
@@ -31,20 +32,16 @@ def isNStraightHand_v1( hand, group_size):
     """
     if len(hand) % group_size:
         return False
-    n = len(hand)
     hand.sort()
-    counter = Counter(hand)
-    while counter:
-        i = 0
-        while i < n and hand[i] not in counter:
-            i += 1
+    n, counter = len(hand), Counter(hand)
+    for i in range(n):
+        if counter[hand[i]] == 0:
+            continue
         cur_hand = hand[i]
         for _ in range(group_size):
-            if cur_hand not in counter:
+            if counter[cur_hand] == 0:
                 return False
             counter[cur_hand] -= 1
-            if counter[cur_hand] == 0:
-                del counter[cur_hand]
             cur_hand += 1
     return True
 
