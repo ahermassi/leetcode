@@ -48,11 +48,11 @@ def partition_labels_v1(s):
 
 
 def partition_labels_v2(s):
-    """ We can treat this problem essentially as an interval merging problem. This is similar to 56- Merge Intervals.
+    """ We can treat this problem as an interval merging. This is similar to 56- Merge Intervals.
 
-         Basically, we can take an indices range for all the characters in the string and save it in a map. This yields
-         a list of intervals that is already sorted by first element (since we process the characters of the string fom
-         left to right). Finally, we build the result by merging the intervals and calculating the range length of each
+         Basically, we can create a range of indices for all the characters in the string. This yields a list of
+         intervals that is already sorted by the first element (since we process the characters of the string fom
+         left to right). We then build the result by merging the intervals and calculating the range size of each
          merged interval.
 
     Time complexity: O(N)
