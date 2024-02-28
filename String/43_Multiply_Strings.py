@@ -130,7 +130,7 @@ def multiply_v3(num1, num2):
 
         Example: num1 = "12", num2 = "19"
 
-        First for loop:
+        First two for loops:
         res = [0, 0, 0,18], after first iteration
         res = [0, 0, 9,18], after second iteration
         res = [0, 0,11,18], after third iteration
@@ -150,17 +150,17 @@ def multiply_v3(num1, num2):
         a = (ord(num1[i]) - ord('0'))
         for j in reversed(range(m)):
             b = (ord(num2[j]) - ord('0'))
-            mul = a * b
-            res[i + j + 1] += mul
+            prod = a * b
+            res[i + j + 1] += prod
     carry = 0
-    for i in reversed(range(len(res))):
+    for i in reversed(range(n+m)):
         res[i] += carry
         carry = res[i] // 10
         res[i] %= 10
-    i = 0
-    while i < len(res) and res[i] == 0:
-        i += 1
-    return ''.join(map(str, res[i:])) if i < len(res) else '0'
+    zero = 0
+    while zero < n + m and res[zero] == 0:
+        zero += 1
+    return ''.join(map(str, res[zero:])) if zero < n + m else '0'
 
 
 class Test(unittest.TestCase):
