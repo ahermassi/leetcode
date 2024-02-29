@@ -74,26 +74,25 @@ class DetectSquaresV1:
 
 
 class DetectSquaresV2:
-    """ We can apply the same idea as above but using a single hash map.
+    """ We can apply the same idea but using a single hashmap.
 
-        We store the COUNT of all points lying on x-axis with x coordinate, and for each point on x-axis, we have
-        corresponding y coordinate such as:
+        We store the COUNT of all the points lying on x-axis with x coordinate, and for each point on x-axis, we have
+        its corresponding y coordinate such as:
 
-                x_axis[x][y] = count of points with coordinate (x, y)
+                    x_axis[x][y] = count of points with coordinate (x, y)
 
-        Notice how x_axis map gives us access to count of points with coordinates (x, y) AND immediate access to all
-        points that share the same x coordinate, thus combining the 2 maps of the previous solution.
+        Notice how x_axis map gives us access to the count of points with coordinates (x, y) AND immediate access to all
+        points that share the same x coordinate, thus combining the 2 hashmaps of the previous solution.
 
-        Now, for check, we need to pick all points lying on x coordinate of the query point. For each of these points,
-        we calculate side length and find remaining two points at same distance on left and right sides of x.
+        For count(point), we need to pick all the points that have the same x coordinate of the query point. For each of
+        these points, we calculate the square side length and find remaining two points at same distance on the left and
+        right sides of x.
 
-        For a query point p1 = (x, y), we try all the points p2 which have the same x coordinate with p1,
-        i.e. p1.x = p2.x
-        Since we now have two points p1 and p2, we can form a square by computing the positions of the two remain points
-        p3, p4.
+        For a query point p1 = (x, y), we try all the points p2 which have the same x coordinate as p1, i.e. p1.x = p2.x
+        Since we now have two points p1 and p2, we can form a square by computing the positions of the remaining two
+        points, p3 and p4.
 
-        To get the count of all possible squares, we need to multiply count of all possible p2, p3, and p4 possible
-        points.
+        To get the count of all possible squares, we need to multiply the count of all possible p2, p3, and p4 points.
 
             - Count of right side squares = count(p3') * count(p4')
             - Count of left side squares = count(p3'') * count(p4'')
