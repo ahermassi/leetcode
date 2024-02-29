@@ -25,39 +25,38 @@ class DetectSquaresV1:
 
         What we need to do now:
 
-            - For add(self, point): We increment the points counter and append the y coordinate to its respective list
+            - add(point): We increment the points counter and append the y coordinate to its respective list
 
-            - For count(self, point): We need to find all points with the same x coordinate, i.e. points in the form
-               (x, y2), and then reconstruct square. There will be two ways to do it: One above x-axis and one below it.
-               Here we need to take into account the frequencies of our points, so we use the counter for that.
+            - count(point): We need to find all the points with the same x coordinate, i.e. points in the form (x, y1),
+               and then reconstruct square. There will be two ways to do it: One above x-axis and one below it.
+               Here we need to take into account the count of the points, so we use the counter for that.
 
-        For a query point p1 = (x, y), we try all the points p2 which have the same x coordinate with p1,
-        i.e. p1.x = p2.x
-        Since we now have two points p1 and p2, we can form a square by computing the positions of the two remain points
-        p3, p4.
+        For a query point p1 = (x, y), we try all the points p2 which have the same x coordinate as p1, i.e. p1.x = p2.x
+        Since we now have two points p1 and p2, we can form a square by calculating the positions of the remaining two
+        points, p3 and p4.
 
-            - Calculate side_len = abs(p1.y - p2.y)
+            - Calculate the square side length: side_length = abs(p1.y - p2.y)
 
-            - Case 1: p3, p4 points are on the left side of the vertical line [p1, p2]:
-               p3 = (p1.x - side_len, p2.y)
-               p4 = (p1.x - side_len, p1.y)
+            - Case 1: p3 and p4 are on the left side of the vertical line [p1, p2]:
+               p3 = (p1.x - side_length, p2.y)
+               p4 = (p1.x - side_length, p1.y)
 
-            - Case 2: p3, p4 points are on the right side of the vertical line [p1, p2]:
-               p3 = (p1.x + side_len, p2.y)
-               p4 = (p1.x + side_len, p1.y)
+            - Case 2: p3 and p4 are on the right side of the vertical line [p1, p2]:
+               p3 = (p1.x + side_length, p2.y)
+               p4 = (p1.x + side_length, p1.y)
 
     Time complexity: O(1) for add(point), O(N) for count(point) but in practice it is less because usually we do not
-    have a lot of points on the same line
+    have a lot of points on the same line.
     Space complexity: O(N)
     """
 
     def __init__(self):
-        self.counter = defaultdict(int)
+        self.points = defaultdict(int)
         self.x_axis = defaultdict(list)
 
     def add(self, point):
         x, y = point
-        self.counter[(x, y)] += 1
+        self.points[(x, y)] += 1
         self.x_axis[x].append(y)
 
     def count(self, point):
@@ -68,8 +67,8 @@ class DetectSquaresV1:
                 continue
             side_length = abs(y - y1)
             squares = 0
-            squares += self.counter[(x - side_length, y)] * self.counter[(x - side_length, y1)]
-            squares += self.counter[(x + side_length, y)] * self.counter[(x + side_length, y1)]
+            squares += self.points[(x - side_length, y)] * self.points[(x - side_length, y1)]
+            squares += self.points[(x + side_length, y)] * self.points[(x + side_length, y1)]
             res += squares
         return res
 
