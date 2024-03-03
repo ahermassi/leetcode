@@ -170,43 +170,47 @@ def check_valid_string_v2(s):
 def check_valid_string_v3(s):
     """ Stack-based solution.
 
-        The basic idea is to track the index of the left bracket and asterisk. Push all the indices of the asterisks and
-        left brackets to their stacks, respectively.
+        The basic idea is to track the indices of the left parenthesis and asterisks. Push all the indices of the
+        asterisks and left parenthesis to their respective stacks.
 
-        Step 1: When we encounter a right bracket, we try to match it. So, pop left bracket stack first if it is not
-        empty. If the left bracket stack is empty, pop the asterisk stack if it is not empty. Here we consider '*' as
-        an open parenthesis that can be match a closing parenthesis. False can be returned if both stacks are empty.
+            - Step 1: When we encounter a right parenthesis, we try to match it. So, pop left parenthesis stack first if
+               it is not empty. If the left parenthesis stack is empty, pop the asterisk stack if it is not empty. Here
+               we consider '*' as an open parenthesis that can match a closing parenthesis. False is returned if both
+               stacks are empty.
 
-        Step 2: Here we consider '*' as a closing parenthesis. Attention is paid to the remaining stuff in the two
-        stacks. Note that the left bracket CANNOT appear after the asterisk as there is NO way to balance the bracket.
-        In other words, if index at top of left stack > index at top of asterisk stack, it means there was no '*' after
-        the last '(' , so return false. Otherwise, pop out each from the left bracket and asterisk stack.
+            - Step 2: Here we consider '*' as a closing parenthesis. Attention is paid to the remaining items in the two
+               stacks. Note that the left parenthesis CANNOT appear after the asterisk as there is NO way to balance the
+               parenthesis.
+               In other words, if the index at the top of left parenthesis stack > index at the top of asterisk stack,
+               it means there was no '*' after the last '(' , so return false. Otherwise, pop from the left parenthesis
+               and asterisk stacks.
 
-        A correct sequence should have an empty left bracket stack, which means we were able to balance the complete
+        A valid sequence should have an empty left bracket stack, which means we were able to balance the complete
         string.
 
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    left, asterisk = [], []
+    left_unmatched, asterisk = [], []
     for i, c in enumerate(s):
         if c == '(':
-            left.append(i)
+            left_unmatched.append(i)
         elif c == '*':
             asterisk.append(i)
-        elif left:
-            left.pop()
+        elif left_unmatched:
+            left_unmatched.pop()
         elif asterisk:
             asterisk.pop()
-        else:  # We can't match the current ')'
+        else:
+            # We can't match the current ')'
             return False
     # So far, we have cleared all the ')' using '(' accordingly. But, we may have more '(' and '*' than ')'. In the
-    # remaining part, if there is any '(' after '*', we return False. We can only close an '(' if there is an '*'
-    # that occurs at a greater/later index.
-    while left and asterisk:
-        if left.pop() > asterisk.pop():
+    # second part, if there is any '(' after '*', we return False. We can only close an '(' if there is an '*' that
+    # appears at a later index.
+    while left_unmatched and asterisk:
+        if left_unmatched.pop() > asterisk.pop():
             return False
-    return not left
+    return not left_unmatched
 
 
 class Test(unittest.TestCase):
