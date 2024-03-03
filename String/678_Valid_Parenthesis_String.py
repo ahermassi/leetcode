@@ -12,12 +12,12 @@ import unittest2 as unittest
 def check_valid_string_v1(s):
     """ Top-Down Dynamic Programming (recursion + memoization).
 
-        The idea of recursion is very simple: increment 'open' when we encounter '(' and increment 'close' when we
-         see a ')'. Otherwise, we just need to consider 3 cases: Skip '*' symbol or substitute it with either closing or
-         opening parenthesis.
+         The idea of recursion is very simple: increment 'open' when we encounter '(' and increment 'close' when we
+          see a ')'. Otherwise, we just need to consider 3 cases: skip '*' or substitute it with either closing or
+          opening parenthesis.
 
-        Check for the case when we want to decrement zero-valued 'open', that means that we want to put ')' before
-        '(' which is not acceptable.
+         Check for the case when we want to decrement zero-valued 'open', that means that we want to put ')' before
+         '(' which is not acceptable.
 
     Time complexity: O(N^2), O(3^N) + memoization
     Space complexity: O(N)
@@ -31,12 +31,12 @@ def check_valid_string_v1(s):
         if (index, open, close) not in memo:
             cur_char = s[index]
             if cur_char == '(':
-                memo[(index, open, close)] = dfs(index + 1, open + 1, close)
+                res = dfs(index + 1, open + 1, close)
             elif cur_char == ')':
-                memo[(index, open, close)] = dfs(index + 1, open, close + 1)
+                res = dfs(index + 1, open, close + 1)
             else:
-                memo[(index, open, close)] = dfs(index + 1, open + 1, close) or dfs(index + 1, open, close + 1) \
-                                             or dfs(index + 1, open, close)
+                res = dfs(index + 1, open + 1, close) or dfs(index + 1, open, close + 1) or dfs(index + 1, open, close)
+            memo[(index, open, close)] = res
         return memo[(index, open, close)]
 
     n, memo = len(s), {}
