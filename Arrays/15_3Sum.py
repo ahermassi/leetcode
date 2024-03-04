@@ -58,17 +58,17 @@ def three_sum_v1(nums):
 
 
 def three_sum_v2(nums):
-    """ Since triplets must sum up to the target value, we can try the hash table approach from the Two Sum solution.
+    """ Since triplets must sum up to the target value, we can try the hashmap approach from the Two Sum solution.
 
-        We move our pivot element nums[i] and analyze elements to its right. We find all pairs whose sum is equal
-        -nums[i] using the Two Sum: One-pass Hash Table approach, so that the sum of the pivot element (nums[i])
-        and the pair (-nums[i]) is equal to zero.
+         We move the pivot element nums[i] and analyze elements to its right. We find all pairs whose sum is equal
+         to -nums[i] using the Two Sum: One-pass Hash Table approach, so that the sum of the pivot element (nums[i])
+         and the pair is equal to zero.
 
-        To do that, we process each element nums[j] to the right of the pivot, and check whether a complement
-        -(nums[i] + nums[j]) is already in the hashset. If it is, we found a triplet. Then, we add nums[j] to the
-        hashset, so it can be used as a complement from that point on.
+         To do that, we process each element nums[j] to the right of the pivot, and check whether a complement
+         -(nums[i] + nums[j]) is already in the hashset. If it is, we found a triplet. Then, we add nums[j] to the
+         hashset, so it can be used as a complement from that point on.
 
-        Like in the previous approach, we will also sort the array, so we can skip repeated values.
+         Like in the previous approach, we also sort the array so we can skip duplicate values.
 
     Time complexity: O(N logN + N^2) = O(N^2)
     Space complexity: O(N)
@@ -81,6 +81,7 @@ def three_sum_v2(nums):
         if i > 0 and nums[i] == nums[i - 1]:
             continue
         a = nums[i]
+        # Find a pair of numbers (b, c) in [i + 1, n - 1] whose sum is equal to -a
         j = i + 1
         seen = set()
         while j < n:
@@ -88,10 +89,10 @@ def three_sum_v2(nums):
             c = - (a + b)
             if c in seen:
                 res.append([a, b, c])
-                # Increment j while the next value is the same as before to avoid duplicates in the result
+                seen.add(b)
+                # Skip duplicates
                 while j < n - 1 and nums[j] == nums[j + 1]:
                     j += 1
-            seen.add(b)
             j += 1
     return res
 
