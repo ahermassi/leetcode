@@ -6,6 +6,7 @@ The solution set must not contain duplicate triplets. """
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/jzZsG8n2R9A
 def three_sum_v1(nums):
     """ We will follow the same two pointers pattern as in other similar sum problems. It requires the array to be
         sorted, so we'll do that first. To make sure the result contains unique triplets, we need to skip duplicate
