@@ -23,6 +23,16 @@ def is_valid_sudoku_v1(board):
     Space complexity: O(1)
     """
 
+    def is_valid_unit(unit):
+        values = set()
+        for cell in unit:
+            if cell == '.':
+                continue
+            if cell in values:
+                return False
+            values.add(cell)
+        return True
+
     def is_valid_rows():
         for row in board:
             if not is_valid_unit(row):
@@ -34,16 +44,6 @@ def is_valid_sudoku_v1(board):
             col = [board[i][j] for i in range(9)]
             if not is_valid_unit(col):
                 return False
-        return True
-
-    def is_valid_unit(unit):
-        values = set()
-        for cell in unit:
-            if cell == '.':
-                continue
-            if cell in values:
-                return False
-            values.add(cell)
         return True
 
     def is_valid_squares():
