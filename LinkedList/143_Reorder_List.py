@@ -11,9 +11,8 @@ class ListNode(object):
         self.val = x
         self.next = None
 
+
 # Video explanation: https://www.youtube.com/watch?v=S5bfdUTrKLM
-
-
 def reorder_list_v1(head):
     """ Reverse the second half of the list and merge the two halves.
 
@@ -22,11 +21,11 @@ def reorder_list_v1(head):
         the slow pointer should be in the middle.
 
         Let's traverse the list starting from the middle node slow and its virtual predecessor None. For each current
-        node, save its neighbours: The previous node prev and the next node nxt = cur.next.
+        node, save its neighbors: the previous node prev and the next node nxt = cur.next.
         While we're moving along the list, change the node's next pointer to point to the previous node and shift the
         current node to the right for the next iteration
 
-        Let's pick the first node of each list - first_head and second_head, and save their successors. While we're
+        Next, pick the first node of each list - first_head and second_head, and save their successors. While we're
         traversing the list, set first_head node's next pointer to point to second_head, and second_head node's next
         pointer to point to the successor of first_head. For this iteration the job is done, and for the next iteration
         move to the previously saved nodes' successors.
