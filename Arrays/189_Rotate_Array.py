@@ -44,16 +44,16 @@ def rotate_v3(nums, k):
 
         The idea of this algorithm is the following:
 
-            1- Reverse the first (n - k) elements
-            2- Reverse the remaining k elements
-            3- Reverse the entire array
+            1- Reverse the entire array
+            2- Reverse the first k elements
+            3- Reverse the remaining (n-k) elements
 
         nums = "----->-->"; k =3
         result = "-->----->";
 
-        reverse "----->" to get "<------->"
-        reverse "-->" to get "<-----<--"
-        reverse "<-----<--" to get "-->----->"
+        reverse "----->-->" to get "<--<-----"
+        reverse "<--" to get "--><-----"
+        reverse "<-----" to get "-->----->"
 
     Time complexity: O(N)
     Space complexity: O(1)
@@ -64,13 +64,13 @@ def rotate_v3(nums, k):
             left += 1
             right -= 1
 
-    if not k:
-        return nums
     n = len(nums)
     k = k % n
-    reverse(0, n-k-1)
-    reverse(n-k, n-1)
+    if not k:
+        return nums
     reverse(0, n-1)
+    reverse(0, k-1)
+    reverse(k, n-1)
 
 
 class Test(unittest.TestCase):
