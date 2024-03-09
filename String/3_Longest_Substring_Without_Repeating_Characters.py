@@ -4,23 +4,22 @@ import unittest2 as unittest
 
 
 def length_of_longest_substring_v0(s):
-    """ Brute force. Check all the substring one by one to see if it has no duplicate character.
+    """ Brute force. Check all the substring to see if any of them has no duplicate characters.
 
-         To check if one substring has duplicate characters, we can use a hash set. We iterate through all the characters
-         in the substring and put them into the set one by one. Before putting one character, we check if the set
-         already contains it.
+         To check if a substring has duplicate characters, we can use a hash set. We iterate through all the characters
+         in the substring and put them into the set. Before adding a character, we check if the set already contains it.
 
     Time complexity: O(N^2)
     Space complexity: O(N), or O(1) if the set of characters considered is the English alphabet O(26)
     """
     n, res = len(s), 0
     for i in range(n):
-        chars = {s[i]}
-        j = i + 1
-        while j < n and s[j] not in chars:
-            chars.add(s[j])
-            j += 1
-        res = max(res, j - i)
+        window = set()
+        for j in range(i, n):
+            if s[j] in window:
+                break
+            window.add(s[j])
+        res = max(res, len(window))
     return res
 
 
