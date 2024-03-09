@@ -24,68 +24,68 @@ def length_of_longest_substring_v0(s):
 
 
 def length_of_longest_substring_v1(s):
-    """ Given a substring with a fixed end index in the string, maintain a hash map to record the occurrence of each
-         character in the current substring. If any character occurs more than once, drop the leftmost characters until
-         there are no duplicate characters.
+    """ Given a substring with a fixed end index in the string, maintain a hashmap to record the occurrence of each
+         character in the current substring. If any character occurs more than once, drop characters from the left until
+         no more duplicate characters exist in the substring.
 
-         In the brute force approach, we repeatedly check a substring to see if it has duplicate character. But it is
+         In the brute force approach, we repeatedly checked a substring to see if it has duplicate characters. But it is
          unnecessary. If a substring s(i,j) from index i to j-1 was already checked to have no duplicate characters, we
-         only need to check if s[j] is already in the substring s(i,j).
+         only need to check if s[j] is in the substring s(i,j).
 
-        We will reuse previous computation as we iterate through the string. Suppose we know the longest duplicate-free
-        substring ending at a given index right. The longest duplicate-free substring ending at index right+1 is either:
+         We reuse previous computations as we iterate through the string. Suppose we know the longest duplicate-free
+         substring ending at a given index i. The longest duplicate-free substring ending at index i+1 is either:
 
-            1- The previous substring extended with the element at index right+1, if that element does not appear in
-                 the longest duplicate-free substring ending at index right
-            2- The substring beginning at the most recent occurrence of the element at index right+1 plus 1
+             1- The previous substring extended with the element at index i+1, if that element does not appear in the
+                  longest duplicate-free substring ending at index i
+             2- The substring beginning at the most recent occurrence of the element at index i+1 plus 1
 
-        To perform this case analysis as we iterate, all we need is a hash table storing the most recent occurrence of
-        each character, and the longest duplicate-free substring ending at the current index.
+         To perform this case analysis as we iterate, all we need is a hashmap mapping each character to its most recent
+         occurrence, and the longest duplicate-free substring ending at the current index.
 
-        The basic idea is to keep a hash map which stores the characters in string as keys and their indices as values,
-        then we can skip the characters immediately when we find a repeated character.
+         The basic idea is to use a hashmap to immediately skip the repeated characters.
 
-        We use two pointers which define the max substring. Move the right pointer 'right' to scan the string, and in
-        the meanwhile update the hash map. If the current character is already in the hash map, then move the left
-        pointer 'left' after the last occurrence of this repeated character. The reason is that if s[right] has a
-        duplicate in the range [left, right) at index j, we can skip all the elements in the range [left, j] and let
-        'left' be equal to (j + 1). This is because we need to make sure our left pointer is at least past the index
-        where we last saw the current duplicate character, so we move 'left' to (last_occurrence[right] + 1). We also
-        need to ensure that 'left' always moves forward or just stays at its position.
+         We use two pointers which define the max substring. Move the right pointer to scan the string, and in the
+         meanwhile update the hashmap. If the current character is already in the hashmap, then move the left pointer
+         after the last occurrence of this repeated character. The reason is that if s[right] has a duplicate in the
+         range [left, right) at index j, we can skip all the elements in the range [left, j] and let 'left' be equal to
+         (j + 1). This is because we need to make sure the left pointer is at least past the index where we last saw
+         the current duplicate character, so we move 'left' to (last_occurrence[right] + 1). We also need to ensure that
+         'left' always moves forward or just stays at its position.
 
-        Example: s = 'fsfetwenwe'. When we process the element at index 2, the longest duplicate-free substring ending
-        at index 1 is from 0 to 1. The hash table tells us that the element at index 2, namely f, appears in that
-        substring, so we update the longest substring ending at index 2 to being from index 1 to 2.
-        Indices 3-5 introduce fresh elements. Index 6 holds a repeated value, e, which appears within the longest
-        substring ending at index 5; specifically, it appears at index 3. Therefore, the longest substring ending at
-        index 6 starts at index 4.
+         Example: s = 'fsfetwenwe'. When we are at index 2, the longest duplicate-free substring ending at index 1 is
+         from 0 to 1. The hash,ap tells us that the element at index 2, namely 'f', appears in that substring, so we
+         update the longest substring ending at index 2 to being from index 1 to 2.
+         Indices 3 -> 5 introduce new characters. Index 6 holds a repeated value, 'e', which appears within the longest
+         substring ending at index 5; specifically, it appears at index 3. Therefore, the longest substring ending at
+         index 6 starts at index 4.
 
-        Example:
+         Example:
 
-        index    0    1    2    3   4   5   6   7
-        string   a    c    b    d   b   a   c   d
-                 ^                  ^
-                 |                  |
-		        left               right
+         index    0    1    2    3   4   5   6   7
+         string    a    c    b    d   b   a   c   d
+                     ^                ^
+                     |                 |
+		          left              right
 
-		last_occurrence = {a : 0, c : 1, b : 2, d: 3}
-		# case 1: last_occurrence[b] = 2, current window  is s[0:4] ,
-		#         b is inside current window, last_occurrence[b] = 2 > left = 0. Move left pointer to last_occurrence[b] + 1 = 3
-		last_occurrence = {a : 0, c : 1, b : 4, d: 3}
+		 last_occurrence = {a : 0, c : 1, b : 2, d: 3}
+		 # case 1: last_occurrence[b] = 2, current window is s[0:4],
+		 #             b is in the current window, last_occurrence[b] = 2 > left = 0. Move left pointer to
+		 #             last_occurrence[b] + 1 = 3
+		 last_occurrence = {a : 0, c : 1, b : 4, d: 3}
 
-        index    0    1    2    3   4   5   6   7
-        string   a    c    b    d   b   a   c   d
-						        ^   ^
-					            |   |
-				              left  right
+         index    0    1    2    3   4   5   6   7
+         string   a    c    b    d   b   a   c   d
+						         ^   ^
+					              |   |
+				               left  right
 
-        index    0    1    2    3   4   5   6   7
-        string   a    c    b    d   b   a   c   d
-					            ^       ^
-					            |       |
-				              left    right
-		# case 2: last_occurrence[a] = 0, which means 'a' is not in current window s[3:5] , since last_occurrence[a] = 0 < left = 3
-		# We can keep moving right pointer.
+         index    0    1    2    3   4   5   6   7
+         string   a    c    b    d   b   a   c   d
+					            ^         ^
+					             |         |
+				               left    right
+		 # case 2: last_occurrence[a] = 0, which means 'a' is not in the current window s[3:5] , since
+		 # last_occurrence[a] = 0 < left = 3. We can keep moving the right pointer.
 
     Time complexity : O(N)
     Space complexity: O(N), or O(1) if the set of characters considered is the English alphabet O(26)
@@ -93,7 +93,7 @@ def length_of_longest_substring_v1(s):
     last_occurrence = {}
     n, res = len(s), 0
     left = right = 0  # 'left' denotes the left end of the longest substring with no repeating characters seen so far
-    while right < n:  # 'right' is the right end of that string, or the right boundary of our sliding window
+    while right < n:  # 'right' is the right end of that string, or the right boundary of the sliding window
         if s[right] in last_occurrence:  # If this is a duplicate character
             # Slide the window past the last recorded occurrence of the duplicate character
             left = max(left, last_occurrence[s[right]] + 1)
