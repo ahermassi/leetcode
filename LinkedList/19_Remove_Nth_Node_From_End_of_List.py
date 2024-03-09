@@ -13,15 +13,15 @@ class ListNode(object):
 def remove_nth_from_end_v1(head, n):
     """ Two-pass approach.
 
-        We notice that the problem could be simply reduced to another one : Remove the (L - n + 1)th node from the
-        beginning in the list , where L is the list length. This problem is easy to solve once we found list length L.
+        We notice that the problem could be simply reduced to the following : remove the (L - n + 1)th node from the
+        beginning of the list , where L is the list length. This problem is easy to solve once we find L.
 
-        We will add an auxiliary "dummy_head" node, which points to the list head. The "dummy" node is used to simplify
-        some corner cases such as a list with only one node, or removing the head of the list.
+        We add an auxiliary "dummy_head" node, which points to the list head. The "dummy" node is used to simplify some
+        edge cases such as a list with only one node, or removing the head of the list.
 
-        On the first pass, we find the list length. Then we set a pointer to the dummy node and start to move it
-        through the list till it comes to the (length - n)th node. We relink next pointer of the (length - n)th node to
-        the (length - n + 2)th node.
+        On the first pass, we find the list length. Then, we set a pointer to the dummy node and start to move it
+        through the list until it comes to the (L - n)th node. We relink the next pointer of the (L - n)th node to the
+        (L - n + 2)th node.
 
     Time complexity: O(N), where N is list length
     Space complexity: O(1)
