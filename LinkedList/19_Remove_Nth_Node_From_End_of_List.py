@@ -83,21 +83,21 @@ def remove_nth_from_end_v2(head, n):
 
 
 def remove_nth_from_end_v3(head, n):
-    """ One-pass without using a dummy head node.
+    """ One pass without using a dummy head node.
 
-        To do that, we can simply stagger our two pointers by n nodes by giving the first pointer (fast) a head start
-        before starting the second pointer (slow). Doing this will cause slow to reach the nth node from the end at the
-        same time that fast reaches the end.
+        We can stagger our two pointers by n nodes by giving the first pointer (fast) a head start before starting the
+        second pointer (slow). Doing this will cause the slow pointer to reach the nth node from the end at the
+        same time that the fast pointer reaches the end.
 
         This will unfortunately cause a problem when n is the same as the length of the list, which would make the
         first node the target node, and thus make it impossible to find the node before the target node. If that's the
         case, however, we can just return head.next without needing to stitch together the two sides of the target node.
 
-        Since we will need access to the node before the target node in order to remove the target node, we can use
-        fast.next == null as our exit condition, rather than fast == null, so that we stop one node earlier.
+        Since we need access to the node before the target node in order to remove the latter, we can use
+        (fast.next == null) as an exit condition, rather than (fast == null), so that we stop one node earlier.
 
         Otherwise, once we successfully find the node before the target, we can then stitch it together with the node
-        after the target, and then return head.
+        after the target, and then return the head.
 
         For eg. let the list be 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9, and n = 4.
 
@@ -106,7 +106,7 @@ def remove_nth_from_end_v3(head, n):
        slow                          fast
         |<-- gap of n nodes -->|
 
-        => Now traverse till fast reaches end
+        => Now traverse until fast reaches the end.
 
         1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> null
                                           ^                               ^
@@ -124,7 +124,7 @@ def remove_nth_from_end_v3(head, n):
         # If fast is null at the end of the for loop, it means that the nth node from the end is actually the first
         # node. The while loop is an attempt to move slow to the node before the node to be removed, which obviously
         # can't happen if the node to be removed is the first node, as there is no node before it. So if fast == null,
-        # then we should just return the list with the first node removed, or head.next.
+        # then we should just return the list with the first node removed, which is head.next.
         return head.next
     while fast.next:
         slow, fast = slow.next, fast.next
