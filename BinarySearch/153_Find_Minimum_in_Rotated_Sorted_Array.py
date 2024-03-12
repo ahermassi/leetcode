@@ -7,46 +7,45 @@ import unittest2 as unittest
 
 
 # Check out this article for a good illustration: https://leetcode.com/articles/find-minimum-in-rotated-sorted-array/
-
 def find_min_v1(nums):
-    """ There is a point in the array at which we would notice a change. This is the point which would help us in this
-        question. We call this the Inflection Point.
+    """ There is a point in the array at which we notice a change. This is the point which would help us in this
+         question. We call this the Inflection Point.
+         In this modified version of binary search, we are looking for this point.
 
-        In this modified version of binary search algorithm, we are looking for this point.
+         All the elements to the left of Inflection Point > first element of the array
+         All the elements to the right of Inflection Point < first element of the array
 
-        All the elements to the left of Inflection Point > first element of the array
-        All the elements to the right of Inflection Point < first element of the array
+         Find the middle element of the array.
 
-        Find the middle element of the array.
+             - If middle element > leftmost element of array, this means that left half is sorted/non-rotated, and we
+                need to look for the Inflection Point on the right of mid.
 
-            - If middle element > leftmost element of array, this means that left half is sorted/non-rotated, and we
-               need to look for the Inflection Point on the right of mid.
+             - If middle element < leftmost element of array, this that the left half is rotated (not completely sorted)
+                and we need to look for the Inflection Point on the left of mid.
 
-            - If middle element < leftmost element of array, this that the left half is rotated (not completely sorted)
-               and we need to look for the Inflection Point on the left of mid.
+         We stop the search when we find the Inflection Point when either of the following two conditions is satisfied:
 
-        We stop our search when we find the Inflection Point when either of the following two conditions is satisfied:
+             - nums[mid] > nums[mid + 1] --> nums[mid + 1] is the smallest. This is because, in a sorted array, an
+                element is always less than or equal to its successor
 
-            - nums[mid] > nums[mid + 1] --> nums[mid + 1] is the smallest. This is because, in a sorted array, an
-               element is always less than or equal to its successor
+             - nums[mid] < nums[mid - 1] --> nums[mid] is the smallest. This is because, in a sorted array, an element
+                 is always greater than or equal to its predecessor.
 
-            - nums[mid] < nums[mid - 1] --> nums[mid] is the smallest. This is because, in a sorted array, an element is
-               always greater than or equal to its predecessor.
+         So, in all cases, we're looking for the point where the discrepancy occurs.
 
-        So, in all cases, we're looking for the point where the discrepancy occurs.
-
-        The key observation is: regardless of where it occurs in the array, by definition the minimum value's left
-        neighbor is the maximum value.
+         The key observation is: regardless of where it occurs in the array, by definition the minimum value's left
+         neighbor is the maximum value.
 
     Time complexity: O(logN)
     Space complexity: O(1)
     """
-    if len(nums) == 1 or nums[0] < nums[-1]:  # If last element is greater than first element, there is no rotation.
+    if len(nums) == 1 or nums[0] < nums[-1]:
+        # If the last element is greater than the first element, there is no rotation.
         return nums[0]
     left, right = 0, len(nums) - 1
     while left <= right:
         mid = (left + right) // 2
-        if nums[mid] > nums[mid + 1]:
+        if nums[mid + 1] < nums[mid]:
             # If the middle element is greater than its next element, then nums[mid + 1] is the smallest. This point
             # would be the point of change from higher to lower values.
             return nums[mid + 1]
@@ -55,7 +54,7 @@ def find_min_v1(nums):
             return nums[mid]
         if nums[mid] > nums[left]:
             # If the middle element is greater than the leftmost element, this means the smallest value is still
-            # somewhere to the right as we are still dealing with a sorted/non-rotated half
+            # somewhere to the right as we are still searching in a sorted/non-rotated half
             left = mid + 1
         else:
             # If nums[mid] is smaller than leftmost value, then this means the smallest value is somewhere to the left
