@@ -61,9 +61,10 @@ def find_min_v1(nums):
             right = mid - 1
 
 
+# Video explanation: https://youtu.be/nIVW4P8b1VA
 def find_min_v2(nums):
-    """ The main idea for our checks is to converge the left and right bounds to the start of the pivot, or Inflection
-         Point, and never disqualify the index for a possible minimum value.
+    """ After the array is rotated, the minimum value will always be in the right sorted half. We make the binary search
+         converge to that half.
 
          Remember that:
 
@@ -71,7 +72,8 @@ def find_min_v2(nums):
             - All the elements to the right of Inflection Point < rightmost element of the array
 
         Notice that the numbers are divided into two sections: numbers larger than the RIGHTMOST element of the array
-        and numbers smaller than it. The minimum element is at the BOUNDARY between the two sections.
+        (left sorted half) and numbers smaller than it (right sorted half). The minimum element is at the BOUNDARY
+        between the two sections, which is the first element in the right sorted half.
 
         A better way to visualize this algorithm is thinking that we apply a filter of "< rightmost element" to each
         value in the array, it conceptually produces a boolean array.
@@ -82,6 +84,13 @@ def find_min_v2(nums):
         Binary search can work beyond sorted arrays, as long as there is a BINARY DECISION we can use to shrink the
         search range.
 
+        Note on the binary search boundaries:
+
+        Since left < right, right would never be the same as mid. Consider the case of a two-element array (or just in
+        general when the left and right pointers are adjacent, .i.e. right = left + 1) in which case mid = left.
+        Therefore, we can always make right = mid and not worry the loop will not end, ensuring the interval is always
+        shrinking.
+
     Time complexity: O(logN)
     Space complexity: O(1)
     """
@@ -90,29 +99,24 @@ def find_min_v2(nums):
         mid = (left + right) // 2
         if nums[mid] > nums[right]:
             left = mid + 1
-            # If nums[mid] > nums[right], we know that the discrepancy must have occurred somewhere to the right of mid.
+            # If nums[mid] > nums[right], we know that the right sorted half is somewhere to the right of mid.
             # mid can't be the minimum, so we can safely move left to mid + 1, which ensures the interval is always
             # shrinking.
             # Example: [3, 4, 5, 6, 7, 8, 9, 1, 2]. In the first iteration, we start with mid = 4, right = 9.
-            # nums[mid] > nums[right], so we know that at some point to the right of mid, the pivot must have occurred.
-            # We also know that the number at mid is greater than AT LEAST one number to the right, so we can use
-            # mid + 1 and never consider mid again.
+            # 7 > 2, so we know that the array was rotated at some point to the right of 7. We also know that the middle
+            # element 7 is greater than AT LEAST one number to the right, so we can discard mid.
         else:
             right = mid
             # Example: [8,9,1,2,3,4,5,6,7]
             # In the first iteration, when we start with mid = 4, right = 9.
-            # nums[mid] <= nums[right]; we know the numbers continued increasing to the right of mid, so
-            # they never reached the pivot and wrapped around. Therefore, we know the pivot must be at index <= mid.
-            # We also now know that mid stores a smaller value than at least one other index in the list (to its right),
-            # so we do not discard it by doing right = mid - 1. It still might have the minimum value.
-            # Since we use round down for mid, and left < right, right would never be the same as mid. This situation
-            # becomes very clear in the case of a two-element array (or just in general when the left and right pointers
-            # are adjacent, .i.e. right = left + 1, in which case mid = left). Therefore, we can always make right = mid
-            # while we don't have to worry the loop will not end, ensuring the interval is always shrinking.
+            # 3 <= 7; we know the numbers continued increasing to the right of mid (3), so they never reached the pivot
+            # and wrapped around. Therefore, we know the pivot must be at index <= mid.
+            # We also know that mid has a smaller value than at least one other element (to its right), so we do not
+            # discard it using right = mid - 1. It's still a viable candidate for the minimum value.
 
-    # At this point, left and right converge to a single index (for minimum value). Our if/else block forces the bounds
-    # of left/right to shrink each iteration.
-    # We shrink the left/right bounds to one value, without ever disqualifying a possible minimum
+    # At this point, left and right converge to a single index (for minimum value). The if/else block forces the
+    # boundaries of left/right to shrink each iteration.
+    # We shrink the left/right boundaries to one value, without ever disqualifying a possible minimum value.
     return nums[left]
 
 
