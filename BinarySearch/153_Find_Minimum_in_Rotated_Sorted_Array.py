@@ -52,9 +52,9 @@ def find_min_v1(nums):
         if nums[mid] < nums[mid - 1]:
             # If the middle element is less than its previous element, then nums[mid] is the smallest
             return nums[mid]
-        if nums[mid] > nums[left]:
-            # If the middle element is greater than the leftmost element, this means the smallest value is still
-            # somewhere to the right as we are still searching in a sorted/non-rotated half
+        if nums[mid] >= nums[left]:
+            # If the middle element is >= the leftmost element, this means the smallest value is still somewhere to the
+            # right as we are still searching in a sorted/non-rotated half
             left = mid + 1
         else:
             # If nums[mid] is smaller than leftmost value, then this means the smallest value is somewhere to the left
