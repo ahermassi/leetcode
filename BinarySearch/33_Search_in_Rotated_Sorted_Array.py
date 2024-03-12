@@ -6,50 +6,50 @@ Your algorithm's runtime complexity must be in the order of O(log n). """
 
 import unittest2 as unittest
 
+
 # Video explanation: https://www.youtube.com/watch?v=U8XENwh8Oy8
-
-
 def search_v1(nums, target):
-    """ Let's take a step back and consider a regular binary search. Why are we able to confidently discard half of the
-         array after comparing target with the middle value nums[mid]? The reason is that both halves of the array are
-         sorted. Hence, if target is less than the middle value, it's assured to be smaller than every value in the
-         right half. If target is larger than the middle value, it's guaranteed to be larger than every value in the
-         left half. Therefore, we can safely discard one half of nums in either case.
+    """ Let's take a step back and consider a regular binary search.
 
-         However, a rotated sorted array may not possess this characteristic – we can't determine whether target is
+         Why are we able to confidently discard half of the array after comparing target with the middle value?
+         The reason is that both halves are sorted. Hence, if target is smaller than the middle value, it's guaranteed
+         to be smaller than every value in the right half. If target is larger than the middle value, it's guaranteed to
+         be larger than every value in the left half. Therefore, we can safely discard one half in either case.
+
+         However, a rotated sorted array may not have this characteristic – we can't determine whether target is
          definitively not in the array just by comparing boundary values.
 
-        We have an ascending array, which is rotated at some pivot. Let's call the index where the rotation occurs the
-        Inflection Point (IP).
-        One characteristic the inflection point holds is:
+         We have an ascending array, which is rotated at some pivot. Let's call the index where the rotation occurs the
+         Inflection Point (IP). One characteristic the inflection point holds is:
 
                 arr[IP] > arr[IP + 1] and arr[IP] > arr[IP - 1]
 
-        So if we had an array like: [7, 8, 9, 0, 1, 2, 3, 4] the inflection point, IP would be the number 9.
+         So if we had an array like: [7, 8, 9, 0, 1, 2, 3, 4] the inflection point IP will be 9.
 
-         One thing we notice is that values until the IP are ascending, and values from IP + 1 until the end of the
+         One thing we notice is that values until the IP are ascending, and values from IP+1 until the end of the
          array are also ascending (binary search, wink, wink). Also, the values in [0, IP] are always bigger than those
          in [IP + 1, n].
 
          Although the array is rotated, it retains some properties of sorted arrays that we can leverage. Specifically,
          one half of the array (either the left or the right) will always be sorted. This means we can still apply
-         binary search by determining which half of our array is sorted and whether the target lies within it.
+         binary search by determining which half of the array is sorted and whether the target lies within it.
 
          It is straightforward to determine if a sorted array nums[left ~ right] could possibly contain target. We can
          simply compare target with the two boundary values nums[left] and nums[right].
-         If nums[left] <= target <= nums[right], then nums[left ~ right] might contain target, which needs to be
-         verified by binary search, so we continue with this subarray.
-        Otherwise, target is guaranteed to not be in nums[left ~ right], and there is no need to search over this array,
-        so we continue with the other subarray.
 
-         Perform standard binary search. Take an index in the middle as a pivot.
-         If nums[mid] == target, the job is done, return mid.
-         Otherwise, there could be two situations:
+            - If nums[left] <= target <= nums[right], then nums[left ~ right] might contain target, which needs to be
+               verified using binary search, so we continue with this subarray.
 
-            1- Middle element is greater than the leftmost element in the array, i.e. the part of array from the leftmost
-                 element to the middle one, nums[left ~ mid], is sorted/non-rotated. In a normally sorted array, if the
-                 start is less than or equal to the midpoint, it means all elements till the midpoint are in the correct
-                 increasing order.
+            - Otherwise, target is guaranteed to not be in nums[left ~ right], and there is no need to search this
+               array, so we continue with the other half.
+
+         Perform standard binary search. Take an index in the middle as a pivot. If nums[mid] == target, the job is
+         done, return mid. Otherwise, there could be two situations:
+
+            1- Middle element is greater than or equal to the leftmost element in the array, i.e. the part of array from
+                 the leftmost element to the middle one, nums[left ~ mid], is sorted/non-rotated. In a "normal" sorted
+                 array, if the start is less than or equal to the midpoint, it means all elements till the midpoint are
+                 in the correct increasing order.
 
                  If the target lies within this sorted left half:
                         nums[left] <= target < nums[mid]
@@ -70,10 +70,9 @@ def search_v1(nums, target):
                  Otherwise, the right half is guaranteed not to contain target, and we will move on to the left half:
                  right = mid - 1.
 
-        The beauty of this approach lies in its ability to determine with certainty which half of the array to look in,
+        The beauty of this approach is in its ability to determine with certainty which half of the array to search,
         even though the array is rotated. By checking which half of the array is sorted and then using the sorted
-        property to determine if the target lies in that half, we can effectively eliminate half of the array from
-        consideration at each step
+        property to determine if the target is in that half, we can effectively discard half of the array at each step.
 
     Time complexity: O(logN)
     Space complexity: O(1)
@@ -84,8 +83,7 @@ def search_v1(nums, target):
         if nums[mid] == target:
             return mid
         if nums[mid] >= nums[left]:
-            # It's <= instead of < because when there's only two elements, 'mid' and 'left' point to exactly the same
-            # element. Then we have to include = to make sure it covers this case.
+            # It's <= instead of < because when there's only two elements, mid == left
             if nums[left] <= target < nums[mid]:
                 right = mid - 1
             else:
