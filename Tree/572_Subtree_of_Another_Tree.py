@@ -55,6 +55,8 @@ def is_subtree_v2(root, sub_root):
          At each node, we perform a recursive check to verify if the subtree at the current node is identical to the
          tree 'sub_root'. If it's not the case, we carry on the BFS until the queue is empty or a match is found.
 
+         BFS is useful if the node we're looking for is near the root (first few levels).
+
     Time complexity: O(N * M), where N and M is the number of nodes in root and sub_root, respectively
     Space complexity: O(N), since in the worst case the queue will contain all nodes in one level of the binary tree.
     For a full binary tree, the leaf level has ⌈N/2⌉= O(N) leaves.
