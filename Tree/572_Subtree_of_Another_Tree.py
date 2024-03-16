@@ -84,33 +84,32 @@ def is_subtree_v3(root, sub_root):
         What we are doing can be broadly labeled as pattern matching. We are trying to match the "tree rooted at root"
         portion with the "tree rooted at subRoot".
 
-        Can we somehow port the string matching to this problem?
-        Yes, we can if there is a mechanism to convert the trees into strings and then use string matching.
+        Can we somehow port the string matching to this problem? Yes, we can if there is a mechanism to convert the
+        trees into strings and then use string matching.
 
-        The task now is to find a mechanism to transform the trees into strings.
-        Note that serialization must contain information about the node values as well as information about the tree
-        structure.
+        The task now is to find a mechanism to transform the trees into strings. Note that serialization must contain
+        information about the node values as well as information about the tree structure.
 
         The most intuitive way is to traverse the tree and add each node's value to the string. Now, there are multiple
-        ways to traverse the tree. We can either do a pre-order traversal, in-order traversal, post-order traversal, or
-        can even do a level-order traversal. However, it turns out that none of them is sufficient to uniquely identify
+        ways to traverse the tree. We can either do a preorder traversal, inorder traversal, postorder traversal, or
+        even a level-order traversal. However, it turns out that none of them is sufficient to uniquely identify
         a tree.
 
         If we include '#' or any other character for the null node while serializing, then we can uniquely identify a
-        tree with only one traversal (either pre-order or post-order). Note that only in-order traversal (with markers
+        tree with only one traversal (either preorder or postorder). Note that only inorder traversal (with markers
         for null node) is still not sufficient to uniquely identify a binary tree, as it is difficult to locate the root
-        node in the serialized string as the root is visited in between the left and right subtrees.
+        node in the serialized string as the root is visited between the left and right subtrees.
 
-        We want to hash (map) each subtree to a unique value. We want to do this in such a way that if two trees are
-        identical, then their hash values are equal.
+        We want to hash (map) each subtree to a unique value in such a way that if two trees are identical, then their
+        hash values are equal.
 
-        We will build the hash of each node depending on the hash of its left and right child. The hash of the root node
-        will represent the hash of the whole tree because to build the hash of the root node, we used (directly, or
-        indirectly) the hash values of all the nodes in its subtree.
+        We build the hash of each node as a function of the hash of its left and right child. The hash of the root node
+        represents the hash of the whole tree because to build the hash of the root node, we used (directly, or
+        indirectly) the hash values of all the nodes in its subtrees.
 
-        For each node in both trees, we can create node.tag, a hash representing the subtree rooted at that node.
-        This hash is formed using the concatenation of the node's value, the merkle of the left child, and the merkle of
-        the right child.
+        For each node in both trees, we can create node.tag, an attribute representing the hash of the subtree rooted at
+        that node. This hash is formed using the concatenation of the node's value, the merkle of the left child, and
+        the merkle of the right child.
 
         Then, two trees are identical if and only if the merkle hash of their roots are equal. From there, finding the
         answer is straightforward: We simply check if any node in 'root' has node.tag == sub_root.tag.
@@ -122,7 +121,7 @@ def is_subtree_v3(root, sub_root):
 
     def tag_tree(root):
         if not root:
-            # We include the hash of null nodes to uniquely identify the tree with its pre-order traversal
+            # We include the hash of null nodes to uniquely identify the tree using its preorder traversal
             return '#'
         # Without '#' separator, [31, 1, 2] and [3, 11,2] would have the same tag
         tag = ''.join(['#', str(root.val), '#', tag_tree(root.left), tag_tree(root.right)])
