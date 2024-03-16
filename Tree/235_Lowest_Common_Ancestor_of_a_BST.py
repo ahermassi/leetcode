@@ -12,9 +12,8 @@ class TreeNode(object):
         self.left = None
         self.right = None
 
+
 # Video explanation: https://youtu.be/gs2LMfuOR9k
-
-
 def lowest_common_ancestor_v1(root, p, q):
     """ Lowest Common Ancestor of two nodes p and q would be the last ancestor node common to both of them. In this
          context, "last" is defined in terms of the depth of the node.
@@ -37,17 +36,18 @@ def lowest_common_ancestor_v1(root, p, q):
         using a stack or recursion since we don't need to backtrace to find the LCA node. We just want to find the split
         point, the point from where p and q won't be part of the same subtree or when one is the parent of the other.
 
-        Just walk down from the whole tree's root as long as both p and q are in the same subtree (meaning their values
-        are both smaller or both larger than root's). This walks straight from the root to the LCA.
+        Just walk down from the tree's root as long as both p and q are in the same subtree (meaning their values are
+        both smaller or both larger than root's). This walks straight from the root to the LCA.
 
         Start traversing the tree from the root node.
-        If both the nodes p and q are in the right subtree, then continue the search with right subtree.
-        If both the nodes p and q are in the left subtree, then continue the search with left subtree.
-        If the previous two statements are not true, this means we have found the node which is common to node
-        p's and q's subtrees, and hence we return this common node as the LCA.
+        If both p and q are in the right subtree, then continue the search with the right subtree.
+        If both p and q are in the left subtree, then continue the search with the left subtree.
+        If the previous two statements are not true, this means we have found the node which is common to p's and q's
+        subtrees, and hence we return this common node as the LCA.
 
-    Time complexity: O(height); O(N), in the worst case when all nodes have only one child (skewed tree) and p and q
-    are near the bottom; O(logN) for a balanced BST since we reduce the nodes to check by half after each step
+    Time complexity: O(height), we have to visit only one node per level; O(N), in the worst case when all nodes have
+    only one child (skewed tree) and p and q are near the bottom; O(logN) for a balanced BST since we reduce the nodes
+    to check by half after each step.
     Space complexity: O(1)
     """
     cur = root
