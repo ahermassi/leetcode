@@ -60,8 +60,8 @@ def top_k_frequent_v2(nums, k):
 
 # Video explanation: https://youtu.be/YPTqKIgVk-k
 def top_k_frequent_v3(nums, k):
-    """ Same idea as previous solution but using bucket sort, where 'bucket' array replaces 'frequencies' hash map.
-         Note that we don't need to loop starting at (n + 1). We could instead start at max(counter.values()) + 1.
+    """ Same idea of the previous solution but using Bucket Sort, where 'bucket' array replaces 'frequencies'
+         hashmap.
 
     Time complexity: O(N), as we traverse through the bucket array, we aren't doing an operation N times at each
     iteration; we are doing N total operations throughout the entire array. So even though the for loops are nested, we
@@ -69,15 +69,13 @@ def top_k_frequent_v3(nums, k):
     Space complexity: O(N)
     """
     n, topk = len(nums), []
-    counter = defaultdict(int)
-    for num in nums:
-        counter[num] += 1
-    bucket = [[] for _ in range(n+1)]
+    counter = Counter(nums)
+    max_freq = max(counter.values())
+    bucket = [[] for _ in range(max_freq + 1)]
     for num, count in counter.items():
         bucket[count].append(num)
-    # max_count = max(counter.values())
-    # for i in reversed(range(max_count + 1)):
-    for i in reversed(range(n+1)):  # Traverse the bucket right-to-left to get the largest counts first
+    for i in reversed(range(max_freq + 1)):
+        # Traverse the bucket right-to-left to get the largest counts first
         for num in bucket[i]:
             topk.append(num)
             if len(topk) == k:
