@@ -27,8 +27,8 @@ def is_subtree_v1(root, sub_root):
         Since we have to check for identicality, again and again, we can write a function same_tree which takes two
         roots of two trees and returns true if the trees are identical and false otherwise.
 
-    Time complexity: O(N * M), where N is the number of nodes in the tree. For every node in the tree we check if the
-    tree rooted at node is identical to subRoot. This check takes O(M) time, where M is the number of nodes in subRoot.
+    Time complexity: O(N * M), where N and M is the number of nodes in root and subRoot, respectively. For every node
+    in the first tree we check if the tree rooted at that node is identical to subRoot. This check takes O(M) time.
     Space complexity: O(N + M), the depth of the recursion tree can go up to N. Recursion stack space is dictated by the
     height of 'root'. Each of these calls will have M recursive calls to same_tree.
     """
@@ -42,7 +42,8 @@ def is_subtree_v1(root, sub_root):
 
     if not root:
         return False
-    if same_tree(root, sub_root):  # If root and sub_root are equal right off the bat, we're done!
+    if same_tree(root, sub_root):
+        # If root and sub_root are equal right off the bat, we're done!
         return True
     # Check if we can find sub_root to the left or right of root
     return is_subtree_v1(root.left, sub_root) or is_subtree_v1(root.right, sub_root)
