@@ -114,8 +114,8 @@ def min_meeting_rooms_v2(intervals):
         Sort the start times and the end times separately. Note that this will mess up the original correspondence of
         start times and end times. They will be treated individually now.
 
-        We consider two pointers: 'start_pointer' and 'end_pointer'. The start pointer simply iterates over all the
-        meetings and the end pointer helps us track if a meeting has ended and if we can reuse a room.
+        We consider two pointers: 'start_pointer' and 'end_pointer'. The start pointer iterates over all the meetings
+        and the end pointer helps us track if a meeting has ended and if we can reuse a room.
 
         When considering a specific meeting pointed to by 'start_pointer', we check if this start time is greater than
         the end time of the meeting pointed to by 'end_pointer'. If this is the case, then that would mean some meeting
@@ -134,22 +134,22 @@ def min_meeting_rooms_v2(intervals):
             create one.
 
         Since we iterate over the intervals by starting time, there is no better choice than the current interval as the
-        remaining intervals would all request one more room if current one does. And we also need to track the ending
-        time since we need to determine whether there exists a vacant room at a specific time. We only track the
+        remaining intervals would all request one more room if the current one does. And we also need to track the
+        ending time since we need to determine whether there exists a vacant room at a specific time. We only track the
         earliest ending time as we only check this room for vacancy. If this room is not vacant, there is no need to
         check the rest, and we just create one more room.
 
-        Whenever there is a start meeting, we need to add one room. But before adding rooms, we check to see if ANY
+        Whenever there is a meeting starting, we need to add one room. But before adding rooms, we check to see if ANY
         previous meeting ended, which is why we check start with the first end. When the start is bigger than end, it
         means at this time one of the previous meeting ended, and we can take and reuse that room. Then, the next
         meeting needs to compare with the second end because the first end's room is already taken.
-        The reason we sort end points is that we have to find the meeting room which will end earliest for reuse.
+        The reason we sort end points is that we have to find the meeting room which will end the earliest for reuse.
         So as long as we have a meeting whose start time is earlier than the earliest ending meeting finish time, we
         add a new room.
 
     Time complexity: O(N logN), for the sort
-    Space complexity: O(N), we create two separate arrays of size N, one for recording the start times and one
-    for the end times
+    Space complexity: O(N), we create two separate arrays of size N, one for recording the start times and one for the
+    end times
     """
     n = len(intervals)
     start_times = sorted([i[0] for i in intervals])
@@ -158,10 +158,10 @@ def min_meeting_rooms_v2(intervals):
     start_pointer = end_pointer = 0
     while start_pointer < n:  # Until all the meetings have been processed
         if start_times[start_pointer] < end_times[end_pointer]:
-            # If the earliest ending meeting hasn't ended by the time the meeting at 'start_pointer' starts
+            # If the earliest ending meeting hasn't ended by the time the current meeting at 'start_pointer' started
             used_rooms += 1  # Allocate a new room for the current meeting
         else:
-            # If there is a meeting that has ended by the time the meeting at 'start_pointer' starts
+            # If there is a meeting that has ended by the time the current meeting at 'start_pointer' started
             end_pointer += 1  # Use that same room and advance 'end_pointer'
         start_pointer += 1
     return used_rooms
