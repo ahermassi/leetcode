@@ -81,11 +81,12 @@ def exist_v1(board, word):
 def exist_v2(board, word):
     """ Backtracking without altering the input board.
 
-         We use a 'visited' set to store the visited cells. When we exhaust all search possibilities, we backtrack and
-         remove the cell from 'visited' set.
+         We use a 'visited' set to keep track of the visited cells. When we exhaust all search possibilities, we
+         backtrack and remove the cell from the 'visited' set.
 
         This (and the technique used in the following solution) resemble what we usually do in the backtracking
         problems where we have to try/enumerate all the possible paths. At every recursive call, we'd either:
+
             - Call f(path + new_val), or
             - path.append(new_val); f(path); path.pop()
 
@@ -100,12 +101,12 @@ def exist_v2(board, word):
             return False
         visited.add((i, j))
         # Mark the cell as visited. At each step, we mark our choice before jumping into the next step.
-        # At the end of each step, we would also revert our marking, so that we could have a clean slate to try
+        # At the end of each step, we also revert the marking, so that we could have a clean slate to try
         # another direction.
         for x, y in directions:
             if search(i + x, j + y, index + 1):
                 return True
-        visited.remove((i, j))  # Backtrack and remove the mark
+        visited.remove((i, j))  # Backtrack and remove the marking
         return False
 
     n, m, length = len(board), len(board[0]), len(word)
