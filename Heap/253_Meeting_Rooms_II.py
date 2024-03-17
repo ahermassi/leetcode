@@ -6,7 +6,6 @@ import unittest2 as unittest
 
 
 # More details: https://leetcode.com/articles/meeting-rooms-ii/
-
 def min_meeting_rooms_v1(intervals):
     """ Let's approach this problem from the perspective of a group of people who want to hold a meeting and have not
          been allocated a room yet. What would they do?
@@ -46,14 +45,13 @@ def min_meeting_rooms_v1(intervals):
         After processing all the meetings, the size of the heap will tell us the number of rooms allocated. This will
         be the minimum number of rooms needed to accommodate all the meetings.
 
-        If we look at these events in a timeline one after the other (like stream data), then this solution is a greedy
-        solution. The heap stores all conflicting events, which must be resolved by independent rooms. The heap's head
-        is the event that has the earliest end/finish time. All other events collide with each other mutually in the
-        heap.
+        If we look at these events in a timeline one after the other (like stream data), then this solution is greedy.
+        The heap stores all conflicting events, which must be resolved by independent rooms. The heap's head is the
+        event that has the earliest end/finish time. All other events collide with each other mutually in the heap.
 
-        When a new event comes (this is the reason that we need to sort by start time), we greedily choose the event A
-        that finished the earliest (this is the reason we use min heap on end time). If the new event does not
-        collide with A, then the new event can reuse A's room by simply EXTENDING A's room to the new event's end time.
+        When a new event comes (this is the reason we need to sort by start time), we greedily choose the event A that
+        finished the earliest (this is the reason we use min heap on end time). If the new event does not collide with A,
+        then the new event can reuse A's room by simply EXTENDING A's room to the new event's end time.
         If the new event collides with A, then it must collide with all events in the heap, so a new room must be
         created.
 
@@ -62,31 +60,31 @@ def min_meeting_rooms_v1(intervals):
                 Heap size is always the minimum number of rooms we need so far
 
         If the new event collides with everyone, then a new room must be created; if the new event does not collide
-        with someone, then it must not collide with the earliest finishing one, so greedily choose that one and reuse
-        that room. Hence, the invariant is maintained.
+        with someone, then it must not collide with the earliest ending one, so greedily choose that one and reuse that
+        room. Hence, the invariant is maintained.
 
-    Time complexity: O(N logN), there are two major portions that take up time here: One is sorting of the array that
-    takes O(N logN). Then we have the min-heap. In the worst case, all N meetings will collide with each other. In any
-    case we have N add operations on the heap. In the worst case we will have N extract-min operations as well. Overall
-    complexity being O(N logN) since extract-min operation on a heap takes O(logN)
-    Space complexity: O(N), we construct the min-heap and that can contain N elements in the worst case as described
+    Time complexity: O(N logN), there are two major portions that take up time here: One is sorting the array that takes
+    O(N logN). Then we have the min heap. In the worst case, all N meetings will collide with each other. In any case we
+    have N add operations to the heap. In the worst case we will have N extract-min operations as well. Overall
+    complexity is O(N logN) since extract-min operation on a heap takes O(logN).
+    Space complexity: O(N), we construct the min heap and that can contain N elements in the worst case as described
     above in the time complexity
     """
     intervals.sort()
     earliest_ending = []
     for start, end in intervals:
         if earliest_ending and start >= earliest_ending[0]:
-            # If the room due to free up the earliest is free, assign that room to this meeting
+            # If the room due to free up the earliest is free, assign that room to this meeting and add to the heap the
+            # updated end time after removing the room.
             heappop(earliest_ending)
-        # If a new room is to be assigned, we also add it to the heap. If an old room is reused, then we also have to
-        # add to the heap the updated end time (after removing the room inside the previous if statement)
+            heappush(earliest_ending, end)
+        else:
+            # Otherwise, if a new room is to be assigned, we also add the ending time to the heap.
+            heappush(earliest_ending, end)
+        # That can be rewritten as follows:
+        if earliest_ending and start >= earliest_ending[0]:
+            heappop(earliest_ending)
         heappush(earliest_ending, end)
-        # That's similar to the following:
-        # if earliest_ending and start >= earliest_ending[0]:
-        #     heappop(earliest_ending)
-        #     heappush(earliest_ending, end)
-        # else:
-        #     heappush(earliest_ending, end)
     return len(earliest_ending)
 
 
