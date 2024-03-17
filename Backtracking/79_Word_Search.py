@@ -5,50 +5,50 @@ or vertically neighboring. The same letter cell may not be used more than once. 
 import unittest2 as unittest
 
 
-# Video explanation: https://youtu.be/pfiQ_PS1g8E
 def exist_v1(board, word):
     """ The accurate term to summarize the solution is backtracking, which is a methodology where we mark the current
          path of exploration, and if the path does not lead to a solution we revert the change (i.e. backtrack) and try
          another path.
 
          As the general idea for the solution, we would walk around the 2D grid, and at each step we mark our choice
-         before jumping into the next step. At the end of each step, we would also revert our marking, so that we could
+         before jumping into the next step. At the end of each step, we would also revert the marking, so that we could
          have a clean slate to try another direction. In addition, the exploration is done via the DFS strategy, where
-         we go as further as possible before we try the next direction.
+         we go as further/deep as possible before we try the next direction.
 
          The skeleton of the algorithm is a loop that iterates over each cell in the grid. For each cell, we invoke the
-         backtracking function to check if we would obtain a solution starting from this very cell.
+         backtracking function to check if we could obtain a solution starting from this very cell.
 
-         For the backtracking function search(row, col, index), as a DFS algorithm, it is often implemented as a recursive
-         function. The function can be broken down into the following four steps:
+         For the backtracking function search(row, col, index), as a DFS algorithm, it is often implemented as a
+         recursive function. The function can be broken down into the following 4 steps:
 
             1- At the beginning, we first check if we reached the bottom case of the recursion, where the word to be
                  matched is empty, i.e. we have already found the match for each prefix of the word.
 
-            2- We then check if the current state is invalid, either the position of the cell is out of the boundary of
-                 the board or the letter in the current cell does not match with the current letter of the word.
+            2- We then check if the current state is invalid, either the position of the cell is out of the boundaries
+                 of the board or the letter in the current cell does not match the current letter of the word.
 
             3- If the current step is valid, we then start the exploration. First, we mark the current cell as visited,
-                 e.g. any non-alphabetic letter will do. Then we iterate through the four possible directions, namely up,
+                 e.g. any non-alphabetic letter will do. Then we iterate through the 4 possible directions, namely up,
                  right, down and left.
 
             4- At the end of the exploration, we revert the cell back to its original state. Finally, we return the
                  result of the exploration.
 
     Time complexity: O(N * M * (3^L)), where N and M are the dimensions of the board and L is the length of the word.
-    We iterate through the board for backtracking, i.e. there could be N * M times invocation for the backtracking
-    function in the worst case. For the backtracking function, initially we could have at most 4 directions to explore,
-    but further the choices are reduced into 3 (since we won't go back to where we come from). As a result, the
-    execution trace after the first step could be visualized as a 3-ary tree, each of the branches represent a potential
-    exploration in the corresponding direction. Therefore, in the worst case, the total number of invocation would be
-    the number of nodes in a full 3-nary tree, which is about 3^L.
+    We iterate through the board for backtracking, i.e. there could be N*M invocations of the backtracking function in
+    the worst case. For the backtracking function, initially we could have at most 4 directions to explore, but further
+    the choices are reduced to 3 (since we won't go back to where we came from). As a result, the execution trace after
+    the first step could be visualized as a 3-ary tree, where each of the branches represents a potential exploration in
+    the corresponding direction. Therefore, in the worst case, the total number of invocations would be the number of
+    nodes in a full 3-ary tree, which is about 3^L.
     https://cs.stackexchange.com/questions/96626/whats-the-big-o-runtime-of-a-dfs-word-search-through-a-matrix
-    Space complexity: O(L), the main consumption of the memory lies in the recursion call of the backtracking function.
-    The maximum length of the call stack would be the length of the word.
+    Space complexity: O(L), the main consumption of the memory lies in the recursion call stack of the backtracking
+    function. The maximum length of the call stack would be the length of the word.
     """
 
     def search(i, j, index):
-        if index == length:  # No characters left to search
+        if index == length:
+            # No characters left to search
             return True
         if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index]:
             return False
@@ -59,12 +59,12 @@ def exist_v1(board, word):
                 return True
                 # Sudden-death return, no cleanup. This would, however, leave with a "side-effect," i.e. the matched
                 # letters in the original board would be altered to #
-                # Instead of returning True directly once we find a match, we could've simply broken out of the loop
-                # to do the cleanup before returning
+                # Instead of returning True directly once we find a match, we could've broken out of the loop to do the
+                # cleanup before returning:
                 # found = True
                 # break
         # None of the 4 potential paths got matched up to the end, meaning the current cell is not a good candidate,
-        # so return it back to the non-visited pool by changing it back to its original value
+        # so return it back to the non-visited pool by changing it back to its original value.
         board[i][j] = temp  # Backtrack: Revert the change, a clean slate and no side effect
         return False
 
@@ -77,6 +77,7 @@ def exist_v1(board, word):
     return False
 
 
+# Video explanation: https://youtu.be/pfiQ_PS1g8E
 def exist_v2(board, word):
     """ Backtracking without altering the input board.
 
