@@ -7,12 +7,12 @@ def permute_v1(nums):
          candidate turns to be not a solution (or at least not the last one), backtracking algorithm discards it by
          making some changes on the previous step, i.e. backtrack and then try again.
 
-         In backtracking, we generate all solutions one element at a time. This problem is asking us to generate all
+         With backtracking, we generate all solutions one element at a time. This problem is asking us to generate all
          possible permutations, so we will generate permutations one element at a time.
 
-         To generate a permutation one element at a time, we will use an array 'path' that represents the current
-         permutation we are building. To start, we add the first element in nums. We have path = [nums[0]]. We are
-         LOCKING in this first value, and we will now find all permutations that start with nums[0].
+         To generate a permutation, we use a 'path' array that represents the current permutation we are building.
+         To start, we add the first element in nums: path = [nums[0]]. We are LOCKING in this first value, and we will
+         now find all permutations that start with nums[0].
 
         To find all permutations that start with nums[0], we start by adding the next element, which is nums[1]. We now
         have path = [nums[0], nums[1]]. We are LOCKING in this second element, and we will now find all permutations
@@ -27,40 +27,43 @@ def permute_v1(nums):
         adding the next element. We have path = [nums[1]], and now we need to find all permutations that start with
         nums[1].
 
-        This process is recursive in nature. Each time we add an element, we solve a new version of the problem (find
-        all permutations that start with 'path'). The initial version of the problem is to find all permutations that
-        start with [], which represents all possible permutations.
+        This process is recursive in nature. Each time we add an element, we solve a new version of the problem: find
+        all permutations that start with 'path'. The initial version of the problem is to find all permutations that
+        start with [], which is equivalent to all the possible permutations.
 
         To summarize: try all numbers in the first position. For each number in the first position, try all other
         numbers in the second position. For each pair of numbers in the first and second positions, try all other
         numbers in the third position, and so on.
 
-        We use a backtracking function which takes as argument the index of the first integer to consider.
+        We use a backtracking function which takes as argument the index of the first element to consider. In other
+        words, the function helps generate all the permutations of nums[index:]
 
-            - If the current integer has an index n, that means that the current permutation is finished.
-            - Otherwise, iterate over the integers from the current index to index (n - 1).
-                - Place ith integer first in the permutation, i.e. swap(nums[index], nums[i]).
-                - Proceed to create all permutations which starts from ith integer : backtrack(index + 1).
-                - Now backtrack, i.e. swap(nums[index], nums[i]) back.
+            - If we reach index n, that means that the current permutation/path is finished.
 
-        A good approach is to recognize that once a value has been chosen for an entry, we do not want to repeat it.
-        Specifically, every permutation of A begins with one of A[0],A[1] ,. . . ,A[n - 1]. The idea is to generate all
-        permutations that begin with A[0], then all permutations that begin with A[1], and so on.
+            - Otherwise, iterate over the integers from the current index to (n - 1). For each index i:
 
-        Computing all permutations beginning with A[0] entails computing all permutations of A[1,n - 1], which suggests
-        the use of recursion.
+                * Move the ith integer to the head of the permutation, i.e. swap(nums[index], nums[i]).
+                * Proceed to generate all the permutations that start with the integer at the current index : backtrack(index + 1).
+                * Now backtrack, i.e. swap(nums[index], nums[i]) back.
 
-        To compute all permutations beginning with A[1], we swap A[0] with A[1] and compute all permutations
-        of the updated A[1.,n - 1]. We then restore the original state before embarking on computing all permutations
-        beginning with A[2], and so on.
+        It's crucial to recognize that once a value was chosen for an entry, we do not want to repeat it. Specifically,
+        every permutation of A begins with one of A[0],A[1] ,. . . ,A[n - 1]. The idea is to generate all the
+        permutations that begin with A[0], then all the permutations that begin with A[1], and so on.
 
-        For example, for the array [7, 3, 5], we would first generate all permutations starting with 7. This entails
-        generating all permutations of [3, 5], which we do by finding all permutations of [3, 5] beginning with 3.
-        Since [5] is an array of length 1, it has a single permutation. This implies [3, 5] has a single permutation
-        beginning with 3. Next we look for permutations of [3, 5] beginning with 5. To do this, we swap 3 and 5, and
-        find, as before, there is a single permutation of [3, 5] beginning with 5, namely,[5, 3]. Hence,there are two
-        permutations of A beginning with 7, namely [7, 3, 5] and [7, 5, 3].
-        We swap 7 with 3 to find all permutations beginning with 3, namely [3, 7, 5] and [3, 5, 7].
+        Computing all the permutations that begin with A[0] entails computing all the permutations of A[1,n-1],
+        which suggests the use of recursion.
+
+        To compute all the permutations that begin with A[1], we swap A[0] with A[1] and compute all the permutations
+        of the updated A[1.,n - 1]. We then restore the original state before computing all the permutations that begin
+        with A[2], and so on.
+
+        For example, for the array [7, 3, 5], we would first generate all the permutations that start with 7. This
+        entails generating all the permutations of [3, 5], which we do by finding all the permutations of [3, 5] that
+        start with 3. Since [5] is an array of length 1, it has a single permutation. This implies [3, 5] has a single
+        permutation that starts with 3. Next we look for permutations of [3, 5] that start with 5. To do this, we swap
+        3 and 5, and find, as before, there is a single permutation of [3, 5] that starts with 5, namely [5, 3]. Hence,
+        there are two permutations of [7, 5, 3] that start with 7, namely [7, 3, 5] and [7, 5, 3].
+        We swap 7 and 3 to find all the permutations that start with 3, namely [3, 7, 5] and [3, 5, 7].
         The last two permutations we add are [5, 3, 7] and [5, 7, 3].
         There are six permutations in total.
 
@@ -74,18 +77,18 @@ def permute_v1(nums):
             res.append(path)
             return
         for i in range(index, n):
-            # We're using here the same principle of recursion. Given a subarray starting at index 'index', loop over
-            # the elements of the subarray, and at each iteration:
-            # 1- Bring the current element to the head of the subarray at starting index 'index'
-            # 2- TRUST that the recursive call will compute the permutations of the subarray at (index + 1)
+            # We're here using the same principle of recursion. Given a subarray starting at index 'index'
+            # nums[index:], loop over the elements of the subarray, and at each iteration:
+            # 1- Move the current element to the head of the subarray
+            # 2- TRUST that the recursive call will compute the permutations of the subarray nums[index+1:]
             # 3- Undo the swap to bring the subarray to its initial state and move on to the next element
             nums[index], nums[i] = nums[i], nums[index]
             compute_permutations_at_index(index + 1, path + [nums[index]])
-            nums[index], nums[i] = nums[i], nums[index]  # Second swap: backtracking. Think of it as moving back up
-            # in the tree to explore the next branch. When we moved down one level, we swapped 2 elements (1st
-            # swap in the code). So when we go back up in the tree we need to swap these 2 elements back to their
-            # original order at the parent node level (2nd swap in the code). This is called backtracking = done
-            # exploring a branch, let's go back up and explore more branches.
+            # Second swap: backtracking. Think of it as moving back up in the tree to explore the next branch. When we
+            # moved down one level, we swapped 2 elements (1st swap in the code). So when we go back up in the tree we
+            # need to move these 2 elements back to their original order at the parent node level (2nd swap in the
+            # code). This is called backtracking = done exploring a branch, go back up and explore more branches.
+            nums[index], nums[i] = nums[i], nums[index]
 
     n, res = len(nums), []
     compute_permutations_at_index(0, [])
