@@ -170,7 +170,7 @@ def valid_tree_v2(n, edges):
 
 
 def valid_tree_v3(n, edges):
-    """ BFS version of the first DFS approach.
+    """ BFS version of the previous solution.
 
     Time complexity: O(|V| + |E|)
     Space complexity: O(|V| + |E|)
@@ -178,9 +178,9 @@ def valid_tree_v3(n, edges):
     if len(edges) != n - 1:
         return False
     graph = defaultdict(list)
-    for src, dest in edges:
-        graph[src].append(dest)
-        graph[dest].append(src)
+    for a, b in edges:
+        graph[a].append(b)
+        graph[b].append(a)
     visited = set()
     queue = deque([0])
     while queue:
