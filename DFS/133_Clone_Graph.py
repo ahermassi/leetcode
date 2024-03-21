@@ -87,19 +87,23 @@ def clone_graph_v2(node):
 def clone_graph_v3(node):
     """ We also have the BFS way of doing iterative traversal of the graph.
 
-         We will use a hash map to store the reference of the copy of all the nodes that have already been visited and
+         We use a hashmap to store the reference of the copy of all the nodes that have already been visited and
          copied in order to avoid cycles.
 
-            - Add the first node to the queue. Clone the first node and add it to the hash map.
+            - Add the first node to the queue. Clone the first node and add it to the hashmap.
 
             - Do the BFS traversal:
 
-                -> Pop a node from the front of the queue
-                -> Visit all the neighbors of this node.
-                      If any of the neighbors was already visited, then it must be present in the hash map. Get the
-                      clone of this neighbor from the hash map in that case.
-                      Otherwise, create a clone and store it in the hash map.
-                -> Add the clones of the neighbors to the corresponding list of the clone node
+                * Pop a node from the front of the queue
+                * Visit all the neighbors of this node.
+                      If any of the neighbors was already visited, then it must be present in the hashmap. Get the
+                      clone of this neighbor from the hashmap in that case.
+                      Otherwise, create a clone and store it in the hashmap.
+                * Add the clones of the neighbors to the corresponding list of the clone node
+
+        It's crucial to understand that the queue is used to store the ORIGINAL nodes that have been cloned BUT still
+        need their neighbors' edges established. In other words, a node is in the queue if it has a clone but its edge
+        relationships haven't yet been explored.
 
         In summary: We push a node to the queue and make sure that the node is already cloned. Then, we process
         neighbors. If a neighbor is already cloned, we just append it to the current clone neighbors list. Otherwise,
@@ -110,20 +114,21 @@ def clone_graph_v3(node):
     operations is O(|V|), where V is the number of nodes/vertices. The inner loop scans the neighbors list of each
     node only when the node is dequeued. Therefore, it scans each neighbors list at most once and so the total time in
     scanning the list is O(|E|), where E is the number of edges.
-    Space complexity: O(|V|), we will store V vertices in the hashtable, and the queue can hold at worst some fractional
+    Space complexity: O(|V|), we store V vertices in the hashmap, and the queue can hold at worst some fractional
     multiple of the total number for vertices. Imagine 1 node connected to 9 nodes all at once in a graph of size
-    10, and we start from that 1 node. Our queue would have 9 nodes in it at once on the first iteration. In addition,
+    10, and we start from that 1 node. The queue would have 9 nodes in it at once in the first iteration. In addition,
     each vertex is enqueued at most once and dequeued at most once.
     Take this example: Nodes 1 2 3 4 5 6 7 8, [[2,4],[1,3],[2,4],[1,3],[5,6],[7,8],[5,6],[7,8]]
-    In this example there are 8 nodes 16 edges.
-    When we look at node 1 we only go to edges 2 and 4.
-    When we look at node 2 you only go to edges 1 and 3
+    In this example there are 8 nodes and 16 edges.
+    When we look at node 1, we only go to edges 2 and 4.
+    When we look at node 2, we only go to edges 1 and 3.
     So basically we go through 16 edges + 8 nodes = O(|V| + |E|)
     """
     if not node:
         return None
     clones = {node: Node(node.val)}
-    queue = deque([node])  # The queue is used to store ORIGINAL nodes that need to be cloned
+    # The queue is used to store ORIGINAL nodes that have been cloned BUT still need their neighbors' edges established
+    queue = deque([node])
     while queue:
         cur_node = queue.popleft()
         for neighbor in cur_node.neighbors:
