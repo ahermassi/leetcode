@@ -120,22 +120,22 @@ def valid_tree_v2(n, edges):
          fully connected. Any more, and it has to contain cycles. Additionally, if the graph is fully connected and
          contains exactly n-1 edges, it can't possibly contain a cycle, and therefore must be a tree!
 
-         Going by this definition, our algorithm needs to do the following:
+         Going by this definition, the algorithm needs to do the following:
 
             - Check whether there are n-1 edges. If there's not, then return false.
 
             - Check whether the graph is fully connected. Return true if it is, false if otherwise.
 
         Recall that the most complicated part of the previous approach was in checking whether the graph contained
-        cycles. This was because in an undirected graph, we needed to be careful of trivial cycles. Checking whether a
+        cycles. This was because in an undirected graph, we need to be careful of trivial cycles. Checking whether a
         graph is fully connected is straightforward—we simply check if all nodes were reachable from a search starting
         at a single node.
 
         Like before, we can check for connectivity using recursive depth-first search, iterative depth-first search, or
         iterative breadth-first search. We still need to use a visited set to prevent the algorithm getting caught in an
-        infinite loop if there are indeed cycles (and to prevent looping on the trivial cycles).
+        infinite loop due to the trivial cycles.
 
-        In other words: In order for an undirected graph to be a tree, it must satisfy the following condition:
+        In other words: In order for an undirected graph to be a tree, it must satisfy the following conditions:
 
                     Number of edges = Number of nodes - 1
                                             AND
@@ -160,12 +160,12 @@ def valid_tree_v2(n, edges):
     if len(edges) != n - 1:
         return False
     graph = defaultdict(list)
-    for src, dest in edges:
-        graph[src].append(dest)
-        graph[dest].append(src)
+    for a, b in edges:
+        graph[a].append(b)
+        graph[b].append(a)
     visited = set()
     dfs(0)
-    # If the graph is connected then all vertices must have been visited during DFS
+    # If the graph is connected then all the vertices must have been visited during DFS
     return len(visited) == n
 
 
