@@ -64,7 +64,8 @@ def clone_graph_v1(node):
 
 
 def clone_graph_v2(node):
-    """ Iterative DFS using a stack.
+    """ Iterative DFS using a stack. It's crucial to understand that the stack contains the nodes that have been cloned
+         but whose neighbors' clones and connections haven't been set up yet.
 
     Time complexity: O(|V| + |E|)
     Space complexity: O(|V|)
@@ -73,7 +74,7 @@ def clone_graph_v2(node):
     clones = {node: node_clone}
     stack = [node]
     while stack:
-        cur_node = stack.pop()
+        cur_node = stack.pop() # This node has a clone but its neighbors' connections haven't been established yet
         for neighbor in cur_node.neighbors:
             if neighbor not in clones:
                 clones[neighbor] = Node(neighbor.val)
