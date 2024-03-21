@@ -16,31 +16,34 @@ class Node(object):
 # Video explanation: https://www.youtube.com/watch?v=mQeF6bN8hMk
 def clone_graph_v1(node):
     """ The basic intuition for this problem is to just copy as we go. What is crucial to understand is that we don't
-         want to get stuck in a cycle while we are traversing the graph. According to the problem statement, any given
-         undirected edge could be represented as two directional edges. So, if there is an undirected edge between node
-         A and node B, the graph representation for it would have a directed edge from A to B and another from B to A.
+         want to get stuck in a cycle while we are traversing the graph.
+
+         According to the problem statement, any given undirected edge could be represented as two directional edges.
+         So, if there is an undirected edge between node A and node B, the graph representation for it would have a
+         directed edge from A to B and another from B to A.
 
          To avoid getting stuck in a loop, we would need some way to keep track of the nodes which have already been
          copied. By doing this we don't end up traversing them again.
 
             - Start traversing the graph from the given node.
 
-            - We would take a hash map to store the reference of the copy of all the nodes that have already been
-               visited and cloned. The key for the hash map would be the node of the original graph and corresponding
-               value would be corresponding cloned node of the cloned graph. If the node already exists in the map,
-               we return corresponding stored reference of the cloned node.
+            - Use a hashmap to store the reference of the copy of all the nodes that have already been visited and
+               cloned. The key for the hashmap would be the node of the original graph and its corresponding value would
+               be the cloned node of the clone graph.
 
-            - If we don't find the node in the hash map, we create a copy of it and put it in the hash map. It's
-               important to create a copy of the node and add it to the hash map before entering recursion. In the
-               absence of such an ordering, we would be caught in the recursion because of encountering the node again
-               somewhere down the recursion, we will be traversing it again thus getting into cycles.
+               - If the node already exists in the map, we return the stored  reference of the cloned node.
+
+            - If we don't find the node in the hashmap, we create a copy of it and put it in the hashmap. It's important
+               to create a copy of the node and add it to the hashmap before entering the recursion. In the absence of
+               such an ordering, we would be caught in an infinite loop because of encountering the node again somewhere
+               down the recursion path, we will be traversing it again thus getting into cycles.
 
             - Now make the recursive call for the neighbors of the node. Each recursive call would return the clone of
                a neighbor. We will prepare the list of these clones returned and put into neighbors of clone node which
                we had created earlier. This way we will have cloned the given node and its neighbors.
 
     Time complexity: O(|V| + |E|), we will touch V nodes and traverse E edges
-    Space complexity: O(|V|), this space is occupied by the hash map and in addition to that, space would also be
+    Space complexity: O(|V|), this space is occupied by the hashmap and in addition to that, space would also be
     used by the recursion stack, which would be equal to O(H) where H is the height of the graph.
     """
 
@@ -52,7 +55,7 @@ def clone_graph_v1(node):
         node_clone = Node(node.val)
         clones[node] = node_clone  # We can also use the node's value as key as it's guaranteed to be unique
         for neighbor in node.neighbors:
-            # Iterate through the neighbors to generate their clones
+            # Iterate over the neighbors to create their clones
             node_clone.neighbors.append(dfs(neighbor))
         return node_clone
 
