@@ -7,8 +7,8 @@ import unittest2 as unittest
 
 # Video explanation: https://www.youtube.com/watch?v=bXsUuownnoQ
 def valid_tree_v1(n, edges):
-    """ According to the definition of tree on Wikipedia: 'a tree is an undirected graph in which any two vertices are
-        connected by exactly one path. In other words, any CONNECTED graph without simple CYCLES is a tree.'
+    """ According to the definition of a tree on Wikipedia: 'A tree is an undirected graph in which any two vertices are
+         connected by exactly one path. In other words, any CONNECTED graph without simple CYCLES is a tree.'
 
         Therefore, a graph G is a tree iff the following two conditions are met:
 
@@ -18,50 +18,50 @@ def valid_tree_v1(n, edges):
         Depth-first search is a classic graph traversal algorithm that can be used to check for both of these
         conditions:
 
-            1- G is fully connected if, and only if, we started a depth-first search from a single source and discovered
-                 all nodes in G during it.
+            1- G is fully connected if, and only if, we start a depth-first search from a single source and can reach
+                 all nodes in G during traversal.
             2- G contains no cycles if, and only if, the depth-first search never goes back to an already discovered
                  node. We need to be careful though not to count trivial cycles of the form A → B → A that occur with
                  most implementations of undirected edges.
 
         Depth-first search requires being able to look up the adjacent (immediate neighbors) of a given node. Like
         many graph problems though, the input format we're given doesn't allow us to quickly get the neighbors of a
-        node. Therefore, our first step is to convert the input into an adjacency list.
+        node. Therefore, the first step is to convert the input into an adjacency list.
 
         Recall that most depth-first searches follow a template like the one below for iterative depth-first search.
         Note that this doesn't yet solve the problem of determining whether the input graph is a tree—we're simply
         using it as a step towards building up a solution.
 
-            - Use a stack to keep track of unexplored nodes
-            - Use a set to keep track of already seen nodes to avoid infinite looping
-            - While there are nodes remaining on the stack, take one off to visit
-            - Check for unseen neighbors of this node
-            - If we've already seen this node, continue. Otherwise, put this neighbor onto the stack and record that
-               it has been seen
+            - Use a stack to keep track of the unexplored nodes
+            - Use a hashset to keep track of the already seen nodes to avoid infinite looping
+            - While there are nodes remaining on the stack, take one off to visit.
+               Check for unseen neighbors of this node.
+               If we've already seen this node, continue. Otherwise, push this neighbor to the stack and record
+               that it has been seen.
 
         Let's now figure out how we can modify the basic depth-first search template to do the two checks we need.
 
         The first check is straightforward. If the graph is fully connected, then every node must have been seen.
         This means that all nodes must be in the seen set at the end. Because a set removes duplicates, and the only
-        values going into it were valid node numbers, then we know that the graph was fully connected if, and only if,
-        the seen set contains n values at the end.
+        values going into it were valid node numbers, then we know that the graph is fully connected if, and only if,
+        the seen set is of size n at the end.
 
         For the second check, you might be thinking: can't we just modify the above algorithm to return false when a
-        neighbor is in visited set?
+        neighbor is in the visited set?
 
-        This, however, would only work on a directed graph. On an undirected graph, like the one we're working with
+        This, however, would only work with a directed graph. In an undirected graph, like the one we're working with
         here, trivial "cycles" will be detected. For example, if there's an undirected edge between node A and node B,
         a detected cycle will include A → B → A. This is because an undirected edge is actually 2 edges in the adjacency
         list, and so forms a trivial cycle.
 
-        There are several strategies of detecting whether an undirected graph contains cycles, while excluding the
+        There are several strategies of detecting whether an undirected graph contains cycles while excluding the
         trivial cycles. Most rely on the idea that a depth-first search should only go along each edge once, and
         therefore only in one direction. This means that when we go along an edge, we should do something to ensure
         that we don't then later go back along it in the opposite direction.
 
         One of the strategies is to keep track of the "parent" node that we got to a node from. Then, when we iterate
         through the neighbors of a node, we ignore the "parent" node as otherwise it'll be detected as a trivial cycle
-        (and we know that the parent node has already been visited by this point anyway). The starting node (0 in this
+        (and we know that the parent node has already been visited at this point anyway). The starting node (0 in this
         implementation) has no "parent", so put it as -1.
 
         At first, it's a little more difficult to understand why this strategy even works. A good way to think about it
@@ -73,8 +73,8 @@ def valid_tree_v1(n, edges):
     Time complexity: O(|V| + |E|), creating the adjacency list requires initializing a list of length V, with a cost of
     O(V), and then iterating over and inserting E edges, for a cost of O(E). This gives us O(V) + O(E) = O(V + E).
     Each node is added to the data structure once. This means that the outer loop will run V times. For each of the V
-    nodes, its adjacent edges is iterated over once. In total, this means that all E edges are iterated over once by the
-    inner loop. This, therefore, gives a total time complexity of O(|V| + |E|)
+    nodes, its adjacent edges list is iterated over once. In total, this means that all E edges are iterated over once
+    by the inner loop. This, therefore, gives a total time complexity of O(|V| + |E|)
     Space complexity: O(|V| + |E|), the adjacency list is a list of length V, with inner lists with lengths that add to
     a total of E. This gives a total of O(V + E) space. In the worst case, the recursion stack will have all V nodes on
     it at the same time, giving a total of O(V) space.
@@ -93,22 +93,22 @@ def valid_tree_v1(n, edges):
                 # (vertex=1, parent=0), we again proceed to examine the neighbors of 1: node 0 is there, but 0 is 1's
                 # parent due to the undirected nature of the graph.
                 return False
-            # 'neighbor' has not been visited and is not the parent of current vertex, so let's check if there's
-            # cycle starting from 'neighbor'
+            # 'neighbor' has not been visited and is not the parent of the current vertex, so let's check if there's
+            # a cycle starting from 'neighbor'
             if not dfs(neighbor, vertex):
                 return False
         return True
 
     graph = defaultdict(list)
-    for src, dest in edges:
-        graph[src].append(dest)
-        graph[dest].append(src)
+    for a, b in edges:
+        graph[a].append(b)
+        graph[b].append(a)
     visited = set()
     if not dfs(0, -1):
         # Make sure there's no cycle. Note: node 0 isn't guaranteed to exist, so we can get a key error if we don't
         # use a defaultdict.
         return False
-    # Check if all vertices are connected. If the graph is a tree, all nodes will be visited by the end of DFS.
+    # Check that all vertices are connected. If the graph is a tree, all nodes will be visited by the end of DFS.
     return len(visited) == n
 
 
