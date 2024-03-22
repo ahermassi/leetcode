@@ -38,11 +38,11 @@ def jump_v2(nums):
           that we can jump. Therefore, our next step will fall somewhere in the range [start, end], where start is the
           next index (i + 1) and end is (i + nums[i]). Then the question is, where to jump?
 
-          If we greedily jump as far as we can, we may end up in a place with small jump power.
-          If we choose to only jump 1, we may have a strong jump power for the next jump.
+          If we greedily jump as far as we can, we may end up at an index with small jump power.
+          If we choose to jump only 1 step, we may have a strong jump power for the next jump.
 
-          Let's think about it in the following way. Our next move will fall somewhere between [start, end], and to find
-          the minimum number of jumps to reach the end of the array, we must determine which place will take us the
+          Let's think about it in the following way. The next move will fall somewhere between [start, end], and to find
+          the minimum number of jumps to reach the end of the array, we must determine which index will take us the
           farthest in the next jump.
 
          As we can notice, we are using a greedy approach: always jump to the index that will take us the farthest.
@@ -50,32 +50,31 @@ def jump_v2(nums):
          The idea is to maintain two pointers 'start' and 'end', initially set to 0, such as indices between 0 and
          nums[0] are the ones we can reach by making only 1 jump from the first index.
 
-         Next, we want to find the indices we can reach making 2 jumps, so new 'start' will be set to (end + 1) and new
-         'end' will be set equal to the farthest index we can reach by making two jumps, which is:
+         Next, we want to find the indices we can reach making 2 jumps, so new 'start' is set to (end + 1) and new 'end'
+         is set to the farthest index we can reach by making 2 jumps, which is:
 
                     end = max(i + nums[i] for i in range(start, end + 1)
 
         Why do we set start = end + 1?
         Suppose the starting indices of jump 0 are in the range [0, 2]. When looking for the starting indices of the
         next jump, do we still consider the range [0, 2]? The answer is NO! We want to reach the ending position by
-        using the least number of jumps possible, so there is no reason in reaching an index using more jumps.
-        Therefore, we shall take a greedy approach that tries to reach each index using the least number of jumps and
-         ignore updates that are destined to end in more jumps.
+        using the least number of jumps possible, so there is no reason in reaching an index in the same range with
+        more jumps. Therefore, we shall take a greedy approach that tries to reach each index using the least number of
+        jumps and ignore updates that result in more jumps.
 
          Back to the example, even if we can move to [0, 2] in jump 1, we would not consider doing so since we already
          covered that range with jump 0. If, for instance, nums[1] = 3, the valid range of reachable indices for jump 1
          is [3, 4] instead of [0, 4].
 
-        This problem has a nice BFS structure. Let's illustrate it using the example nums = [2, 3, 1, 1, 4] in the
-        problem statement.
+        This problem has a nice BFS structure. Let's illustrate it using the example nums = [2, 3, 1, 1, 4].
 
         We are initially at position 0. Then we can move at most nums[0] steps from there. So, after one move, we may
-        reach nums[1] = 3 or nums[2] = 1. These nodes are reachable in 1 move. From there, we can further move to
+        reach nums[1] = 3 or nums[2] = 1. These positions are reachable in 1 move. From there, we can further move to
         nums[3] = 1 and nums[4] = 4. Now we can see that the target nums[4] = 4 is reachable in 2 moves.
 
-        Putting these into code, we keep two pointers 'start' and 'end' that record the current range of the starting
-        nodes. Each time after we make a jump, update 'start' to (end + 1) and 'end' to be the farthest index that
-        can be reached in 1 jump from the current [start, end].
+        Putting these into code, we keep two pointers 'start' and 'end' that represent the current range of reachable
+        indices with the minimal number of jumps possible so far. Each time we make a jump, update 'start' to end+1 and
+        'end' to be the farthest index that can be reached in 1 jump from the current range [start, end].
 
     Time complexity: O(N), we visit each element in the array only once
     Space complexity: O(1)
