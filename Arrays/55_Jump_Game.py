@@ -5,9 +5,34 @@ Determine if you are able to reach the last index. """
 import unittest2 as unittest
 
 
-# Video explanation: https://www.youtube.com/watch?v=Yan0cv2cLy8
-
 def can_jump_v1(nums):
+    """ We want to know whether we can reach the end from the starting index. 'farthest_reachable_index' indicates the
+         farthest position that can be reached from any index i, initialized to 0.
+
+         As we iterate over the array, we track the farthest index we know we can advance to. The farthest we can
+         reach from index i is (i + nums[i]). As soon as 'farthest_reachable_index' is greater than or equal to the
+          last index, we know we can reach the last position.
+
+         If at any moment we arrive at an index that is strictly greater than 'farthest_reachable_index', i.e. that is
+         not reachable, we return False. Otherwise, we update 'farthest_reachable_index' to the maximum between
+         'farthest_reachable_index' and (i + nums[i]) which indicates the farthest index that can be reached from the
+         current position.
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    farthest_reachable_index, last_index = 0, len(nums) - 1
+    for i, num in enumerate(nums):
+        # If i falls beyond farthest_reachable_index, it means we cannot reach index i, thus return false.
+        if i > farthest_reachable_index:
+            return False
+        if farthest_reachable_index >= last_index:
+            return True
+        farthest_reachable_index = max(farthest_reachable_index, i + num)
+
+
+# Video explanation: https://www.youtube.com/watch?v=Yan0cv2cLy8
+def can_jump_v2(nums):
     """ We call a position in the array a 'good index' if starting at that position, we can reach the last index.
          Otherwise, that index is called a 'bad index'. The problem then reduces to whether or not index 0 is a
          'good index'.
@@ -49,31 +74,6 @@ def can_jump_v1(nums):
             # If I can jump to last_good_index, I'm going to be the new last_good_index
             last_good_index = i
     return last_good_index == 0  # This means from index 0 we can jump and reach the end of the array
-
-
-def can_jump_v2(nums):
-    """ We want to know whether we can reach the end from the starting index. 'farthest_reachable_index' indicates the
-         farthest position that can be reached from any index i, initialized to 0.
-
-         As we iterate over the array, we track the farthest index we know we can advance to. The farthest we can
-         reach from index i is (i + nums[i]). As soon as 'farthest_reachable_index' is greater than or equal to the
-          last index, we know we can reach the last position.
-
-         If at any moment we arrive at an index that is strictly greater than 'farthest_reachable_index', i.e. that is
-         not reachable, we return False. Otherwise, we update 'farthest_reachable_index' to the maximum between
-         'farthest_reachable_index' and (i + nums[i]) which indicates the farthest index that can be reached from the current position.
-
-    Time complexity: O(N)
-    Space complexity: O(1)
-    """
-    farthest_reachable_index, last_index = 0, len(nums) - 1
-    for i, v in enumerate(nums):
-        # If i is beyond farthest_reachable_index, it means we cannot reach index i, thus return false.
-        if i > farthest_reachable_index:
-            return False
-        if farthest_reachable_index >= last_index:
-            return True
-        farthest_reachable_index = max(farthest_reachable_index, i + v)
 
 
 def can_jump_v3(nums):
