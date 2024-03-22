@@ -31,44 +31,43 @@ def can_jump_v1(nums):
         farthest_reachable_index = max(farthest_reachable_index, i + num)
 
 
-# Video explanation: https://www.youtube.com/watch?v=Yan0cv2cLy8
+# Video explanation: https://youtu.be/Yan0cv2cLy8?t=611
 def can_jump_v2(nums):
     """ We call a position in the array a 'good index' if starting at that position, we can reach the last index.
-         Otherwise, that index is called a 'bad index'. The problem then reduces to whether or not index 0 is a
-         'good index'.
+         Otherwise, that index is called a 'bad index'. The problem then reduces to determining whether 0 is
+         a 'good index'.
 
         The idea is to work backwards from the last index and keep track of the smallest 'last_good_index' that can
         jump to the last index. At each iteration, we check whether the current index can jump to this smallest index.
 
         Iterating right-to-left, for each position we check if there is a potential jump that reaches a 'good' index
         (currPosition + nums[currPosition] >= last_good_index). If we can reach a 'good' index, then our position is
-        itself 'good'. Also, this new 'good' position will be the new leftmost 'good' index. Iteration continues until
+        also 'good'. Also, this new 'good' position will be the new leftmost 'good' index. Iteration continues until
         the beginning of the array.
 
         If index 0 is a 'good' index, then we can reach the last index from the first position.
 
         Thinking process:
 
-        Last index can trivially reach to last index. How can we reach the last index (we will call it last_position)
-        from a preceding index?
-        If we have a preceding index i in nums which has jump count nums[i] which satisfies i+nums[i] >= last_position,
-        we know that index i is good enough to be treated as the last index because all we need to do now is to get to
-        index i. So, we're going to treat this index as a new last_position.
+        From last index we can trivially reach the last index. How can we reach the last index from a preceding index?
+        If we have a preceding index i which has jump count nums[i] that satisfies i+nums[i] >= last_position, we know
+        that index i is good enough to be treated as the last index because all we need to do now is to get to
+        index i. So, we're going to treat this index as a new last target position.
 
         If we have indices which are like sinkholes, those with 0 as jump and every other preceding index can only jump
-        to that sinkhole, our last_position will not be updated anymore because i+nums[i] >= last_position will not be
+        to that sinkhole, the last position will not be updated anymore because i+nums[i] >= last_position will not be
         satisfied at that sinkhole and every other preceding index cannot satisfy the condition since their jumps are
         not big enough.
 
-        If we have barriers, those indices with 0 as jump, but the preceding indices contain jumps which can go beyond
+        If we have barriers, those indices with 0 as jump, but the preceding indices contain jumps which can bypass
         those barriers, i+nums[i] >= last_position will be satisfied and last_position will be updated.
-        E.g. nums=[3,2,2,0,4] # Here 0 is just a barrier since the index before that 0 can jump *over* that barrier.
+        E.g. nums=[3,2,2,0,4]. Here 0 is just a barrier since the index before that 0 can jump *over* that barrier.
 
     Time complexity: O(N)
     Space complexity: O(1)
     """
     n = len(nums)
-    last_good_index = n - 1  # (last_good_index = i) means 'from index i, we can jump and reach the end of array'
+    last_good_index = n - 1  # (last_good_index = i) means 'from index i, we can jump and reach the end of the array'
     for i in reversed(range(n)):
         if i + nums[i] >= last_good_index:
             # If I can jump to last_good_index, I'm going to be the new last_good_index
