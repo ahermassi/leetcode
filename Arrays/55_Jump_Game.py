@@ -76,12 +76,13 @@ def can_jump_v2(nums):
     return last_good_index == 0  # This means from index 0 we can jump and reach the end of the array
 
 
+# Video explanation: https://youtu.be/Yan0cv2cLy8?t=171
 def can_jump_v3(nums):
     """ Backtracking (brute force) for the sake of completeness. TLE.
 
-        This is the inefficient solution where we try every single jump pattern that takes us from the first position to
-        the last. We start from the first position and jump to every index that is reachable. We repeat the process
-        until last index is reached. When stuck, backtrack.
+        This is the inefficient solution where we try every single jump pattern that takes us from the first to the
+        last position. We start from the first index and jump to every index that is reachable. We repeat the process
+        until the last index is reached. When stuck, backtrack.
 
         We can add memoization (cache results based on indices) to this solution to become Top-Down Dynamic Programming.
 
