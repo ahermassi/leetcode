@@ -98,9 +98,8 @@ def jump_v3(nums):
     """ This solution uses the same concept of the previous algorithm but with a twist.
 
          Suppose the range of the current jump is [cur_jump_start, cur_jump_end], farthest_reachable_index is the
-         farthest position that all indices in [cur_jump_start, cur_jump_end] can reach. Once the current index reaches
-         cur_jump_end, then trigger another jump by setting cur_jump_end to farthest_reachable_index, then repeat the
-         steps above.
+         farthest position that all indices in [cur_jump_start, cur_jump_end] can jump to. Once the current index
+         reaches cur_jump_end, then trigger another jump by setting cur_jump_end to farthest_reachable_index and repeat.
 
          Note that we exclude the last element from the iteration because as soon as we reach the last element, we do
          not need to jump any further.
@@ -111,12 +110,12 @@ def jump_v3(nums):
 
         The idea is pretty intuitive. Think of each of the indices as missile bases, each having a max range defined by
         the value at that index. Now say, for example, we can reach 100 miles from base 0. If the target is in that
-        range, then it's just a direct hop. If not, we start our search for better launchers moving forward.
+        range, then it's just a direct hop. If not, we start the search for better launchers moving forward.
 
         We discover that base 1 gives better coverage i.e. > 100 miles, so we may simply move to that base.
-        This counts as an extra hop. However, that this is not necessarily the best choice. Within the range of this
-        launcher (at base 0), there could be other bases providing better coverage. Our job is to iterate through and
-        choose the launcher that improves our current range and reaches the target first.
+        This counts as an extra hop. However, that is not necessarily the best choice. Within the range of this launcher
+        (at base 0), there could be other bases providing better coverage. Our job is to iterate through and choose the
+        launcher that improves our current range and reaches the target first.
 
     Time complexity: O(N)
     Space complexity: O(1)
