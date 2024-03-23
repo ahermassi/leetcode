@@ -17,12 +17,12 @@ def insert_v1(intervals, new_interval):
 
         However, we can use a straightforward one-pass strategy which could be implemented in three steps:
 
-            - Add to the output all the intervals starting before newInterval
+            - Add to the output all the intervals that start before newInterval
             - Add to the output newInterval and merge it with the last added one if there is an overlap
             - Add the remaining intervals one by one, and merge with the last added interval if there is an overlap
 
         Basically, the same approach as 56- Merge Intervals, with an additional care to add the new interval in its
-        proper position in order not to destroy the well-sorted input.
+        proper position in order to not destroy the well-sorted input.
 
     Time complexity: O(N)
     Space complexity: O(N)
@@ -34,12 +34,12 @@ def insert_v1(intervals, new_interval):
     while i < n and intervals[i][0] < start:
         res.append(intervals[i])
         i += 1
-    # Add newInterval. If there is no overlap, just add the interval. Otherwise, merge with the last interval.
+    # Add newInterval. If there is no overlap, just add the interval as-is. Otherwise, merge it with the last interval.
     if not res or start > res[-1][1]:
         res.append(new_interval)
     else:
         res[-1][1] = max(res[-1][1], end)
-    # Add remaining intervals and merge if needed
+    # Add the remaining intervals and merge if needed
     while i < n:
         if intervals[i][0] > res[-1][1]:
             res.append(intervals[i])
