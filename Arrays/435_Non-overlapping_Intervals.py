@@ -12,10 +12,11 @@ def erase_overlap_intervals_v1(intervals):
         Let's start by considering the intervals according to their start times. If two intervals i1 and i2 overlap, we
         greedily choose to remove the interval with the latest end time to minimize overlap chances with subsequent
         intervals.
+
         Let's call k the choice we need to make between i1.end and i2.end. We want to maximize the number of intervals
-        we keep (without overlap), so we want to maximize our choices for the next intervals. Because the next interval
+        to keep (without overlap), so we want to maximize our choices for the next intervals. Because the next interval
         must have a start time greater than or equal to k to avoid overlap, a larger value of k can never give us more
-        choices than a  smaller value of k. As such, we should try to minimize k. Therefore, we should always greedily
+        choices than a smaller value of k. As such, we should try to minimize k. Therefore, we should always greedily
         remove the interval with the latest end time.
 
         While considering the intervals in the ascending order of starting times, we make use of a pointer
@@ -50,7 +51,7 @@ def erase_overlap_intervals_v1(intervals):
     """
     intervals.sort()
     removed = 0
-    prev_interval_end = float('-inf')  # Pointer to keep track of the end time of previously processed interval
+    prev_interval_end = float('-inf')  # Pointer to keep track of the end time of the previously processed interval
     for start, end in intervals:
         if start < prev_interval_end:  # Find overlapping interval
             prev_interval_end = min(prev_interval_end, end)  # Keep the interval with the earliest end time
