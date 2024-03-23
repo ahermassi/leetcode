@@ -96,20 +96,20 @@ def insert_v3(intervals, new_interval):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    n, merged = len(intervals), []
+    n, res = len(intervals), []
     start, end = new_interval
     for i, interval in enumerate(intervals):
         if interval[1] < start:
             # Current interval starts first and doesn't overlap with newInterval
-            merged.append(interval)
+            res.append(interval)
         elif interval[0] <= end:
             # Overlap. Merge current interval and newInterval
             start = min(start, interval[0])
             end = max(end, interval[1])
         else:
-            merged.append([start, end])
-            return merged + intervals[i:]
+            res.append([start, end])
+            return res + intervals[i:]
     # If we reach this statement, newInterval overlapped with a bunch of other intervals but there was no interval X
-    # that started after the end of the merged intervals (X > end)
-    merged.append([start, end])
-    return merged
+    # that started after the end of the merged intervals (X[0] > end)
+    res.append([start, end])
+    return res
