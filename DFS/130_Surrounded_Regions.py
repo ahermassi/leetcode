@@ -17,43 +17,42 @@ def solve_v1(board):
 
         Surrounded regions shouldn't be on the border, which means that:
 
-                Any 'O' on the border of the board is not flipped to 'X'.
-                Any 'O' that is not on the border but is connected to an 'O' on the border will not be flipped to 'X'.
-                Any 'O' that is not on the border and is not connected to an 'O' on the border will be flipped to 'X'.
+                - Any 'O' on the border of the board is not flipped to 'X'.
+                - Any 'O' that is not on the border but is connected to an 'O' on the border will not be flipped to 'X'.
+                - Any 'O' that is not on the border and is not connected to an 'O' on the border will be flipped to 'X'.
 
         The algorithm consists of three steps:
 
-            1- We select all the cells that are located on the borders of the board.
+            1- Select all the cells that are located on the borders of the board.
 
-            2- Starting from each of the above selected cells, we then perform a DFS traversal.
+            2- Starting from each of the above selected cells, perform a DFS traversal.
 
-                 If a cell on the border happens to be 'O', then we know that this cell is alive, together with the
-                 other 'O' cells that are connected to this border cell. Two cells are connected if there exists a path
-                 consisting of only 'O' letter that bridges between the two cells.
+                 - If a cell on the border happens to be 'O', then we know that this cell is alive, together with all
+                    the other 'O' cells that are connected to this border cell. Two cells are connected if there exists
+                    a path (consisting of only 'O' letters) that bridges between the two cells.
 
-                Based on the above conclusion, the goal of the DFS traversal would be to mark all those connected 'O'
-                cells that originated from the border with any distinguished letter such as 'T'.
+                - Based on the above conclusion, the goal of the DFS traversal would be to mark all those connected 'O'
+                   cells that originated from the border with any distinguished letter such as 'T'.
 
-            3- Once we iterate through all border cells, we would then obtain three types of cells:
+            3- Once we finish iterating over all the border cells, we would then obtain three types of cells:
 
                     - The ones with letter 'X': The cells that we could consider as the wall.
 
-                    - The ones with letter 'O': The cells that are spared during the DFS traversal, i.e. these cells
+                    - The ones with letter 'O': The cells that were spared during the DFS traversal, i.e. these cells
                        have no connection to the border, therefore they are captured. We then should replace
                        these cells with 'X'.
 
-                    - The ones with letter 'T': These are the cells that are marked during the DFS traversal, i.e.
+                    - The ones with letter 'T': These are the cells that were marked during the DFS traversal, i.e.
                        these are the cells that have at least one connection to the border, therefore they are not
                        captured. As a result, we would revert these cells back to 'O'.
 
-        Rather than using a 'visited' set to keep track of the visited cells, we simply mark visited cells in place.
+        Instead of using a 'visited' set to keep track of the visited cells, we simply mark visited cells in place.
 
-    Time complexity: O(N * M), in the worst case where it contains only the O cells on the board (cells that are not at
-    the border), we would traverse each cell twice: once during the DFS traversal and a second time to capture the
-    regions.
+    Time complexity: O(N * M), in the worst case where the board contains only O cells (cells that are not at the
+    border), we would traverse each cell twice: once during the DFS traversal and a second time to capture the regions.
     Space complexity: O(N * M), during the recursive calls of DFS() function we would consume some space in the function
     call stack, i.e. the call stack will pile up along with the depth of recursive calls. The maximum depth of recursive
-    calls would be N * M as in the worst scenario mentioned in the time complexity.
+    calls would be N*M as in the worst scenario mentioned in the time complexity.
     """
 
     def dfs(i, j):
