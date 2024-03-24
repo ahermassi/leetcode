@@ -44,7 +44,7 @@ def snakes_and_ladders(board):
     """
 
     def get_coordinates(square):
-        a, b = (square - 1)//n, (square - 1) % n
+        a, b = (square - 1)//n, (square - 1) % n  # Subtract 1 to make the values of the squares 0-based
         row = n - a - 1
         col = b if a % 2 == 0 else n - 1 - b
         return row, col
