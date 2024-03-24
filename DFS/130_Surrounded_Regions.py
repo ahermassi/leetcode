@@ -78,31 +78,32 @@ def solve_v1(board):
 
 
 def solve_v2(board):
-    """ Unlike the DFS strategy, in BFS we prioritize visiting a cell's neighbors before moving further (deeper) into
-         the neighbor's neighbor. Though the order of visit might differ between DFS and BFS, eventually both
-         strategies would visit the same set of cells, for most of the 2D grid traversal problems.
+    """ Unlike DFS, in BFS we prioritize visiting a cell's neighbors before moving further (deeper) to the neighbor's
+         neighbors. Though the order of visit might differ between DFS and BFS, eventually both searches would visit the
+         same set of cells, for most of the 2D grid traversal problems.
 
          We could reuse the bulk of the DFS approach, while simply replacing the dfs() function with a queue.
-          At each iteration of the loop, we pop out the head element from the queue.
+         At each iteration of the loop, we pop out the head element from the queue.
 
-            - If the popped element is of the candidate cell (i.e. O), we mark it as escaped, otherwise we skip this
+            - If the popped element is a candidate cell (i.e. O), we mark it as escaped, otherwise we skip this
                iteration.
-            - For a candidate cell, we then simply append its neighbor cells into the queue, which would get their turns
+
+            - For a candidate cell, we then simply append its neighbor cells to the queue, which would get their turns
                to be visited in the next iterations.
 
-         The fun part is that we could easily convert the BFS strategy to DFS by changing one single line of code, and
+         The interesting part is that we could easily convert the BFS to DFS by changing one single line of code, and
          the obtained DFS implementation is done in iteration, instead of recursion.
          The key is that instead of using the queue data structure which follows the principle of FIFO, if we use the
-         stack data structure which follows the principle of LIFO, we then switch the strategy from BFS to DFS.
+         stack data structure which follows the principle of LIFO, we then switch from BFS to DFS.
 
     Time complexity: O(N * M), in the worst case where it contains only the O cells on the board (cells that are not at
     the border), we would traverse each cell twice: once during the BFS traversal and a second time to capture the
     regions.
     Space complexity: O(N * M), we use a queue data structure to hold the cells to be visited. We then need to estimate
-    the upper bound on the size of the queue. Intuitively we could imagine the unfolding of BFS as the structure of an
+    the upper bound on the size of the queue. Intuitively, we could imagine the unfolding of BFS as the structure of an
     onion. Each layer of the onion represents the cells that have the same distance to the starting point. At any given
-    moment, the queue would contain no more than two layers of onion, which in the worst case might cover almost all
-    cells in the board.
+    moment, the queue would contain no more than two layers, which in the worst case might cover almost all the cells in
+    the board.
     """
     n, m = len(board), len(board[0])
     queue = deque()
@@ -112,9 +113,11 @@ def solve_v2(board):
         queue.extend([(0, j), (n-1, j)])
     while queue:
         i, j = queue.popleft()
-        if 0 <= i < n and 0 <= j < m and board[i][j] == 'O':
+        if board[i][j] == 'O':
             board[i][j] = 'T'
-            queue.extend([(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)])
+            for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1):
+                if 0 <= x < n and 0 <= y < m:
+                    queue.append((x, y))
     for i in range(n):
         for j in range(m):
             if board[i][j] == 'O':
