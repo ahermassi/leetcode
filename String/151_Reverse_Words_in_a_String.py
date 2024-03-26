@@ -8,54 +8,27 @@ import unittest2 as unittest
 
 
 def reverse_words_v1(s):
-    """ First reverse the entire string, then iterate over the reversed string and reverse each group of non-whitespace
+    """ Start by removing leading, trailing, and consecutive whitespaces without the use of any built-in method. Then,
+         reverse the entire string and iterate over the reversed string and reverse each group of non-whitespace
          characters to form a word.
 
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    def reverse(left, right):
-        while left < right:
-            s[left], s[right] = s[right], s[left]
-            left += 1
-            right -= 1
 
-    # Get rid of whitespaces and transform the string into a list of characters (strings are immutable).
-    # This takes care of consecutive whitespaces.
-    # Example: s = 'blue      sky  ' --> s = ['b', 'l', 'u', 'e', ' ', 's' 'k', 'y']
-    s = list('  '.join(s.split()))
-    n = len(s)
-    reverse(0, n - 1) # Reverse the entire string (or list of characters)
-    i = 0
-    while i < n:
-        j = i
-        while j < n and s[j] != '  ':
-            j += 1
-        reverse(i, j - 1) # Reverse the word
-        i = j + 1
-    return ''.join(s)
-
-
-def reverse_words_v2(s):
-    """ The same algorithm but removes leading, trailing, and consecutive whitespaces without the use of split().
-
-    Time complexity: O(N)
-    Space complexity: O(N)
-    """
-
-    def trimSpaces():
+    def trim_spaces():
         left, right = 0, len(s) - 1
         # Remove leading spaces
         while left <= right and s[left] == '  ':
             left += 1
-            # Remove trailing spaces
+        # Remove trailing spaces
         while left <= right and s[right] == '  ':
             right -= 1
         chars = []
         while left <= right:
             if s[left] != '  ':
                 chars.append(s[left])
-            # Reduce multiple spaces to a single one
+            # Reduce consecutive whitespaces into a single whitespace
             elif chars[-1] != '  ':
                 chars.append(s[left])
             left += 1
@@ -63,24 +36,24 @@ def reverse_words_v2(s):
 
     def reverse(left, right):
         while left < right:
-            s[left], s[right] = s[right], s[left]
+            chars[left], chars[right] = chars[right], chars[left]
             left += 1
             right -= 1
 
-    s = trimSpaces()
-    n = len(s)
-    reverse(0, n - 1)
+    chars = trim_spaces() # Example: s = 'blue      sky  ' --> chars = ['b', 'l', 'u', 'e', ' ', 's' 'k', 'y']
+    n = len(chars)
+    reverse(0, n - 1)  # Reverse the entire string (or list of characters)
     i = 0
     while i < n:
         j = i
-        while j < n and s[j] != '  ':
+        while j < n and chars[j] != '  ':
             j += 1
-        reverse(i, j - 1)
+        reverse(i, j - 1)  # Reverse the word
         i = j + 1
-    return ''.join(s)
+    return ''.join(chars)
 
 
-def reverse_words_v3(s):
+def reverse_words_v2(s):
     """ Reverse the individual words in the string without reversing the string itself.
 
         Process the string backwards and extract the words. Each word is appended to the output. Finally, join the
@@ -89,7 +62,7 @@ def reverse_words_v3(s):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    s = s.strip()
+    s = s.strip() # Remove leading and trailing whitespaces
     words = []
     i = len(s) - 1
     while i >= 0:
@@ -101,6 +74,34 @@ def reverse_words_v3(s):
             j -= 1
         i = j
     return ' '.join(words)
+
+
+def reverse_words_v3(s):
+    """ Similar to the first implementation but uses built-in methods to remove whitespaces.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    def reverse(left, right):
+        while left < right:
+            chars[left], chars[right] = chars[right], chars[left]
+            left += 1
+            right -= 1
+
+    # Get rid of whitespaces and transform the string into a list of characters (strings are immutable).
+    # That takes care of consecutive whitespaces.
+    # Example: s = 'blue      sky  ' --> chars = ['b', 'l', 'u', 'e', ' ', 's' 'k', 'y']
+    chars = list('  '.join(s.split()))
+    n = len(chars)
+    reverse(0, n - 1)  # Reverse the entire string (or list of characters)
+    i = 0
+    while i < n:
+        j = i
+        while j < n and chars[j] != '  ':
+            j += 1
+        reverse(i, j - 1)  # Reverse the word
+        i = j + 1
+    return ''.join(chars)
 
 
 class Test(unittest.TestCase):
