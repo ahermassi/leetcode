@@ -47,13 +47,14 @@ def game_of_life_v1(board):
                 board[i][j] = 1
 
 
+# Video explanation: https://www.youtube.com/watch?v=fei4bJQdBUQ
 def game_of_life_v2(board):
     """  O(N * M) space complexity could be too expensive when the board is very large. Whenever we are asked to do
          something in-place, we are mostly given the luxury of modifying the input data structure itself. Even though a
          cell can only be in one of two states (dead or alive), we are given an integer matrix, where a bool matrix
          would obviously have been sufficient. But we can exploit that.
 
-         For this, we introduce two new states for a cell: 2: newly alive, and 3: newly dead.
+         We introduce two new states for a cell: 2: newly dead / originally alive, and 3: newly alive / originally dead.
          For example, if the cell value was 1 originally, but it has now become 0 after applying the rule, then we can
          change the value to 2. Also, if the cell value was 0 originally, but it has now become 1 after applying the
          rule, then we can change the value to 3. Hence:
@@ -65,26 +66,31 @@ def game_of_life_v2(board):
         the changes made by us have not been enforced right now, hence the check (board[x][y] == 1) becomes
          (board[x][y] in {1, 2}).
 
-                1- Iterate the cells of the board one by one.
+                1- Iterate over the cells of the board
 
                 2- The rules are computed and applied on the original board. The updated values signify both previous
                      and updated states.
 
                 3- The updated rules can be seen as this:
-                     Rule 1: Any live cell with fewer than two live neighbors dies, as if caused by under-population.
-                     Hence, change the value of cell to 2. This means the cell was live before but now is dead.
-                     Rule 2: Any live cell with two or three live neighbors lives on to the next generation. Hence, no
-                     change in the value.
-                     Rule 3: Any live cell with more than three live neighbors dies, as if by over-population. Hence,
-                     change the value of cell to 2. This means the cell was live before but now dead. Note that we
-                     don't need to differentiate between rules 1 and 3. The start and end values are the same. Hence,
-                     we use the same dummy state value.
-                     Rule 4: Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
-                     Hence, change the value of cell to 3. This means the cell was dead before but now live.
+
+                     * Rule 1: Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+                        Hence, change the value of cell to 2. This means the cell was live before but now is dead.
+
+                     * Rule 2: Any live cell with two or three live neighbors lives on to the next generation. Hence, no
+                        change in the value.
+
+                     * Rule 3: Any live cell with more than three live neighbors dies, as if by over-population. Hence,
+                        change the value of cell to 2. This means the cell was live before but now dead. Note that we
+                        don't need to differentiate between rules 1 and 3. The start and end values are the same. Hence,
+                        we use the same dummy state value.
+
+                     * Rule 4: Any dead cell with exactly three live neighbors becomes a live cell, as if by
+                        reproduction. Hence, change the value of cell to 3. This means the cell was dead before but now
+                        live.
 
                 4- Apply the new rules to the board.
 
-                5- Iterate over the board again and change the value of a cell to a 0 if its current value is 2 and,
+                5- Iterate over the board again and change the value of a cell to a 0 if its current value is 2 and
                      change the value to a 1 if its current value is 3.
 
     Time complexity: O(N * M)
@@ -99,7 +105,7 @@ def game_of_life_v2(board):
                 if 0 <= x < n and 0 <= y < m and board[x][y] in {1, 2}:
                     live_neighbors += 1
             if board[i][j] and (live_neighbors < 2 or live_neighbors > 3):
-                board[i][j] = 2 # The cell is now dead but originally was alive
+                board[i][j] = 2 # The cell is now dead but was originally alive
             elif board[i][j] == 0 and live_neighbors == 3:
                 board[i][j] = 3 # The cell is now live but was originally dead
     for i in range(n):
