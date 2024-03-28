@@ -123,15 +123,17 @@ def game_of_life_v3(board):
     """ If the board becomes infinitely large, there are multiple problems the current solution would run into:
 
             1- It would be computationally impossible to iterate a matrix that large.
+
             2- It would not be possible to store that big a matrix entirely in memory. We have huge memory capacities
-               these days i.e. of the order of hundreds of GBs. However, it still wouldn't be enough to store such a
-               large matrix in memory.
-            3- We would be wasting a lot of space if such a huge board only has a few alive cells and the rest of them
-                 are all dead. In such a case, we have an extremely sparse matrix, and it wouldn't make sense to save
-                 the board as a "matrix".
+                 these days i.e. of the order of hundreds of GBs. However, it still wouldn't be enough to store such a
+                 large matrix in memory.
+
+            3- We would be wasting a lot of space if such a huge board only has a few live cells and the rest of them
+                 are all dead. In such case, we have an extremely sparse matrix, and it wouldn't make sense to save the
+                 board as a "matrix".
 
          If we have an extremely sparse matrix, it would make much more sense to actually save the location of only
-         the alive cells and then apply the 4 rules accordingly using only these alive cells.
+         the live cells and then apply the 4 rules accordingly using only these live cells.
 
          We have the coordinates of all alive cells in a set. Then we count the alive neighbors of all cells by going
          through the alive cells and incrementing the counter of their neighbors (thus cells without alive neighbors
@@ -147,7 +149,7 @@ def game_of_life_v3(board):
                 alive_neighbors_counter[cell] += 1
     for i in range(n):
         for j in range(m):
-            if (i, j) not in alive and alive_neighbors_counter[(i, j)] == 3:
+            if board[i][j] == 0 and alive_neighbors_counter[(i, j)] == 3:
                 board[i][j] = 1
             elif (i, j) in alive and alive_neighbors_counter[(i, j)] not in {2, 3}:
                 board[i][j] = 0
