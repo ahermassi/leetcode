@@ -31,6 +31,9 @@ def has_cycle_v1(head):
 
         Walker goes 1 step at a time, and runner goes 2 steps at a time. If we think walker is still, then runner goes 1
         step at a time. So, there is eventually a time when runner catches walker.
+        Or in other words, let's assume the distance between walker and runner is 10 once they're both inside the cycle.
+        At each iteration, walker increases the gap by 1 but simultaneously runner decreases it by 2, so the total is
+        +1 - 2 = -1, meaning the gap shrinks by 1 at each iteration. Therefore, walker and runner HAVE TO meet.
 
         If there is a cycle then there will be a time when walker will enter the cycle for the first time. At that
         moment, runner will already be present in the cycle (because he was fast and ahead).
