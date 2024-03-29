@@ -41,7 +41,7 @@ def detect_cycle_v2(head):
     """ Floyd's Tortoise and Hare
 
         What happens when a fast runner (a hare) races a slow runner (a tortoise) on a circular track? At some point,
-        the fast runner will catch up to the slow runner from behind.
+        the fast runner will catch up to the slow runner.
 
         Floyd's hare and tortoise algorithm is separated into two distinct phases. In the first phase, it determines
         whether a cycle is present in the list. If no cycle is present, it returns null immediately, as it is
@@ -53,10 +53,10 @@ def detect_cycle_v2(head):
         we stop at that node. Otherwise, we continue. If the while loop terminates without meeting at a node, then the
         list is acyclic, and we return null.
 
-        Given that previous phase finds an intersection node, now we proceed to find the node that is the entrance to
-        the cycle. To do so, we initialize one more pointer 'entry' which points to the head of the list, and tortoise
-        will still point to the intersection. Then, we advance each of them by 1 until they meet; the node where they
-        meet is the entrance to the cycle, so we return it.
+        Given that the previous phase finds an intersection node, now we proceed to find the node that is the entrance
+        to the cycle. To do so, we initialize one more pointer 'entry' which points to the head of the list, and the
+        tortoise will still point to the intersection. Then, we advance each of them by 1 until they meet; the node
+        where they meet is the entrance to the cycle, so we return it.
 
         Why does it work?
 
@@ -90,7 +90,12 @@ def detect_cycle_v2(head):
         Hence, to find the entrance to the cycle, we have two pointers traverse at the same speed -- one from the front
         of the list, and the other from the point of intersection.
 
-    Time complexity: O(N)
+    Time complexity: O(N), the algorithm consists of two phases. In the first phase, we use two pointers (the "hare" and
+    the "tortoise") to traverse the list. The slow pointer (tortoise) will go through the list only once until it meets
+    the hare. Therefore, this phase runs in O(N) time. In the second phase, we again have two pointers traversing the
+    list at the same speed until they meet. The maximum distance to be covered in this phase will not be greater than
+    the length of the list (recall that the hare just needs to get back to the entrance of the cycle). So, this phase
+    also runs in O(N) time. As a result, the total time complexity of the algorithm is O(N).
     Space complexity: O(1)
     """
     slow, fast = head, head
