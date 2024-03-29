@@ -2,9 +2,8 @@
 
 import unittest2 as unittest
 
+
 # Definition for singly-linked list.
-
-
 class ListNode(object):
     def __init__(self, x):
         self.val = x
@@ -12,13 +11,12 @@ class ListNode(object):
 
 
 # Video explanation: https://www.youtube.com/watch?v=gBTe7lFR3vc
-
 def has_cycle_v1(head):
-    """ Floyd's cycle detection algorithm, or 'the tortoise and the hare' algorithm.
+    """ Floyd's Cycle Detection, or 'the Tortoise and the Hare' Algorithm.
 
-        Consider two pointers at different speed - a slow pointer and a fast pointer. The slow pointer moves one step
-        at a time while the fast pointer moves two steps at a time. If there is no cycle in the list, the fast pointer
-        will eventually reach the end, and we can return false in this case.
+        Consider two pointers at two different speeds - a slow pointer and a fast pointer. The slow pointer moves one
+        step at a time while the fast pointer moves two steps at a time. If there is no cycle in the list, the fast
+        pointer will eventually reach the end, and we can return false in this case.
 
         Now consider a cyclic list and imagine the slow and fast pointers are two runners racing around a circle track.
         The fast runner will eventually meet the slow runner. Why? Consider this case- The fast runner is just one step
@@ -36,20 +34,20 @@ def has_cycle_v1(head):
 
         If there is a cycle then there will be a time when walker will enter the cycle for the first time. At that
         moment, runner will already be present in the cycle (because he was fast and ahead).
-        Now if the runner is also on the same node as walker, problem solved.
-        Otherwise, if both runner and walker are on different nodes on cycle, then relative velocity of runner with
+        Now if the runner is also at the same node as walker, problem solved.
+        Otherwise, if both runner and walker are at different nodes in the cycle, then relative velocity of runner with
         respect to walker is one node per iteration (because walker moves one step then runner moves two steps and
         therefore relative velocity is 2 - 1 = 1). It can we viewed as if runner is closing in on walker. So that means
         runner will surely catch the walker.
 
-        Every step of the while loop decreases the number of nodes between the walker and runner by one. Once the runner
+        Every step of the while loop decreases the number of nodes between walker and runner by one. Once the runner
         is directly behind the walker (no nodes in between), then the next step of the loop makes them meet. The only
         way for the runner to "skip" the walker is if they were on the same node, but the loop would've ended if that
         occurred.
 
     Time complexity: O(N), we consider the following two cases separately:
-        - List has no cycle: The fast pointer reaches the end first and the runtime depends on the list's length, O(N)
-        - List has a cycle: We break down the movement of the slow pointer into two steps, the non-cyclic part and the
+        - List has no cycle: the fast pointer reaches the end first and the runtime depends on the list's length, O(N)
+        - List has a cycle: we break down the movement of the slow pointer into two steps, the non-cyclic part and the
            cyclic part:
             From start point to the beginning of circle/cycle, the distance is a.
             From the start point of the circle to the meeting point, the distance is b.
