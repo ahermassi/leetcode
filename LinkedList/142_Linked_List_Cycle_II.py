@@ -4,12 +4,16 @@ Note: Do not modify the linked list.
 
 
 def detect_cycle_v1(head):
-    """ If we keep track of the nodes that we've seen already in a hash set, we can traverse the list and return the
-         first duplicate node.
+    """ The fundamental concept behind this approach is that a cycle in a linked list means visiting a node we've
+         already seen before. By keeping track of each node we visit and checking whether we've seen it before, we can
+         identify whether a cycle exists.
 
-         If the node has already been seen, then it is necessarily the entrance to the cycle. If any other node were
-         the entrance to the cycle, then we would have already returned that node instead. Otherwise, the if condition
-         will never be satisfied, and our function will return null.
+        So, traverse the linked list one node at a time and, for each nod check if it is in the hash set. If we come
+        across a node that is already in our set, then we have encountered a cycle. If not, we add this new node to the
+        set and proceed to the next one.
+
+        If we manage to reach the end of the list (a null node), then we can conclude that no cycle exists. This is
+        because we would have been stuck in a loop and wouldn't reach the end if there was a cycle.
 
         The algorithm necessarily terminates for any list with a finite number of nodes, as the domain of input lists
         can be divided into two categories: cyclic and acyclic lists. An acyclic list resembles a null-terminated chain
