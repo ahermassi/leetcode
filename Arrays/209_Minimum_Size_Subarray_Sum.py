@@ -1,5 +1,5 @@
-""" Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous sub array
-of which the sum ≥ s. If there isn't one, return 0 instead. """
+""" Given an array of positive integers nums and a positive integer target, return the minimal length of a subarray
+whose sum is greater than or equal to target. If there is no such subarray, return 0 instead. """
 
 import unittest2 as unittest
 
@@ -10,26 +10,29 @@ import unittest2 as unittest
 # Video explanation: https://www.youtube.com/watch?v=aYqYMIqZx5s
 def min_sub_array_len_v1(target, nums):
     """ Use 2 pointers, one for the start and another for the end of the current subarray (window) and make optimal
-         moves as to keep the sum greater than 'target' as well as maintain the smallest subarray size possible.
+         moves as to keep the sum greater than or equal to 'target' as well as maintain the smallest subarray size
+         possible.
 
         Initialize the left pointer 'left', the right pointer 'right', and the window sum 'cur_sum' to 0 .
         Iterate over nums array:
 
             - Add nums[right] to 'cur_sum'
+
             - While 'cur_sum' is greater than or equal to 'target':
-                - Update res = min(res ,right - left + 1), where (right - left + 1) is the size of the current window
-                - It means that the element pointed at by the first index can safely be discarded, since the minimum
+
+                * Update res = min(res ,right - left + 1), where (right - left + 1) is the size of the current window
+                * It means that the element pointed at by the leftmost index can safely be discarded, since the minimum
                    subarray starting with this index with sum ≥ target has been found
-                - Subtract nums[left] from 'cur_sum' and increment 'left' to make shrink the window
+                * Subtract nums[left] from 'cur_sum' and increment 'left' to shrink the window
 
         Since the given array contains only positive integers, the subarray sum can only increase by including more
         elements. Therefore, we don't have to include more elements once the current subarray reached a large
         enough sum.
 
-        The essential idea is if a subarray starts at 'left', then try to get min length subarray by adding elements
-        into it. Once the sum is over 'target', then it means we just found the min subarray starting at 'left'.
+        The essential idea is if a subarray starts at 'left', then try to get the minimum length subarray by adding
+        elements to it. Once the sum is over 'target', it means we just found the minimum subarray starting at 'left'.
         In this case, instead of moving 'left' forward one step, we can just discard any elements starting from leftmost
-        element of the current min subarray till the sum is less than 'target'.
+        element of the current minimum subarray until the sum becomes less than 'target'.
 
     Time complexity: O(N), each element can be visited at most twice, once by the right pointer and (at most) once by
     the left pointer.
