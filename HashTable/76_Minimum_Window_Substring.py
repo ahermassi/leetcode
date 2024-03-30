@@ -103,36 +103,35 @@ def min_window_v1(s, t):
 
 # Video explanation: https://youtu.be/jSto0O4AJbM
 def min_window_v2(s, t):
-    """ If the previous algorithm looks confusing, we can also use a second hash map to represent the current
-         sliding window in s.
+    """ We can also use a second hashmap to represent the current sliding window in s.
 
     Time complexity: O(N+ M)
     Space complexity: O(N + M)
     """
     n = len(s)
-    t_counter = Counter(t)
-    window = defaultdict(int)  # Keeps a count of all the unique characters in the current window
+    counter = Counter(t)
+    window = defaultdict(int)  # Keeps a count of all the characters in the current window
+    # Note that, unlike the previous algorithm, characters_to_match is initialized to the length of the counter not t.
     # 'characters_to_match' is how many UNIQUE characters in t should be present in the current window in its desired
     # frequency for the window to be valid. e.g. if t = "AABC" then the window must have two A's, one B and one C.
     # Thus 'characters_to_match'' would be equal to 0 when all these conditions are met.
-    characters_to_match = len(t)
-    res = ''
-    min_len = float('inf')
+    characters_to_match = len(counter)
+    res, min_len = '', float('inf')
     left = right = 0
     while right < n:
         cur_char = s[right]
         window[cur_char] += 1
-        if window[cur_char] == t_counter[cur_char]:
-            # If the frequency of the current character added equals the desired count in t, then decrement the
-            # counter of characters to match
+        if window[cur_char] == counter[cur_char]:
+            # If the frequency of the current added character equals the desired count in t, then we have one less
+            # character to match
             characters_to_match -= 1
-        # Try and contract the window till the point where it ceases to be desirable
+        # Try to contract the window until it ceases to be desirable/valid
         while characters_to_match == 0:
-            cur_length = right - left + 1
-            if cur_length < min_len:  # Save the smallest window seen so far
-                min_len, res = cur_length, s[left:right + 1]
+            window_length = right - left + 1
+            if window_length < min_len:  # Save the smallest valid window seen so far
+                min_len, res = window_length, s[left:right + 1]
             window[s[left]] -= 1
-            if s[left] in t_counter and window[s[left]] < t_counter[s[left]]:
+            if window[s[left]] < counter[s[left]]:
                 characters_to_match += 1
             left += 1
         right += 1
