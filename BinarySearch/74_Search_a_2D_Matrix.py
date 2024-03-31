@@ -9,17 +9,19 @@ import unittest2 as unittest
 def search_matrix_v1(matrix, target):
     """ We notice that the input matrix N x M could be considered as a sorted array of length N x M.
 
-        Sorted array is a perfect candidate for the binary search because the element index in this virtual array could
+        A sorted array is a perfect candidate for binary search because the element index in this virtual array could
         be easily transformed into the row and column in the original matrix:
 
-                row = idx // m
-                col = idx % m
+                    row = index // m
+                    col  = index % m
 
-    Another way to took at it is: Let's say we have a matrix M with 4 rows and 3 columns. When we want to access
-    M[2][1], the way the memory address is calculated is 2*3+1 = 7. So, we are just reversing the calculation, where row
-    number is given by 7/3 = 2, and column is the offset in that row so for 7th element it is 7%3 = 1.
+        The row to which an item belongs depends on the number of items that can fit in each row.
 
-    Time complexity: O(log(N*M)) = O(logN + logM)
+        Another way to took at it is that if we have a matrix A with 4 rows and 3 columns, when we want to access
+        A[2][1], the way the memory address is calculated is 2*3 + 1 = 7. So, we are reversing the calculation, where
+        row = 7 // 3 = 2, and column is the offset in that row which for 7th element is 7 % 3 = 1.
+
+    Time complexity: O(log(N * M)) = O(logN + logM)
     Space complexity: O(1)
     """
     n, m = len(matrix), len(matrix[0])
