@@ -40,10 +40,10 @@ def search_matrix_v1(matrix, target):
 
 # Video explanation: https://www.youtube.com/watch?v=Ber2pi2C0j0
 def search_matrix_v2(matrix, target):
-    """ We can also perform two binary searches. The first binary search helps us locate the row that could contain
-        the target value. The second is a regular binary search on that row to check if the target value exists.
+    """ We can also use two binary searches. The first binary search helps us locate the row that COULD contain
+         the target value. The second is a regular binary search on that row to check if the target value exists.
 
-    Time complexity: O(log(N) + log(M))
+    Time complexity: O(log(N) + log(M)) = O(log(N * M))
     Space complexity: O(1)
     """
     n, m = len(matrix), len(matrix[0])
