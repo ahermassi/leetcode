@@ -10,10 +10,10 @@ def find_peak_element_v1(nums):
     """ Linear scan.
 
          In this approach, we make use of the fact that two consecutive numbers nums[i] and nums[i+1] are never equal.
-         Thus, we can traverse over the nums array starting from the beginning. Whenever we find a number nums[i], we
-         only need to check if it is larger than the next number nums[i+1] to determine if nums[i] is the peak element.
+         Thus, we can traverse the nums array starting from the beginning. Whenever we find a number nums[i], we only
+         need to check if it is larger than the next number nums[i+1] to determine if nums[i] is the peak element.
 
-            - Case 1: All the elements appear in ascending order. In this case, we keep on comparing nums[i] with
+            - Case 1: all the numbers appear in ascending order. In this case, we keep on comparing nums[i] with
                nums[i+1] to determine if nums[i] is the peak element. None of the elements satisfies the criteria,
                indicating that we are currently on a rising slope and not on a peak. Thus, at the end, we need to return
                the last element as the peak element, which turns out to be correct (because nums[n] = -∞). In this case
@@ -24,12 +24,12 @@ def find_peak_element_v1(nums):
                satisfies the criteria, and is hence identified as the peak correctly. In this case too, we didn't reach
                a point where we needed to compare nums[i] with nums[i−1].
 
-            - Case 3: The peak appears somewhere in the middle. In this case, when we are traversing on the rising edge,
-               as in case 1, none of the elements will satisfy nums[i] > nums[i+1]. We don't need to compare nums[i]
-               with nums[i-1] on the rising slope as discussed above. When we finally reach the peak element, the
-               condition nums[i] > nums[i+1] is satisfied. We again don't need to compare nums[i] with nums[i-1].
-               This is because we could reach nums[i] as the current element only when the check nums[i] > nums[i+1]
-               failed for the previous (i−1)th element.
+            - Case 3: the peak appears somewhere in the middle. In this case, when we are traversing the rising slope,
+               as in case 1, none of the elements satisfies nums[i] > nums[i+1]. We don't need to compare nums[i] with
+               nums[i-1] on the rising slope as discussed above. When we finally reach the peak element, the condition
+               nums[i] > nums[i+1] is satisfied. We again don't need to compare nums[i] with nums[i-1]. This is because
+               we could reach the current nums[i] only when the check nums[i] > nums[i+1] failed for the previous
+               (i−1)th element.
 
     Time complexity: O(N)
     Space complexity: O(1)
