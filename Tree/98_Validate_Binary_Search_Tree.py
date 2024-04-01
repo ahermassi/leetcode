@@ -39,28 +39,27 @@ def is_valid_bst_v1(root):
         cur = node.right
     return True
 
+
 # Video explanation: https://www.youtube.com/watch?v=s6ATEkipzow
-
-
 def is_valid_bst_v2(root):
     """  On the first sight, the problem is trivial. Let's traverse the tree and check at each step if
          node.right.val > node.val and node.left.val < node.val. The problem is this approach will not work for all
          cases. Not only the right child should be larger than the node but all the elements in the right subtree.
 
-         That means we should keep both upper and lower limits for each node while traversing the tree, and compare the
-         node's value not with children values but with these limits.
+         That means we should keep both lower and upper boundaries for each node while traversing the tree and compare
+         the node's value not with children values but with these boundaries.
 
         The idea above could be implemented as a recursion. We pass down two parameters: 'lower' (which means that all
         nodes in the current subtree must be greater than this value) and 'upper' (all must be less than it). Compare
         the root of the current subtree with these two values. Then, recursively check the left and right subtrees of
-        the current one and update limits accordingly.
+        the current subtree and update the boundaries accordingly.
 
         This idea generalizes: if all nodes in a tree must have keys in the range [lower,upper] and the key at the root
         is w (which itself must be between [lower, upper], otherwise the requirement is violated at the root itself),
-        then all keys in the left subtree must be in the range [lower, w], and all keys stored in the right subtree
-        must be in the range [w, upper]
+        then all keys in the left subtree must be in the range [lower, w], and all keys in the right subtree must be in
+        the range [w, upper]
 
-    Time complexity: O(N), since we visit each node exactly once
+    Time complexity: O(N), we visit each node exactly once
     Space complexity: O(N), worst case to hold the function call stack if the tree is skewed
     """
 
