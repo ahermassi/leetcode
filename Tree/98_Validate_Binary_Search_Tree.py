@@ -91,23 +91,23 @@ def is_valid_bst_v3(root):
 
 
 def is_valid_bst_v4(root):
-    """ All the previous approaches explore the left subtree first. Therefore, even if the BST property does not hold
+    """ All the previous implementations explore the left subtree first. Therefore, even if the BST property is violated
          at a node which is close to the root (e.g., the key stored at the right child is less than the key stored at
-         the root), their time complexity is still O(N).
+         the root), the time complexity is still O(N).
 
          We can search for violations of the BST property in a BFS manner, thereby reducing the time complexity when the
-         property is violated at a node whose depth is small.
+         violation occurs at a node whose depth is small.
 
-         Specifically, we use a queue, where each queue entry contains a node, as well as an upper and a lower bound on
-         the keys stored at the subtree rooted at that node. The queue is initialized to the root, with lower bound -∞
+         Specifically, we use a queue, where each entry contains a node as well as an upper and a lower bound on
+         the keys stored at the subtree rooted at that node. The queue is initialized with the root, lower bound -∞,
          and upper bound +∞.
 
-         We iteratively check the constraint on each node. If it violates the constraint we stop: The BST property has
-         been violated. Otherwise, we add its children along with the corresponding constraint.
+         We iteratively check the constraint on each node. If it violates the constraint we stop. Otherwise, we add its
+         children along with the corresponding constraint.
 
     Time complexity: O(N)
     Space complexity: O(N), in the worst case scenario, we have a completely balanced tree. In such case, the maximum
-    space consumption will occur at the last level (at the leaves) where we have N/2 nodes in the queue
+    space consumption will occur at the last level (at the leaves) where we have N/2 nodes in the queue.
     """
     queue = deque([(root, float('-inf'), float('inf'))])
     while queue:
