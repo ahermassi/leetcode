@@ -33,28 +33,28 @@ class TreeNode(object):
 def build_tree_v1(preorder, inorder):
     """ The two key observations are:
 
-            - Preorder traversal follows Root -> Left -> Right, therefore, given the preorder array, we have easy
+            - Preorder traversal follows Root -> Left -> Right. Therefore, given the preorder list, we have easy
                access to the root which is preorder[0].
 
-            - Inorder traversal follows Left -> Root -> Right, therefore if we know the position of root in the inorder
-               list, we can recursively split the entire array into two subtrees.
+            - Inorder traversal follows Left -> Root -> Right. Therefore, if we know the position of the root in the
+               inorder list, we can recursively split the entire array into two subtrees.
 
         A preorder traversal sequence consists of the root, followed by the preorder traversal sequence of the left
         subtree, followed by the preorder traversal sequence of the right subtree. We know the number k of nodes in the
         left subtree from the location of the root in the inorder traversal sequence. Therefore, the subsequence of k
-        nodes after the root in the preorder traversal sequence is the preorder traversal sequence for the left subtree.
+        nodes after the root in the preorder traversal sequence is the preorder traversal sequence of the left subtree.
 
-        Now the idea should be clear enough. We will design a recursive function that will set the first element of
-        preorder as the root, and then construct the entire tree. To find the left and right subtrees, it will look for
-        the index of root in inorder list, so that everything on the left should be the left subtree, and everything on
-        the right should be the right subtree. Both subtrees can be constructed by making another recursive call.
+        Now the idea should be clear enough. We will design a recursive function that sets the first element of preorder
+        as the root and then constructs the entire tree. To find the left and right subtrees, it looks for the index of
+        the root in inorder list, so that everything on the left should be the left subtree, and everything on the right
+        should be the right subtree. Both subtrees can be constructed by making another recursive call.
 
-        It is worth noting that we should build a hashmap to record the relation of value -> index for inorder, so that
-        we can find the position of root in constant time. Furthermore, if we don't want to create a deque out of the
-        preorder  list, we can instead use an integer variable preorderIndex to keep track of the element that will be
+        It is worth noting that we should build a hashmap to record the relation of {value -> index} for inorder, so
+        that we can find the position of root in constant time. Furthermore, if we don't want to create a queue from the
+        preorder list, we can instead use an integer variable preorderIndex to keep track of the element that will be
         used to construct the root.
 
-        The reason we are given two types of binary tree traversals is because it is not possible to construct binary
+        The reason we are given two types of binary tree traversals is because it is not possible to construct a binary
         tree from a single traversal.
 
         Example: preorder = [3, 9, 20, 15, 7], inorder = [9, 3, 15, 20, 7]
@@ -62,7 +62,7 @@ def build_tree_v1(preorder, inorder):
 
     Time complexity: O(N), the recursive helper method has a cost of O(1) for each call and is called once for each of
     the N nodes, giving a total of O(N)
-    Space complexity: O(N) for hash map, O(N) worst case / O(logN) average case for call stack
+    Space complexity: O(N) for hashmap, O(N) worst case / O(logN) average case for call stack
     """
 
     def build_tree(left, right):
@@ -72,12 +72,12 @@ def build_tree_v1(preorder, inorder):
             return None
         root = TreeNode(preorder.popleft())
         index = indices[root.val]
-        # Build left and right subtrees excluding 'index' element because it's the root
+        # Build the left and right subtrees excluding 'index' element because it's the root
         root.left = build_tree(left, index - 1)
         root.right = build_tree(index + 1, right)
         return root
 
-    preorder = deque(preorder)  # Speed up a bit by making preorder a queue (cheap left pops as opposed to list.pop(0))
+    preorder = deque(preorder)  # Speed up by making preorder a queue (inexpensive left pops as opposed to list.pop(0))
     indices = {val: i for i, val in enumerate(inorder)}
     return build_tree(0, len(inorder) - 1)
 
