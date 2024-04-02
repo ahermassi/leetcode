@@ -11,28 +11,27 @@ class TreeNode(object):
         self.left = None
         self.right = None
 
+
 # Video explanation: https://www.youtube.com/watch?v=5LUXSvjmGCw
-
-
 def kth_smallest_v1(root, k):
     """ Iterative inorder.
 
-         We can use the property of BST: inorder traversal of BST is an array sorted in ascending order. We could speed
-         up the solution knowing that there is no need to build the entire inorder traversal, as we can stop once we
-         meet the kth element.
+         We can use the property of BST: inorder traversal of a BST is an array sorted in ascending order. We could
+         speed up the solution knowing that there is no need to build the entire inorder traversal, as we can stop once
+         we meet the kth element.
 
-         The idea is that we're maintaining a stack of nodes to visit as well as our current active node. Because we're
-         doing an in-order traversal of a BST we always want to visit the leftmost child first since we know that is the
-         lowest value (between left, root, right). We want to go left as many times as we can since we want to find the
-         smallest value we haven't looked at yet. Only when we reach a node with no left do we evaluate it. (Here, the
-         code sets cur = None and requires us the pop the non-empty node off the stack).
+         The idea is to maintain a stack of nodes to visit as well as the current active node. Because we're doing an
+         inorder traversal of a BST, we always want to visit the leftmost child first since we know that is the lowest
+         value (between left, root, right). We want to go left as many times as we can since we want to find the
+         smallest value we haven't looked at yet. Only when we reach a node with no left do we evaluate it. Here, the
+         code sets cur = None and requires us to pop the non-empty node off the stack.
 
-        After we've visited that node without a left, we check to see if it has a right by setting our active node to
-        its right. From there, we restart our iteration checking if the right node has any left children adding nodes to
-        visit later to the stack.
+        After we've visited that node without a left, we check to see if it has a right by setting the current node to
+        its right. From there, we restart the iteration and check if the right node has any left children adding nodes
+        to visit later to the stack.
 
     Time complexity: O(N + k) in the worst case of a skewed BST with all the nodes in the left subtree, since before
-    starting to pop out we have to go down to a leaf. O(logN + k) in the best case of a balanced BST.
+    starting to pop we have to go down to a leaf. O(logN + k) in the best case of a balanced BST.
     Space complexity: O(logN) average case, O(N) worst case to keep the stack
     """
     stack, cur = [], root
