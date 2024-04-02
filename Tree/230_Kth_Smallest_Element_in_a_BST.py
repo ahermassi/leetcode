@@ -49,7 +49,7 @@ def kth_smallest_v1(root, k):
 def kth_smallest_v2(root, k):
     """ Recursive inorder traversal.
 
-         If the length of our resulting list becomes k, then we have enough elements. Break out of the recursion and
+         If the length of the inorder list reaches k, then we have enough elements. Break out of the recursion and
          return the last element in the list.
 
     Time complexity: O(N)
