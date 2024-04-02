@@ -79,8 +79,8 @@ def kth_smallest_v3(root, k):
     # of nodes of LEFT subtree in every node's data.
     # Assume the root has M nodes in its left subtree:
     # If K = M + 1, i.e. M = K - 1, root is Kth node.
-    # If K < M + 1, we will continue our search (recursion) for the Kth smallest element in the left subtree of root.
-    # If K > M + 1, we continue our search in the right subtree for the (K – M – 1)th smallest element.
+    # If K < M + 1, i.e. M > K - 1, we continue the search (recursion) for the Kth smallest element in the left subtree.
+    # If K > M + 1, i.e. M < K - 1, we continue the search in the right subtree for the (K – M – 1)th smallest element.
     # Note that we need the count of nodes in the left subtree only.
 
 
