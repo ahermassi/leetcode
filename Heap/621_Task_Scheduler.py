@@ -64,72 +64,74 @@ def least_interval_v1(tasks, n):
 
 
 def least_interval_v2(tasks, n):
-    """ The key is to find out how many idles we need, and only the most frequent tasks can create idles.
+    """ The key is to find how many idles we need, and only the most frequent tasks can create idles.
 
-         Let's first look at how to arrange the tasks. It's not hard to figure out that we can do a
-         'greedy arrangement': always arrange the tasks with most frequency first.
+         Let's first look at how to arrange the tasks. It's not hard to notice that we can do a 'greedy arrangement':
+         always arrange the tasks with most frequency first.
 
-         E.g. we have the following tasks : 3 A, 2 B, 1 C, and we have n=2. According to what we have above, we
-         should first arrange A, and then B, and finally C. Imagine there are 'slots' and we need to arrange tasks by
-         putting them into these 'slots'. A should be put into slots 0, 3, 6 since we need to have at least n=2 other
-         tasks between two consecutive As. After A is placed, it looks like this:
+         E.g. we have the following tasks : 3 A, 2 B, 1 C, and n=2. According to what we have above, we should first
+         arrange A, and then B, and finally C. Imagine there are 'slots' and we need to arrange tasks by placing them
+         into these 'slots'. A's should be put into slots 0, 3, 6 since we need to have at least n=2 other tasks between
+         two consecutive A's. After A is placed, it looks like this:
 
                     A ? ? A ? ? A
-         where '?' is empty slots
+         where '?' are empty slots.
 
          Now we can use the same method to arrange B's and C's. The finished schedule should look like this:
 
                     A B C A B # A
-         where '#' is idle
+         where '#' is idle.
 
          Now we have a way to arrange tasks. But the problem only asks for the number of CPU intervals, so we don't need
-         to actually arrange them. Instead, we only need to get the total idles needed and the answer to the problem is:
+         to actually arrange them. Instead, we only need to get the total idles needed and the answer to the problem
+         becomes:
 
-                    number of idles + number of tasks
+                    minimum CPU intervals = number of tasks + number of idles
 
          Same example: 3 A, 2 B, 1 C, n = 2. After arranging A's, we have:
                     A ? ? A ? ? A
 
-         We can see that A separated the slots into (count(A) - 1) = 2 segments, where each part has length n. With the
-         fact that A is the most frequent task, it should need more idles than any other tasks. In this case, if we can
-         calculate how many idles we need to arrange A, we will also get the number of idles needed to arrange all the
-         tasks. Calculating this is not hard. We first get the number of segments created by A's arrangements:
+         We can see that A separated the slots into (count(A) - 1) = 2 segments, where each segment has length n.
+         With the fact that A is the most frequent task, it should need more idles than any other tasks. In this case,
+         if we can calculate how many idles we need to arrange A's, we will also get the number of idles needed to
+         arrange all the tasks. Calculating this is not hard. We first get the number of segments created by A's
+         arrangements:
 
-                    part_count = count(A) - 1
+                    segments = count(A) - 1
 
          Then we can find the number of empty slots after arranging the A's:
 
-                    empty_slots = part_count * n
+                    empty_slots = segments * n
 
          We can also get how many tasks we have to put into those slots:
 
                     remaining_tasks = tasks.length - count(A)
 
-         Now if we have empty_slots > remaining_tasks it means we don't have enough tasks available to fill all empty
-         slots, we must fill them with idles.
+         Now, if we have empty_slots > remaining_tasks it means we don't have enough tasks available to fill all empty
+         slots, so we must fill them with idles.
 
-         What if we have more than n tasks with most frequency, and we got empty_slots negative?
+         What if we have more than n tasks with the same most frequency, and we got empty_slots negative?
          Like 3A, 3B, 3C, 3D, 3E, n=2. In this case it seems like we can't put all B C s inside slots since we only
-         have n = 2.
+         have n=2.
 
-         Well, n is actually the "minimum" length of each part required for arranging A. We can always make the length
-         of segments longer. E.g. 3A, 3B, 3C, 3D, 2E, n=2. We can always first arrange A, B, C, D as:
+         Well, n is actually the "minimum" length of each part required for arranging A's. We can always make the length
+         of segments bigger. E.g. 3A, 3B, 3C, 3D, 2E, n=2. We can always first arrange A, B, C, D as:
 
                     A B C D | A B C D | A B C D
 
-         In this case, we have already met the "minimum" length requirement for each part (n=2).
-         empty_slots < 0 means we have already got enough tasks to fill in each part to make arranged tasks valid.
+         In this case, we have already met the "minimum" length requirement for each segment (n=2).
+         empty_slots < 0 means we already got enough tasks to fill in each segment to make arranged tasks valid.
 
          The problem actually requires us to make the "distance" between two same tasks up to at least n. Thus, if
          empty_slots is negative, it means that we even have remaining tasks to make the "distance" between the same
-         tasks longer than n. That is, no idle is needed.
+         tasks larger than n. That is, no idle is needed.
 
          Thus, we have:
 
                     idles = max(0, empty_slots - remaining_tasks)
 
-         Almost done. One special case: what if there is more than one task with max frequency ? Let's look at another
-         example: 3 A, 3 B, 2 C, 1 D, n=3
+         Almost done. One special case: what if there is more than one task with the same max frequency ? Let's look at
+         another example: 3 A, 3 B, 2 C, 1 D, n=3
          Similarly we arrange A's first:
 
                     A ? ? ? A ? ? ? A
@@ -147,21 +149,21 @@ def least_interval_v2(tasks, n):
 
                     A ? ? ? A ? ? ? A
 
-         The only changes are the length of each part (from 3 to 2) and available tasks:
+         The only changes are the length of each segment (from 3 to 2) and available tasks:
 
-                    empty_slots = part_count * (n - number of tasks with same max frequency + 1)
+                    segment_length = (n + 1) - number of tasks with same max frequency
+                    empty_slots = segments * segment_length
                     remaining_tasks = tasks.length - max frequency * number of tasks with same max frequency
 
     Time complexity: O(n)
     Space complexity: O(1)
     """
-    frequency = defaultdict(int)
-    total_tasks, same_max_frequency = len(tasks), 0
-    for task in tasks:
-        frequency[task] += 1
+    frequency = Counter(tasks)
     max_frequency = max(frequency.values())
+    same_max_frequency = 0
     for task, freq in frequency.items():
         same_max_frequency += 1 if freq == max_frequency else 0
+    total_tasks = len(tasks)
     segments = max_frequency - 1
     segment_length = n + 1 - same_max_frequency
     empty_slots = segments * segment_length
