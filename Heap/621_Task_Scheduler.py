@@ -15,20 +15,21 @@ def least_interval_v1(tasks, n):
          if we run the most frequent task first, we have a better chance of not running into the idle state. So ideally
          the CPU needs to be idle as little as possible.
 
-         Begin with scheduling the most frequent task. Then cool-off for n, and in that cooldown period schedule tasks
-         in order of frequency, or if no tasks are available, then be idle.
+         Begin with scheduling the most frequent task. Then cool-off for n, and during that cooldown period schedule
+         tasks in order of frequency, and if no tasks are available then be idle.
 
          We start by choosing the most frequent task from the heap for current execution and increment the 'work_units'.
          We also decrement the task's number of pending instances, and if any more instances of the current task are
-         pending, we store them in a temporary 'remaining' list to be added later on back to the heap.
+         pending, we store them in a temporary 'remaining' list to be added later back to the heap.
 
-         We keep doing that until a cycle of cooling time has been finished. After every such cycle, we add the
-         'remaining' list back to the heap for the next scheduling iteration.
+         We keep doing that until a cycle of cooling time passes. After every such cycle, we add the 'remaining' list
+         back to the heap for the next scheduling iteration.
 
          If either the heap or the temporary list becomes empty during an iteration, it means there are no more tasks
          left to schedule, and we break early.
 
-         We can see the idle state as a filler when the number of remaining distinct tasks is less than the cycle length.
+         The idle state can be seen as a filler when the number of remaining distinct tasks is less than the cycle's
+         length.
 
     Time complexity: O(n * logN) ~= O(n * log(26)) ~= O(n), where N is the number of tasks and n is the cooldown period
     Space complexity: O(1), there will not be more than O(26) (tasks are capital letters A to Z)
@@ -40,22 +41,22 @@ def least_interval_v1(tasks, n):
     while heap:
         remaining, work_units = [], 0
         for _ in range(cycle):
-            # Increment 'work_units'. If a task is pending in the heap, it's going to be actual work time. Otherwise,
-            # it's idle time.
+            # If a task is pending in the heap, it's going to be actual work time. Otherwise, it's idle time. Therefore,
+            # increment work_units in all cases.
             # Idle time is the time that is needed in the cycle because no task is available. It is the remaining cycle
-            # length. Idle time should be only added if the priority queue is empty and 'remaining' list is not.
+            # length. Idle time should be only added if the priority queue is empty and remaining list is not.
             work_units += 1
             if heap:
                 instances = -heappop(heap)
                 if instances > 1:
                     remaining.append(instances - 1)
-            # Check if we're out of tasks. If at any point the heap is empty (no more tasks to extract) and 'remaining'
+            # Check if we're out of tasks. If at any point the heap is empty (no more tasks to extract) and remaining
             # list is empty (no more tasks to put back in the heap), we break out of the current cycle because CPU
             # can't be idle after finishing the execution of the entire set of tasks.
             if not heap and not remaining:
                 break
-        # Because we transferred all the items from the heap to 'remaining', we're transferring them back for the next
-        # iteration of scheduling
+        # Because we transferred all the items from the heap to remaining list, we're transferring them back for the
+        # next round of scheduling.
         for instance in remaining:
             heappush(heap, -instance)
         work_time += work_units
