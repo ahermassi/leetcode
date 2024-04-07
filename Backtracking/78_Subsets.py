@@ -5,17 +5,16 @@ import unittest2 as unittest
 
 
 def subsets_v1(nums):
-    """ Let's start from an empty subset in the output list. While iterating over the numbers, for each new number, we
-         can either pick it or not pick it.
+    """ Let's start from an output list with an empty subset. While iterating over the numbers, for each number, we can
+         either pick it or not pick it.
 
              1- If picked, add the current number to every existing subset
 
              2- If not picked, leave all existing subsets unchanged
 
-         We just combine both into our result.
+         We then combine both into the result.
 
-         Here's an example to help understand the code. The set to iterate over/generate the power set for is
-         [1, 2, 3].
+         Here's an example to help understand the code. The list of numbers to generate the power set for is [1, 2, 3].
          The power set initially has only the empty subset (empty list), [].
          In each iteration, append the current number to each previously generated subset, then extend the power set.
 
@@ -26,24 +25,24 @@ def subsets_v1(nums):
             num = 3    ->      [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
 
          The solution comes from the observation that the subsets are 'nested', meaning it is easy to construct a subset
-         of n numbers if we already have the subset of the first (n - 1) numbers, where the base case for n = 0 is the
+         of n numbers if we already have the subsets of the first (n - 1) numbers, where the base case for n=0 is the
          empty subset S = {}. Then we can obtain S_n from S_(n-1) in the following way:
 
                     S_n = {S_(n-1), S_(n-1) + n)}
 
-         S_(n-1) + n is obtained by appending n to each element in S_(n-1).
+         (S_(n-1) + n) is obtained by appending n to each element in S_(n-1).
          For example, S_(1) = {{}, {1}}, then S_(2) = {S_(1), S_(1) + 2} = {S_(1), {2}, {1,2}} = {{}, {1}, {2}, {1,2}}.
 
     Time complexity: O(N * 2^N), to generate all subsets and then copy them into output list
     Space complexity: O(N * 2^N)
     """
-    all_subsets = [[]]
+    power_set = [[]]
     for num in nums:
-        extension = []
-        for subset in all_subsets:
-            extension.append(subset + [num])
-        all_subsets.extend(extension)
-    return all_subsets
+        subsets = []
+        for subset in power_set:
+            subsets.append(subset + [num])
+        power_set.extend(subsets)
+    return power_set
 
 
 def subsets_v2(nums):
