@@ -58,6 +58,33 @@ def subsets_with_dup_v1(nums):
 
 
 def subsets_with_dup_v2(nums):
+    """ Good ol' backtracking without the use of a for loop.
+
+    Time complexity: O(N * 2^N)
+    Space complexity: O(N)
+    """
+
+    def compute_subsets_at_index(index):
+        if index == n:
+            res.append(subset[:])
+            return
+        # Find all subsets that contain the current number by adding nums[index] to the subset
+        subset.append(nums[index])
+        compute_subsets_at_index(index + 1)
+        # Backtrack. Explore subsets that don't contain nums[index] by removing nums[index] from the subset.
+        # We also need to skip duplicates of nums[index].
+        subset.pop()
+        while index + 1 < n and nums[index] == nums[index + 1]:
+            index += 1
+        compute_subsets_at_index(index + 1)
+
+    n, subset, res = len(nums), [], []
+    nums.sort()
+    compute_subsets_at_index(0)
+    return res
+
+
+def subsets_with_dup_v3(nums):
     """ Assume the given array has no duplicate elements. In this case, there will be a total of 2^N distinct subsets.
          To find all the subsets, we start with an empty subset. This will be the first subset. Next, we consider one
          number at a time and add it to each of the existing subsets.
@@ -119,7 +146,7 @@ def subsets_with_dup_v2(nums):
     return all_subsets
 
 
-def subsets_with_dup_v3(nums):
+def subsets_with_dup_v4(nums):
     """  If we store the last created subsets in a list, the previous solution might be slightly easier to understand.
     """
     nums.sort()
