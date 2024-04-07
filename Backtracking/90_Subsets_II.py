@@ -89,38 +89,39 @@ def subsets_with_dup_v3(nums):
          To find all the subsets, we start with an empty subset. This will be the first subset. Next, we consider one
          number at a time and add it to each of the existing subsets.
 
-         However, in this problem, the given array can have duplicate numbers which will produce duplicate subsets if
+         However, in this problem, the given array can have duplicate numbers which could produce duplicate subsets if
          we follow the previously mentioned approach. Thus, we need to omit the duplicate subsets.
 
-         For this, we need to sort the given array first. To avoid adding duplicate subsets we follow this rule:
+         For this, we need to sort the given array first. To avoid adding duplicate subsets we follow this rule, where
+         X designates the current number:
 
-                        If the current number is encountered for the first time, we add it to all the existing subsets.
-                        Then onwards we add its duplicates only to the subsets created in the previous step.
+                        If X is encountered for the first time, we add it to all the existing subsets. After that, we
+                        add the duplicates of X only to the subsets created when X was encountered for the first time.
 
         In other words, we treat a group of duplicate numbers as a subarray. Suppose we have a subarray [3, 3, 3]. The
         ways to add these numbers to the existing subsets are as follows:
 
-             -Not add any number=3 to any subset
+             -Not add any 3 to any subset
              - Add one 3 to all the subsets
              - Add two 3's to all the subsets
              - Add three 3's to all the subsets
 
-         The alogrithm is as follows:
+         The algorithm is as follows:
 
-             - Initialize a variable prev_subset_size to 0. prev_subset_size is the index of the subset in the subsets
-                list from where we should start appending the current number if the number has duplicates. In other
-                words, it's the index of the first subset generated in the previous step.
+             - Initialize a variable append_index to 0. append_index is the index of the subset in the subsets list from
+                where we should start appending the current number if the number has duplicates. In other words, it's
+                the index of the first subset generated in the previous step.
 
              - Iterate over the nums array considering one number at a time.
 
-             - If we haven't seen current number before, we need to add it to all the previously generated subsets.
+             - If we haven't seen the current number before, we need to add it to all the previously generated subsets.
                 Therefore, set start_index to 0.
 
              - If the current number is a duplicate, add it only to the subsets that were created in the previous
-                iteration. This means we will skip every subset that was created earlier than the previous iteration.
-                So instead of setting start_index to 0, set it equal to prev_subset_size.
+                iteration. This means we skip every subset that was created earlier than the previous iteration.
+                So instead of setting start_index to 0, set it equal to append_index.
 
-             - Set prev_subset_size to the size of the current list of subsets. This will be the starting index of the
+             - Set append_index to the size of the current list of subsets. This will be the starting index of the
                 subsets generated in the next iteration.
 
              - Add the current number to all the subsets in the subsets list created before the current iteration
@@ -131,19 +132,18 @@ def subsets_with_dup_v3(nums):
     Space complexity: O(N), for sorting
     """
     nums.sort()
-    all_subsets = [[]]
-    prev_subset_size = 0
+    power_set = [[]]
+    append_index = 0
     for i, num in enumerate(nums):
-        # prev_subset_size refers to the size of the subsets list in the previous step. This value also indicates the
-        # starting index of the subsets generated in this step.
-        start_index = prev_subset_size if i > 0 and nums[i] == nums[i - 1] else 0
-        # This will be the value of start_index in the next iteration if a duplicate number is found.
-        prev_subset_size = len(all_subsets)
-        temp = []
-        for j in range(start_index, prev_subset_size):
-            temp.append(all_subsets[j] + [num])
-        all_subsets.extend(temp)
-    return all_subsets
+        # append_index refers to the starting index of the subsets to which we will append the current number.
+        start_index = append_index if i > 0 and nums[i] == nums[i - 1] else 0
+        subsets = []
+        for j in range(start_index, len(power_set)):
+            subsets.append(power_set[j] + [num])
+        # This will be the value of start_index in the next iteration if a duplicate number is encountered
+        append_index = len(power_set)
+        power_set.extend(subsets)
+    return power_set
 
 
 def subsets_with_dup_v4(nums):
