@@ -135,15 +135,19 @@ def subsets_v4(nums):
     Space complexity: O(N)
     """
 
-    def compute_subsets_at_index(index, subset):
+    def compute_subsets_at_index(index):
         if index == n:
-            res.append(subset)
+            res.append(subset[:])
             return
-        compute_subsets_at_index(index + 1, subset + [nums[index]])
-        compute_subsets_at_index(index + 1, subset)
+        # Find all subsets that contain the current number by adding nums[index] to the subset
+        subset.append(nums[index])
+        compute_subsets_at_index(index + 1)
+        # Backtrack. Explore subsets that don't contain nums[index] by removing nums[index] from the subset
+        subset.pop()
+        compute_subsets_at_index(index + 1)
 
-    n, res = len(nums), []
-    compute_subsets_at_index(0, [])
+    n, subset, res = len(nums), [], []
+    compute_subsets_at_index(0)
     return res
 
 
