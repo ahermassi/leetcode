@@ -48,19 +48,19 @@ def subsets_v1(nums):
 def subsets_v2(nums):
     """ Backtracking.
 
-         The power set is all possible combinations of all possible lengths, from 0 to n.
-         Given the definition, the problem can also be interpreted as finding the power set from a sequence.
+         The power set is the set of all possible combinations of all possible lengths, from 0 to n.
+         Given this definition, the problem can also be interpreted as finding the power set from a sequence.
 
-         At each index i, add the current number to the current subset, recursively find the subsets that include
-         nums[i], and finally retract nums[i] from the current subset to explore other possibilities.
+         At each index i, add the current number nums[i] to the current subset/path, recursively find the other subsets
+         that contain nums[i], then finally retract nums[i] from the current path to explore other possibilities.
 
-         We define a backtracking function named compute_subsets_at_index(index, subset) which takes the index of the
-         current number and the subset that's being created.
+         We define a backtracking function compute_subsets_at_index(index, subset) which takes the index of the current
+         number and the subset that's being created.
 
-             - If the current subset is complete, we add it to the final output
+             - Add the current subset to the final output
 
-              - Otherwise, we iterate over all the indices from 'index' to the length of the entire sequence n.
-                 At each index i:
+              - Iterate over all the indices from 'index' to the length of the entire sequence n. At each index i:
+
                   * Add nums[i] to the current subset
                   * Proceed recursively to add more numbers to the subset : compute_subsets_at_index(i + 1, subset).
                   * Backtrack by removing nums[i] from the subset
@@ -95,7 +95,7 @@ def subsets_v2(nums):
     def compute_subsets_at_index(index, subset):
         res.append(subset)
         for i in range(index, n):
-            # Find all subsets that include nums[i] with the rest of the numbers
+            # Find all subsets that contain nums[i] and the rest of the numbers
             compute_subsets_at_index(i + 1, subset + [nums[i]])
 
     n, res = len(nums), []
