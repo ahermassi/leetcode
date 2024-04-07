@@ -147,16 +147,16 @@ def subsets_with_dup_v3(nums):
 
 
 def subsets_with_dup_v4(nums):
-    """  If we store the last created subsets in a list, the previous solution might be slightly easier to understand.
+    """  If we store the last generated subsets in a list, the previous solution might be easier to understand.
     """
     nums.sort()
-    all_subsets = [[]]
+    power_set = [[]]
     prev_subsets = []
     for i, num in enumerate(nums):
         if i > 0 and nums[i] == nums[i - 1]:
             cur_subsets = [subset + [num] for subset in prev_subsets]
         else:
-            cur_subsets = [subset + [num] for subset in all_subsets]
-        all_subsets.extend(cur_subsets)
+            cur_subsets = [subset + [num] for subset in power_set]
+        power_set.extend(cur_subsets)
         prev_subsets = cur_subsets
-    return all_subsets
+    return power_set
