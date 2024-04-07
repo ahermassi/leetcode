@@ -104,13 +104,13 @@ def subsets_v2(nums):
 
 
 def subsets_v3(nums):
-    """ This solution uses an explicit backtracking template: Add current candidate to the path, explore, and finally
+    """ This solution uses an explicit backtracking template: Add the current number to the path, explore, and finally
          backtrack. Notice that we reuse the same path/subset for all recursive calls.
 
-    Time complexity: O(N * 2^N), there are 2^N subsets to generate and each one takes O(N) time to copy into 'res'.
+    Time complexity: O(N * 2^N), there are 2^N subsets to generate and each one takes O(N) time to copy to the output.
     The recursive function is called 2^N times. Because we have 2 choices at each iteration in nums array: either
     include nums[i] in or exclude it from the current subset. We need to create a copy of the current subset because we
-    reuse the original one to build all the valid subsets. This copy costs O(N) and it is performed at each call of the
+    reuse the original one to build all the valid subsets. This copy costs O(N) and is performed at each call of the
     recursive function, which is called 2^N times. So total time complexity is O(N * 2^N).
     Space complexity: O(N), for the call stack
     """
@@ -118,11 +118,9 @@ def subsets_v3(nums):
     def compute_subsets_at_index(index):
         res.append(subset[:])
         for i in range(index, n):
-            subset.append(nums[i])  # Find all subsets that include nums[i]. Add the current number to the subset.
+            subset.append(nums[i])  # Find all subsets that contain the current number by adding nums[i] to the subset
             compute_subsets_at_index(i + 1)  # Explore
-            # Backtrack. Remove nums[i] from the currennt subset and move further to explore subsets that don't
-            # contain nums[i].
-            subset.pop()
+            subset.pop()  # Backtrack. Explore subsets that don't contain nums[i] by removing nums[i] from the subset
 
     n, subset, res = len(nums), [], []
     compute_subsets_at_index(0)
