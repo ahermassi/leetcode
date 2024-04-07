@@ -5,12 +5,12 @@ The solution set must not contain duplicate subsets. Return the solution in any 
 
 # Video explanation: https://youtu.be/Vn2v6ajA7U0
 def subsets_with_dup_v1(nums):
-    """ This problem is a successor of 78- Subsets. We'll focus our attention on generating all unique subsets while
+    """ This problem is a successor of 78- Subsets. We'll focus our attention on generating all subsets while
          efficiently omitting all duplicate subsets.
 
           When designing the recursive function, there are two main points that we need to consider at each call:
 
-             - Whether the number under consideration has duplicates or not
+             - Whether the current number has duplicates
              - If the number has duplicates, which number among the duplicates should be considered while creating a
                 subset.
 
@@ -22,16 +22,18 @@ def subsets_with_dup_v1(nums):
 
             - Scan through all the numbers in the nums array from the starting to the ending index. Consider one number
                at a time and decide whether to keep it or exclude it.
+
                     * If we haven't seen the current number before, then add it to the current subset and make a
                        recursive call with the starting index incremented by one.
-                    * Otherwise, the number is a duplicate, so we skip it as it will generate a duplicate subset.
+
+                    * Otherwise, the number is a duplicate, so we skip it as it could generate a duplicate subset.
                        Thus, if in a particular call we scan through k distinct elements, there will be k different
                        branches.
 
          Sorting the input is required to ensure all the generated subsets are also sorted. It also helps identify
-         potential duplicate subsets. For example, without sorting nums = [2,1,2] the algorithm will generate subsets
+         potential duplicate subsets. For example, without sorting nums = [2,1,2], the algorithm will generate subsets
          { [], [2], [1], [2], [2, 1], [2,2], [1, 2], [2, 1, 2] }. Here, subset [1, 2] should be considered a duplicate
-         of subset [2, 1]. To detect such duplicate subsets, prior sorting of the input list is needed.
+         of subset [2, 1]. To detect such duplicate subsets, prior sorting of the input list is required.
 
 
     Time complexity: O(2^N), in the worst case when the array consists of N distinct elements. There are 2^N subsets
@@ -43,9 +45,9 @@ def subsets_with_dup_v1(nums):
     def compute_subsets_at_index(index, subset):
         res.append(subset)
         for i in range(index, n):
-            if i != index and nums[i] == nums[i - 1]:
-                # If the current element is a duplicate, ignore the subset (this skips duplicates except in the
-                # first iteration)
+            if i > index and nums[i] == nums[i - 1]:
+                # If the current number is a duplicate, ignore the subset. This skips duplicates except in the first
+                # iteration.
                 continue
             compute_subsets_at_index(i + 1, subset + [nums[i]])
 
