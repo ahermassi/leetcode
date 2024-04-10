@@ -138,17 +138,17 @@ def alien_order_v2(words):
          that is currently grey. It works because all nodes that are currently on the stack are grey. Nodes are changed
          to black when they are removed from the stack.
 
-         The way DFS would work is that we would consider all possible paths stemming from A before finishing up the
-         recursion for A and moving onto other nodes. All the nodes in the paths stemming from the node A would have A
-         as an ancestor. The way this fits in our problem is, all the characters in the paths stemming from character
-         A would have A as a 'prerequisite'.
+         The way DFS works is that we consider all possible paths stemming from A before finishing up the recursion for
+         A and moving on to other nodes. All the nodes in the paths stemming from the node A would have A as ancestor.
+         The way this fits in our problem is, all the characters in the paths stemming from character A would have A as
+         'prerequisite'.
 
-         For each of the nodes in our graph, we will run a depth-first search in case that node was not already visited
-         in some other node's DFS traversal.
+         For each of the nodes in the graph, we run a depth-first search in case that node was not already visited
+         during some other node's DFS traversal.
 
-         Suppose we are executing the depth-first search for a node N. We will recursively traverse all the neighbors of
-         node N which have not been processed before. Once the processing of all the neighbors is done, we will add the
-         node N to the result list.
+         Suppose we are executing the depth-first search for a node N. We recursively traverse all the neighbors of node
+         N which have not been processed before. Once the processing of all the neighbors is done, we will add the node
+         N to the result list.
 
          visited[node] == 0 means this node is part of the current trip, and either all of its descendants are not
          processed or it's still in the function call stack. If we see it again, it's a cycle.
@@ -170,11 +170,12 @@ def alien_order_v2(words):
     """
 
     def dfs(vertex):
-        if visited[vertex] == 0:  # Don't recurse further if a cycle was already found
+        if visited[vertex] == 0:
+            # Don't recurse further if a cycle was already found
             return False
         if visited[vertex] == 1:
             return True
-        visited[vertex] = 0  # Start the recursion
+        visited[vertex] = 0  # Start the recursion/coloring
         for neighbor in graph[vertex]:
             if not dfs(neighbor):
                 return False
@@ -193,7 +194,7 @@ def alien_order_v2(words):
         if j == min_len and len(cur_word) > len(next_word):
             return ''
         if j < min_len and next_word[j] not in graph[cur_word[j]]:
-            # Create graph, better thought of as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
+            # Create a graph, better thought of as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
             # prerequisite of 'char2' and precedes it in the alien alphabet
             graph[cur_word[j]].append(next_word[j])
     visited = {c: -1 for word in words for c in word}
