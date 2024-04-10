@@ -6,11 +6,11 @@ import unittest2 as unittest
 
 
 def calc_equation_v1(equations, values, queries):
-    """ Let's look at the example given in the problem description. Given two equations, namely a/b=2, b/c=3, we could
+    """ Let's look at the example given in the problem description. Given two equations a/b=2 and b/c=3, we could
          derive the following equations:
 
-            1) b/a=1/2, c/b=1/3
-            2) a/c=a/b * b/c=2 * 3=6
+            1) b/a = 1/2, c/b = 1/3
+            2) a/c = a/b * b/c = 2 * 3=6
 
         Each division implies the reverse of the division, which is how we derive the equations in (1). While by
         chaining up equations, we could obtain new equations in (2).
@@ -24,30 +24,31 @@ def calc_equation_v1(equations, values, queries):
         To evaluate a query (e.g. a/c=?) is equivalent to performing two tasks on the graph:
 
             - Find if there exists a path between the two entities
-            - If so, calculate the cumulative products along the paths
+            - If so, calculate the running products along the paths
 
         As we can see, we just transform the problem into a path searching problem in a graph. More precisely, we can
         reinterpret the problem as:
 
                 Given two nodes, we are asked to check if there exists a path between them. If so, we should return
-                the cumulative products along the path as the result.
+                the running products along the path as the result.
 
          Visualize a/b = k as a link between nodes a and b, the weight from a to b is k, the reverse link is 1/k. Query
          is to find a path between the two nodes.
 
         Given the above problem statement, it seems intuitive that we could apply DFS. Essentially, we can break down
-        the algorithm into two steps overall:
+        the algorithm into two steps:
 
-            - Build the graph out of the list of input equations. Each equation corresponds to two edges in the graph.
+            - Build the graph from the list of input equations. Each equation corresponds to two edges in the graph.
 
             - Once the graph is built, we then can evaluate the queries one by one.
 
                 * The evaluation of a query is done via searching the path between the given two variables.
+
                 * Other than the above searching operation, we need to handle two exceptional cases as follows:
-                   Case 1): if either of the nodes does not exist in the graph, i.e. the variables did not appear in any
-                   of the input equations, then we can assert that no path exists.
-                   Case 2): if the origin and the destination are the same node, i.e. a/a, we can assume that there
-                   exists an invisible self-loop path for each node and the result is 1.
+                   Case 1): If either of the nodes does not exist in the graph, i.e. the variables did not appear in any
+                                 of the input equations, then we can assert that no path exists.
+                   Case 2): If the origin and the destination are the same node, i.e. a/a, we can assume that there
+                                 exists an invisible self-loop path for each node and the result is 1.
 
     Time complexity: O(N * M), where N is the number of input equations and M be the number of queries. We iterate
     through the equations to build a graph. Each equation takes O(1) time to process. Therefore, this step will take
@@ -61,13 +62,13 @@ def calc_equation_v1(equations, values, queries):
     """
 
     def dfs(origin, destination, running_prod):
-        if origin not in divisions or destination not in divisions or origin in visited:
+        if origin in visited:
             return -1
         if origin == destination:
             return running_prod
         visited.add(origin)
-        for neighbor, val in divisions[origin]:
-            result = dfs(neighbor, destination, running_prod * val)
+        for neighbor, division in divisions[origin]:
+            result = dfs(neighbor, destination, running_prod * division)
             if result != -1:
                 return result
         return -1
@@ -79,8 +80,11 @@ def calc_equation_v1(equations, values, queries):
         divisions[y].append((x, 1 / result))
     res = []
     for x, y in queries:
-        visited = set()
-        res.append(dfs(x, y, 1))
+        if x not in divisions or y not in divisions:
+            res.append(-1)
+        else:
+            visited = set()
+            res.append(dfs(x, y, 1))
     return res
 
 
