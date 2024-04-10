@@ -15,7 +15,7 @@ def alien_order_v1(words):
                the word 'kitten' in the list does not tell us that the letter 'k' is before the letter 'i'.
 
             - The input can contain words followed by their prefix, for example, 'abcd' and then 'ab'. These cases will
-               never result in a valid alphabet (because in a valid alphabet, prefixes are always first). We'll need to
+               never result in a valid alphabet, because in a valid alphabet prefixes always come first. We'll need to
                make sure the solution detects these cases correctly.
 
             - There can be more than one valid alphabet ordering. It is fine for the algorithm to return anyone of them.
@@ -56,28 +56,28 @@ def alien_order_v1(words):
 
         Some letters will have no arrows going into them. What this means is that there are no letters that have to be
         before any of these. We need to somehow identify which letters have no incoming links left. With the adjacency
-        list format, this is a bit annoying to do, because determining whether a particular letter has any incoming
+        list format, this is a bit expensive to do, because determining whether a particular letter has any incoming
         links requires repeatedly checking over the adjacency lists of all the other letters to see whether they feature
         that letter.
 
         However, we can do better than that. Instead of keeping track of all the other letters that must be before a
-        particular letter, we only need to keep track of how many of them there are. While building the adjacency list,
+        particular letter, we only need to keep track of HOW MANY of them there are. While building the adjacency list,
         we can also count up how many incoming edges each letter has. We call the number of incoming edges the
         indegree of a node.
 
-        Therefore, when a character has a 'prerequisite' extracted, we can simply decrement its count by 1. Once the
+        Therefore, when a character has a 'prerequisite' extracted, we can simply decrement its count by 1. once the
         count reaches 0, this is equivalent to there being no incoming edges left.
 
-        We'll do a BFS for all letters that are reachable, adding each letter to the output as soon as it's reachable.
+        We do a BFS for all letters that are reachable, adding each letter to the output as soon as it's reachable.
         A letter is reachable once all the letters that need to be before it have been added to the output.
 
-        To do a BFS, recall that we use a queue. We should initially put all letters with an indegree of 0 into that
-        queue. Each time a letter gets down to an indegree of 0, it is added to the queue.
+        To perform a BFS, recall that we use a queue. We should initially put all letters with an indegree of 0 into
+        that queue. Each time a letter gets down to an indegree of 0, it is added to the queue.
 
         We continue this until the queue is empty. After that, we check whether all letters were put in the output list.
         If some are missing, this is because we got to a point where all remaining letters had at least one edge going
         in; this means there must be a cycle! In that case, we should return '' as per the problem description.
-        Otherwise, we should return the complete ordering we found.
+        Otherwise, we return the complete ordering we found.
 
         One edge case we need to be careful of is where a word is followed by its own prefix. In these cases, it is
         impossible to come up with a valid ordering, and so we should return ''. The best place to detect it is in the
@@ -87,7 +87,7 @@ def alien_order_v1(words):
     Space complexity: O(|V| + |E|)
     """
     n = len(words)
-    graph = defaultdict(set)
+    graph = defaultdict(list)
     indegree = {c: 0 for word in words for c in word}
     for i in range(n - 1):
         cur_word, next_word = words[i], words[i + 1]
@@ -98,14 +98,15 @@ def alien_order_v1(words):
         j = 0
         while j < min_len and cur_word[j] == next_word[j]:
             j += 1
-        if j == min_len and len(cur_word) > len(next_word):  # Check that next_word isn't a prefix of cur_word
+        # Check if next_word is a prefix of cur_word
+        if j == min_len and len(cur_word) > len(next_word):
             return ''
-        # Even though the adjacency lists are hash sets, we have to check that we're not processing the same edge
-        # more than once as it would result in a wrong indegree value
+        # We need to make sure we're not processing the same edge more than once as it would result in a wrong
+        # indegree value
         if j < min_len and next_word[j] not in graph[cur_word[j]]:
-            # Create graph, better thought of as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
+            # Create a graph, better thought of as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
             # prerequisite of 'char2' and precedes it in the alien alphabet
-            graph[cur_word[j]].add(next_word[j])
+            graph[cur_word[j]].append(next_word[j])
             indegree[next_word[j]] += 1  # Record the number of 'prerequisites' each character has
     queue = deque(c for c in indegree if indegree[c] == 0)
     res = []
@@ -118,7 +119,7 @@ def alien_order_v1(words):
             indegree[neighbor] -= 1
             if indegree[neighbor] == 0:
                 queue.append(neighbor)
-    # If not all letters are in the output, that means there was a cycle and so no valid ordering. Return ''.
+    # If not all the letters are in the output, that means there was a cycle and so no valid ordering is possible.
     return ''.join(res) if len(res) == len(indegree) else ''
 
 
