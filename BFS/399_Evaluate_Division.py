@@ -61,13 +61,13 @@ def calc_equation_v1(equations, values, queries):
     complexity of the visited set would be O(N).
     """
 
-    def dfs(origin, destination, running_prod):
-        if origin in visited:
+    def dfs(vertex, destination, running_prod):
+        if vertex in visited:
             return -1
-        if origin == destination:
+        if vertex == destination:
             return running_prod
-        visited.add(origin)
-        for neighbor, division in divisions[origin]:
+        visited.add(vertex)
+        for neighbor, division in divisions[vertex]:
             result = dfs(neighbor, destination, running_prod * division)
             if result != -1:
                 return result
@@ -100,19 +100,20 @@ def calc_equation_v2(equations, values, queries):
         divisions[y].append((x, 1 / result))
     res = []
     for x, y in queries:
+        if x not in divisions or y not in divisions:
+            res.append(-1)
+            continue
         queue = deque([(x, y, 1)])
         visited, result = set(), -1
         while queue:
-            origin, destination, running_prod = queue.popleft()
-            if origin not in divisions or destination not in divisions:
-                break
-            if origin == destination:
+            vertex, destination, running_prod = queue.popleft()
+            if vertex == destination:
                 result = running_prod
                 break
-            visited.add(origin)
-            for neighbor, val in divisions[origin]:
+            visited.add(vertex)
+            for neighbor, division in divisions[vertex]:
                 if neighbor not in visited:
-                    queue.append((neighbor, destination, running_prod * val))
+                    queue.append((neighbor, destination, running_prod * division))
         res.append(result)
     return res
 
