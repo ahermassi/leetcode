@@ -150,19 +150,18 @@ def can_complete_circuit_v3(gas, cost):
     """ This solution is a more explicit version of the first algorithm.
 
          The idea is to keep track of the deficits that are incurred as we traverse the stations. Deficit occurs when
-         the gas tank would not be enough to travel to the next station.
+         the gas tank would not have enough fuel to travel to the next station.
 
-        At the last station, we simply need to ask if the current gas tank is enough to cover the deficits that have
-        occurred between 0 and ith stations. If so, it means that we can cover any deficit that we encounter between 0
-        and ith stations (note that order does not matter). Therefore, we can conclude that our starting position i+1
-        can circle back to itself.
+        At the last station, we simply need to check if the current gas tank has enough gas left to cover the deficits
+        that have been incurred between 0th and ith stations. If so, it means that we can cover any deficit that we
+        encountered between 0th and ith stations (note that order does not matter). Therefore, we can conclude that we
+        can circle back the starting station.
 
     Time complexity: O(N)
     Space complexity: O(1)
     """
     n = len(gas)
-    tank = start = 0
-    gas_deficit = 0
+    gas_deficit = tank = start = 0
     for i in range(n):
         tank += gas[i] - cost[i]
         if tank < 0:
