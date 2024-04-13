@@ -123,11 +123,12 @@ def can_complete_circuit_v1(gas, cost):
 def can_complete_circuit_v2(gas, cost):
     """ Same solution as above but with two differences:
 
-            1- We check the condition sum(gas) < sum(cost) beforehand and return -1 if it's verified.
-            2- Because of that, this solution performs 2 passes over the arrays instead of 1 pass.
+            1- We check the condition sum(gas) < sum(cost) beforehand
 
-         Note that in the previous solution (sum(gas) - sum(cost)) is being accumulated during the execution of the
-         algorithm using 'total_gas' variable: sum(gas) - sum(cost) = sum(i=0..n-1) {gas[i] - cost[i]}.
+            2- Because of that, this implementation performs 2 passes over the arrays instead of 1 pass
+
+         Note that in the previous solution (sum(gas) - sum(cost)) is being accumulated with every iteration using
+         'total_gas' variable: sum(gas) - sum(cost) = sum(i=0..n-1) {gas[i] - cost[i]}.
          total_gas < 0, i.e.  sum(gas) < sum(cost) is checked at the end.
 
     Time complexity: O(N)
