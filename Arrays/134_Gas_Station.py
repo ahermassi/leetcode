@@ -11,16 +11,16 @@ import unittest2 as unittest
 def can_complete_circuit_v1(gas, cost):
     """ The first idea is to check every single station :
 
-            - Choose the station as starting point.
-            - Perform the road trip and check how much gas we have in tank at each station.
+            - Choose the station as starting point
+            - Perform the road trip and check how much gas we have in tank at each station
 
          That means O(N^2) time complexity, and for sure we could do better.
 
-         Let's notice two things.
+         We notice two things:
 
-            1- It's impossible to perform the road trip if sum(gas) < sum(cost). In this situation the answer is -1.
-                 We could compute total amount of gas in the tank total_tank = sum(gas) - sum(cost) during the round
-                 trip, and then return -1 if total_tank < 0.
+            1- It's impossible to perform the road trip if sum(gas) < sum(cost). In this situation, the answer is -1.
+                 We could accumulate the total amount of gas in the tank total_tank = sum(gas) - sum(cost) during the
+                 round trip, and then return -1 anytime total_tank < 0.
 
             2- It's impossible to start at a station i if gas[i] - cost[i] < 0, because then there is not enough gas in
                  the tank to travel to station (i + 1).
@@ -28,25 +28,26 @@ def can_complete_circuit_v1(gas, cost):
         The second fact could be generalized.
 
         Let's introduce current_tank variable to track the current amount of gas in the tank. If at some station
-        current_tank is less than 0, that means we couldn't reach next station. Next step is to mark next station as a
-        new starting point, and reset current_tank to zero since we start with no gas in the tank.
+        current_tank drops below 0, that means we can't reach the next station. Next step is to mark next station as a
+        new starting point and reset current_tank to zero since we start with no gas in the tank.
 
-        The gas stations in the problem are characterized by two attributes, namely, gas[i] and cost[i], The net change
-        in the amount of gas in our tank when moving from station i to (i + 1) is given by gas[i] - cost[i].
+        The gas stations in the problem are characterized by two attributes, namely gas[i] and cost[i], The net change
+        in the amount of gas in the tank when moving from station i to (i + 1) is given by (gas[i] - cost[i]).
 
         Now the algorithm is straightforward:
 
-            - Initiate total_gas and current_tank as zero, and choose station 0 as a starting station.
+            - Initialize total_gas and current_tank as zero, and choose station 0 as a starting station.
 
-            - Iterate over all stations:
-                - Update total_gas and current_tank at each step, by adding gas[i] and subtracting cost[i].
-                - If current_tank < 0 at station i, make station (i + 1) a new starting point and reset current_tank = 0
+            - Iterate over all the stations:
+
+                * Update total_gas and current_tank at each step, by adding gas[i] and subtracting cost[i].
+                * If current_tank < 0 at station i, make station (i + 1) a new starting point and reset current_tank = 0
                    to start with an empty tank.
 
-            - Return starting station if total_gas >= 0 and -1 otherwise.
+            - Return starting station if total_gas >= 0 or -1 otherwise.
 
-        We visit the gas stations in series of stages one station at a time. At each stage we select the best station to
-        start our trip, which is the one that can get us to the next gas station. The car can only get to the next
+        We visit the gas stations in a series of stages, one station at a time. At each stage we select the best station
+        to start the trip, which is the one that can get us to the next gas station. The car can only get to the next
         station if the tank has enough gas. if there is no good station at a given stage, we do not make a selection
         and move on to the next stage.
 
@@ -59,42 +60,48 @@ def can_complete_circuit_v1(gas, cost):
             - A can reach C1, C2, ..., Ck
         A --- C1 --- C2  --- ... Ck --- B
         Assume that C1 can reach B.
-        => A can reach C1 (by Fact 3) & C1 can reach B
-        => A can reach B (contradiction with Fact1 !)
+        => A can reach C1 (by fact 3) & C1 can reach B
+        => A can reach B (contradiction with fact1 !)
         => Assumption is wrong; C1 cannot reach B
         Same proof by contradiction could be applied to C2 ~ Ck
-        => Any station between A and B that A can reach cannot reach B
+        => Any station between A and B that A can reach cannot reach B.
 
         !!! IMPORTANT !!!
 
-        When the algorithm returns N_s as a starting station, it directly ensures that it's possible to go from N_s to
-        the station 0. But what about the last part of the round trip from the station 0 to the station N_s? How could
-        we ensure that it's possible to loop around to N_s ?
+        When the algorithm returns N_s as starting station, it directly ensures that it's possible to go from N_s to
+        station 0. But what about the last part of the round trip from station 0 to station N_s? How could we ensure
+        that it's possible to loop around to N_s ?
 
-        We are resetting start as soon as current_tank dips below 0 and setting it to the next index. Let's say the last
-        update to start index was at index k where 0 <= k < n.
+        We are resetting start to the next index as soon as current_tank dips below 0. Let's say the last update to
+        start index was at index k where 0 <= k < n.
 
-        At the end of the iteration, current_tank contains the total amount of fuel collected from the last updated
-        start index till the end of tha array:
+        At the end of the algorithm, current_tank contains the total amount of fuel collected from the last updated
+        start index, k,  to the end of the array:
 
                     current_tank = (gas[k] - cost[k]) + (gas[k + 1] - cost[k + 1]) + ... + (gas[n - 1] - cost[n - 1])
 
-        current_tank must be able to offset the net fuel consumption before the kth index so that we are able to
+        current_tank must be able to offset the net fuel in the tank up to the kth index so that we are able to
         circle back and finish at the index k:
 
-                    Net Fuel Consumption Before k = (gas[0] - cost[0]) + (gas[1] - cost[1]) + ... + (gas[k - 1] - cost[k - 1])
+                    Net fuel in tank up to k = (gas[0] - cost[0]) + (gas[1] - cost[1]) + ... + (gas[k - 1] - cost[k - 1])
 
         Now, total_gas is the total fuel collected from the 0th to the (n-1)th index:
 
                     total_gas = (gas[0] - cost[0]) + (gas[1] - cost[1]) + ... (gas[n - 1] - cost[n -1]);
 
-        This means that: total_gas = Net Fuel Consumption Before k +  current_tank
-                                   --> Net Fuel Consumption Before k = total_gas - current_tank
+        This means that: total_gas = Net fuel in tank up to k +  current_tank
 
-        This implies that if (current_tank + (total_gas - current_tank)) >= 0 then the current start index is the
-        correct answer. (current_tank + (total_gas - current_tank)) >= 0 is the same as total_gas >= 0.
+                                   --> Net fuel in tank up to k = total_gas - current_tank
 
-        Less formally: We know that we would be able to reach from 0 to k-1 without any difficulty. Having started with
+        This implies that if (current_tank + Net fuel in tank up to k) >= 0 then the current start index is the
+        correct answer.
+                                --> current_tank + Net fuel in tank up to k >= 0
+                                --> current_tank + (total_gas - current_tank) >= 0
+                                --> total_gas >= 0
+
+        So, we know we can circle back from station 0 to station N_s if and only if total_gas >= 0.
+
+        Less formally: we know that we would be able to reach from 0 to k-1 without any difficulty. Having started with
         zero fuel and now that we know that after traversing from k to the end we have some fuel left, so that extra
         fuel will help us traverse from k-1 to k when verifying the circular tour (we've already checked that it's
         possible to travel from the 0th index to k-1).
