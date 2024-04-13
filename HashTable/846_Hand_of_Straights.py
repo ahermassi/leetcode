@@ -52,8 +52,8 @@ def isNStraightHand_v2( hand, group_size):
     """ Similar approach but using a min heap instead of sorting the input.
 
         By using a priority queue, we can poll the smallest number and remove the next (group_size - 1) consecutive
-        numbers. If any of the consecutive numbers is not in the priority queue, it implies the hand is invalid, and
-        thus we return false.
+        numbers. If any of the consecutive numbers is no longer available, it implies the hand is invalid, and thus we
+        return false.
 
         Each time we want to find a starting number, we pop the heap. If the number is no longer available, we pop again
         until we find the minimum of the remaining numbers.
@@ -70,15 +70,15 @@ def isNStraightHand_v2( hand, group_size):
     for card in hand:
         heappush(heap, card)
     while counter:
-        cur_hand = heappop(heap)
+        start = heappop(heap)
         # Find the starting number of the current group
-        while cur_hand not in counter:  # Number is no longer available
-            cur_hand = heappop(heap)
+        while start not in counter:  # Number is no longer available
+            start = heappop(heap)
         for _ in range(group_size):
-            if cur_hand not in counter:
+            if start not in counter:
                 return False
-            counter[cur_hand] -= 1
-            if counter[cur_hand] == 0:
-                del counter[cur_hand]
-            cur_hand += 1
+            counter[start] -= 1
+            if counter[start] == 0:
+                del counter[start]
+            start += 1
     return True
