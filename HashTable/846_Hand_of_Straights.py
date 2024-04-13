@@ -9,9 +9,10 @@ from heapq import heappush, heappop
 
 
 def isNStraightHand_v1( hand, group_size):
-    """ We can use a greedy approach. Sort the input array and start with the smallest number 'start' that has a nonzero
-         frequency and check if the numbers from start to (start + k) exist. If they do, we then keep removing them from
-         the numbers we have, and if there is a case where it's not possible then we return false.
+    """ We can use a greedy approach. Sort the input array and start with the smallest number 'start' that has
+         non-zero occurrences and check if the numbers from start to (start + k) exist in the array. If they do, we then
+         keep removing them from the list of numbers, and if it's not possible to enumerate the entire sequence we
+         return false.
 
             - Create a hashmap 'counter' to count the frequency of each card in the hand
 
@@ -19,9 +20,9 @@ def isNStraightHand_v1( hand, group_size):
 
             - Try to find 'group_size' cards with consecutive values starting from 'start' card
 
-         If we know the first number in one of the groups, we know the whole group. That is to say, we just need to find
-         all starting numbers of each group, then go check if all the other numbers in the group can be found in the
-         given hand.
+         The intuition is if we know the first number in one of the groups, we can enumerate the entire group. That is
+         to say, we just need to find all starting numbers of each group, then check if all the other numbers in the
+         group can be found in the given hand.
 
          Since there might be groups with the same starting number, each time we use a card we decrement its count, and
          once its count drops to 0 we know the number is no longer available for future use.
@@ -37,12 +38,12 @@ def isNStraightHand_v1( hand, group_size):
     for i in range(n):
         if counter[hand[i]] == 0:
             continue
-        cur_hand = hand[i]
+        start = hand[i]
         for _ in range(group_size):
-            if counter[cur_hand] == 0:
+            if counter[start] == 0:
                 return False
-            counter[cur_hand] -= 1
-            cur_hand += 1
+            counter[start] -= 1
+            start += 1
     return True
 
 
