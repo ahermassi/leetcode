@@ -88,6 +88,7 @@ def calc_equation_v1(equations, values, queries):
     return res
 
 
+# Video explanation: https://youtu.be/Uei1fwDoyKk
 def calc_equation_v2(equations, values, queries):
     """ We can also apply BFS. However, the essence of the solution remains the same, i.e. we are searching for a path
          in a graph.
