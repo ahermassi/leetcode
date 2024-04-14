@@ -16,11 +16,11 @@ def walls_and_gates_v1(rooms):
         The condition (rooms[x][y] > distance) solves 3 problems:
 
             1- Do not update walls & gates (-1s & 0s) because 'distance' will always be strictly greater than 0 except
-                 for the first call to dfs() from an empty room where distance = 0
+                 for the first call to dfs() from a gate where distance = 0
 
-            2- Distinguish the visited and non-visited nodes (the visited can only have smaller distance)
+            2- Distinguish the visited and non-visited nodes: the visited can only have smaller distance
 
-            3- Stop early when we find that a previous gate has given a shorter distance than the current one
+            3- Stop early when we find that a previous gate has contributed to a shorter distance than the current one
 
     Time complexity: O((N * M)^2)
     Space complexity: O(N * M)
