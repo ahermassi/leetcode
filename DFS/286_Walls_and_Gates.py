@@ -48,25 +48,26 @@ def walls_and_gates_v2(rooms):
         rooms of distance d+1, the distance to an empty room must be the shortest. So whenever an empty room is
         reached, it must be from the closest gate.
 
-        We are starting BFS from each of the gates by enqueuing the coordinates into the queue. Since Queue is FIFO, the
+        We start BFS from each of the gates by enqueuing the coordinates into the queue. Since the queue is FIFO, the
         first gate is processed first. While doing a BFS from the first gate, we check the coordinates at distance 1
-        from that gate, and only if we hit an empty room we increment the distance by 1 since it is the next level,
-        i.e. rooms[x][y] = rooms[row][col] + 1.
-        Then we enqueue the adjacent nodes of this coordinate, but since it is a queue, those coordinates are at the
+        from that gate, and only if we hit an empty room at coordinates (x, y) we increment the distance by 1 since it
+        is the next level, i.e. rooms[x][y] = rooms[row][col] + 1.
+
+        Then we enqueue the adjacent nodes of this cell, but since it is a queue, those coordinates are added to the
         back of the queue. So next to be processed is the 2nd gate which was added, and so on. Since we spread out from
         each gate in a BFS manner for a single step only each time and evaluate the distance, we have to get the
         shortest distance from each room to a gate.
 
-        Each gate looks only at the areas within 1 space (immediate neighbors) before we check the next gate. So each
-        area within 1 space of the gate is checked for rooms and these rooms are marked then added to the queue.
-        Once all gates are checked, each new space is checked, and so on. So, once a room is reached, it has to be from
-        the closest gate.
+        Each gate looks only at the areas within 1 hop (immediate neighbors) before we check the next gate. So each
+        area within 1 hop of the gate is checked for rooms and these rooms are marked then added to the queue.
+        Once all the gates are checked, each new space is checked, and so on. So, once a room is reached, it has to be
+        from the closest gate.
 
-        We can understand it by level-order BFS. First, we enqueue all 0s, and let's say these 0s are in level 1.
+        We can understand it by level-order BFS. First, we enqueue all 0s, and let's say these 0s are at level 1.
         Then from each 0 of the queue, we will go up, down, left and right, all these positions that are rooms are at
         level 1, and so on. So assume we only have Gate A and Gate B, and we have a room C and all the other
-        positions are walls. Assume that distance A-C is 3 and distance B-C is 4. So for Gate A, room C is at its
-        level 3, and for Gate B room C is at its level 4. Since we are doing level-order BFS, C will always first be
+        positions 1 hop away are walls. Assume that distance A-C is 3 and distance B-C is 4. So for Gate A, room C is at
+        its level 3, and for Gate B room C is at its level 4. Since we are doing level-order BFS, C will always first be
         reached from the gate that is closer to it which is A.
 
         Imagine that all the gates are "competing" against each other "at the same time". Once a gate reaches an empty
@@ -99,7 +100,7 @@ def walls_and_gates_v2(rooms):
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
             # If a room was previously reached (rooms[x][y] != INF), it has to be from the closest gate, so there is
             # no need to visit it again.
-            if 0 <= x < n and 0 <= y < m and rooms[x][y] == 2 ** 31 - 1:
+            if 0 <= x < n and 0 <= y < m and rooms[x][y] > rooms[i][j] + 1:  # Or rooms[x][y]  == 2**31 - 1
                 rooms[x][y] = rooms[i][j] + 1
                 queue.append((x, y))
 
