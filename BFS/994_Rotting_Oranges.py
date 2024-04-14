@@ -23,19 +23,18 @@ def oranges_rotting_v1(grid):
          We use all rotten oranges as start position of the BFS. Moreover, we keep track of 'fresh_oranges' to count
          the number of 1s. If there is no fresh oranges initially, we immediately return 0.
 
-         Usually in BFS algorithms, we keep a visited set which keeps track of the visited cells. The visited set helps
-         avoid repetitive visits. But as we can notice, rather than using the visited set, we reuse the input grid to
-         mark the visited cells, i.e. we are altering the status of the input grid in-place.
+         Usually in BFS algorithms, we use a visited set to keep track of the visited cells. The visited set helps avoid
+         repetitive visits and infinite loops. But as we can notice, rather than using the visited set, we can reuse the
+         input grid to mark the visited cells, i.e. we are altering the status of the input grid in-place.
 
-    Time complexity: O(N * M), first we scan the grid to find the initial values for the queue, then we run BFS on the
-    queue, which in the worst case would enumerate all the cells in the grid once and only once.
+    Time complexity: O(N * M), first we scan the grid to find the initial values for the queue, then we run BFS which in
+    the worst case would enumerate all the cells in the grid once and only once.
     Space complexity: O(N * M), in the worst case, the grid is filled with rotten oranges. As a result, the queue would
     be initialized with all the cells in the grid.
     Normally for BFS, the main space complexity lies in the process rather than the initialization. For instance, for a
     BFS traversal of a tree, at any given moment, the queue would hold no more than 2 levels of tree nodes. Therefore,
     the space complexity of BFS traversal in a tree would depend on the width of the input tree.
     """
-
     n, m = len(grid), len(grid[0])
     queue = deque()
     fresh_oranges = 0
@@ -58,9 +57,9 @@ def oranges_rotting_v1(grid):
                 if 0 <= x < n and 0 <= y < m and grid[x][y] == 1:
                     grid[x][y] = 2  # Contaminate the fresh orange
                     fresh_oranges -= 1
-                    queue.append((x, y))  # This orange would then contaminate other oranges
-        # Update the number of minutes passed. It is safe to update the minutes by 1, since we visit oranges level by
-        # level in BFS traversal.
+                    queue.append((x, y))  # This orange would then contaminate its fresh neighbors
+        # Update the number of minutes passed. It is safe to inncrement the minutes by 1, since we visit the oranges
+        # level by level in BFS traversal.
         time += 1
     # Return -1 if there are fresh oranges left in the grid (there were no adjacent rotten oranges to contaminate them)
     return time if not fresh_oranges else -1
