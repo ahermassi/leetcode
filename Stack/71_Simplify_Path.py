@@ -61,18 +61,16 @@ def simplify_path_v2(path):
     n = len(path)
     stack, i = [], 0
     while i < n:
-        if path[i] == '/':
-            i += 1
-            continue
-        directory = ''
-        while i < n and path[i] != '/':
-            directory += path[i]
-            i += 1
+        j = i
+        while j < n and path[j] != '/':
+            j += 1
+        directory = path[i:j]
         if directory == '..':
             if stack:
                 stack.pop()
-        elif directory != '.':
+        elif directory and directory != '.':
             stack.append(directory)
+        i = j + 1
     return '/' + '/'.join(stack)
 
 
