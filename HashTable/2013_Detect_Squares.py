@@ -23,13 +23,13 @@ class DetectSquaresV1:
             - List of corresponding y coordinates for each x coordinate, that is given x we can quickly find all points
                that share this x coordinate
 
-        What we need to do now:
+        What we need to do:
 
-            - add(point): We increment the points counter and append the y coordinate to its respective list
+            - add(point): increment the points counter and append the y coordinate to its respective list
 
-            - count(point): We need to find all the points with the same x coordinate, i.e. points in the form (x, y1),
-               and then reconstruct square. There will be two ways to do it: One above x-axis and one below it.
-               Here we need to take into account the count of the points, so we use the counter for that.
+            - count(point): we need to find all points with the same x coordinate, i.e. points in the form (x, y1),
+               and then reconstruct the square. There will be two ways to do it: one above the x-axis and one below it.
+               Here we need to take into account the count of the points, so we use the counter map for that.
 
         For a query point p1 = (x, y), we try all the points p2 which have the same x coordinate as p1, i.e. p1.x = p2.x
         Since we now have two points p1 and p2, we can form a square by calculating the positions of the remaining two
@@ -46,7 +46,7 @@ class DetectSquaresV1:
                p4 = (p1.x + side_length, p1.y)
 
     Time complexity: O(1) for add(point), O(N) for count(point) but in practice it is less because usually we do not
-    have a lot of points on the same line.
+    have many points on the same line.
     Space complexity: O(N)
     """
 
@@ -61,16 +61,14 @@ class DetectSquaresV1:
 
     def count(self, point):
         x, y = point
-        res = 0
+        squares = 0
         for y1 in self.x_axis[x]:
             if y1 == y:
                 continue
             side_length = abs(y - y1)
-            squares = 0
             squares += self.points[(x - side_length, y)] * self.points[(x - side_length, y1)]
             squares += self.points[(x + side_length, y)] * self.points[(x + side_length, y1)]
-            res += squares
-        return res
+        return squares
 
 
 class DetectSquaresV2:
