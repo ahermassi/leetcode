@@ -74,17 +74,17 @@ class DetectSquaresV1:
 class DetectSquaresV2:
     """ We can apply the same idea but using a single hashmap.
 
-        We store the COUNT of all the points lying on x-axis with x coordinate, and for each point on x-axis, we have
-        its corresponding y coordinate such as:
+        We store the COUNT of all the points on x-axis with x coordinate, and for each point on x-axis, we have its
+        corresponding y coordinate such as:
 
-                    x_axis[x][y] = count of points with coordinate (x, y)
+                    x_axis[x][y] = count of points with coordinates (x, y)
 
         Notice how x_axis map gives us access to the count of points with coordinates (x, y) AND immediate access to all
-        points that share the same x coordinate, thus combining the 2 hashmaps of the previous solution.
+        the points that share the same x coordinate, thus combining the 2 hashmaps of the previous solution.
 
-        For count(point), we need to pick all the points that have the same x coordinate of the query point. For each of
-        these points, we calculate the square side length and find remaining two points at same distance on the left and
-        right sides of x.
+        For count(point), we need to pick all the points that have the same x coordinate as the query point. For each of
+        these points, we calculate the square side length and find the two remaining points at same distance on the left
+        and right sides of x.
 
         For a query point p1 = (x, y), we try all the points p2 which have the same x coordinate as p1, i.e. p1.x = p2.x
         Since we now have two points p1 and p2, we can form a square by computing the positions of the remaining two
