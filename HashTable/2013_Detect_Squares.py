@@ -150,15 +150,32 @@ class DetectSquaresV3:
     def count(self, point):
         x, y = point
         res = 0
-        # Attempting to access a non-existent key in a defaultdict will add that key (with a value of zero in this
+        # Attempting to access a non-existent key in a defaultdict(int) will add that key (with a value of zero in this
         # case). This causes the dictionary to mutate during iteration, which throws an error.
         # Therefore, we have to 1) make a copy of the list of keys before iterating, and 2) include the diagonal
         # point's count in the multiplication before adding to the result. This is because the call to .keys() will
         # never include duplicates, whereas iterating over a list will allow us to come across multiple copies of
         # the diagonal point.
-        keys = list(self.points.keys())
-        for x1, y1 in keys:
+        points = list(self.points.keys())
+        for a, b in points:
             # Skip empty square or invalid square point. Diagonal points CAN NOT lie on the same x-axis.
-            if x1 != x and abs(x1 - x) == abs(y1 - y):
-                res += self.points[(x1, y1)] * self.points[(x, y1)] * self.points[(x1, y)]
+            if a != x and abs(x - a) == abs(y - b):
+                res += self.points[(a, b)] * self.points[(x, b)] * self.points[(a, y)]
         return res
+        # An alternate version could use a separate list to store the points to avoid the pitfalls of the list of keys:
+        # def __init__(self):
+        #     self.pointsCounter = defaultdict(int)
+        #     self.points = []
+        #
+        # def add(self, point):
+        #     x, y = point
+        #     self.pointsCounter[(x, y)] += 1
+        #     self.points.append((x, y))
+        #
+        # def count(self, point):
+        #     x, y = point
+        #     res = 0
+        #     for a, b in self.points:
+        #         if a != x and abs(x - a) == abs(y - b):
+        #             res += self.pointsCounter[(x, b)] * self.pointsCounter[(a, y)]
+        #     return res
