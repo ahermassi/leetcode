@@ -10,13 +10,13 @@ import unittest2 as unittest
 def daily_temperatures_v1(temperatures):
     """ The logic is similar to 503- Next Greater Element II.
 
-         Imagine if we had multiple days in a row with a decreasing temperature, and then one very hot day -
+         Imagine if we had multiple days in a row with decreasing temperatures, and then one very hot day -
          [40, 39, 38, 37, 36, 35, 34, 65]. The final day is the "answer" day for all the other days. Why? Because all
          the other days are in descending order (and cooler than the last day). If we make use of the fact that
          temperatures in descending order can share the same "answer" day, we can improve the time complexity.
 
          In the above example, we can "delay" finding the answer for the first 7 days, and upon finding a warmer
-         temperature of 65, we can move backward to find the answer for all 7 days at the same time. This process of
+         temperature of 65 we can move backward to find the answer for all 7 days at the same time. This process of
          storing elements and then walking back through them matches the behavior of a stack.
 
          A monotonic stack is simply a stack where the elements are always in sorted order. How does this help us?
@@ -38,8 +38,9 @@ def daily_temperatures_v1(temperatures):
             - If the current day's temperature is warmer than the temperature at top of the stack, this is significant.
                It means that the current day is the FIRST day with a warmer temperature than the day associated with the
                temperature at the top of the stack. When we find a warmer temperature, the number of days is the
-               difference between the current index and the index at the top of the stack. We can declare an answer
-               list before iterating through the input and populate the list as we go.
+               difference between the current index and the index at the top of the stack.
+
+         We can declare an answer list before iterating through the input and populate the list as we go.
 
          When we find a warmer temperature, we can't stop after checking only one element at the top of the stack.
          Using the example temperatures = [75, 71, 69, 72], once we arrive at the last day the stack looks like
@@ -50,7 +51,7 @@ def daily_temperatures_v1(temperatures):
 
     Time complexity: O(N), a specific index can only be pushed once (as cur_index) and can only be popped once
     (as prev_index). Every iteration of the while loop uses 1 pop, which means the while loop will not iterate more than
-    N times in total, across all iterations of the for loop.
+    N times in total across all iterations of the for loop.
     Space complexity: O(N), if the input was non-increasing, then no element would ever be popped from the stack,
     and the stack would grow to a size of N elements at the end.
     """
