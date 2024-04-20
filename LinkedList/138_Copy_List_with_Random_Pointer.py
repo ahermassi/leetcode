@@ -76,20 +76,21 @@ def copy_random_list_v2(head):
 
 # Video explanation: https://youtu.be/OvpKeraoxW0?t=637
 def copy_random_list_v3(head):
-    """ Instead of a separate dictionary to keep the old node --> new node mapping, we can tweak the original linked
-         list and keep every cloned node next to its original node. This interleaving of old and new nodes allows us to
-         solve this problem without any extra space.
+    """ Instead of a separate hashmap to keep old node --> node clone mapping, we can tweak the original linked list and
+         keep every cloned node next to its original node. This interleaving of old and new nodes allows us to solve
+         this problem without any extra space.
 
-         Traverse the original list and clone the nodes as we go and place the cloned copy next to its original node.
-         This new linked list is essentially an interweaving of original and cloned nodes. The next pointer is used to
-         create the weaving. Note that this operation ends up modifying the original linked list.
+            - Traverse the original list and clone the nodes as we go and place the clone next to the original node.
+               This new linked list is essentially an interweaving of original and cloned nodes. The next pointer is
+               used to create the weaving. Note that this operation ends up modifying the original linked list.
 
-         Next, iterate the list having both the new and old nodes intertwined with each other and use the original nodes'
-         random pointers to assign references to random pointers for cloned nodes. For example, if B has a random pointer
-         to A, this means B's clone has a random pointer to A's clone.
+            - Next, iterate the list having both the new and old nodes intertwined with each other and use the original
+               nodes' random pointers to assign references to random pointers for cloned nodes. For example, if B has a
+               random pointer to A, this means B's clone has a random pointer to A's clone.
 
-         Now that the random pointers are assigned to the correct nodes, the next pointers need to be correctly
-         assigned to unweave the current linked list and get back the original list and the cloned list.
+            - Now that the random pointers are assigned to the correct nodes, the next pointers need to be correctly
+               assigned to undo the interweaving of the current linked list and get back the original list and the
+               cloned list.
 
     Time complexity: O(N)
     Space complexity: O(1)
@@ -99,27 +100,26 @@ def copy_random_list_v3(head):
     # Creating a new weaved list of original and copied nodes.
     cur = head
     while cur:
-        node = Node(cur.val, cur.next)
+        clone = Node(cur.val, cur.next)
         # Cloned node. Note that the new node's next points to current node's next, inserting the cloned node
         # just next to the original node. If A->B->C is the original linked list, after weaving cloned nodes would
         # be A->A'->B->B'->C->C'
-        cur.next = node
-        cur = cur.next.next
+        cur.next = clone
+        cur = clone.next
     cur = head
-    # Now link the random pointers of the new nodes created. Iterate over the newly created list and use the original
-    # nodes random pointers to assign references to random pointers for cloned nodes.
+    # Now link the random pointers of the clones nodes. Iterate over the newly created list and use the original nodes'
+    # random pointers to assign references to random pointers for cloned nodes.
     while cur:
         cur.next.random = cur.random.next if cur.random else None
         cur = cur.next.next
-    # Unweave the linked list to get back the original linked list and the cloned list, i.e. A->A'->B->B'->C->C' would
-    # be broken to A->B->C and A'->B'->C'
-    old_head = head
-    new_head = head.next
+    # Undo the interweaving of the linked list to get back the original linked list and the cloned list,
+    # i.e. A->A'->B->B'->C->C' would be broken to A->B->C and A'->B'->C'
+    old_head, new_head = head, head.next
     head_to_return = head.next
     while old_head.next and new_head.next:
-        old_head.next = new_head.next
+        old_head.next = old_head.next.next
+        new_head.next = new_head.next.next
         old_head = old_head.next
-        new_head.next = old_head.next
         new_head = new_head.next
     return head_to_return
 
