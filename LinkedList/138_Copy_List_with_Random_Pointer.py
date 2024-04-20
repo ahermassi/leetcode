@@ -42,23 +42,26 @@ def copy_random_list_v2(head):
     """ One-pass approach.
 
          When we are iterating over the list, we can create new nodes via the random pointer or the next pointer,
-         whichever points to a node that doesn't exist in our old --> new dictionary.
+         whichever points to a node that doesn't exist in the old --> new mapping.
 
-            1- Traverse the linked list starting at the head
-            2- Random Pointer:
-                - If the random pointer of the current node i points to node j, and a clone of j already exists in
-                   the 'clones' dictionary, we will simply use the cloned node reference from the 'clones' dictionary.
-                - If the random pointer of the current node i points to node j which has not been cloned yet, we
-                   create j's clone and add it to the 'clones' dictionary.
-            3- Same goes for next pointer
-            4- We repeat steps 2 and 3 until we reach the end of the linked list.
+            - Traverse the linked list starting at the head
+
+            - Random Pointer:
+                * If the random pointer of the current node points to a node whose clone already exists in the hashmap,
+                   we simply use the cloned node reference
+                * If the random pointer of the current node points to a node which has not been cloned yet, we
+                   create its clone and add it to the hashmap
+
+            - Same goes for the next pointer
+
+            - We repeat steps 2 and 3 until we reach the end of the linked list
 
     Time complexity: O(N), we make one pass over the original linked list
-    Space complexity: O(N), we have a dictionary containing mapping from old list nodes to new list nodes
+    Space complexity: O(N), we have a hashmap containing mapping from old list nodes to new list nodes
     """
     if not head:
         return None
-    clones = {None: None, head: Node(head.val)}  # None: None to avoid checking if next/random is null
+    clones = {None: None, head: Node(head.val)}  # None -> None to avoid checking for nullity when accessing a clone
     cur = head
     while cur:
         if cur.next not in clones:
