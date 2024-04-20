@@ -12,6 +12,8 @@ class Node(object):
         self.random = random
 
 
+# Video explanation: https://youtu.be/5Y2EiZST97Y
+# Video explanation: https://www.youtube.com/watch?v=OvpKeraoxW0
 def copy_random_list_v1(head):
     """ We perform two passes over the linked list:
 
@@ -36,7 +38,6 @@ def copy_random_list_v1(head):
     return clones[head]
 
 
-# Video explanation: https://www.youtube.com/watch?v=OvpKeraoxW0
 def copy_random_list_v2(head):
     """ One-pass approach.
 
