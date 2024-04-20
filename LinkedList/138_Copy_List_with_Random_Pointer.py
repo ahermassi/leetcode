@@ -15,14 +15,14 @@ class Node(object):
 def copy_random_list_v1(head):
     """ We perform two passes over the linked list:
 
-        1st pass: We map the original nodes to their clones.
-        2nd pass: Give all clones their next and random pointer assignments. Our hash map lets us reach an original
+        1st pass: Map the original nodes to their clones.
+        2nd pass: Give all clones their next and random pointer assignments. The hashmap lets us access an original
         node's clone in constant time.
 
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    clones = {None: None}
+    clones = {None: None}  # None -> None to avoid checking for nullity when accessing a node's clone
     cur = head
     while cur:
         clones[cur] = Node(cur.val)
