@@ -7,6 +7,7 @@ loops endlessly in a cycle which does not include 1. Those numbers for which thi
 import unittest2 as unittest
 
 
+# Video explanation: https://www.youtube.com/watch?v=ljz85bxOYJ0
 def is_happy_v1(n):
     """ After working through some examples, we'd expect continually following links to end in one of three ways:
 
@@ -80,7 +81,6 @@ def is_happy_v1(n):
     return True
 
 
-# Video explanation: https://www.youtube.com/watch?v=ljz85bxOYJ0
 def is_happy_v2(n):
     """ The chain we get by repeatedly calling digit_square_sum(n) is an implicit linked list. Implicit means we don't
         have actual nodes and pointers, but the data does still form a linked list structure. The starting number is
