@@ -83,22 +83,22 @@ def is_happy_v1(n):
 
 def is_happy_v2(n):
     """ The chain we get by repeatedly calling digit_square_sum(n) is an implicit linked list. Implicit means we don't
-        have actual nodes and pointers, but the data does still form a linked list structure. The starting number is
-        the head node of the list, and all the other numbers in the chain are nodes. The next pointer is obtained with
-        the digit_square_sum(n) function.
+         have actual nodes and pointers, but the data does still form a linked list structure. The starting number is the
+         head node of the list, and all the other numbers in the chain are nodes. The next pointer is obtained with the
+         digit_square_sum(n) function.
 
-        We can therefore use Floyd's Cycle-Finding Algorithm here. This algorithm is based on 2 runners running around
-        a circular racing track, a fast runner (hare) and a slow runner (tortoise). At each step of the algorithm, the
-        slow runner goes forward by 1 number in the chain, and the fast runner goes forward by 2 numbers
-        (nested calls to the digit_square_sum(n) function).
+         We can therefore use Floyd's Cycle-Finding Algorithm here. This algorithm is based on 2 pointers running around
+         a circular racing track, a fast runner (hare) and a slow runner (tortoise). At each step of the algorithm, the
+         slow runner moves forward by 1 number in the chain, and the fast runner moves forward by 2 numbers (nested
+         calls to the digit_square_sum(n) function).
 
-        Regardless of where the tortoise and hare start in the cycle, they are guaranteed to eventually meet. This is
-        because the hare moves one node closer to the tortoise (in their direction of movement) each step.
+         Regardless of where the tortoise and hare start in the cycle, they are guaranteed to eventually meet. This is
+         because the hare moves one node closer to the tortoise (in its direction of movement) each step.
 
-        If n is a happy number, i.e. there is no cycle, then the fast runner will eventually get to 1 before the slow
-        runner.
+         If n is a happy number, i.e. there is no cycle, then the fast runner will eventually get to 1 before the slow
+         runner.
 
-        If n is not a happy number, then eventually the fast runner and the slow runner will meet at the same number.
+         If n is not a happy number, then eventually the fast runner and the slow runner will meet at the same number.
 
     Time complexity: O(log n), we're treating the length of the chain to the cycle as insignificant compared to the cost
     of calculating the next value for the first n
@@ -109,7 +109,7 @@ def is_happy_v2(n):
         total_sum = 0
         while n:
             digit = n % 10
-            total_sum += digit ** 2
+            total_sum += digit * digit
             n = n // 10
         return total_sum
 
