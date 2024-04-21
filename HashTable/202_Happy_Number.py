@@ -10,25 +10,25 @@ import unittest2 as unittest
 def is_happy_v1(n):
     """ After working through some examples, we'd expect continually following links to end in one of three ways:
 
-            - It eventually gets to 111.
-            - It eventually gets stuck in a cycle.
-            - It keeps going higher and higher, up towards infinity.
+            - Eventually get to 1
+            - Eventually get stuck in a cycle
+            - Keep going higher and higher, up towards infinity
 
         That 3rd option sounds really annoying to detect and handle. How would we even know that it is going to
         continue going up, rather than eventually going back down, possibly to 1? Luckily, it turns out we don't need
-        to worry about it. Think carefully about what the largest next number we could get for each number of digits is.
+        to worry about it. Think carefully what is the largest next number we could get for each number of digits.
 
-        Digits	Largest	    Next
-            1	        9	        81
-            2	        99	    162
-            3	        999	    243
-            4	        9999	324
+        Digits	 Largest	               Next
+            1	        9	                        81
+            2	        99	                    162
+            3	        999	                    243
+            4	        9999	                324
             13	    9999999999999	1053
 
-        For a number with 3 digits, it's impossible for it to ever go larger than 243. This means it will have to either
-        get stuck in a cycle below 243 or go down to 1. Numbers with 4 or more digits will always lose a digit at each
-        step until they are down to 3 digits. So we know that at worst, the algorithm might cycle around all the numbers
-        under 243 and then go back to one it's already been to (a cycle) or go to 1. But it won't go on indefinitely,
+        For a number with 3 digits, it's impossible for it to ever go beyond 243. This means it will have to either get
+        stuck in a cycle below 243 or go down to 1. Numbers with 4 or more digits will always lose a digit at each step
+        until they are down to 3 digits. So we know that at worst, the algorithm might cycle around all the numbers
+        below 243 and then go back to one it's already been to (a cycle) or go to 1. But it won't go on indefinitely,
         allowing us to rule out the 3rd option.
 
         There are 2 parts to the algorithm we'll need to design and code:
@@ -40,7 +40,7 @@ def is_happy_v1(n):
         remains, and then squaring each removed digit and adding them together.
 
         Part 2 can be done using a hash set. Each time we generate the next number in the chain, we check if it's
-        already in our hash set. If it is not in the hash set, we should add it. If it is in the hash set, that means
+        already in the hash set. If it is not in the hash set, we should add it. If it is in the hash set, that means
         we're in a cycle and so should return false.
 
     Time complexity: O(log n), we are processing each digit in the number, and the number of digits in a number is given
@@ -48,13 +48,12 @@ def is_happy_v1(n):
     algorithm would process those million digits, and then the next value would be, at most (pretend all the digits
     are 9), 81 * 1,000,000 = 81,000,000. In just one step, we've gone from a million digits, down to just 8.
     The largest possible 8-digit number we could get is 99,999,999, which then goes down to 81 * 8 = 648. And then from
-    here, the cost will be the same as if we'd started with a 3-digit number. Starting with 2 million digits
+    there, the cost will be the same as if we'd started with a 3-digit number. Starting with 2 million digits
     (a massively larger number than one with a 1 million digits) would only take roughly twice as long, as again, the
     dominant part is summing the squares of the 2 million digits, and the rest is tiny in comparison.
-    The time complexity analysis is broken up into two steps, based off of the insight that once a
-    number reaches the <= 243 threshold it cannot get above it again: 1) the amount of time it takes a number to
-    reach 243, and 2) once a number reaches the <= 243 threshold, the amount of time it takes to either discover a cycle
-    or get to 1.
+    The time complexity analysis is broken down into two steps, based off of the insight that once a number reaches the
+    <= 243 threshold it cannot get above it again: 1) the amount of time it takes a number to reach 243, and 2) once a
+    number reaches the <= 243 threshold, the amount of time it takes to either find a cycle or get to 1.
     For 1) we argue that the time to reach 243 is O(log n) + O(log log n) + ..., but we disregard the terms after
     O(log n) because they are insignificant compared with O(log n). So the time complexity for 1) is O(log n).
     For 2) we argue that once a number reaches the <= 243 threshold, it will take, at absolute worst case, 243 more
@@ -68,7 +67,7 @@ def is_happy_v1(n):
         total_sum = 0
         while n:
             digit = n % 10
-            total_sum += digit ** 2
+            total_sum += digit * digit
             n = n // 10
         return total_sum
 
