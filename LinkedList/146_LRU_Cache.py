@@ -13,8 +13,9 @@ import unittest2 as unittest
 # Video explanation: https://youtu.be/7ABFKPK2hD4
 class Node:
     def __init__(self, key, val):
-        self.key = key  # We have to store the key because we need to know a key when we remove a node from the map.
-        # Otherwise, for each remove operation we would need to scan the entire Map
+        # We have to store the key because we need to know a key when we remove a node from the map. Otherwise, for each
+        # remove operation we would need to scan the entire map.
+        self.key = key
         self.val = val
         self.next = None
         self.prev = None
@@ -22,12 +23,12 @@ class Node:
 
 class LRUCacheV1(object):
     """ The description of the put method states that we are storing key-value pairs. This means the data structure is
-         similar to a hash map, which also stores key-value pairs.
+         similar to a hashmap, which also stores key-value pairs.
 
-         It's easy enough to add new key-value pairs or update existing ones using a hash map. The thing that makes
-         this problem tricky is that the hash map is limited to a size of capacity. When the hash map exceeds this
-         capacity, we cannot arbitrarily remove a key - we need to remove the least recently used one. After we remove
-         it, we need to know what the second least recently used one was (as it will be the next one to be deleted).
+         It's easy to add new key-value pairs or update existing ones using a hashmap. The thing that makes this problem
+         tricky is that the hashmap has a limited capacity. When the hashmap exceeds this capacity, we cannot
+         arbitrarily remove a key - we need to remove the least recently used one. After we remove it, we need to know
+         what the second least recently used one was (as it will be the next one to be deleted).
 
          To keep the order in which keys have been used, we can implement a queue. The key at the front of the queue is
          the most recently used key, and the key at the back of the queue is least recently used key. When we insert a
@@ -45,7 +46,7 @@ class LRUCacheV1(object):
          that a linked list does better than an array. In general, if we want to remove a node from the list, we need a
          pointer to the node before it. Because of this, we shall use a doubly linked list.
 
-        The problem can be solved with a hash map that keeps track of the keys and its values in the doubly-linked list.
+        The problem can be solved with a hashmap that keeps track of the keys and its values in the doubly-linked list.
         That results in O(1) time for put and get operations and allows to remove the first added node in O(1) time as
         well. As each node represents an element in the data structure, we can also store the key-value pair in each
         node.
@@ -54,19 +55,19 @@ class LRUCacheV1(object):
         takes constant time to add and remove nodes from the head or tail.
 
         In a singly-linked list, we would also need a reference to the node before the one we want to remove.
-        Therefore, if we were using a singly-linked list, we wouldn't be able to remove nodes we retrieved from the
-        hash map in O(1) time because we don't have a reference to the one before them. By using a doubly-linked list,
-        we can retrieve node from the hash map in O(1) and then remove the node itself from the list in O(1), giving
+        Therefore, if we were using a singly-linked list, we wouldn't be able to remove a node we retrieved from the
+        hashmap in O(1) time because we don't have a reference to the one before it. By using a doubly-linked list,
+        we can retrieve a node from the hashmap in O(1) and then remove the node itself from the list in O(1), giving
         the entire operation an O(1) running time.
 
         One particularity about the doubly-linked list implemented here is that there are dummy head and dummy tail to
-        mark the boundary, so that we don't need to check the null node during the update. The "real" head will be
-        head.next and the "real" tail will be tail.prev. These dummy nodes sit just "outside" of our linked list.
+        mark the boundaries, so that we don't need to check the null node during the update. The "real" head will be
+        head.next and the "real" tail will be tail.prev. These dummy nodes sit just "outside" of the linked list.
         What is the purpose? We never want head or tail to be null.
 
         It's true that we can remove a node from a doubly linked list at any position in O(1) - but only if we already
         have a reference to the node. Given a key, how can we find the node associated with it in O(1)?
-        In our hash map, instead of mapping each key to its value, let's have it map each key to its associated node.
+        In the hashmap, instead of mapping each key to its value, let's have it map each key to its associated node.
 
         Rules:
             1- Always add a new node AFTER the dummy head: this is the most recently used
@@ -91,7 +92,7 @@ class LRUCacheV1(object):
         self.nodes = {}  # (Node.key: Node) pairs
         self.capacity = capacity
         self.size = 0
-        # Dummy head and tail nodes to avoid empty states. The tail is the pseudo node that marks the boundary of the
+        # Dummy head and tail nodes to avoid null states. The tail is the pseudo node that marks the boundary of the
         # tail, same as that the head node is a pseudo node that marks the head. The doubly-linked list can be
         # represented as head (pseudo) <--> head <--> ....tail <--> tail (pseudo).
         # By adding two pseudo nodes to mark the boundaries, we could reduce the boundary checking code such as
@@ -106,7 +107,7 @@ class LRUCacheV1(object):
             return -1
         node = self.nodes[key]
         self.remove(node)  # The node is now most recently accessed, so remove it ..
-        self.insert(node)  # and place it right before the dummy tail
+        self.insert(node)  # and place it right after the dummy head
         return node.val
 
     def put(self, key, value):
@@ -122,7 +123,8 @@ class LRUCacheV1(object):
         self.head.next = node
         self.nodes[node.key] = node
         self.size += 1
-        if self.size > self.capacity:  # If max capacity reached, delete the LRU node: the one before the dummy tail
+        if self.size > self.capacity:
+            # If max capacity reached, delete the LRU node: the one before the dummy tail
             lru = self.tail.prev
             self.remove(lru)
 
