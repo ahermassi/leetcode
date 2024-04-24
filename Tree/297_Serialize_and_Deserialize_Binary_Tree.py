@@ -109,15 +109,15 @@ class CodecV2:
         """
         if data[0] == 'X':
             return None
-        data_queue = deque(data.split(','))
+        data = deque(data.split(','))
         root = TreeNode(data.popleft())
-        node_queue = deque([root])
-        while node_queue:
-            node = node_queue.popleft()
-            left_val, right_val = data_queue.popleft(), data_queue.popleft()
+        queue = deque([root])
+        while queue:
+            node = queue.popleft()
+            left_val, right_val = data.popleft(), data.popleft()
             node.left = TreeNode(left_val) if left_val != 'X' else None
             node.right = TreeNode(right_val) if right_val != 'X' else None
-            node_queue.extend(child for child in (node.left, node.right) if child)
+            queue.extend(child for child in (node.left, node.right) if child)
         return root
 
 
