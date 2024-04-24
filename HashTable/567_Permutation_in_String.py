@@ -52,19 +52,19 @@ def check_inclusion_v1(s1, s2):
 # Video explanation: https://youtu.be/UbyhOgBN834
 def check_inclusion_v2(s1, s2):
     """ The previous approach can be optimized. Instead of comparing all the elements of the hashmaps for every updated
-         frequency map of every window of s2, we keep track of the number of characters which were already matching in
-         the previous window and only update the count of matching elements when we shift the window towards the right.
+         frequency map of every window in s2, we keep track of the number of characters that already matched in the
+         previous window and only update the count of those characters when we slide the window.
 
-         We maintain a 'matches' variable which stores the number of characters that have the same frequency of
-         occurrence in s1, and the current window in s2. When we slide the window:
+         We maintain a 'matches' variable which stores the number of characters that have the same number of occurrences
+         in both s1 and the current window in s2. When we slide the window:
 
-            - If the exclusion of the leftmost character and the inclusion of the new character lead to a new frequency
-               match for any of the characters, we increment 'matches'.
+            - If the exclusion of the leftmost character and the inclusion of the current character lead to a new
+               match in occurrences for any of the characters, we increment 'matches'.
+
+            - Otherwise, if a character whose frequency was the same earlier (prior to addition or removal) is included,
+               it could lead to a frequency mismatch which is taken into account by decrementing 'matches'.
 
             - Otherwise, we keep 'matches' intact.
-
-        However, if a character whose frequency was the same earlier (prior to addition or removal) is included, it
-        could lead to a frequency mismatch which is taken into account by decrementing 'matches'.
 
         If after sliding the window 'matches' evaluates to 26, it means all the characters match in frequency.
 
@@ -74,32 +74,32 @@ def check_inclusion_v2(s1, s2):
     if len(s1) > len(s2):
         return False
     n, m = len(s1), len(s2)
-    s1_counter, s2_counter = defaultdict(int), defaultdict(int)
-    for i in range(n):
-        s1_counter[s1[i]] += 1
-        s2_counter[s2[i]] += 1
+    counter, window = Counter(s1), Counter(s2[:n])
     matches = 0
     for i in range(26):
-        if s1_counter[chr(i + ord('a'))] == s2_counter[chr(i + ord('a'))]:
+        if window[chr(i + ord('a'))] == counter[chr(i + ord('a'))]:
             matches += 1
     if matches == 26:
         return True
-    for i in range(n, m):
-        cur_char, leftmost_char = s2[i], s2[i-n]
-        s2_counter[cur_char] += 1  # Expand the window
-        if s1_counter[cur_char] == s2_counter[cur_char]:
+    left, right = 0, n
+    while right < m:
+        cur_char, leftmost_char = s2[right], s2[left]
+        window[cur_char] += 1  # Expand the window
+        if window[cur_char] == counter[cur_char]:
             matches += 1
-        # If the addition of the current character disrupts an earlier match
-        elif s2_counter[cur_char] == s1_counter[cur_char] + 1:
+        elif window[cur_char] == counter[cur_char] + 1:
+            # If the addition of the current character disrupts an earlier match
             matches -= 1
-        s2_counter[leftmost_char] -= 1  # Shrink the window
-        if s1_counter[leftmost_char] == s2_counter[leftmost_char]:
+        window[leftmost_char] -= 1  # Shrink the window
+        if window[leftmost_char] == counter[leftmost_char]:
             matches += 1
-        # If the removal of the current character disrupts an earlier match
-        elif s1_counter[leftmost_char] == s2_counter[leftmost_char] + 1:
+        elif window[leftmost_char] == counter[leftmost_char] - 1:
+            # If the removal of the current character disrupts an earlier match
             matches -= 1
         if matches == 26:
             return True
+        left += 1
+        right += 1
     return False
 
 
