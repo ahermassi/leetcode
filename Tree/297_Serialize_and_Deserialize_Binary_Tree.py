@@ -8,9 +8,8 @@ string and this string can be deserialized to the original tree structure. """
 
 from collections import deque
 
+
 # Definition for a binary tree node.
-
-
 class TreeNode(object):
     def __init__(self, x):
         self.val = x
@@ -36,7 +35,7 @@ class CodecV1:
          subtree begins.
 
          Note that serialization contains information about the node values as well as the information about the tree
-         structure. 'X' appears for each leaf to mark the absence of left and right child node, this is how we save the
+         structure. 'X' appears for each leaf to mark the absence of left and right child node. This is how we save the
           tree structure during the serialization.
     """
 
@@ -47,17 +46,17 @@ class CodecV1:
         Space complexity: O(N), we keep the entire tree
         """
 
-        def pre_order(root):
+        def preorder(root):
             if not root:
                 values.append('X')
                 return
-            values.append(str(root.val))
-            pre_order(root.left)
-            pre_order(root.right)
+            values.append(root.val)
+            preorder(root.left)
+            preorder(root.right)
 
         values = []
-        pre_order(root)
-        return ','.join(values)
+        preorder(root)
+        return ','.join(map(str, values))
 
     def deserialize(self, data):
         """Decodes the encoded data to tree.
