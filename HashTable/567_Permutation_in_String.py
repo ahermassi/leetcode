@@ -110,7 +110,7 @@ def check_inclusion_v3(s1, s2):
          the left and right boundaries of the sliding window, and a variable 'matches' represents the number of
          characters in s1 that matched in the sliding window so far.
 
-         If the rightmost (current) character is already in the hashmap, indicating that the character appears in s1,
+         If the rightmost (current) character is already in the hashmap, indicating that the character exists in s1,
          then 'matches' is incremented, and the count of the current character in the hashmap is also decremented in all
          cases.
 
@@ -130,7 +130,8 @@ def check_inclusion_v3(s1, s2):
     """
     n, m = len(s1), len(s2)
     counter = Counter(s1)
-    left, right, matches = 0, 0, 0
+    matches, needed = 0, n
+    left = right = 0
     while right < m:
         cur_char = s2[right]
         if counter[cur_char] > 0:  # The current character is in s1
@@ -138,7 +139,7 @@ def check_inclusion_v3(s1, s2):
         # Decrement the count of current character in all cases, so when it is not part of s1 it gets a negative
         # count in the map.
         counter[cur_char] -= 1
-        if matches == n:
+        if matches == needed:
             return True
         if right - left + 1 == n:  # Current window size is equal to s1's length
             counter[s2[left]] += 1  # Exclude the leftmost character
