@@ -123,7 +123,7 @@ class CodecV2:
 
 class CodecV3:
     """ Same BFS approach, but during deserialization we use a read pointer/index to process the elements in the data
-         list without turning it into a queue.
+         list without transforming it into a queue.
     """
 
     def serialize(self, root):
@@ -157,12 +157,10 @@ class CodecV3:
         index = 1
         while queue:
             node = queue.popleft()
-            if data[index] != 'X':
-                node.left = TreeNode(data[index])
-            index += 1
-            if data[index] != 'X':
-                node.right = TreeNode(data[index])
-            index += 1
+            left_val, right_val = data[index], data[index + 1]
+            node.left = TreeNode(left_val) if left_val != 'X' else None
+            node.right = TreeNode(right_val) if right_val != 'X' else None
             queue.extend(child for child in (node.left, node.right) if child)
+            index += 2
         return root
 
