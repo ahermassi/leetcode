@@ -88,7 +88,7 @@ class WordDictionaryV1(object):
 
 
 class WordDictionaryV2(object):
-    """ A trie implementation using nested hash map. """
+    """ A trie implementation using nested hashmap. """
 
     def __init__(self):
         self.root = dict()
@@ -104,7 +104,7 @@ class WordDictionaryV2(object):
 
     def search(self, word):
 
-        def dfs(node, index):
+        def dfs(index, node):
             if index == n:
                 # If any word is found there should be an end of word mark in the dictionary of current node
                 return '#' in node
@@ -112,17 +112,17 @@ class WordDictionaryV2(object):
             if c != '.':
                 if c not in node:
                     return False
-                return dfs(node[c], index + 1)
+                return dfs(index + 1, node[c])
             # Search for any substring starting with current character.
             # Why exclude '#' ? Since '#' is not a 'real' character and only a placeholder (and we know it won't
-            # have any children, since the word finished here), we don't want to traverse down this path.
+            # have any children, since the word ends there), we don't want to traverse down this path.
             for child in node:
-                    if child != '#' and dfs(node[child], index + 1):
-                        return True
+                if child != '#' and dfs(index + 1, node[child]):
+                    return True
             return False
 
         n = len(word)
-        return dfs(self.root, 0)
+        return dfs(0, self.root)
 
 
 class Test(unittest.TestCase):
