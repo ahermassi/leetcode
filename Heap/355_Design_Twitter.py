@@ -58,11 +58,11 @@ class TwitterV1:
 
 
 class TwitterV2:
-    """ There is no need to store more than 10 tweets for each user because the function getNewsFeed() is already
-         bounded by that constraint. Therefore, we can use a deque to save the 10 most recent tweets per user.
+    """ There is no need to store more than 10 tweets for each user because getNewsFeed() is already bounded by that
+         constraint. Therefore, we can use a deque to save the 10 most recent tweets per user.
 
-         Every new tweet is appended to the end of the queue, and when the queue's size exceeds 10 we pop
-         the least recent tweet from the front.
+         Every new tweet is appended to the front of the queue, and when the queue's size exceeds 10 we pop the least
+         recent tweet from the end.
     """
 
     def __init__(self):
