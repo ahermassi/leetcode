@@ -16,9 +16,10 @@ from collections import defaultdict, deque
 from heapq import heappush, heappop
 
 
+# Video explanation: https://www.youtube.com/watch?v=pNichitDD2E
 class TwitterV1:
-    """  Use a hashmap to track the tweets of each user. When we need to generate the news feed, we merge the
-          news feeds of all the users we're following in a min heap of size 10.
+    """  Use a hashmap to save the tweets of each user. When we need to generate the news feed of a particular user, we
+          merge the news feeds of all the users this user is following in a min heap of size 10.
     """
 
     def __init__(self):
@@ -34,13 +35,14 @@ class TwitterV1:
     def getNewsFeed(self, user_id):
         """ Time complexity: O(#followees * #tweets) """
         followees = self.followees[user_id]
-        followees.add(user_id)   # Add myself to the list of my followees
-        heap, res = [], []
+        followees.add(user_id)   # My news feed should also contain my own tweets
+        heap = []
         for followee in followees:  # O(#followees)
             for timestamp, tweet_id in self.tweets[followee]:  # O(#tweets))
                 heappush(heap, (timestamp, tweet_id))  # O(log10) ~= O(1)
                 if len(heap) > 10:
                     heappop(heap)
+        res = []
         while heap:
             res.append(heappop(heap)[1])
         return res[::-1]
