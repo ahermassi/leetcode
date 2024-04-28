@@ -132,17 +132,19 @@ def partition_v2(s):
 
 
 def partition_v3(s):
-    """ This approach uses a similar backtracking algorithm. However, the previous approaches perform one extra
+    """ Backtracking + Dynamic Programming.
+
+        This approach uses a similar backtracking algorithm. However, the previous approaches perform one extra
          iteration to determine if a given substring is a palindrome. We are repeatedly iterating over the same
-         substring multiple times and the result is always the same. There are overlapping sub-problems, and we could
-         further optimize the approach by using Dynamic Programming to determine if a string is a palindrome in constant
-         time.
+         substrings multiple times and the result is always the same. There are overlapping sub-problems, and we could
+         further optimize the algorithm by using Dynamic Programming to determine if a string is a palindrome in a
+         constant time.
 
          A given string s starting at index 'start' and ending at index 'end' is a palindrome if the following two
          conditions are satisfied :
 
             1- The characters at 'start' and 'end' indices are equal
-            2- The substring starting at index start+1 and ending at index end−1 is a palindrome
+            2- The substring starting at index start+1 and ending at index end−1 (inclusive) is a palindrome
 
         Let N be the length of the string. To determine if a substring starting at index 'start' and ending at index
         'end' is a palindrome, we use a 2-dimensional array dp of size N * N where:
