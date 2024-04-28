@@ -16,22 +16,22 @@ def partition_v1(s):
          recursively expand potential candidates until the defined goal is achieved. After that, we backtrack to explore
          the next potential candidate.
 
-         The backtracking algorithms consists of the following steps:
+         The backtracking algorithm consists of the following steps:
 
-            - Choose: Choose the potential candidate. Here, our potential candidates are all substrings that could be
+            - Choose: choose the potential candidate. Here, the potential candidates are all substrings that could be
                generated from the given string.
 
-            - Constraint: Define a constraint that must be satisfied by the chosen candidate. In this case, the
-               constraint is that the string must be a palindrome.
+            - Constraint: define a constraint that must be satisfied by the chosen candidate. In this case, the
+               constraint is that the substring must be a palindrome.
 
-            - Goal: We must define the goal that determines if we have found the required solution and must backtrack.
-               Here, our goal is achieved if we have reached the end of the string.
+            - Goal: we define the goal that determines if we have found the required solution and must backtrack. Here,
+               the goal is achieved if we have reached the end of the string.
 
-         In the backtracking algorithm, we recursively traverse over the string in depth-first search fashion. For each
-         recursive call, the beginning index of the string is given as 'index'.
+         In the backtracking algorithm, we recursively traverse over the string using depth-first search. At each
+         recursive call, the start index of the string is given as 'index'.
 
-            - Iteratively generate all possible substrings beginning at 'index'. The i pointer iterates from 'index'
-               until the end of the string.
+            - Iteratively generate all possible substrings starting at 'index'. The i pointer iterates from 'index' to
+               the end of the string.
 
             - For each of the generated substrings, check if it is a palindrome.
 
@@ -44,19 +44,19 @@ def partition_v1(s):
         We take 'snapshots' or snippets as we advance through the string and see if they can add to the decomposition
         that we want to build.
 
-            - Choice: The start and the end of a snapshot that we want to add to a decomposition we are working on.
+            - Choice: the start and the end of a snapshot that we want to add to a decomposition we are working on.
 
-            - Constraint: Each piece of the decomposition must be a palindrome, and we cannot choose and advance on a
-               non-palindrome snippet.
+            - Constraint: each piece of the decomposition must be a palindrome, and we cannot choose and advance on a
+               non-palindromic snippet.
 
-            - Goal: Decompose the whole string. When the decomposition progress index is the length of the string,
-               then we know that we have achieved this.
+            - Goal: decompose the whole string. When the decomposition progress index is the length of the string,
+               then we know that we achieved the goal.
 
     Time complexity: O(N * 2^N), we are basically taking subsets so (2^N). It is the number of possible partitioning
     (each partitioning is a way to partition the string into substrings). For each partitioning, we do two things: build
     the substrings for that partition and check whether each substring in that partitioning is a palindrome or not.
     O(N * 2^N) is a rare worst case where all decompositions turn out to be palindromic (for example, a string of all
-    1 character like 'aaaaa'). The best case becomes greatly improved.
+    1-character like 'aaaaa'). The best case becomes greatly improved.
     Note: The number 2^N in complexity analysis above is in fact the number of nodes in the search tree - NOT the number
     of substrings. It is the number of possible partitionings (each partitioning is a way to partition the string into
     substrings). This can be derived as follows:
@@ -79,7 +79,7 @@ def partition_v1(s):
         if index == n:
             res.append(path)
         for i in range(index, n):
-            # Take every snippet from 'index' to the end of the string. This is our 'possibility space'.
+            # Take every snippet from 'index' to the end of the string. This is the 'possibility space'.
             if is_palindrome(index, i):
                 # Only recurse if the snippet from 'index' (inclusive) to current index i (inclusive) is a palindrome.
                 # Take the snippet and add it to the current decomposition 'path', then advance 1 past right bound of
