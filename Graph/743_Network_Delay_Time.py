@@ -23,18 +23,14 @@ def network_delay_time_v1(times, n, k):
          the answer. Starting from node k, the signal will travel to the adjacent nodes along the directed edges. We
          track the signal movement with respect to time in a depth-first search manner.
 
-        Start the DFS with node=k and current timestamp cur_time=0. Before we traverse to the adjacent nodes, we mark
-        the time required for the current node in the array signal_received_at as cur_time. Now, we traverse all the
-        adjacent nodes to the current node.
-
-        For each adjacent node, we start a DFS with the updated timestamp i.e., equal to the sum of cur_time and the
-        time it takes to traverse the edge from current node to the adjacent node.
+        Start the DFS at vertex=k. At each vertex, we need to traverse all the adjacent nodes to the current node.
+        For each adjacent node X, we update its timestamp to be the sum of the timestamp of the current node and the
+        time it takes to traverse the edge from the current node to node X. Then, start a DFS from node X.
 
         As discussed before, there can be multiple signals received at a particular node, and we are only interested
-        in the time that the first signal reached the node. Hence, we perform the DFS only if cur_time is less than the
-        time we have stored corresponding to the current node in signal_received_at. This is because if cur_time is
-        greater than or equal to signal_received_at[node], it means that the current node received a signal before the
-        current signal could reach it.
+        in the time that the first signal reached the node. Hence, we start a DFS only if the timestamp of a node X is
+        greater than what it would be if it was reached from its parent vertex. This is because if the opposite is true,
+        it means that node X received a signal before the current signal could reach it.
 
         There is a trick that can reduce the execution time. Instead of traversing adjacent nodes arbitrarily, we can
         traverse them in increasing order of their travel time. Although this will increase the time complexity of the
@@ -50,14 +46,13 @@ def network_delay_time_v1(times, n, k):
                for the signal to travel from a to b.
 
             - For all nodes, initialize signal_received_at as a large value to signify that, so far, no signal has been
-               received.
+               received. Furthermore, initialize signal_received_at[k] = 0.
 
-            - Perform DFS on the node k and with the cur_time as 0. For each recursive call:
-                    * If cur_time is greater than or equal to signal_received_at[node], then return.
-                    * Otherwise, set signal_received_at[node] equal to cur_time which is the new shortest time required
-                       to reach the current node. Sort the edges connecting to every node in graph[node] in increasing
-                       order of their travel time.Then, perform a DFS for each of the adjacent nodes using the updated
-                       timestamp.
+            - Start DFS from node k. For each recursive call:
+
+                    * Sort the edges connecting to every node in graph[node] in increasing order of their travel time.
+                    * Start a DFS from each of the adjacent nodes using the updated timestamp if it leads to a shorter
+                       signal travel time, and set signal_received_at[adjacent_node] to signal_received_at[node] + edge_weight.
 
             - Find the maximum value in the array signal_received_at. If any value in signal_received_at is still the
                large value we initialized the array with, then return -1 as that node is not reachable from k.
@@ -75,23 +70,23 @@ def network_delay_time_v1(times, n, k):
     at most N active functions calls
     """
 
-    def dfs(node, cur_time):
-        if signal_received_at[node] <= cur_time:
-            # If the current time is greater than or equal to the fastest signal received, then no need to iterate
-            # over adjacent nodes
-            return
-        signal_received_at[node] = cur_time  # Fastest signal time for current node so far
-        for time, neighbor in sorted(graph[node]):
-            # Broadcast the signal to adjacent nodes
-            # cur_time + time = time when signal reaches neighbor node
-            dfs(neighbor, cur_time + time)
+    def dfs(vertex):
+        # Broadcast the signal to adjacent nodes
+        for time, neighbor in sorted(graph[vertex]):
+            # signal_received_at[vertex] + time = time when signal reaches the neighbor node
+            # Only start a DFS from the neighbor node if it could receive a faster signal from the current node
+            if signal_received_at[vertex] + time < signal_received_at[neighbor]:
+                # Fastest signal time for the neighbor node so far
+                signal_received_at[neighbor] = signal_received_at[vertex] + time
+                dfs(neighbor)
 
     graph = defaultdict(list)
     for a, b, time in times:
-        graph[a].append((time, b))  # The edge is (time, b) so we can sort by time later on
-    signal_received_at = [float('inf')] * (n + 1)  # signal_received_at[node] = the earliest time we've reached the node
+        graph[a].append((time, b))  # The edge is (time, b) so we can sort by time
+    signal_received_at = [float('inf')] * (n + 1)  # signal_received_at[node] = the earliest time signal reached node
     signal_received_at[0] = 0  # Node 0 doesn't exist
-    dfs(k, 0)
+    signal_received_at[k] = 0  # It takes no time for the signal to travel from and to node k
+    dfs(k)
     return max(signal_received_at) if max(signal_received_at) != float('inf') else -1
 
 
