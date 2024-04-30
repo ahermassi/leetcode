@@ -202,14 +202,14 @@ def network_delay_time_v4(times, n, k):
     for a, b, time in times:
         graph[a].append((b, time))
     signal_received_at = [float('inf')] * (n + 1)
-    signal_received_at[0] = 0
+    signal_received_at[0] = signal_received_at[k] = 0
     queue = deque([(0, k)])
     while queue:
         travel_time, vertex = queue.popleft()
-        if travel_time < signal_received_at[vertex]:
-            signal_received_at[vertex] = travel_time
-            for neighbor, time in graph[vertex]:
-                queue.append((signal_received_at[vertex] + time, neighbor))
+        for neighbor, time in graph[vertex]:
+            if travel_time + time < signal_received_at[neighbor]:
+                signal_received_at[neighbor] = travel_time + time
+                queue.append((signal_received_at[neighbor], neighbor))
     return max(signal_received_at) if max(signal_received_at) != float('inf') else -1
 
 
