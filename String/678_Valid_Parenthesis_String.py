@@ -12,32 +12,32 @@ import unittest2 as unittest
 def check_valid_string_v1(s):
     """ Top-Down Dynamic Programming (recursion + memoization).
 
-         The idea of recursion is very simple: increment 'open' when we encounter '(' and increment 'close' when we
-          see a ')'. Otherwise, we just need to consider 3 cases: skip '*' or substitute it with either closing or
-          opening parenthesis.
+         The idea of recursion is very simple: increment 'left' when we encounter '(' and increment 'right' when we
+          see a ')'. Otherwise, we just need to consider 3 cases: skip '*' or substitute it with either left or right
+          parenthesis.
 
-         Check for the case when we want to decrement zero-valued 'open', that means that we want to put ')' before
+         Check for the case when we want to decrement zero-valued 'left', that means that we want to put ')' before
          '(' which is not acceptable.
 
     Time complexity: O(N^2), O(3^N) + memoization
     Space complexity: O(N)
     """
 
-    def dfs(index, open, close):
+    def dfs(index, left, right):
         if index == n:
-            return open == close
-        if open < close:
+            return left == right
+        if left < right:
             return False
-        if (index, open, close) not in memo:
+        if (index, left, right) not in memo:
             cur_char = s[index]
             if cur_char == '(':
-                res = dfs(index + 1, open + 1, close)
+                res = dfs(index + 1, left + 1, right)
             elif cur_char == ')':
-                res = dfs(index + 1, open, close + 1)
+                res = dfs(index + 1, left, right + 1)
             else:
-                res = dfs(index + 1, open + 1, close) or dfs(index + 1, open, close + 1) or dfs(index + 1, open, close)
-            memo[(index, open, close)] = res
-        return memo[(index, open, close)]
+                res = dfs(index + 1, left + 1, right) or dfs(index + 1, left, right + 1) or dfs(index + 1, left, right)
+            memo[(index, left, right)] = res
+        return memo[(index, left, right)]
 
     n, memo = len(s), {}
     return dfs(0, 0, 0)
