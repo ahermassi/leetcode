@@ -176,20 +176,20 @@ def check_valid_string_v2(s):
 def check_valid_string_v3(s):
     """ Stack-based solution.
 
-        The basic idea is to track the indices of the left parenthesis and asterisks. Push all the indices of the
-        asterisks and left parenthesis to their respective stacks.
+        The basic idea is to track the indices of the left parenthesis and wildcards. Push all the indices of the
+        wildcards and left parenthesis to their respective stacks.
 
             - Step 1: When we encounter a right parenthesis, we try to match it. So, pop left parenthesis stack first if
-               it is not empty. If the left parenthesis stack is empty, pop the asterisk stack if it is not empty. Here
+               it is not empty. If the left parenthesis stack is empty, pop the wildcards stack if it is not empty. Here
                we consider '*' as an open parenthesis that can match a closing parenthesis. False is returned if both
                stacks are empty.
 
             - Step 2: Here we consider '*' as a closing parenthesis. Attention is paid to the remaining items in the two
-               stacks. Note that the left parenthesis CANNOT appear after the asterisk as there is NO way to balance the
-               parenthesis.
-               In other words, if the index at the top of left parenthesis stack > index at the top of asterisk stack,
+               stacks. Note that the left parenthesis CANNOT appear after the wildcards as there is NO way to balance
+               the parenthesis.
+               In other words, if the index at the top of left parenthesis stack > index at the top of wildcards stack,
                it means there was no '*' after the last '(' , so return false. Otherwise, pop from the left parenthesis
-               and asterisk stacks.
+               and wildcards stacks.
 
         A valid sequence should have an empty left bracket stack, which means we were able to balance the complete
         string.
@@ -197,24 +197,24 @@ def check_valid_string_v3(s):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    left_unmatched, asterisk = [], []
+    left_unmatched, wildcards = [], []
     for i, c in enumerate(s):
         if c == '(':
             left_unmatched.append(i)
         elif c == '*':
-            asterisk.append(i)
+            wildcards.append(i)
         elif left_unmatched:
             left_unmatched.pop()
-        elif asterisk:
-            asterisk.pop()
+        elif wildcards:
+            wildcards.pop()
         else:
             # We can't match the current ')'
             return False
     # So far, we have cleared all the ')' using '(' accordingly. But, we may have more '(' and '*' than ')'. In the
     # second part, if there is any '(' after '*', we return False. We can only close an '(' if there is an '*' that
     # appears at a later index.
-    while left_unmatched and asterisk:
-        if left_unmatched.pop() > asterisk.pop():
+    while left_unmatched and wildcards:
+        if left_unmatched.pop() > wildcards.pop():
             return False
     return not left_unmatched
 
