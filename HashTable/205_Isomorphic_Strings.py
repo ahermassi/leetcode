@@ -45,39 +45,42 @@ def is_isomorphic_v1(s, t):
 
 
 def is_isomorphic_v2(s, t):
-    """ This approach is based on the idea that the two given strings, if isomorphic, will in some way be exactly the
-         same. If we have two isomorphic strings, we can replace the characters in the first string with the
-         corresponding mapped characters to get the second string. The idea we explore here is the following:
+    """ This approach is based on the idea that the two given strings, if isomorphic, will in some share a similar
+         "structure" or "fingerprint". If we have two isomorphic strings, we can replace the characters in the first
+         string with the corresponding mapped characters to get the second string. The idea we explore here is the
+         following:
 
-                    Is there any string transformation we can apply to both the strings such that to check for
-                    isomorphism, we simply check if their modified versions are exactly the same?
+                    Is there any string transformation we can apply to both strings such that to check for
+                    isomorphism, we simply check if their transformed versions are exactly the same?
 
-        For each character in the given string, we replace it with the index of that character's first occurrence in the
-        string. For a string like 'paper', the transformed string will be '01034'. The character 'p' occurs first at the
-        index 0; so we replace future occurrences of 'p' with the index 0. Similar modifications are made for the other
-        characters. Now let's look at 'title'. The transformed string would be '01034' which is the same as that for
-        'paper'. This confirms the isomorphic nature of both the strings.
+        For each character in a given string, we replace it with the index of that character's first occurrence in the
+        string. For a string like 'paper', the transformed string will be '01034'. The character 'p' occurs first at
+        index 0, so we replace all occurrences of 'p' with '0'. Similar modifications are made for the other characters.
+
+        Now let's look at 'title'. The transformed string would be '01034' which is the same as that of 'paper'.
+        This confirms the isomorphic nature of both strings.
 
         However, we should be mindful of transformations that use both one and two-digit numbers. Under these
         circumstances, the transformed strings can be misinterpreted. For example, 'stenographic's and 'logarithmsxox'
-        both transform to '123456789110', yet they are not isomorphic. Therefore, to avoid confusion we can add a
-        delimiter to help differentiate the transformed digits.
+        both map to '123456789110', yet they are not isomorphic. Therefore, to avoid confusion, we add a delimiter to
+        help differentiate the transformed digits.
 
-        Note that this solution is more scalable if we want to form groups of isomorphic strings given a list of strings.
+        Note that this solution is more scalable if we want to form groups of isomorphic strings given a list of
+        strings. The transformation would serve as key of the hashmap.
 
-    Time complexity: O(N), where N is the length of s and t
-    Space complexity: O(1), the hash maps can't store more than the size of the alphabet characters
+    Time complexity: O(N), where N is the length of s (and t)
+    Space complexity: O(1), the hashmaps can't store more than the size of the alphabet characters
     """
 
-    def encode(string):
+    def transform(string):
         indices, values = {}, []
         for i, c in enumerate(string):
             if c not in indices:
                 indices[c] = i
-            values.append(str(indices[c]))
-        return ' '.join(values)
+            values.append(indices[c])
+        return ','.join(map(str, values))
 
-    return encode(s) == encode(t)
+    return transform(s) == transform(t)
 
 
 class Test(unittest.TestCase):
