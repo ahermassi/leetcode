@@ -47,11 +47,11 @@ def check_valid_string_v1(s):
 # Great visualization: https://bit.ly/3bZDp0n
 def check_valid_string_v2(s):
     """ Let's assume the string consists of only '(' and ')' brackets. When checking whether the string is valid, we
-         only care about the "balance": the number of extra, open left brackets as we parsed through the string.
+         only care about the "balance": the number of extra, open left brackets as we parse through the string.
 
          For example, when checking whether '(()())' is valid, we have a balance of 1, 2, 1, 2, 1, 0 as we parse through
          the string: '(' has 1 left bracket, '((' has 2, '(()' has 1, and so on. This means that after parsing the first
-         few symbols, (which may include asterisks,) we only need to keep track of what the balance could be.
+         few symbols (which may include asterisks,) we only need to keep track of what the balance could be.
 
          If we have the string '(***)', then as we parse each symbol, the set of possible values for the balance is:
             - [1] for '('
@@ -60,26 +60,27 @@ def check_valid_string_v2(s):
             - [0, 1, 2, 3, 4] for '(***'
             - [0, 1, 2, 3] for '(***)'.
 
-         Furthermore, these possible values of the balance always form a contiguous interval. Thus, we only need to
+         Furthermore, these possible values of the balance always form a CONTIGUOUS interval. Thus, we only need to
          know the lower and upper bounds of this interval. That is, we would keep those intermediate states as
          [lo, hi] = [1, 1], [0, 2], [0, 3], [0, 4], [0, 3].
 
-         Scan the string from left to right and keep a count of the smallest and largest possible number of open left
-         brackets ‘(’ for all possible cases.
-         If we encounter ‘(’ or ‘)’, it is straightforward, just increment or decrement the counters, respectively.
-         When the character is '*', there are three substitution cases: ‘(’, empty, or ‘)’. We can think of those three
-         cases as three branches in the ongoing route.
+            - Scan the string from left to right and keep a count of the smallest and largest possible number of open
+               left brackets ‘(’ for all possible cases.
 
-         During the process, we use the following variables for the counters:
+            - If we encounter ‘(’ or ‘)’, it is straightforward, just increment or decrement the counters, respectively.
 
-                - min_unmatched_left: the lower bound of open parenthesis, which is the number of unmatched '(' that
-                   MUST be paired.
+            - When the character is '*', there are three substitution cases: ‘(’, empty, or ‘)’. We can think of those
+               three cases as three branches in the ongoing route.
 
-                - max_unmatched_left: the upper bound of open parenthesis, which is the maximum number of unmatched
-                   '(' that COULD be paired.
+            - During the process, we use the following variables for the counters:
 
-          We basically count the number of ')' we are waiting for, and it's equal to the number of open parenthesis.
-          This number will be in a range, and we represent it as [min_unmatched_left, max_unmatched_left].
+                    * min_unmatched_left: the lower bound of open parenthesis, which is the number of unmatched '(' that
+                       MUST be paired.
+                    * max_unmatched_left: the upper bound of open parenthesis, which is the maximum number of unmatched
+                       '(' that COULD be paired.
+
+            - We basically count the number of ')' we are waiting for, and it's equal to the number of open parenthesis.
+               This number will be in a range, and we represent it as [min_unmatched_left, max_unmatched_left].
 
           'min_unmatched_left' considers each '*' as ')' as much as possible.
           'max_unmatched_left' considers each '*' as '('.
@@ -95,19 +96,24 @@ def check_valid_string_v2(s):
 
              2- min_unmatched_left is 0 at the end
 
-         Note that every time during the process min_unmatched_left falls below zero, it's set back to zero.
+         Note that every time during the process min_unmatched_left falls below zero, it's reset back to zero.
          If min_unmatched_left < 0, it means we have taken some extra '*' as ')' which has caused the current "state" to
          become invalid, i.e. no opening bracket is there to balance the closing bracket. So, we can assume few of the
          '*'s as empty string.
+
          If min_unmatched_left < 0, it means that this replacement results in more ')' than '(', so it should be
          avoided. To avoid it, we simply reset min_unmatched_left to 0 which implies we only replace '*' with '(' or
          empty string.
 
+         [min_unmatched_left, max_unmatched_left] shouldn't be just the range of possibilities, but also a VALID range.
+         min_unmatched_left < 0 implies we've made invalid choices with regard to '*' substitutions and we should reset
+         it to 0.
+
          The input string can be invalid if there are unbalanced parentheses. There are two such patterns:
 
              1- Too many ')' at any instant when parsing the string left to right.
-                  max_unmatched_left deals with this condition. Since it treats each '*' as '(', then any time the number
-                  of ')' exceeds maximum possible '(', the string is flagged as invalid.
+                  max_unmatched_left deals with this condition. Since it treats each '*' as '(', then any time the
+                  number of ')' exceeds maximum possible '(', the string is flagged as invalid.
 
              2- At least one '(' at the end doesn't have a matching ')'.
                   min_unmatched_left deals with this condition. Since it treats each '*' as ')' AND clips its own value
@@ -124,7 +130,7 @@ def check_valid_string_v2(s):
          At step 1, the route diverges into three branches, so there are three counts: 1 - 1, 1, 1 + 1 which is
          0, 1, 2, for ‘)’, empty and ‘(’ respectively.
 
-         At step 2, each route diverges into three routes again, so there will be 9 possible routes now.
+         At step 2, each route diverges into three routes again, so there will be 9 possible routes.
              For count = 0, it will be 0 – 1, 0, 0 + 1, which is -1, 0, 1, but when the count is -1, that means there
              are more ‘)’s than ‘(’s, which is '())', and should be avoided. We end up with 0, 1.
              For count = 1, it will be 1 – 1, 1, 1 + 1, which is 0, 1, 2
@@ -138,7 +144,7 @@ def check_valid_string_v2(s):
          At step 5, decrement all counts --> -1, 0, 1, 2. The route with count -1 is invalid, so avoid it. Now we have
          0, 1, 2.
 
-         In the very end, we find that there is a route that can reach count == 0, which means all ‘(’ and ‘)’ are
+         At the end, we find that there is a route that can lead to count == 0, which means all ‘(’ and ‘)’ are
          cancelled out. So, the input string is valid.
 
     Time complexity: O(N)
@@ -152,16 +158,16 @@ def check_valid_string_v2(s):
         elif c == ')':
             min_unmatched_left -= 1
             max_unmatched_left -= 1
+            if max_unmatched_left < 0:
+                # Number of ')' is more than available '( ' and '*'. We can’t accommodate current right braces with
+                # the current left braces and asterisks. With all '(' and '*' we have encountered, there are more ')'.
+                return False
         else:
             min_unmatched_left -= 1 # '*' is used as ')'
             max_unmatched_left += 1 # '*' is used as '('
-        if max_unmatched_left < 0:
-            # Number of ')' is more than available '( ' and '*'. We can’t accommodate current right braces with current
-            # left braces and asterisks. With all the '(' and '*' we have encountered, there are more ')'.
-            return False
         if min_unmatched_left < 0:
             # min_unmatched_left can become negative because we COULD in theory use a '*' as a ')' even when there is
-            # no previous '(' to match it. However, we don't want to do this because it would give us an invalid
+            # no previous '(' to match it. However, we don't want to do this because it would result in an invalid
             # string. This check serves as a guarantee that we won't ever perform this unwanted '*' substitution.
             min_unmatched_left = 0
     return min_unmatched_left == 0  # If we wait for no ')' at the end, then we are good
