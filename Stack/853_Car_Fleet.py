@@ -69,12 +69,12 @@ def car_fleet_v2(target, position, speed):
     """  Similar to the previous solution but using a stack to track the fleets of cars.
 
          Since the first vehicle will always lead a fleet, starting from the second vehicle, compare each vehicle's
-         ideal arrival time with the arrival time of the fleet in front of it, i.e., stack[-1]. If its ideal arrival time
-         is earlier, it will join that fleet. Otherwise, it will lead a new fleet, and we push its arrival time to the
-         stack.
+         time needed to reach the target with that of the fleet in front of it, i.e., stack[-1]. If it needs less or
+         equal time that the fleet, it will join that fleet. Otherwise, it will lead a new fleet, and we push the time
+         calculated to the stack.
 
-         Finally, the stack contains the arrival times of the fleets and the length of the stack is the number of
-         distinct arrival times, i.e., the number of fleets.
+         Finally, the stack contains the time needed by each of the fleets to reach the target, and the length of the
+         stack is the number of fleets.
 
          This problem fits the pattern of what we can call "allocating resources to overlapping events".
          In this type of problems, it's usually the case that we have to sort the items with respect to some feature and
@@ -86,8 +86,7 @@ def car_fleet_v2(target, position, speed):
     Space complexity: O(N)
     """
     n = len(position)
-    cars = [(position[i], speed[i]) for i in range(n)]
-    cars.sort()
+    cars = sorted([(position[i], speed[i]) for i in range(n)])
     stack = []
     for i in reversed(range(n)):
         position, speed = cars[i]
@@ -95,5 +94,5 @@ def car_fleet_v2(target, position, speed):
         if not stack or time_to_target > stack[-1]:
             stack.append(time_to_target)
         # If the current time_to_target is less than or equal to the previous time_to_target, then the current car joins
-        # the previous fleet and gets dissolved into it (aka we don't need to do anything)
+        # the previous fleet and gets dissolved into it (i.e. we don't need to do anything)
     return len(stack)
