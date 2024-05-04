@@ -9,20 +9,20 @@ def str_str_v1(haystack, needle):
     """ The brute force approach is to traverse each possible substring of length M in the haystack and check if it is
          equal to the needle, where M is the length of the needle.
 
-         First substring of length M will start at index 0 in the haystack and will end at index (M - 1) + 0 = M - 1.
-         The second substring of length M will start at index 1 in the haystack and will end at index (M - 1) + 1 = M.
-         The third substring of length M will start at index 2 in the haystack and will end at index (M - 1) + 2 = M + 1
-         Thus, the last substring of length M will start at index (N - M) in the haystack and will end at index N - 1.
+         The first substring of length M will start at index 0 in the haystack and will end at index M-1.
+         The second substring of length M will start at index 1 in the haystack and will end at index M.
+         The third substring of length M will start at index 2 in the haystack and will end at index M+1.
+         Thus, the last substring of length M will start at index N-M in the haystack and will end at index N-1.
 
-         We will create a window of size M and slide it across the haystack. We will keep track of the starting index of
-         the window in a variable i. For every i, we will iterate till (i + m). During each iteration:
+         We create a window of size M and slide it across the haystack. We keep track of the starting index of the
+         window in a variable i. For every i, we iterate until (i + m). During each iteration:
 
-            - If the ith character in the window is equal to the ith character in the needle, then we will increment i.
-            - If the ith character in the window is not equal to the ith character in the needle, then we conclude that
-               the substring of length M starting from index i cannot be equal to the needle, and we will reset i to i+1.
-            - If all the ith characters in the window are equal to the ith characters of needle, then we will return i.
+            - If the ith character in the window is equal to the ith character in the needle, then we increment i.
+            - If the ith character in the window is not equal to the ith character in the needle, then we can conclude
+               that the substring of length M starting at index i cannot be equal to the needle, and we reset i to i+1.
+            - If all the characters in the window are equal to the characters of needle, then we return i.
 
-        If we are done iterating over all values of i and none of them return a match, then return -1.
+        If we are done iterating over all the values of i and none of them return a match, then return -1.
 
     Time complexity: O(N * M), where N is the length of haystack and M is the length of needle. One example where the
     worst case occurs is when needle is "aaaaab", while haystack is all a's (Let's say, "aaaaaaaaaa"). In this case, we
@@ -33,10 +33,13 @@ def str_str_v1(haystack, needle):
     n, m = len(haystack), len(needle)
     for i in range(n - m + 1):
         j = 0
-        while j < m and haystack[j + i] == needle[j]:
+        while j < m and haystack[i+j] == needle[j]:
             j += 1
         if j == m:
             return i
+        # Or simply:
+        # if haystack[i:i + m] == needle:
+        #     return i
     return -1
 
 
