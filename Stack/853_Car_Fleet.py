@@ -18,51 +18,50 @@ Return the number of car fleets that will arrive at the destination. """
 # Video explanation: https://www.youtube.com/watch?v=H5w6doOXz10
 def car_fleet_v1(target, position, speed):
     """ How can we know if a car can catch up with the car in front of it? If we calculate the time each car needs
-         to reach the target without any blockers, then the car that needs shorter time can catch up with the other cars
+         to reach the target without any blockers, then the car that needs less time can catch up with the other cars
          ahead of it.
 
-            - Sort the cars by their start positions.
+            - Sort the cars by their start positions
 
-            - Loop over the cars' positions in reverse order, so the rightmost position is the car that is closest to
-               the target.
+            - Loop over the cars' positions in reverse order, so the rightmost position is the car that is the closest
+               to the target.
 
             - Calculate the time needed for each car to reach the target, where 'current_fleet_time' is the time needed
                by the fleet ahead of the current car to reach the target.
 
                     * If the current car needs less or equal time than 'current_fleet_time', it can join this fleet.
-                    * Otherwise, if it needs more time than the 'current_fleet_time', the car will become the head of a
-                       new car fleet, and 'current_fleet_time' is now the time needed by the current car to reach the
-                       target.
+                    * Otherwise, the car becomes the head of a new fleet, and 'current_fleet_time' is now the time
+                       needed by the current car to reach the target.
 
          Even if the car catches up to a slower car, that doesn't change the fact that the only way to make more fleets
          is if cars behind actually go slower than the slowest we have seen so far. A faster car, even after slowing
          down when joining a fleet, won't change the slowest time.
 
-         So the idea is: Keep track of the time needed to arrive at the target. Whenever a car's time is less than or
+         So the idea is: keep track of the time needed to arrive at the target. Whenever a car's time is less than or
          equal to the time of the car in the fleet ahead, they will form a fleet together.
 
+         IMPORTANT:
          Why process the cars in the reverse order of their positions? Since the car farther away is the closest to the
-         target, therefore, it will definitely lead a fleet since no car behind it can pass it. If we start processing
-         the first car to the left and want to know if it would collide with the second car, we don't even know at what
-         speed the second car is going to be traveling throughout the whole trip. We can't just assume it's traveling
-         at its initial speed the entire time because it could collide with another car ahead of it and slow down.
+         target, it will definitely lead a fleet since no car behind it can pass it. If we start processing the first
+         car to the left and want to know if it would collide with the second car, we don't even know at what speed the
+         second car is going to be traveling throughout the whole trip. We can't just assume it's traveling at its
+         initial speed the entire time because it could join a slower fleet ahead and slow down.
 
     Time complexity: O(N logN)
     Space complexity: O(N)
     """
     n = len(position)
-    cars = [(position[i], speed[i]) for i in range(n)]
-    cars.sort()
-    fleet, current_fleet_time = 0, 0
+    cars = sorted([(position[i], speed[i]) for i in range(n)])
+    fleets, current_fleet_time = 0, -1
     for i in reversed(range(n)):
         position, speed = cars[i]
         time_to_target = (target - position) / speed
         if time_to_target > current_fleet_time:
-            # If the current car behind takes more time to reach the target than the head of the fleet, that means
-            # the two cars are separated, so the current car creates a new fleet
-            fleet += 1
+            # If the current car needs more time to reach the target than the fleet ahead does, that means the current
+            # car can't join that fleet, and so it forms a new fleet.
+            fleets += 1
             current_fleet_time = time_to_target
-    return fleet
+    return fleets
 
 
 # Video explanation: https://youtu.be/Pr6T-3yB9RM
