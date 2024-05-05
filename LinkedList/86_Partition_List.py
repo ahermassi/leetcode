@@ -16,27 +16,27 @@ class ListNode:
 
 # Video explanation: https://youtu.be/KT1iUciJr4g
 def partition(head, x):
-    """ In the reformed list, there would be a point in the linked list before which all the elements would be smaller
-         than x and after which all the elements would be greater or equal to x. Let's call this point as the JOINT.
+    """ In the reformed linked list, there would be a point in the list before which all the elements would be smaller
+         than x and after which all the elements would be greater than or equal to x. Let's call this point the JOINT.
 
-         Reverse engineering the question tells us that if we break the reformed list at the JOINT, we will get two
-         smaller linked lists, one with smaller elements and the other with elements greater or equal to x. In the
-         solution, our main aim is to create these two linked lists and join them.
+         Reverse engineering the question tells us that if we break the reformed list at the JOINT, we get two smaller
+         linked lists, one with smaller elements and another with elements greater than or equal to x. In the solution,
+         our main aim is to create these two linked lists and join them.
 
-         We can take two pointers 'less_tail' and 'equal_or_greater_tail' to keep track of the two linked lists as
+         We can take two pointers 'less_tail' and 'greater_or_equal_tail' to keep track of the two linked lists as
          described above. These two pointers could be used two create two separate lists and then these lists could be
          combined to form the desired reformed list.
 
-            - Initialize two pointers 'less_tail' and 'equal_or_greater_tail' with a dummy ListNode. This helps reduce
+            - Initialize two pointers 'less_head' and 'greater_or_equal_head' with a dummy ListNode. This helps reduce
                the number of conditional checks we would need otherwise.
 
             - Iterate the original linked list using the 'cur' pointer.
 
             - If the node's value pointed by 'cur' is smaller than x, the node should be part of the 'less_tail' list.
-               Else, the node should be part of 'equal_or_greater_tail' list.
+               Else, the node should be part of 'greater_or_equal_tail' list.
 
-            - Once we are done with all the nodes in the original linked list, we would have two lists 'less_tail' and
-               'equal_or_greater_tail'. The original list nodes are part of either list depending on their values.
+            - Once we are done with all the nodes in the original linked list, we would have two lists 'less_head' and
+               'greater_or_equal_head'. The original list nodes are part of either list depending on their values.
 
             - Now, these two lists can be combined to form the reformed list.
 
@@ -49,27 +49,27 @@ def partition(head, x):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    less_tail = ListNode(0)
-    equal_or_greater_tail = ListNode(0)
-    # less_head and equal_or_greater_head are used to save the heads of the two lists
-    less_head, equal_or_greater_head = less_tail, equal_or_greater_tail
+    less_head, greater_or_equal_head = ListNode(0), ListNode(0)
+    # less_head and greater_or_equal_head represent the heads of the two lists
+    less_tail, greater_or_equal_tail = less_head, greater_or_equal_head
     cur = head
     while cur:
         if cur.val < x:
             less_tail.next = cur
             less_tail = less_tail.next
         else:
-            equal_or_greater_tail.next = cur
-            equal_or_greater_tail = equal_or_greater_tail.next
+            greater_or_equal_tail.next = cur
+            greater_or_equal_tail = greater_or_equal_tail.next
         cur = cur.next
-    # After the loop exits we have 4 pointers in the following order:
-    # less_head ->... -> less_tail equal_or_greater_head ->... -> equal_or_greater_tail ->
-    # Combine the two lists by adding the connection less_tail -> equal_or_greater_head.next (remember that
-    # equal_or_greater_head is a dummy node) and also removing the connection equal_or_greater_tail.next
-    less_tail.next = equal_or_greater_head.next
-    # Last node of equal_or_greater_tail list would also be the ending node of the reformed list. That node will
+    # After the loop exits we have the following 4 pointers:
+    # less_head ->... -> less_tail -> <some_node>
+    # greater_or_equal_head ->... -> greater_or_equal_tail -> <some_node>
+    # Combine the two lists by adding the connection less_tail -> greater_or_equal_head.next (remember that
+    # greater_or_equal_head is a dummy node) and also removing the connection greater_or_equal_tail.next
+    less_tail.next = greater_or_equal_head.next
+    # Last node of greater_or_equal_tail list would also be the ending node of the reformed list. That node will
     # still point to whatever node was next in the list until we sever that link by replacing it with None.
-    equal_or_greater_tail.next = None
+    greater_or_equal_tail.next = None
     return less_head.next # Return the new list minus the dummy head
 
 
