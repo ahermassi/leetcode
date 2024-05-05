@@ -78,23 +78,23 @@ def reverse_between_v1(head, left, right):
 
 
 def reverse_between_v2(head, left, right):
-    """ Another iterative version using a dummy head.
+    """ The use of a dummy head greatly simplifies the edge cases.
 
     Time complexity: O(N)
     Space complexity: O(1)
     """
     dummy = ListNode(0)
     dummy.next = head
-    prev, cur = dummy, dummy.next
+    prev, cur = dummy, head
     for _ in range(left - 1):
-        prev, cur = prev.next, cur.next
-    connector, tail = prev, cur
+        prev, cur = cur, cur.next
+    connector, reversed_list_tail = prev, cur
     for _ in range(right - left + 1):
         nxt = cur.next
         cur.next = prev
         prev, cur = cur, nxt
     connector.next = prev
-    tail.next = cur
+    reversed_list_tail.next = cur
     return dummy.next
 
 
