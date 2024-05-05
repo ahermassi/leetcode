@@ -18,21 +18,21 @@ def reverse_between_v1(head, left, right):
     """ Starting from the node at 'left' position and all the way up to 'right', we reverse the next pointers for all
          the nodes in between.
 
-            - We need two pointers, prev and cur. The prev pointer should be initialized to None initially while cur is
-               initialized to the head of the linked list.
+            - We need two pointers, prev and cur. The prev pointer is initialized to None while cur is initialized to
+               the head of the linked list.
 
             - We progress cur pointer one step at a time and the prev pointer follows it.
 
             - Keep progressing the two pointers in this way until cur pointer reaches the node at 'left' position.
                This is the point from where we start reversing the linked list.
 
-            - Create two additional pointers called tail and connector. The tail pointer points to the node at 'left'
-               position from the beginning of the linked list, and we call it a tail pointer since this node becomes the
-               tail of the reversed sublist. The connector points to the node before 'left' node and connects to the
-               head of the reversed sublist.
+            - Create two additional pointers called reversed_list_tail and connector. reversed_list_tail points to the
+               node at 'left' position from the beginning of the linked list, since this node becomes the tail of the
+               reversed sublist. The connector points to the node before 'left' and connects to the head of the reversed
+               sublist.
 
-            - The tail and the connector pointers are set once initially and then used at the end to finish the linked
-               list reversal.
+            - reversed_list_tail and connector pointers are set once initially and then used at the end to finish the
+               linked list reversal.
 
             - Once we reach the 'left' node, we iteratively reverse the links. We keep doing this until we are done
                reversing the link (next pointer) for the 'right' node. At that point, the prev pointer points to the
@@ -40,7 +40,7 @@ def reverse_between_v1(head, left, right):
 
             - Use the connector pointer to attach to the prev pointer since the node now pointed at by the prev pointer
                (the 'right' node) will come in place of the 'left' node after the reversal. Similarly, we make use of
-               the tail pointer to connect to the node next to the prev node i.e. (right+1)th node.
+               reversed_list_tail pointer to connect to the node next to the prev node i.e. (right+1)th node.
 
         To summarize:
 
@@ -54,18 +54,17 @@ def reverse_between_v1(head, left, right):
     prev, cur = None, head
     for _ in range(left - 1):
         # Move the two pointers until they reach the proper starting point in the list
-        prev = cur
-        cur = cur.next
-    connector, tail = prev, cur  # The two pointers that will fix the final connections
+        prev, cur = cur, cur.next
+    connector, reversed_list_tail = prev, cur  # The two pointers that will fix the final connections
     for _ in range(right - left + 1):
         # Iteratively reverse the nodes
         nxt = cur.next
         cur.next = prev
         prev, cur = cur, nxt
-    # Adjust the final connections
+    # Adjust the final connections.
+    # 'connector' always points to the node preceding the leftmost node of the sublist before reversal.
+    # At the end of reversal, 'prev' points to the head of the reversed sublist (the node at 'right' position)
     if connector:
-        # 'connector' always points to the node preceding the leftmost node of the sublist before reversal.
-        # At the end of reversal, 'prev' points to the head of the reversed sublist (the node at 'right' position)
         connector.next = prev
     else:
         # The case where the head of the linked list is the leftmost node of the sublist to reverse. We have 2 facts:
@@ -74,7 +73,7 @@ def reverse_between_v1(head, left, right):
         # 1- and 2- combined mean that if the head of the linked list is the leftmost node of the sublist to reverse,
         # then the final linked list to return should have 'prev' as head.
         head = prev
-    tail.next = cur
+    reversed_list_tail.next = cur
     return head
 
 
