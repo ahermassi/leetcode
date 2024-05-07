@@ -15,18 +15,24 @@ def search_range_v1(nums, target):
         nums = [1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7,  9,  9], target = 5
 
         left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, we set right = mid - 1. By doing that
-        and narrowing down the search range, we're essentially locating the last/rightmost element LESS than target
-        (let's call it X), similar to bisect_left. When 'left' steps over 'right', 'left' is at the index of the first
-        element to the right of X, and by the definition of X that's the index of the first occurrence of target.
+        and narrowing down the search range, we're essentially locating the last/rightmost element LESS THAN OR EQUAL TO
+        target. Let's call it X.
+            - When 'left' steps over 'right', 'left' is at the index of the first element to the right of X, and by the
+               definition of X that's the index of the first occurrence of target.
+            - When 'right' steps over 'left', 'left' is at the index of the first occurrence of target.
+
         left = 0, right = 5, mid = 2
         left = 3, right = 5, mid = 4
         left = 5, right = 5, mid = 5
         left = 6, right = 5 -> return left = 6
 
         left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, we set left = mid + 1. By doing that
-        and narrowing down the search range, we're essentially locating the first/leftmost element GREATER than target
-        (let's call it Y), similar to bisect_right. When 'right' steps over 'left', 'right' is at the index of the first
-        element to the left of Y, and by the definition of Y that's the index of the last occurrence of target.
+        and narrowing down the search range, we're essentially locating the first/leftmost element GREATER than target.
+        Let's call it Y.
+            - When 'right' steps over 'left', 'right' is at the index of the first element to the left of Y, and by the
+               definition of Y that's the index of the last occurrence of target.
+            - When 'left' steps over 'right', 'right' is at the index of the last occurrence of target.
+
         left = 7, right = 12, mid = 9
         left = 7, right = 8, mid = 7
         left = 8, right = 8, mid = 8
@@ -61,26 +67,32 @@ def search_range_v1(nums, target):
 
 # Video explanation: https://youtu.be/4sQL7R5ySUU
 def search_range_v2(nums, target):
-    """ The fundamental idea of binary search is to maintain a set of candidate solutions. To find the first index, if
-         we see the element at index i equals 'target', although we do not know whether i is the first element equal to
-         'target', we do know that no subsequent element can be the first position. Therefore, we discard all elements
-         beyond index (i + 1) from the set of candidates.
+    """ The fundamental idea of binary search is to maintain a set of candidate solutions.
 
-         Let's apply the above logic to the array [-14, -10, 2, 108, 108, 243, 285, 285, 285, 401], with target = 108.
-         We start with all indices as candidates, i.e., with [0, 9].
+         To find the first occurrence index, if we see that the element at index i equals 'target', and although we do
+         not know whether that's the first element equal to 'target', we do know that no subsequent element can be the
+         first occurrence. Therefore, we discard all elements beyond index i+1 from the set of candidates.
 
-         The mid index is 4, which contains target. Therefore, we can update the candidate set to [0, 3], and record 4
-         as an occurrence of 'target'.
+         To find the last occurrence index, if we see that the element at index i equals 'target', and although we do
+         not know whether that's the last element equal to 'target', we do know that no prior element can be the
+         last occurrence. Therefore, we discard all elements before index i from the set of candidates.
 
-        The next midpoint is 1, and this index contains -10. We update the candidate set to [2,3].
+         Let's apply the above logic to the array [-14, -10, 2, 108, 108, 243, 285, 285, 285, 401], and target = 108.
+         We start with all indices as candidates, i.e., with [0, 9]. We want to find the index of the first occurrence
+         of target.
+
+         The mid index is 4, which contains target. Therefore, we can update the candidates range to [0, 3], and record
+         4 as an occurrence of 'target': index=4.
+
+        The next midpoint is 1, and this index contains -10. We update the candidates range to [2,3].
 
         The value at the midpoint is 2, so we update the candidate set to [3, 3].
 
-        Since the value at this midpoint is 108, we update the first seen occurrence of 'target' to 3.
+        Since the value at the midpoint is 108, we update index=3.
 
         Now the interval is [3, 2], which is empty, terminating the search. The first position of target is 3.
 
-        Using the same logic, we can find the last occurrence index.
+        Using the same logic, we can find the index of the last occurrence.
 
     Time complexity: O(logN)
     Space complexity: O(1)
