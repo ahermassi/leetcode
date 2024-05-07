@@ -7,24 +7,26 @@ import unittest2 as unittest
 
 
 def search_range_v1(nums, target):
-    """ The problem can be simply broken down as two binary searches for the beginning and end of the range,
+    """ The problem can be simply broken down into two binary searches for the beginning and end of the range,
          respectively. The tricky part is handling the left and right pointers when a match is found.
 
          Example:
                       0  1  2  3  4  5  6  7  8  9  10 11 12
         nums = [1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7,  9,  9], target = 5
 
-        left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, right = mid - 1. By doing that
-        and narrowing down the search range, we're essentially locating the first element LESS than target, similar to
-        bisect_left. When 'left' steps over 'right', nums[left] is the first occurrence of target.
+        left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, we set right = mid - 1. By doing that
+        and narrowing down the search range, we're essentially locating the last/rightmost element LESS than target
+        (let's call it X), similar to bisect_left. When 'left' steps over 'right', 'left' is at the index of the first
+        element to the right of X, and by the definition of X that's the index of the first occurrence of target.
         left = 0, right = 5, mid = 2
         left = 3, right = 5, mid = 4
         left = 5, right = 5, mid = 5
         left = 6, right = 5 -> return left = 6
 
-        left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, left = mid + 1. By doing that
-        and narrowing down the search range, we're essentially locating the first element GREATER than target, similar
-        to bisect_right. When 'right' steps over 'left', nums[right] is the first occurrence of target.
+        left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, we set left = mid + 1. By doing that
+        and narrowing down the search range, we're essentially locating the first/leftmost element GREATER than target
+        (let's call it Y), similar to bisect_right. When 'right' steps over 'left', 'right' is at the index of the first
+        element to the left of Y, and by the definition of Y that's the index of the last occurrence of target.
         left = 7, right = 12, mid = 9
         left = 7, right = 8, mid = 7
         left = 8, right = 8, mid = 8
