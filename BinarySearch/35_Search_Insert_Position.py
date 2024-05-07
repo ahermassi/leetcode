@@ -35,17 +35,20 @@ def search_insert(nums, target):
                              r=0   l=1
         left = 1 is the insertion index after which nums = [5, 7]
 
-        In other words: In the case where we need to insert (target not found), left and right must have narrowed down
+        In other words: in the case where we need to insert (target not found), left and right must have narrowed down
         to the same element - call it X. Following regular binary search, if we go left, meaning target is smaller than
         X, the algorithm changes right and leaves left untouched. This is desired, because left, untouched and used as
-        insertion index, inserts the element to the left of X. On the other hand, if we go right, left is changed to
-        left + 1, which indeed inserts target to the right of X.
+        insertion index, inserts the element to the left of X. On the other hand, if we go right, left is set to left+1,
+        which indeed inserts target to the right of X.
 
     Time complexity: O(log N)
     Space complexity: O(1)
     """
     left, right = 0, len(nums) - 1
-    while left <= right:  # Invariant: the desired index is between [left, right+1]
+    # The invariant of the algorithm is: the desired index is between [left, right+1].
+    # This is because if target < nums[0], the insertion index is 0; if target > nums[len(nums)-1], the insertion
+    # index is len(nums)=right+1
+    while left <= right:
         mid = (left + right) // 2
         if nums[mid] == target:
             return mid
@@ -53,10 +56,9 @@ def search_insert(nums, target):
             left = mid + 1
         else:
             right = mid - 1
-    # (1) At this point, left > right. That is, left >= right + 1
-    # (2) From the invariant, we know that the index is between [left, right+1], so left <= right + 1.
-    # Following from (1), now we know that left == right + .
-    # (3) Following from (2), the index is between [left, right+1] = [left, left], which means that left is the desired
+    # (1) At this point, left > right, that is, left = right + 1
+    # (2) From the invariant, we know that the index is between [left, right+1].
+    # Following from (1), the index is between [left, right+1] = [left, left], which means that left is the desired
     # index. Therefore, we return left as the answer.
     return left
 
