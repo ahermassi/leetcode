@@ -13,7 +13,7 @@ class TreeNode(object):
 
 
 def right_side_view_v1(root):
-    """ The problem asks to return a list of last elements from all levels, so it's the natural to implement BFS here.
+    """ The problem asks to return a list of last elements from all levels, so it's natural to use BFS here.
 
          Perform a BFS on the tree with the right side being always in the front of the queue.
 
@@ -27,7 +27,7 @@ def right_side_view_v1(root):
     while queue:
         res.append(queue[0].val)
         n = len(queue)
-        for i in range(n):
+        for _ in range(n):
             node = queue.popleft()
             # Push the right child before the left child
             queue.extend([kid for kid in (node.right, node.left) if kid])
