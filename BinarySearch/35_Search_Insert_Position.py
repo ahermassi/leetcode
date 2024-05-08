@@ -6,7 +6,7 @@ import unittest2 as unittest
 
 
 # Video explanation: https://youtu.be/K-RYzDZkzCI
-def search_insert(nums, target):
+def search_insert_v1(nums, target):
     """ Based on the description of the problem, we can see that it could be a good match for binary search. Usually,
          within binary search, we compare the target value to the middle element of the array at each iteration.
 
@@ -63,6 +63,43 @@ def search_insert(nums, target):
     return left
 
 
+def search_insert_v2(nums, target):
+    """ Similar to 278- First Bad Version.
+
+         The problem can be stated as:
+
+                Find the index of the first element greater than or equal to target
+
+         Binary search can be used if we model the problem as a list of binary assertions (nums[index] >= target),
+         resulting in a list of binary values [F, F, F, T, T], where 'F' means (nums[index] >= target == False) and 'T'
+         means (nums[index] >= target == True). This list is sorted, and the problem boils down to finding the first 'T'
+         assertion.
+
+         Note that the initial range of possible indices includes len(nums) to account for the case where target is
+         bigger than all the elements in nums array.
+
+    Time complexity: O(log N)
+    Space complexity: O(1)
+    """
+    left, right = 0, len(nums)
+    while left < right:
+        mid = (left + right) // 2
+        if nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid
+    return left
+    # Contrast this to 278- First Bad Version solution.
+    # left, right = 1, n
+    # while left < right:
+    #     mid = (left + right) // 2
+    #     if not is_bad_version(mid):
+    #         left = mid + 1
+    #     else:
+    #         right = mid
+    # return left
+
+
 class Test(unittest.TestCase):
     data = [([1, 3, 5, 6], 5, 2),
             ([1, 3, 5, 6], 2, 1),
@@ -72,7 +109,8 @@ class Test(unittest.TestCase):
 
     def test_search_insert(self):
         for test_array, target, result in self.data:
-            self.assertEqual(result, search_insert(test_array, target))
+            self.assertEqual(result, search_insert_v1(test_array, target))
+            self.assertEqual(result, search_insert_v2(test_array, target))
 
 
 if __name__ == '__main__':
