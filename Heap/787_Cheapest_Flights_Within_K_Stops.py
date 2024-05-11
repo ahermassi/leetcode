@@ -7,7 +7,7 @@ from heapq import heappop, heappush
 import unittest2 as unittest
 
 
-def find_cheapest_price_v1(flights, src, dst, k):
+def find_cheapest_price_v1(n, flights, src, dst, k):
     """ We can treat this as a graph problem where:
 
          - Cities can be thought of as nodes in a graph
@@ -28,18 +28,17 @@ def find_cheapest_price_v1(flights, src, dst, k):
         path to that node. The only possible way for BFS (or DFS) to find the shortest path in a weighted graph is to
         search the entire graph and keep recording the minimum distance from the source to the destination node.
 
-        However, this problem limits the number of stops to k. As a result, we need not search the paths with lengths
-        greater than (k + 1). A breadth-first search can be used for this problem because the number of levels to be
-        explored by the algorithm is bounded by k.
+        However, this problem limits the number of stops to k. As a result, we need not search the paths that are more
+        than k+1 hops away from the source node. A breadth-first search can be used for this problem because the number
+        of levels to be explored by the algorithm is bounded by k.
 
         In this approach, we perform a level-order iteration over the nodes. We explore all the nodes at the current
-        level before moving on to the nodes at the next level. The current level would correspond to the number of stops
-        that is limited by k. When we move from one level to the next, we increase the stops by 1. We are allowed a
-        maximum of k stops, which means we could go up to a maximum of (k + 1) levels from the source node, trying to
-        reach the destination at the minimum price.
+        level before moving on to the nodes at the next level. The current level corresponds to the number of stops
+        that is limited by k. We are allowed a maximum of k stops, which means we could go up to a maximum of k+1
+        levels from the source node, trying to reach the destination at the minimum price.
 
-        We can maintain a costs array which stores the minimum price to reach each node. When we want to move to a node,
-        we only consider edges where the total price after traversing the edge is less than the currently calculated
+        We can maintain a costs array which stores the minimum cost to reach each node. When we want to move to a node,
+        we only consider edges where the total price after traversing the edge is less than the previously calculated
         costs[node]. This optimization helps avoid TLE.
 
             - Create an adjacency list where graph[a] contains all the neighbors of node a and the corresponding price
@@ -53,18 +52,19 @@ def find_cheapest_price_v1(flights, src, dst, k):
             - Perform BFS until the queue is empty or k >= 0 (alternatively, we can create a variable to keep track of
                the number of BFS "layers" if we don't want to modify the input parameter k):
 
-                    * Iterate over all the nodes at a particular level. This will be done by starting a nested loop and
-                       visiting all the nodes currently present in the queue.
+                    * Iterate over all the nodes of the current level. This is done by starting a nested loop and
+                       extracting all the nodes present in the queue.
 
-                    * At each pair {node, total cost}, iterate over all the neighbors of the node. For each neighbor,
-                       check if costs[neighbor] is greater than total cost + the price of the edge. If it is, then
-                       update cost[neighbor] and push (neighbor, costs[neighbor]) to the queue.
+                    * For each pair {node, total cost}, iterate over all the neighbors of the node. For each neighbor,
+                       check if (total cost + the price of the edge) is smaller than costs[neighbor]. If it is, then
+                       update costs[neighbor] and push (neighbor, costs[neighbor]) to the queue.
 
-                    * After iterating over all the nodes at the current level, decrement k. We visited all the nodes at
-                    the current level and are ready to visit the next level of nodes.
+                    * After iterating over all the nodes of the current level, decrement k. We visited all the nodes at
+                       the current level and are ready to process the next level of nodes.
 
-            - Once we reach a condition where either the queue is empty or k < 0, we have our answer as costs[dst].
-            If costs[dst] hasn't changed from the initial large value, then we never reached it, so return -1.
+            - Once we reach a condition where either the queue is empty or k < 0, we have the answer at costs[dst].
+               If costs[dst] hasn't changed from the initial large value, it means the destination is unreachable, and
+               so return -1.
 
     Time complexity: O(V + E*k), where E is the number of flights and V is the number of cities. Depending on
     improvements in the shortest distance for each node, we may process each edge multiple times. However, the maximum
@@ -74,7 +74,6 @@ def find_cheapest_price_v1(flights, src, dst, k):
     Space complexity: O(V + E*k), we process at most E*k edges, so the queue takes up O(E*k) space in the worst case. We
     also need O(E) space for the adjacency list and O(V) space for the costs array.
     """
-    n = len(flights)
     graph = defaultdict(list)
     for source, destination, cost in flights:
         graph[source].append((destination, cost))
@@ -84,9 +83,9 @@ def find_cheapest_price_v1(flights, src, dst, k):
     while queue and k >= 0:
         size = len(queue)
         for _ in range(size):
-            node, total_cost = queue.popleft()
-            for neighbor, cost in graph[node]:
-                if costs[neighbor] > total_cost + cost:
+            vertex, total_cost = queue.popleft()
+            for neighbor, cost in graph[vertex]:
+                if total_cost + cost < costs[neighbor]:
                     costs[neighbor] = total_cost + cost
                     queue.append((neighbor, costs[neighbor]))
         k -= 1
