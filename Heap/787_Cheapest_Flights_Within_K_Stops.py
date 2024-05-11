@@ -92,42 +92,37 @@ def find_cheapest_price_v1(n, flights, src, dst, k):
     return costs[dst] if costs[dst] != float('inf') else -1
 
 
-def find_cheapest_price_v2(flights, src, dst, k):
+def find_cheapest_price_v2(n, flights, src, dst, k):
     """ Dijkstra's algorithm using priority queue.
 
         If we forget about the part where the number of stops is limited, then the problem simply becomes the shortest
-        path problem on a weighted graph. Dijkstra's algorithm is used to find the shortest paths from a source node to
-        all the other nodes in a weighted graph where the edge weights are positive numbers. It makes use of a priority
-        queue (heap) to decide which edges to use.
+        path in a weighted graph. Dijkstra's algorithm is used to find the shortest paths from a source node to all the
+        other nodes in a weighted graph where the edge weights are positive numbers. It uses a priority queue (heap) to
+        decide which edges to choose.
 
         It's important to model the problem in a way that standard algorithms or their slight variations can be used for
         the solutions.
 
         Whenever we have a problem where we're given some entities that have some sort of connections amongst them, more
-        often than not it can be modeled as a graph problem. Once we've figured out that the question can be modeled as
-        a graph problem, we then need to think about the various aspects of a graph i.e. directed vs undirected,
-        weighted vs unweighted, cyclic vs acyclic. These aspects help define the algorithm that we can consider for
-        solving the problem at hand.
+        often than not it can be modeled as a graph. Once we've figured that out, we then need to think about the
+        various aspects of a graph i.e. directed vs undirected, weighted vs unweighted, cyclic vs acyclic. These aspects
+        help define the algorithm that we can consider for solving the problem at hand.
 
         For example, a standard rule of thumb that is followed in solving the shortest path problems is that we mostly
-        use breadth-first search for unweighted graphs and use Dijkstra's algorithm for weighted graphs. An implied
-        condition to apply Dijkstra's algorithm is that the weights of the graph must be positive. If the graph has
-        negative weights and can have negative weighted cycles, we would have to employ another algorithm called
-        Bellman-Ford. The point here is that the properties of the graph and the goal define the kind of algorithms
-        we might be able to use.
+        use BFS for unweighted graphs and use Dijkstra's algorithm for weighted graphs. An implicit condition to apply
+        Dijkstra's algorithm is that the weights of the graph must be positive. If the graph has negative weights and
+        can have negative weighted cycles, we would have to employ another algorithm called Bellman-Ford. The point
+        here is that the properties of the graph and the goal define the kind of algorithms we might be able to use.
 
-        If we don't consider the part where the number of stops is limited, this problem becomes a standard shortest
-        path problem in a weighted graph with positive weights and hence, it becomes a prime candidate for Dijkstra's.
+        Dijkstra's uses a min-heap (priority queue) as the main data structure to always pick the node which can be
+        reached in the least amount of time/cost/weight from the current point starting all the way from the source.
+        That approach as-is won't work for this problem.
 
-        Dijkstra's uses a min-heap (priority queue) as the main data structure to always pick out the node which can be
-        reached in the shortest amount of time/cost/weight from the current point starting all the way from the source.
-        That approach as it is won't work for this problem.
-
-        In the previous approach, we used a costs array that made sure we only traversed an edge to node a if we could
-        make an improvement on costs[a]. In this approach, we will instead use a stops array which tracks the minimum
-        number of stops needed to reach each node instead of the minimum price. Then, we only traverse an edge to a
-        node if it has not already been visited with fewer stops. Because we are greedily choosing the node with the
-        lowest total price, the first time we reach the destination node we have the answer.
+        In the previous solution, we used a costs array that made sure we only traversed an edge to node a if we could
+        make an improvement on costs[a]. In this approach, we instead use a stops array which tracks the minimum number
+        of stops needed to reach each node instead of the minimum price. Then, we only traverse an edge to a node if it
+        has not already been visited with fewer stops. Because we are greedily choosing the node with the lowest total
+        cost, the first time we reach the destination node we have the answer.
 
         We need to keep track of the number of stops taken to reach a node (city) in addition to the shortest path from
         the source node because, if at any point, we find that we have exhausted k stops, we can't progress any further
@@ -139,53 +134,52 @@ def find_cheapest_price_v2(flights, src, dst, k):
         guaranteed that the distance from the source at that point is the shortest.
 
         What we need to modify here is that we need to reconsider a node if the distance from the source is shorter than
-        what we have recorded. So, we don't change the min-heap's priority which is to pick nodes with the shortest
-        distance from the source. Instead, if we ever encounter a node that has already been processed before but the
-        number of stops from the source is less than what was recorded, we will add it to the heap so that it gets
-        considered again. That's the only change we need to make Dijkstra's compliant with the limitation on the number
-        of stops.
-
-            - Create an adjacency list where graph[a] contains all the neighbors of node a and the corresponding price
-               it takes to move to a neighbor.
-
-            - Initialize a min heap with (0, src, 0). The first value represents the current shortest distance/lowest
-               cost from the source and the last value represents the number of stops taken from the source to reach
-               this node.
-
-            - We continue processing the nodes until either of the following conditions is met:
-                    * We reach the destination node
-                    * We exhaust the heap which would mean we were not able to reach the destination at all
-
-            - At each step, we remove a node from the heap. This would represent the node with the shortest distance/lowest
-               cost from the source amongst the ones in the heap.
-
-            - We check if number of stops to reach the node is greater than the minimum number of stops for the current
-               node. If that is the case, then it means the currently considered path from the source to the node is
-               slightly more expensive than a previous path and has more stops and hence, it should not be considered.
-
-            - Otherwise, we iterate over all the current node's neighbors which we can obtain from the adjacency list.
-               For each neighbor, we push it into the heap with updated cost and number of stops
-
-        The key difference with the classic Dijkstra's algorithm is that we don't maintain the global optimal cost for
-        each node, i.e. ignore below optimization:
-
-            distance ← dist[u] + length(u, v)
-            if distance < dist[v]: ...
-
-        Because there could be routes whose lengths are shorter but use more stops, and those routes don't necessarily
-        constitute the best route in the end. To deal with this, rather than maintaining the optimal routes with 0...k
-        stops for each node, the algorithm simply puts all possible routes into the priority queue, so that all of them
-        have a chance of being processed. The algorithm returns the first qualified route.
-
-        The reason for this is that Dijkstra's (and this modified Dijkstra's) always selects greedily, as in it always
-        picks the node with the lowest cost off the top of the priority queue. This means when we pop the 'dst' node
-        off the heap, we have the lowest cost to that node since we always pick the lowest place to go, and obviously
-        the route from the source to the current node (which is 'dst') used at most k stops.
+        what we have recorded. So, we don't change the min-heap's priority which is to pick nodes with the lowest cost
+        from the source. Instead, if we ever encounter a node that has already been processed before but the number of
+        stops from the source is less than what was recorded, we add it to the heap, so it gets considered again. That's
+        the only change we need to make Dijkstra's compliant with the limitation on the number of stops.
 
         This question is a little different from the Dijkstra's problem in the sense that there's a trade-off between
         lower price and fewer stops. Heap entries take the form of (cost, node, stops_used). 'cost' is the accumulated
         cost, 'node' is the current node's location, and 'stops_used' is the number of stops made as we can only make
         at most k stops.
+
+            - Create an adjacency list where graph[a] contains all the neighbors of node a and the corresponding cost it
+               takes to move to a neighbor.
+
+            - Initialize a min heap with (0, src, 0). The first value represents the current shortest distance/lowest
+               cost from the source and the last value represents the number of stops taken from the source to reach
+               this node.
+
+            - We continue processing the nodes until either one of the following conditions is met:
+                    * We reach the destination node
+                    * We exhaust the heap which would mean we were not able to reach the destination
+
+            - At each step, remove a node from the heap. This represents the node with the shortest distance/lowest
+               cost from the source amongst the ones in the heap.
+
+            - We check if number of stops to reach the node is greater than the recorded minimum number of stops for the
+               current node. If that is the case, then it means the currently considered path from the source to the
+               node is slightly more expensive (in terms of number of stops) than a previous path and hence should not
+               be considered.
+
+            - Otherwise, we iterate over all the current node's neighbors which we can obtain from the adjacency list.
+               For each neighbor, we push it to the heap with updated cost and number of stops
+
+        The key difference with the classic Dijkstra's algorithm is that we don't maintain the global optimal cost for
+        each node, i.e. ignore below optimization:
+
+            if dist[u] + length(u, v) < dist[v]: ...
+
+        because there could be cheaper routes but use more stops, and those routes don't necessarily constitute the best
+        route in the end. To handle this, instead than maintaining the optimal routes with 0...k stops for each node,
+        the algorithm simply puts all possible routes into the priority queue, so that all of them have a chance of being
+        processed. The algorithm returns the first qualified route.
+
+        The reason for this is that Dijkstra's (and this modified Dijkstra's) always selects greedily, as in it always
+        picks the node with the lowest cost off the top of the priority queue. This means when we pop the 'dst' node
+        off the heap, we have the lowest cost to that node since we always pick the lowest cost place to go, and
+        obviously the route from the source to the current node (which is 'dst') used at most k stops.
 
     Time complexity: O(E + V logV), where E is the number of flights and V is the number of cities. The time complexity
     is mainly dominated by the number of times we pop and push into the heap. We will process each node (city) at least
@@ -193,26 +187,25 @@ def find_cheapest_price_v2(flights, src, dst, k):
     neighbors to the heap.
     Space complexity: O(V), graph and heap store at most V entries
     """
-    n = len(flights)
     graph = defaultdict(list)
     for source, destination, cost in flights:
         graph[source].append((destination, cost))
-    heap = [(0, src, 0)]  # (cost from src node, node, number of stops from src node)
     stops = [float('inf')] * n  # Track the minimum number of stops it takes to reach a node
+    heap = [(0, src, 0)]  # (cost from src to node, node, number of stops from src to node)
     while heap:
-        total_cost, node, stops_from_src_node = heappop(heap)
-        if node == dst and stops_from_src_node <= k + 1:
+        total_cost, node, stops_from_src_to_node = heappop(heap)
+        if node == dst and stops_from_src_to_node <= k + 1:
             # There are k stops allowed, which means we can move k+1 times
             return total_cost
-        if stops[node] < stops_from_src_node:
+        if stops_from_src_to_node > stops[node]:
             # The current path used more stops to reach the node than some previous paths. Unlike Dijkstra's which
-            # updates only if the distance is shorter, a node should be updated here if (i) distance is shorter (ii)
-            # fewer number of stops. If current number of stops is greater than a previous stop[node], there is no need
-            # to visit this node as it has higher cost.
+            # updates only if the distance is shorter, a node should be updated here if (i) cost is cheaper (ii) fewer
+            # stops. If the current number of stops is greater than a previous stops[node], there is no need to revisit
+            # this node.
             continue
-        stops[node] = stops_from_src_node
+        stops[node] = stops_from_src_to_node
         for neighbor, cost in graph[node]:
-            heappush(heap, (total_cost + cost, neighbor, stops_from_src_node + 1))
+            heappush(heap, (total_cost + cost, neighbor, stops_from_src_to_node + 1))
     return -1
 
 
