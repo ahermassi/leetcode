@@ -85,9 +85,7 @@ def connect_v1(root):
 
 
 def connect_v2(root):
-    """ Same algorithm but using an extra while loop to finish the wiring of complete child level at each iteration of
-         the outer loop. The previous algorithm moves 'cur' to its next node but finishes the wiring of child level at
-         the following iteration.
+    """ Same algorithm but we establish next pointers of the complete level in each iteration.
 
     Time complexity: O(N)
     Space complexity: O(1)
