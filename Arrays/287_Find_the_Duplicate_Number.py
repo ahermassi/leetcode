@@ -197,13 +197,13 @@ def find_duplicate_v5(nums):
          Each new element in the sequence is an element in nums at an index equal to the value of the previous element.
 
          If we start from x = 0, such a sequence will produce a linked list with a cycle. The cycle appears because nums
-         contains duplicates. The duplicate node is a cycle entrance. Now the problem is to find the entrance of the cycle.
+         contains duplicates. The duplicate node is the cycle entrance. Now the problem is to find that entrance.
 
          Floyd's algorithm consists of two phases and uses two pointers, usually called tortoise and hare.
 
-         In phase 1, hare = nums[nums[hare]] is twice as fast as tortoise = nums[tortoise]. Since the hare goes fast,
-         it would be the first to enter the cycle and run around the cycle. At some point, the tortoise enters the cycle
-         as well, and since it's moving slower the hare catches up to the tortoise at some intersection point.
+         In phase 1, (hare = nums[nums[hare]]) is twice as fast as (tortoise = nums[tortoise]). Since the hare goes
+         fast, it would be the first to enter the cycle and run around the cycle. At some point, the tortoise enters the
+         cycle as well, and since it's moving slower, the hare catches up to the tortoise at some intersection point.
          Note that the intersection point is not the cycle entrance in the general case.
 
          In phase 2, we give the tortoise a second chance by slowing down the hare, so that it now moves at the speed of
@@ -212,18 +212,18 @@ def find_duplicate_v5(nums):
          The tortoise and the (slowed down) hare will meet at the entrance of the cycle. Full proof is at
          142- Linked List Cycle II.
 
-         The intuition here is that because each number in nums is in the range [1, n] and nums has (n + 1) numbers
-         which means indices are in the range [0, n], then each number will necessarily point to an index that exists.
-         Therefore, the list can be traversed infinitely, which implies that there is a cycle. Why? By contradiction.
-         If we cannot reach a cycle, that is to say, we always meet a new index, and then meet a new index, but there
-         is only a finite number of indices. So, we will reach a cycle.
+         The intuition here is that because each number in nums is in the range [1, n] and nums has n+1 numbers which
+         means indices are in the range [0, n], then each number will necessarily point to an index that exists.
+         Therefore, the list can be traversed infinitely, which implies that there is a cycle. Why?
+         By contradiction: if we cannot reach a cycle, that is to say, we always meet a new index, and then meet another
+         new index, but there is only a finite number of indices. So, we will reach a cycle.
 
-         Additionally, because 0 cannot appear as a value in nums, nums[0] cannot be part of the cycle because there is
+         Because 0 cannot appear as a value in nums, nums[0] cannot be part of the cycle because there is
          no value in nums that can TAKE BACK to 0. Therefore, traversing the array in this manner from nums[0] is
          equivalent to traversing a cyclic linked list: nums[a] = b can be seen as a.next = b
 
          As there is always a duplicate number in nums, nums[i] will always be a valid index in nums. This guarantees
-         that at least one cycle will exist. If there was no duplicate in nums then nums[i] would eventually equate to
+         that at least one cycle exists. If there was no duplicate in nums then nums[i] would eventually equate to
          an out-of-range index. nums[0] is not reachable from any nums[i] which means that if another cycle exists other
          than the one containing the duplicate number, it will not contain nums[0].
          All of this means that if we begin at nums[0] we will eventually enter the cycle containing the duplicate
@@ -244,7 +244,7 @@ def find_duplicate_v5(nums):
          The starting point of this cycle is the duplicate number.
 
          Note: We need the second loop because in the first loop both pointers might end up at the same index and hence
-         we get a number which might not be a duplicate. The first loop just gives us the intersection of the indices,
+         we get a number which might not be a duplicate. The first loop just gives the intersection of the indices,
          while the second loop returns the index of the duplicate number.
 
     Time complexity: O(N)
