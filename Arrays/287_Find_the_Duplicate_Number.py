@@ -88,7 +88,7 @@ def find_duplicate_v3(nums):
 def find_duplicate_v4(nums):
     """ Binary search based on pigeonhole principle.
 
-         Originally, there are (n + 1) objects and n holes. This condition complies with pigeonhole principle, therefore
+         Originally, there are n+1 objects and n holes. This condition complies with pigeonhole principle, therefore
          at least one hole has two objects, that is one number appears twice.
 
          Consider an array that has n distinct numbers in the range [1, n]. For example: [1, 2, 3, 4, 5]. If we pick any
@@ -99,11 +99,11 @@ def find_duplicate_v4(nums):
          However, when we have duplicates in the array, this count will exceed the number at some point.
 
          For example, in [4, 3, 4, 5, 2, 4, 1], there are 3 numbers less than or equal to 3. But, the duplicate number
-         will have a count of numbers less than or equal to itself, that is greater than itself. In this example, there
+         X will have a count of numbers less than or equal to itself that is greater than X. In this example, there
          are 6 numbers that are less than or equal to 4, which is the duplicate number. Hence, the smallest number that
          satisfies this property is the duplicate number.
 
-         Consider an example: [4, 6, 4, 2, 1, 4, 3, 5]. This has (n + 1) elements in the range [1, n], where n = 7.
+         Consider an example: [4, 6, 4, 2, 1, 4, 3, 5]. This has 8 elements in the range [1, 7].
          Take each number from 1 to 7 and count how many numbers are less than or equal to it. In this example,
          count_less_than_or_equal(1,2,3,4,5,6,7) = (1,2,3,6,7,8,8). If we performed a linear scan, we would find that
          the number 4 is the first number to have its count exceed the actual number (i.e. 6 > 4) - hence 4 is the
@@ -111,21 +111,21 @@ def find_duplicate_v4(nums):
 
          A linear scan based approach would require an overall O(n^2) time complexity in the worst case, since we'd need
          to iterate over each of the n numbers and then compare it to every element to generate a count of equal or
-         lower numbers. Fortunately, count_less_than_or_equal() is monotonic (its values are always in non-decreasing
+         smaller numbers. Fortunately, count_less_than_or_equal() is monotonic (its values are always in non-decreasing
          order), and hence it is an excellent candidate for binary search.
 
          In the binary search approach, instead of doing a linear scan from 1 to n, we can apply binary search with the
          goal of finding the smallest number that satisfies the aforementioned property.
 
-         Each time we select a number 'mid' (which is the one in the middle), we count all the numbers equal to or less
-         than 'mid'. Then, if the count is more than 'mid', the search space will be [1 ... mid] otherwise [mid+1 ... n].
-         We do this until the search space is reduced to only one number.
+         Each time we select a number 'mid', we count all the numbers equal to or less than 'mid'. Then, if the count is
+         more than 'mid', the search space will be [1 ... mid] otherwise [mid+1 ... n]. We do this until the search
+         space is reduced to only one number.
 
          Or less formally:
 
          We know that the whole range is 'too crowded' and thus that the first half or the second half of the range is
-         too crowded (if both weren't, then neither would be the whole range). So we check to know whether the first
-         half is too crowded, and if it isn't, we know that the second half is.
+         too crowded (if both weren't, then neither would be the whole range). So we check whether the first half is too
+         crowded, and if it isn't, we know that the second half is.
 
          Note that although the numbers in nums are not ordered, their RANGE OF POSSIBLE VALUES is still ordered.
          That's why binary search can still be used.
@@ -133,7 +133,7 @@ def find_duplicate_v4(nums):
          Note:
 
          To observe the monotonicity of count_less_than_or_equal(), consider the evaluation: "For a given number,
-         the count of numbers less than or equal to it exceeds the number itself". Going back to the example, we had
+         the count of numbers less than or equal to itself exceeds the number itself". Going back to the example, we had
          derived: count_less_than_or_equal(1,2,3,4,5,6,7) = (1,2,3,6,7,8,8).
 
          If we now take the first number and apply said evaluation, we get false (since count_less_than_or_equal(1) == 1,
@@ -141,13 +141,8 @@ def find_duplicate_v4(nums):
 
          Applying this evaluation to all counts, we get (false, false, false, true, true, true, true). Observe how this
          remains false in the beginning, and switches to true starting from number 4 (i.e. the duplicate), after which
-         point it remains true for all further numbers. It's for this reason that binary search is applicable: We try to
+         it remains true for all further numbers. It's for this reason that binary search is applicable: We try to
          locate the first number that makes one of the halves 'crowded'.
-
-         Formally, the count for each number must include itself plus the count of all numbers less than itself. Since
-         a number cannot have a negative count, each number N must have a count greater than or equal to the count
-         of n-1. Since count_less_than_or_equal(n) >= count_less_than_or_equal(n-1), count_less_than_or_equal() must be
-         monotonically increasing.
 
          Example: nums = [2, 6, 4, 1, 3, 1, 5]
 
@@ -166,7 +161,7 @@ def find_duplicate_v4(nums):
     time. For each candidate, we iterate over the entire array which takes O(N) time.
     Space complexity: O(1)
     """
-    left, right = 1, len(nums) - 1  # We use binary search on the range of POSSIBLE NUMBERS, so left starts from 1 not 0
+    left, right = 1, len(nums) - 1  # We use binary search on the RANGE OF POSSIBLE VALUES, so left starts from 1 not 0
     while left < right:
         mid = (left + right) // 2
         count = sum(num <= mid for num in nums)
