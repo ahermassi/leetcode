@@ -11,7 +11,7 @@ import unittest2 as unittest
 
 def find_duplicate_v1(nums):
     """ In an unsorted array, duplicate elements may be scattered across the array. However, in a sorted array,
-         duplicate numbers will be next to each other.
+         duplicate numbers are next to each other.
 
          This approach modifies individual elements and does not use constant space, and hence does not meet the problem
          constraints. However, it utilizes a fundamental concept that can help solve similar problems.
@@ -20,10 +20,9 @@ def find_duplicate_v1(nums):
     Space complexity: O(N)
     """
     nums.sort()
-    n = len(nums)
-    for i in range(1, n):
-        if nums[i] == nums[i - 1]:
-            return nums[i]
+    for i, num in enumerate(nums):
+        if nums[i + 1] == num:
+            return num
 
 
 def find_duplicate_v2(nums):
