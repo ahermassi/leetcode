@@ -53,12 +53,12 @@ def partition_labels_v1(s):
 
 
 def partition_labels_v2(s):
-    """ We can treat this problem as an interval merging. This is similar to 56- Merge Intervals.
+    """ We can model this problem as an interval merging. This is similar to 56- Merge Intervals.
 
          Basically, we can create a range of indices for all the characters in the string. This yields a list of
-         intervals that is already sorted by the first element (since we process the characters of the string fom
-         left to right). We then build the result by merging the intervals and calculating the range size of each
-         merged interval.
+         intervals that is already sorted by the first element of each interval (since we process the characters of the
+         string fom left to right). We then build the result by merging the intervals and calculating the range size of
+         each merged interval.
 
     Time complexity: O(N)
     Space complexity: O(N)
@@ -68,15 +68,14 @@ def partition_labels_v2(s):
         # Even though we're collecting all the occurrences of each character, we're only interested in the first and
         # last occurrences
         indices[c].append(i)
-    intervals = list(indices.values())
+    ranges = [[values[0], values[-1]] for values in indices.values()]
     merged = []
-    for interval in intervals:
-        start, end = interval[0], interval[-1]
-        if not merged or start > merged[-1][-1]:
+    for start, end in ranges:
+        if not merged or start > merged[-1][1]:
             merged.append([start, end])  # Start a new partition
         else:
-            merged[-1][-1] = max(merged[-1][-1], end)  # Extend the current partition
-    return [interval[-1] - interval[0] + 1 for interval in merged]
+            merged[-1][1] = max(merged[-1][1], end)  # Extend the current partition
+    return [rng[-1] - rng[0] + 1 for rng in merged]
 
 
 class Test(unittest.TestCase):
