@@ -51,14 +51,15 @@ def find_duplicate_v3(nums):
          underlying concept lends itself to solving similar problems. As such, we can further practice this technique on
          other problems such as 41- First Missing Positive.
 
-         There are (n + 1) positive integers in the array, all in the range [1, n]. Since the array contains only
-         positive integers, we can track each number num that has been seen before by flipping the sign of the number
-         located at index |num|, where || denotes absolute value.
+         There are n+1 positive integers in the array, all in the range [1, n]. This means indices are in the range
+         [0, n], and therefore each number will necessarily point to an index that exists. We can track each number num
+         that was previously seen by flipping the sign of the number located at index |num|, where || denotes absolute
+         value.
 
          For example, if the input array is [1, 3, 3, 2], then for 1 flip the number at index 1, making the array
          [1, -3, 3, 2]. Next, for -3 flip the number at index 3, making the array [1,-3, 3, -2]. Finally, when we reach
-         the second 3, we'll notice that nums[3] is already negative, indicating that 3 has been seen before and hence
-         is the duplicate number.
+         the second 3, we'll notice that nums[3] is already negative, indicating that 3 was previously seen and hence is
+         the duplicate number.
 
             - Iterate over the array, evaluating each number. Let's call the current number cur.
 
@@ -66,9 +67,9 @@ def find_duplicate_v3(nums):
                absolute value).
 
             - Check if nums[cur] is negative.
-               If it is, then we have already performed this operation for the same number, and hence cur is the
-               duplicate number.
-               Otherwise, flip the sign of nums[cur] (i.e. make it negative). Move to the next element and repeat.
+               * If it is, then we have already performed this operation for the same number, and hence cur is the
+                  duplicate number.
+               * Otherwise, flip the sign of nums[cur] (i.e. make it negative). Move to the next element and repeat.
 
          Once we've identified the duplicate, we could just return it. However, even though we were not able to meet the
          problem constraints, we can show that we are mindful of the constraints by restoring the array. This is done
@@ -78,10 +79,10 @@ def find_duplicate_v3(nums):
     Space complexity: O(1)
     """
     for num in nums:
-        val = abs(num)
-        if nums[val] < 0:
-            return val
-        nums[val] = -nums[val]
+        num = abs(num)
+        if nums[num] < 0:
+            return num
+        nums[num] *= -1
 
 
 def find_duplicate_v4(nums):
