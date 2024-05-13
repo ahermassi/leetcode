@@ -21,8 +21,7 @@ def my_sqrt(x):
 
             - Initialize the interval to [0, x].
 
-            - Compare the square of mid = (left + right) // 2 with x, and use the elimination rule to update the
-               interval.
+            - Compare the square of mid = (left + right) // 2 to x, and use the elimination rule to update the interval.
 
             - If mid^2 > x, we know that all numbers greater than or equal to mid have a square greater than x, so we
                update the candidates' interval to [left, mid - 1].
@@ -30,17 +29,21 @@ def my_sqrt(x):
             - If mid^2 < x, we know that all integers less than or equal to mid have a square less than or equal to x.
                Therefore, we update the interval to [mid + 1, right].
 
-        The algorithm terminates when the interval is empty, in which case every number less than left has a square
-        less than or equal to x, and left's square is greater than x, so the result is left - 1, or right.
+        The algorithm terminates when left steps over right (or right steps over left), i.e. left == right+1, in which
+        case every number less than left has a square less than x, and left's square is greater than x because
+        left == right+1 , so the square root is left-1, or right.
 
-        Why return right, or left - 1?
+        Why return right, or left-1?
 
         'mid' is returned whenever the square root of x is an integer. Otherwise, the square root of x has a remainder.
-        Consider when the square root of x has a remainder. The while loop terminates once left > right, at which point
-        left will be greater than the square root of x (the ceiling) and right will be less than the square root of x
-        (the floor). The solution requires truncation, so we return right as it is the floor.
-        'right' is the largest integer value whose square is less than or equal to x, which is the closest possible
-        approximation to the integer square root.
+        In the latter case, the while loop terminates when left > right, at which point left will be the smallest
+        integer greater than the square root of x (the ceiling) and right will be less than the square root of x (the
+        floor). The solution requires truncation, so we return right as it is the floor.
+        'right' is the largest integer value whose square is less than x, which is the closest possible approximation to
+        the integer square root.
+
+        !! IMPORTANT!!
+        The algorithm tries to find the largest value of mid whose square is less than x IF x is not a perfect square.
 
         For example, if x = 21, we initialize the interval to [0, 21].
         mid = (0 + 21) // 2 = 10. Since 10^2 > 21, we update the interval to [0, 9].
@@ -53,7 +56,8 @@ def my_sqrt(x):
     Space complexity: O(1)
     """
     left, right = 0, x
-    while left <= right:  # Everything before 'left' has square < x, everything after 'right' has square > x
+    while left <= right:
+        # The algorithm's invariant: every number < 'left' has square < x, and every number > 'right' has square > x
         mid = (left + right) // 2
         mid_squared = mid * mid
         if mid_squared == x:
