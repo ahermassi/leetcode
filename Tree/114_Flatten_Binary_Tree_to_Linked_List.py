@@ -31,33 +31,34 @@ class TreeNode(object):
         self.right = None
 
 
+# Video explanation: https://youtu.be/rKnD7rLT0lI
 def flatten_v1(root):
     """ The main idea behind a recursive solution is that we use the solutions for sub-problems to solve an upper level
-         problem. In the case of a tree, the subtrees are essentially our sub-problems. So, a recursive solution for
-         this problem is essentially based on the idea that assuming we have already transformed the left and the right
+         problem. In the case of a tree, the subtrees are essentially the sub-problems. So, a recursive solution for
+         this problem is based on the idea that, assuming we have already transformed the left and the right
          halves of a given root node, how do we establish or modify the necessary connections so that we get a right
-         skewed tree overall?
+         skewed tree?
 
-         A great way to think about recursion here is that we "trust" that recursion does all the hard work for us and
-         flattens out the left and the right subtrees. What is it that we have to do then to get our final result? We
+         A better way to think about recursion is to "trust" that recursion does all the heavy lifting for us and
+         flattens out the left and the right subtrees. What is it that we have to do then to get the final result? We
          need a right skewed tree, so we simply have to shuffle around some pointers to get the final result.
 
          The set of nodes that are required for rewiring the tree to the final right skewed tree are 'left', 'right',
-         and 'left tail'. But what is 'left tail'? Notice that each flattened subtree actually looks like a linked list.
-         Every linked list has a head node and in this case, we also need the tail node. Once the recursion does the
-         hard work for us and flattens out the subtrees, we essentially get two linked lists, and we need the tail end
-         of the left one to attach it to the head of the right one.
+         and 'left_tail'. But what is 'lef_tail'? Notice that each flattened subtree actually looks like a linked list.
+         Every linked list has a head node and in this case, we also need the tail node. Once the recursion flattens out
+         the subtrees, we get two linked lists, and we need the tail end of the left side list to attach it to the head
+         of the right side list.
 
-        Next, we will make the following connections:
+         We make the following connections:
             right = root.right
             root.right = root.left
-            root.left = None
             left_tail.right = right
+            root.left = None
 
     Time complexity: (N logN), it takes O(height) to move to the end of the flattened left subtree
     Space complexity: O(N), occupied by the recursion stack. The problem statement doesn't mention anything about the
-    tree being balanced or not and hence, the tree could be e.g. left skewed and in that case the longest branch (and
-    hence the number of nodes in the recursion stack) would be N.
+    tree being balanced or not and hence, the tree could be left skewed and in that case the longest branch (and the
+    number of nodes in the recursion stack) would be N.
     """
     if not root:
         return
@@ -65,11 +66,12 @@ def flatten_v1(root):
     flatten_v1(root.right)
     right = root.right  # Save the flattened right subtree for later concatenation
     root.right = root.left  # Concatenate root and the flattened left subtree
-    root.left = None  # Set left to null
     left_tail = root
-    while left_tail.right:  # Move to the end of the newly added flattened left subtree
+    while left_tail.right:
+        # Move to the tail / right end of the newly added flattened left subtree
         left_tail = left_tail.right
-    left_tail.right = right  # Concatenate the flattened left subtree and the flattened right subtree
+    left_tail.right = right  # Concatenate the right end of the flattened left subtree and the flattened right subtree
+    root.left = None  # Set left to null
 
 
 def flatten_v2(root):
