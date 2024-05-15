@@ -28,6 +28,7 @@ class TreeNode(object):
         self.right = None
 
 
+# Video explanation: https://youtu.be/igbboQbiwqw
 def zigzag_level_order_v1(root):
     """ The most intuitive solution would be the BFS approach through which we traverse the tree level-by-level.
          The default ordering of BFS within a single level is from left to right. As a result, we should adjust the BFS
