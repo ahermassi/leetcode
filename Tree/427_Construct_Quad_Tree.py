@@ -84,43 +84,43 @@ def construct_v1(grid):
 
 
 def construct_v2(grid):
-    """ In the previous approach, we first iterate over all the cells in the matrix and then decide if this should be a
-         leaf or not and have four child nodes. In case we decide to have four child nodes, we recursively move to the
-         4 sub-matrices and follow the same process.
+    """ In the previous solution, we first iterate over all the cells in the matrix and then decide whether the root
+         should be a leaf and have four children nodes. In case we decide to have four children nodes, we recursively
+         move to the 4 sub-matrices and follow the same process.
 
-         The redundant part in that approach is when we will iterate over the cells in the sub-matrices that would have
-         already been iterated for the root node. It can also be explained by the time complexity of the previous
-         approach, which is O(N^2 logN); hence all the N^2 cells can be at max iterated logN times.
+         The redundant part in that approach is that we iterate over the cells in the sub-matrices that would have
+         already been visited. It can also be explained by the time complexity which is O(N^2 logN); hence all the N^2
+         cells can be at max iterated logN times.
 
-         These redundant operations can be avoided if we simply make a recursive call to the 4 sub-matrices instead of
-         first checking all the values. Once all four recursive calls returned, we will decide whether to let these as
-         child nodes of the root node or should be combined into one as the root node.
+         These redundant operations can be avoided if we make a recursive call to the 4 sub-matrices instead of first
+         checking all the cells' values. Once all four recursive calls returned, we decide whether to make these
+         children nodes of the root node or should be combined into one as the root node.
 
-         This decision will again depend on the values, but we won't have to check all the cells; instead, we can just
-         check if the four nodes are leaf nodes and all have the same value (value attribute). If they are, we can just
-         return a root leaf node with a value same as the 4 nodes; otherwise, we will return a node with any value and
-         having these nodes as the respective child nodes.
+         This decision depends on the values, but we won't have to check all the cells; instead, we can just check if
+         the four nodes are leaf nodes and all have the same value (value attribute). If they are, we can return a leaf
+         node with a value equal to that of the 4 nodes; otherwise, we return a node with any value and having these
+         nodes as the respective children nodes.
 
-         In this optimization, the only time we will have to check the cell value is when we have a matrix of size 1.
-         This would be the base case of the recursion and is doable in constant time.
+         In this optimization, the only time we have to check the cell value is when we have a matrix of size 1. This
+         would be the base case of the recursion.
 
     Time complexity: O(N^2), each cell in the matrix is visited only once; we don't check to see if the grid contains
-    the same value in each cell at each recursive call
-    Space complexity: O(log N),  for the recursion call stack; the maximum number of active stack calls is logN
+    the same value in each cell at each recursive call.
+    Space complexity: O(logN),  for the recursion call stack, the maximum number of active stack calls is logN
     """
 
-    def helper(i, j, side_length):
+    def dfs(top, left, side_length):
         if side_length == 1:
-            return Node(grid[i][j], True, None, None, None, None)
-        topLeft = helper(i, j, side_length // 2)
-        topRight = helper(i, j + side_length // 2, side_length // 2)
-        bottomLeft = helper(i + side_length // 2, j, side_length // 2)
-        bottomRight = helper(i + side_length // 2, j + side_length // 2, side_length // 2)
-        if topLeft.isLeaf and topRight.isLeaf and bottomLeft.isLeaf and bottomRight.isLeaf and \
-                topLeft.val == topRight.val and topRight.val == bottomLeft.val and bottomLeft.val == bottomRight.val:
+            return Node(grid[top][left], True, None, None, None, None)
+        top_left = dfs(top, left, side_length // 2)
+        top_right = dfs(top, left + side_length // 2, side_length // 2)
+        bottom_left = dfs(top + side_length // 2, left, side_length // 2)
+        bottom_right = dfs(top + side_length // 2, left + side_length // 2, side_length // 2)
+        if top_left.isLeaf and top_right.isLeaf and bottom_left.isLeaf and bottom_right.isLeaf and \
+                top_left.val == top_right.val and top_right.val == bottom_left.val and bottom_left.val == bottom_right.val:
             # If the 4 returned nodes are leaves and have the same value, return a leaf node with the same value.
-            return Node(grid[i][j], True, None, None, None, None)
-        return Node(grid[i][j], False, topLeft, topRight, bottomLeft, bottomRight)
+            return Node(grid[top][left], True, None, None, None, None)
+        return Node(grid[top][left], False, top_left, top_right, bottom_left, bottom_right)
 
-    return helper(0, 0, len(grid))
+    return dfs(0, 0, len(grid))
 
