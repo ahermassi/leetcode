@@ -49,16 +49,20 @@ def has_path_sum_v1(root, target_sum):
 
 
 def has_path_sum_v2(root, target_sum):
-    """ We could also convert the above recursion into iteration, with the help of stack.
+    """ We could also convert the above recursion into iteration, with the help of a stack.
 
-         We start from a stack which contains the root node and the corresponding remaining sum, which is initially
-         target_sum. Then we proceed to the iterations: pop the current node out of the stack and return True if
-         the node's value is equal to the remaining sum, and we're on a leaf node. If the remaining sum is not zero, or
-         if we're not at a leaf node, then we push the children nodes and corresponding remaining sums into the stack.
+         We start from a stack which contains the root node and the target sum. Then we proceed to the iterations:
+
+            - Pop the current node from the stack.
+
+            - If the node is a leaf and the node's value is equal to the remaining sum, return True.
+
+            - If the remaining sum is not zero, or if the node is not a leaf, then we push the children nodes and
+               corresponding remaining sum into the stack.
 
     Time complexity: O(N)
-    Space complexity: in the worst case, the tree is completely unbalanced, and we would keep all N nodes in the stack
-    so O(N); in the best case (the tree is completely balanced), it is O(logN) which is the height of the tree
+    Space complexity: in the best case, the tree is completely unbalanced, so the stack would contain one node at a
+    time; in the worst case (the tree is completely balanced), it is O(logN) which is the height of the tree.
     """
     if not root:
         return False
