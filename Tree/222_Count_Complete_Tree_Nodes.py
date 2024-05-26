@@ -39,34 +39,34 @@ def count_nodes_v1(root):
 
 
 def count_nodes_v2(root):
-    """ The height of a complete tree can be found by only going left because all nodes in the last level are as far
-         to the left as possible.
+    """ The height of a complete binary tree can be calculated by only going left because all nodes in the last level
+         are as far to the left as possible.
 
             - Find the height of left subtree and right subtree.
 
-            - If left and right subtrees have the same height, then:
+            - If the left and right subtrees have the same height, then:
                     1) the last node in the last tree level is in the right subtree, and
-                    2) the left subtree is a PERFECT tree
-               So we take (2 ^ left_height) nodes of the left subtree plus the 1 root node plus recursively the number
-               of nodes in the right subtree.
+                    2) the left subtree is a PERFECT binary tree
+               So we take (2 ^ left_height) nodes =  {left subtree + 1 root node}, plus recursively the number of nodes
+               in the right subtree. The right subtree is a complete binary tree, and POSSIBLY A PERFECT binary tree.
 
-            - If left and right subtrees have different heights, then:
+            - If the left and right subtrees have different heights, then:
                     1) the last node in the last tree level is in the left subtree, and
                     2) the right subtree is a PERFECT tree
-               So we take the (2 ^ right_height) nodes of the right subtree plus the 1 root node plus recursively the
-               number of nodes in the left subtree.
+               So we take the (2 ^ right_height) nodes = {right subtree + 1 root node}, plus recursively the number of
+               nodes in the left subtree. The left subtree is a complete binary tree, and POSSIBLY A PERFECT binary tree.
 
          In other words:
 
-            - If left subtree height equals right subtree height then:
-                    1) left subtree is perfect binary tree
-                    2) right subtree is complete binary tree
+            - If the left subtree's height is equal to the right subtree's height then:
+                    1) left subtree is a perfect binary tree
+                    2) right subtree is a complete binary tree
 
-            - If left subtree height is greater than right subtree height then:
-                    1) left subtree is complete binary tree
-                    2) right subtree is perfect binary tree
+            - If the left subtree's height is greater than the right subtree's height then:
+                    1) left subtree is a complete binary tree
+                    2) right subtree is a perfect binary tree
 
-    Time complexity: we halve the tree in every recursive step, so we have O(logN) steps, and finding the height costs
+    Time complexity: we halve the tree at every recursive step, so we have O(logN) steps, and finding the height costs
     O(logN), so overall O(logN ^ 2).
     Space complexity: O(logN ^ 2)
     """
