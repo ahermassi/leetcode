@@ -39,7 +39,9 @@ def count_nodes_v1(root):
 
 
 def count_nodes_v2(root):
-    """ The height of a complete binary tree can be calculated by only going left because all nodes in the last level
+    """ Intuition: the subtree of a complete binary tree is also a complete binary tree.
+
+         The height of a complete binary tree can be calculated by only going left because all nodes in the last level
          are as far to the left as possible.
 
             - Find the height of left subtree and right subtree.
