@@ -16,14 +16,14 @@ def has_path_sum_v1(root, target_sum):
     """ The most intuitive way is to use recursion. We go through the tree by considering at each step the node itself
          and its children.
 
-            - If the node is not a leaf, we call recursively hasPathSum method for its children with a sum
-               decreased by the current node's value.
+            - If the node is not a leaf, we recursively call hasPathSum for its children with a sum from which we
+               subtract the current node's value.
 
-            - If the node is a leaf, we check if the current sum is zero, i.e. if the initial sum was found.
+            - If the node is a leaf, we check if the current node's value complements the remaining sum.
 
-        Traverse the tree, keeping track of difference of the root-to-node path sum and the target value. As soon as we
-        encounter a leaf and the remaining sum is equal to the leaf 's value, we return true. Short circuit evaluation
-        of the check ensures that we do not process additional leaves.
+        Traverse the tree, keeping track of the difference between root-to-node path sum and the target value. As soon
+        as we encounter a leaf and the remaining sum is equal to the leaf 's value, we return true. Short circuit
+        evaluation of the check ensures that we do not process additional leaves.
 
     Time complexity: O(N), in the worst case we visit each node exactly once
     Space complexity: in the worst case, the tree is completely unbalanced and the recursion call would occur N times,
@@ -40,9 +40,9 @@ def has_path_sum_v1(root, target_sum):
     # def dfs(node, cur_sum):
     #     if not node:
     #         return False
+    #     if not node.left and not node.right and cur_sum == targetSum:
+    #         return True
     #     cur_sum += node.val
-    #     if not node.left and not node.right:
-    #         return cur_sum == targetSum
     #     return dfs(node.left, cur_sum) or dfs(node.right, cur_sum)
     #
     # return dfs(root, 0)
