@@ -40,11 +40,12 @@ def two_sum_v2(nums, target):
 
 
 def two_sum_v3(nums, target):
-    """ We can do it in one pass. While we iterate and insert elements into the hash map, we also look back to check
-         if current element's complement already exists in the hash map. If it exists, we have found a solution and
-         return immediately.
+    """ We can implement the solution in one pass.
 
-    Time complexity: O(N), for one hash table pass
+         While we iterate and insert elements into the hashmap, we also look back to check if the current element's
+         complement already exists in the hashmap. If it exists, we have found a solution and return immediately.
+
+    Time complexity: O(N), for one hashmap pass
     Space complexity: O(N)
     """
     indices = {}
