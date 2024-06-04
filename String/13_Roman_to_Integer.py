@@ -8,11 +8,11 @@ def roman_to_int(s):
     """ Let's work through some examples before having a go at writing the algorithm.
 
          What is CXVII as an integer?
-         Recall that C = 100, X = 10, V = 5, and I = 1. Because the symbols are ordered from most significant to least,
+         Recall that C = 100, X = 10, V = 5, and I = 1. Because the symbols are ordered from most to least significant,
          we can simply add the symbols, i.e. C + X + V + I + I = 100 + 10 + 5 + 1 + 1 = 117.
 
          What is DXCI as an integer?
-         Recall that D = 500. Now, notice that this time the symbols are not ordered from most significant to least—the
+         Recall that D = 500. Now, notice that this time the symbols are not ordered from most to least significant—the
          X and C are out of numeric order. Because of this, we subtract the value of X (10) from the value of C (100) to
          get 90. So, going from left to right, we have D + (C - X) + I = 500 + 90 + 1 = 591.
 
@@ -31,20 +31,20 @@ def roman_to_int(s):
         cases, instead of adding both symbols to the total, we need to subtract the large from the small, adding that
         instead.
 
-        Therefore, the simplest algorithm is to use a pointer to scan through the string, at each step deciding whether
-        to add or subtract the current symbol:
+        Therefore, the simplest algorithm is to use a pointer to scan through the string, and at each step decide
+        whether to add or subtract the current symbol:
 
             - If the next symbol has a greater value, the current symbol has to be subtracted from the current total
             - If the next symbol has a smaller value, the current symbol's value can be added from the current total
 
-        Note that we could also view the Roman Numeral as having 13 unique symbols instead of 7 (1, 5, 10, 50, 100, 500,
-        1000, 4, 9, 40, 90, 400, 900). In this case, we need to work our way down the string in the same way,
-        left-to-right, firstly checking if we're at a length-2 symbol, if not, then treating it as a length-1 symbol:
+        Note that we could also view the roman numeral as having 13 unique symbols instead of 7 {1, 4, 5, 9, 10, 40, 50,
+        90, 100, 400, 500, 900, 1000}. In this case, we need to work our way down the string in the same way,
+        left-to-right, firstly checking if we're at a length-2 symbol, and if not we treat it as a length-1 symbol:
                 if at least 2 characters remaining and s[i:i+2] is in roman_to_integer:
-                    res += value of s[i:i+2]
+                    res += roman_to_integer[s[i:i+2]]
                     i += 2
                 else:
-                    res += value of s[i]
+                    res += roman_to_integer[s[i]]
                     i += 1
 
     Time complexity: O(N)
