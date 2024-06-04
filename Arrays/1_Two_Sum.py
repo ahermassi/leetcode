@@ -6,16 +6,17 @@ import unittest2 as unittest
 
 def two_sum_v1(nums, target):
     """ Brute force approach. Not the best performance.
-         Loop through each element x and find if there is another value that equals to (target - x)
+         Loop over each element x and find if there is another value that equals to (target - x)
 
     Time complexity: O(N^2)
     Space complexity: O(1)
     """
     n = len(nums)
-    for i in range(n):
-        s = nums[i]
+    for i in range(n-1):
+        a = nums[i]
         for j in range(i + 1, n):
-            if s + nums[j] == target:
+            b = nums[j]
+            if a + b == target:
                 return [i, j]
 
 
