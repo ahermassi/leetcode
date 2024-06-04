@@ -52,12 +52,11 @@ def is_palindrome_v2(x):
 
 
 def is_palindrome_v3(x):
-    """ What if we revert only half of the number? After all, the reverse of the last half of the palindrome should be
-         the same as the first half of the number, if the number is a palindrome.
+    """ What if we reverse only half of the number? After all, the reverse of the last half of the number should be the
+        same as the first half of the number, if the number is a palindrome.
 
-         For example, if the input is 1221, if we can revert the last part of the number 1221 from 21 to 12 and compare
-         it with the first half of the number 12, and since 12 is the same as 12, we know that the number is a
-         palindrome.
+         For example, if the input is 1221, if we can reverse the last part of the number 1221 from 21 to 12 and compare
+         it with the first half of the number 12, and since they are equal we know that the number is a palindrome.
 
          Now the question is, how do we know that we've reached the half of the number?
          Since at each iteration we divide the number by 10 and multiply the reversed number by 10, when the original
@@ -71,7 +70,7 @@ def is_palindrome_v3(x):
         # the first digit of the number also needs to be 0. Only 0 satisfies this property.
         return False
     reverse = 0
-    while reverse < x:
+    while x > reverse:
         reverse = reverse * 10 + x % 10
         x //= 10
     # When the length of the number is odd, we can get rid of the middle digit by reverse // 10. For example, when the
