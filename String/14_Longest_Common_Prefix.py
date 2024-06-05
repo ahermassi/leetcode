@@ -8,14 +8,14 @@ def longest_common_prefix_v1(strings):
     """ This implementation is based on the idea that the longest common prefix is included in or equal to the first
          string in the alphabetical order of the list of strings.
 
-         The first thing to realize is that the longest common prefix can only be as long as the shortest string with a
-         common prefix in the array. So, when we sort, the shortest string with a common prefix will be the first string
-         (assuming ascending order).
+         Say we sort the array of word, and find that the first word starts with a 'b' and the last word also starts
+         with a 'b'. What does that tell us about all the words in between them? They also all start with 'b'. We know
+         this because the words are sorted in alphabetical order and the only way the first and last word can both start
+         with the same letter AND have the array be in order is if ALL the words in between start with the same letter.
 
-         Then, we have to understand that the longest common prefix must apply for ALL list elements. If there's a
-         string that does not have the longest common prefix we've found so far, then there is no common prefix.
-         For example, if the first string in the alphabetical order is 'aaa' and the last string is 'baa', then there is
-         no common prefix.
+         Using this logic, if we sort the array of words we only ever have to look at the first and last one. We can
+         ignore all the middle words entirely since we know that if the prefix matches for the first and last, it
+         matches for the middle ones as well.
 
          The first string stands as a BASELINE for the longest possible common prefix, while the last string acts as a
          verifier that all strings BEFORE the last one have this common prefix. Otherwise, it wouldn't have been the
@@ -28,24 +28,15 @@ def longest_common_prefix_v1(strings):
                     be made between all the other strings. The first and last strings are the elements that are
                     going to be the least similar.
 
-        Say we sort an array of words. The first word starts with a 'b' and the last word also starts with a 'b'. What
-        does that tell us about all the words in between them? They also all start with 'b'. We know this because the
-        words are sorted in alphabetical order and the only way the first and last word can both start with the same
-        letter AND have the array be in order is if all the words in between start with the same letter. Using this
-        logic, if we sort the array of words we only ever have to look at the first and last one. We can ignore all the
-        middle words entirely since we know if the prefix matches for the first and last, it matches for the middle ones
-        as well.
-
-
-
-        For example, ['flood', 'flower', 'flowers']. The min is 'flood' and the max is 'flowers'. We can compare just
-        these two them to get the longest common prefix 'flo'.
+        For example, ['flood', 'flower', 'flowers']. The min of alphabetical order is 'flood' and the max is 'flowers'.
+        We can compare just these two to get the longest common prefix 'flo'.
 
     Time complexity: O(N logN + M), where N is the number of strings in the list and M is the length of the shortest
-    string in the array
+    string in the array. The longest common prefix can only be as long as the shortest string.
     Space complexity: O(N)
     """
-    first, last = min(strings), max(strings)  # These are the first and last in the alphabetical order, NOT length
+    strings.sort()
+    first, last = strings[0], strings[-1]  # These are the first and last in the alphabetical order, NOT length
     i, n = 0, len(first)
     while i < n and first[i] == last[i]:
         i += 1
