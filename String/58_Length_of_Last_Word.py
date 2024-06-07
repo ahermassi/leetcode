@@ -34,3 +34,26 @@ def lengthOfLastWordV1(s):
         length += 1
         last_space -= 1
     return length
+
+
+def lengthOfLastWordV2(s):
+    """ In the above approach, we applied two loops. One is used to locate the last word, and the other one to calculate
+         its length. We could actually complete the same tasks within a single loop.
+
+         The trick is that we could define a condition, i.e. the precise moment that we should start to count the length
+         of the word. If we encounter a white space while a word count is underway, we know this space marks the start
+         of the second-to-last word.
+
+        Time complexity: O(N), where N is the length of the input string
+        Space complexity: O(1)
+        """
+    length = 0
+    i = len(s) - 1
+    while i >= 0:
+        if s[i] != '  ':
+            length += 1
+        elif length > 0:
+            # Did we already start to count the length of a word ? If yes, we've found the last word
+            return length
+        i -= 1
+    return length
