@@ -36,3 +36,30 @@ def remove_element_v1(nums, val):
     return write_index
 
 
+def remove_element_v2(nums, val):
+    """ Consider cases where the array contains few elements to remove. For example, nums = [1,2,3,5,4], val = 4.
+         The previous algorithm will do unnecessary copy operation of the first four elements. Another example is
+         nums = [4,1,2,3,5], val = 4. It seems unnecessary to move elements [1,2,3,5] one step left as the problem
+         description mentions that the order of elements could be changed.
+
+         When we encounter nums[i]=val, we can move the current element to the end of the array and dispose of the last
+         element. This essentially reduces the array's size by 1.
+
+         Note that the last element that was swapped in could be the value we want to remove itself. But don't worry, in
+         the next iteration we will still check this element.
+
+    Time complexity: O(N), where N is the length of nums array. The number of assignment operations is equal to the
+    number of elements to remove. So it is more efficient if elements to remove are rare.
+    Space complexity: O(1)
+    """
+    n = len(nums)
+    i = 0
+    while i < n:
+        if nums[i] == val:
+            nums[i] = nums[n - 1]
+            n -= 1  # Decrement the length of the array by discarding the last element
+        else:
+            i += 1
+    return n
+
+
