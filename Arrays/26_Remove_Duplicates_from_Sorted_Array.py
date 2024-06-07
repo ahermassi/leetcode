@@ -11,9 +11,9 @@ def remove_duplicates(nums):
          the unique elements from the array. We then iterate the map and push all the keys in the input array.
          However, without using extra space it makes it a bit tricky as we have to modify the existing input array.
 
-         Since the array is sorted, repeated elements must appear one after another, so we do not need an auxiliary
-         data structure to check if an element has appeared already. Therefore, if we know the position of one of the
-         elements, we also know the positioning of all the duplicate elements.
+         Since the array is sorted, repeated elements must appear one the other, so we do not need an auxiliary data
+         structure to check if an element appeared before. Therefore, if we know the position of one of the elements, we
+         also know the positioning of all the duplicate elements.
 
          We need to modify the array in-place and the size of the final array would potentially be smaller than the size
          of the input array. The goal is not to remove the elements, but to swap to the end. So, we ought to use a
@@ -30,7 +30,7 @@ def remove_duplicates(nums):
                     All elements up to write_index (included) are unique. All elements between write_index and i are
                     duplicate of nums[write_index].
 
-    Time complexity: O(N) where N is the length of array nums
+    Time complexity: O(N), where N is the length of nums array
     Space complexity: O(1)
     """
     write_index = 0  # write_index is the tail of the sequence of unique elements
