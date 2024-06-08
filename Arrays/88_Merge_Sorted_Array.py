@@ -109,7 +109,7 @@ def merge_v2(nums1, m, nums2, n):
         write_index -= 1
     if j >= 0:
         # There are more elements in nums2 left to merge. This corresponds to the edge case where all nums2 elements
-        # are smaller than nums1 elements. We are performing the merge until we have iterated through all the elements
+        # are smaller than nums1 elements. We need to continue the merge until we have iterated through all the elements
         # in nums2, i.e. all the elements in nums2 are accounted for and have been placed into their correct position in
         # nums1.
         nums1[:j + 1] = nums2[:j + 1]
