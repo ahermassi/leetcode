@@ -53,7 +53,7 @@ def is_symmetric_v2(root):
     Time complexity: O(N)
     Space complexity: O(N), in the worst case we have to insert O(N) nodes in the stack
     """
-    nodes = [root.left, root.right]
+    nodes = [(root.left, root.right)]
     while nodes:
         left_node, right_node = nodes.pop(), nodes.pop()
         if not left_node and not right_node:
@@ -62,8 +62,7 @@ def is_symmetric_v2(root):
             return False
         if left_node.val != right_node.val:
             return False
-        nodes.extend([left_node.left, right_node.right])
-        nodes.extend([right_node.left, left_node.right])
+        nodes.extend([(left_node.left, right_node.right), (right_node.left, left_node.right)])
     return True
 
 
