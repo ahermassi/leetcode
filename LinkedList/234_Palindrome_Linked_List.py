@@ -28,37 +28,41 @@ def is_palindrome_v1(head):
 def is_palindrome_v2(head):
     """ Reverse the second half of the linked list in-place (modifying the list structure), and then compare it with
         the first half.
+
         Imagine we have 2 runners, one fast and one slow, running down the nodes of the list. At each step, the fast
         runner moves down 2 nodes, and the slow runner just 1 node. By the time the fast runner gets to the end of the
         list, the slow runner will be half way.
-        Get the reverse of the second half, after which testing palindromicity of the original list reduces to testing
-        if the first half and the reversed second half are equal. This approach changes the list passed in, but the
-        reversed sublist can be reversed again to restore the original list.
+
+        Get the reverse of the second half, after which testing for palindromicity reduces to testing if the first half
+        and the reversed second half are equal. We step down the lists simultaneously ensuring the node values are
+        equal. When the node we're up to in the second list is null, we know we're done. If there was a middle value
+        attached to the end of the first list, it is correctly ignored by the algorithm.
+
+        The downside of this approach is that in a concurrent environment (multiple threads and processes accessing the
+        same data), access to the linked list by other threads or processes would have to be locked while this function
+        is running, because the linked list is temporarily broken. This is a limitation of many in-place algorithms.
+
+
+
     Time complexity: O(N)
     Space complexity: O(1), we are changing the next pointers for half of the nodes. This was all memory that had
     already been allocated, so we are not using any extra memory.
     """
-
-    def reverse(node):
-        pre, cur = None, node
-        while cur:
-            nxt = cur.next
-            cur.next = pre
-            pre = cur
-            cur = nxt
-        return pre
-
-    slow, fast = head, head
+    slow = fast = head
     while fast and fast.next:
         slow, fast = slow.next, fast.next.next
-    rev = reverse(slow)
-    temp = head
-    while rev:  # After the second half is reversed, middle node's next is set to null to indicate end of list. For
+    pre = None
+    while slow:
+        nxt = slow.next
+        slow.next = pre
+        pre, slow = slow, nxt
+    ptr1, ptr2 = head, pre
+    while ptr2:
+        # After the second half is reversed, middle node's next is set to null to indicate end of list. For
         # this reason, when 'rev' reaches the middle of the list it gets the null value. Equivalent to 'while temp: ...'
-        if temp.val != rev.val:
+        if ptr1.val != ptr2.val:
             return False
-        temp = temp.next
-        rev = rev.next
+        ptr1, ptr2 = ptr1.next, ptr2.next
     return True
 
 
