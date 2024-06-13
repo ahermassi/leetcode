@@ -12,7 +12,9 @@ class ListNode(object):
 
 
 def is_palindrome_v1(head):
-    """ Insert the nodes' values in an array and check for reversibility.
+    """ The naive approach would be to run through the linked list and create an array of its values, then compare the
+         array to its reverse to find out if it's a palindrome.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
