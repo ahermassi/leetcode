@@ -6,25 +6,30 @@ import unittest2 as unittest
 
 
 # Pattern applied: use 2 pointers and maintain an invariant between the pointers
-
+# Video explanation: https://youtu.be/aayNRwUN3Do
 def move_zeroes_v1(nums):
     """ This is a 2 pointer approach. The fast pointer which is denoted by variable i does the job of processing new
         elements. If the newly found element is not a zero, we record it just after the last found non-zero element.
         The position of last found non-zero element is denoted by the 'non_zero_index' variable.
+
         The code will maintain the following invariants:
+
             1- All elements before 'non_zero_index' are non-zeroes
             2- All elements between 'non_zero_index' and i are zeroes
             3- All elements after i are undecided (yet)
-        Therefore, when we encounter a non-zero element, we need to swap elements pointed by i and 'non_zero_index',
-        then advance both pointers. If it's a zero element, we just advance i pointer.
-    Time complexity: O(N), the total number of operations is optimal. The total operations (array writes) that code
-    does is number of non-zero elements.
+
+        Therefore, when we encounter a non-zero element, we need to swap elements pointed at i and 'non_zero_index',
+        then advance both pointers. If it's a zero element, we only advance i pointer.
+
+    Time complexity: O(N), the total number of operations is optimal. The total operations (array writes) the code
+    does is equal to the number of non-zero elements.
     Space complexity: O(1)
     """
     non_zero_index = 0
     for i, num in enumerate(nums):
-        if num:
-            nums[i], nums[non_zero_index] = nums[non_zero_index], nums[i]
+        if num != 0:
+            if i != non_zero_index:  # Avoid swapping an index with itself
+                nums[i], nums[non_zero_index] = nums[non_zero_index], nums[i]
             non_zero_index += 1
 
 
