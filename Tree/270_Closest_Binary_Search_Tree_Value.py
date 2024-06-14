@@ -14,21 +14,27 @@ class TreeNode:
 
 
 def closest_value_v1(root, target):
-    """ It makes sense to use a binary search: go left if target is smaller than current root value, and go right
-        otherwise. Choose the closest to target value at each step. The logic is similar to 285- In-order Successor in
-        BST.
+    """ Similar to 285- In-order Successor in BST.
+
+        It makes sense to use a binary search: go left if target is smaller than current root value, and go right
+         otherwise. Choose the closest to target value at each step.
+
     Time complexity: O(h)
     Space complexity: O(1)
     """
-    candidate = root
-    while root:
-        if abs(root.val - target) < abs(candidate.val - target):
-            candidate = root
-        if root.val > target:
-            root = root.left
+    candidate = root.val
+    cur = root
+    while cur:
+        if abs(target - cur.val) < abs(target - candidate):
+            candidate = cur.val
+        elif abs(target - cur.val) == abs(target - candidate):
+            # Edge case: target is at the same distance of two nodes. In that case, pick the smallest node value.
+            candidate = min(candidate, cur.val)
+        if target < cur.val:
+            cur = cur.left
         else:
-            root = root.right
-    return candidate.val
+            cur = cur.right
+    return candidate
 
 
 def closest_value_v2(root, target):
