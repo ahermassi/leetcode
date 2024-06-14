@@ -6,7 +6,7 @@ import unittest2 as unittest
 
 
 # Video explanation: https://youtu.be/W_akoecmCbM
-def word_pattern(pattern, s):
+def word_pattern_v1(pattern, s):
     """ Similar to 205- Isomorphic Strings.
 
         We use two hash maps, one for mapping characters to words and the other for mapping words to characters. We need
@@ -38,6 +38,46 @@ def word_pattern(pattern, s):
     return True
 
 
+def word_pattern_v2(pattern, s):
+    """ Similar to the previous approach, but using a single hashmap. The map tracks which character (in pattern) maps
+         to what word (in s). As we scan each character-word pair, update this hashmap for characters which are not in
+         the mapping. If we see a character which already is one of the keys in mapping, check whether the current word
+         matches with the word the character maps to. If they do not match, we can immediately return False, otherwise,
+         we just keep on scanning until the end.
+
+         This type of check will work well for cases such as:
+                "abba" and "dog cat cat dog" -> Returns True.
+                "abba" and "dog cat cat fish" -> Returns False.
+
+        BUT it will fail for:
+                "abba" and "dog dog dog dog" -> Returns True (expected False)
+
+        A fix for this is to have one hashmap for mapping characters to words and a hash set to check if a word has not
+        been previously mapped to another character.
+
+    Time complexity: O(N + M), where N is the length of s and M is the length of pattern
+    Space complexity: O(N), where N is the length of s. No more than 26 bijections will be added to each hashmap since
+    they are limited by the number of letters in the alphabet. The character to word hashmap stores a word for each
+    entry, which are substrings of s, so their combined lengths equal s. Therefore, this hashmap requires O(26+N) space.
+    The hash set requires O(N) space.
+    """
+    words = s.split(' ')
+    if len(pattern) != len(words):
+        return False
+    mapped_words = set()
+    pattern_map = dict()
+    for i, c in enumerate(pattern):
+        if c in pattern_map:
+            if pattern_map[c] != words[i]:
+                return False
+        elif words[i] in mapped_words:
+            # Check if the word has been already mapped to some other character
+            return False
+        pattern_map[c] = words[i]
+        mapped_words.add(words[i])
+    return True
+
+
 class Test(unittest.TestCase):
     data = [
         ('abba', 'dog cat cat dog', True),
@@ -46,8 +86,10 @@ class Test(unittest.TestCase):
 
     def test_is_isomorphic(self):
         for pattern, test_string, result in self.data:
-            self.assertEqual(result, word_pattern(pattern, test_string))
-            self.assertEqual(result, word_pattern(pattern, test_string))
+            self.assertEqual(result, word_pattern_v1(pattern, test_string))
+            self.assertEqual(result, word_pattern_v1(pattern, test_string))
+            self.assertEqual(result, word_pattern_v2(pattern, test_string))
+            self.assertEqual(result, word_pattern_v2(pattern, test_string))
 
 
 if __name__ == '__main__':
