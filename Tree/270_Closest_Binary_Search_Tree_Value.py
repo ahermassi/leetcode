@@ -38,33 +38,53 @@ def closest_value_v1(root, target):
 
 
 def closest_value_v2(root, target):
-    """ Let's optimise the previous solution in the case when index k of the closest element is much smaller than the
+    """ Let's optimize the previous solution in the case when index k of the closest element is much smaller than the
         tree height.
-        We can do an iterative in-order traversal of the tree and search the closest value at the same time. We stop
-        just after identifying the closest value, there is no need to traverse the whole tree. The closest value is
-        found if the target value is between two in-order elements: in-order[i] <= target < in-order[i + 1]. Then the
-        closest value is one of these two elements.
-            1- Initiate stack as an empty array and predecessor value as a very small number
-            2- To build an in-order traversal iteratively, go left as far as you can and add all nodes on the way into
+
+        We can do an iterative inorder traversal of the tree and search for the closest value at the same time. We stop
+        just after identifying the closest value, there is no need to traverse the whole tree.
+
+        The closest value is found if the target value is between two in-order elements:
+
+                        inorder[i] <= target < inorder[i+1]
+
+        Then the closest value is one of these 2 elements.
+
+            - Initialize the stack and inorder predecessor value as a very small number
+
+            - To build an inorder traversal iteratively, go left as far as you can and add all nodes on the way to
                stack.
-            3- Pop the last element from stack node = stack.pop()
-            4- If target is between predecessor and node.val, return the closest between these two elements
-            5- Set predecessor value to be equal to node.val and go one step right: root = node.right
-        If we couldn't identify the closest value, that means that the closest value is the last value in the in-order
+
+            - Pop the last element added to the stack: node = stack.pop()
+
+            - If target is between inorder predecessor and node.val, return the closest between these two elements
+
+            - Set inorder predecessor value to be equal to node.val and go one step right: cur = node.right
+
+        If we couldn't identify the closest value, that means the closest value is the last value in the inorder
         traversal, i.e. current predecessor value. Return it.
-    Time complexity: O(h + k), where k is the index of closest element in the in-order traversal of the tree
+
+    Time complexity: O(h + k), where k is the index of the closest element in the inorder traversal of the tree.
+    The worst case is a completely unbalanced tree, where we first push h elements into the stack and then pop out k
+    elements.
     Space complexity: O(h), to keep the stack in the case of unbalanced tree, in the average case of a balanced tree
     the stack always contains a few elements
     """
-    stack, pre = [], float('-inf')
-    while stack or root:
-        while root:
-            stack.append(root)
-            root = root.left
-        root = stack.pop()
-        if pre <= target < root.val:
-            return pre if abs(pre - target) < abs(root.val - target) else root.val
-        pre = root.val
-        root = root.right
-    return pre
+    stack, cur = [], root
+    inorder_predecessor = float('-inf')
+    while stack or cur:
+        while cur:
+            stack.append(cur)
+            cur = cur.left
+        node = stack.pop()
+        if inorder_predecessor <= target <= node.val:
+            if abs(target - inorder_predecessor) < abs(target - node.val):
+                return inorder_predecessor
+            if abs(target - inorder_predecessor) == abs(target - node.val):
+                # Edge case: target is at the same distance of two nodes. In that case, pick the smallest node value.
+                return min(inorder_predecessor, node.val)
+            return node.val
+        inorder_predecessor = node.val
+        cur = node.right
+    return inorder_predecessor
 
