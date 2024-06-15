@@ -111,7 +111,7 @@ def is_subsequence_v2(s, t):
     for i, c in enumerate(t):
         char_indices[c].append(i)
     t_pointer = 0
-    for i, c in enumerate(s):
+    for c in s:
         if c not in char_indices:
             return False
         indices = char_indices[c]
