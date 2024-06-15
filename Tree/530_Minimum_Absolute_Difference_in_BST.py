@@ -72,3 +72,24 @@ def get_minimum_difference_v2(root):
     prev = [float('-inf')]
     inorder(root)
     return res[0]
+
+
+def get_minimum_difference_v3(root):
+    """ The same as the previous solution but using an iterative inorder traversal
+
+
+    Time complexity: O(N), we visit every node exactly once
+    Space complexity: O(N), for the stack
+    """
+    res = float('inf')
+    prev = float('-inf')
+    stack, cur = [], root
+    while stack or cur:
+        while cur:
+            stack.append(cur)
+            cur = cur.left
+        node = stack.pop()
+        res = min(res, node.val - prev)  # No need for abs(); the nodes are processed in order
+        prev = node.val
+        cur = node.right
+    return res
