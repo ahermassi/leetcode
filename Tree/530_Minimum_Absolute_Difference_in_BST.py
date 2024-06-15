@@ -43,6 +43,7 @@ def get_minimum_difference_v1(root):
     return res
 
 
+# Video explanation: https://youtu.be/joxx4hTYwcw
 def get_minimum_difference_v2(root):
     """ As we can notice in the previous approach, we only need the immediate inorder predecessor of any node to
         calculate the minimum difference. The rest of the nodes will not be needed and are stored unnecessarily in the
