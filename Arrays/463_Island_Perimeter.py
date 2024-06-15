@@ -27,25 +27,25 @@ def island_perimeter_v1(grid):
 
 
 def island_perimeter_v2(grid):
-    """ Loop over the matrix and count the number of land cells. If the current cell is a land, count if it has any
-        neighbors. The result is land * 4 - neighbors, since a neighbor subtracts a side from the perimeter.
-        +--+     +--+              +--+--+
-        |  |  +  |  |     ->       |     |
-        +--+     +--+              +--+--+
-         4     +   4      - 2    =    6
+    """ Loop over the matrix and locate the land cells. A land cell without any surrounding land cells will have a
+        perimeter of 4.
+
+         For each land, count the number of its land neighbors and subtract 1 for each surrounding land cell because the
+         common side between current cell and its neighbor doesn't count in perimeter.
+
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
-    n, m = len(grid), len(grid[0])
-    land = neighbors = 0
+    n, m, res = len(grid), len(grid[0]), 0
     for i in range(n):
         for j in range(m):
-            if grid[i][j]:
-                land += 1
+            if grid[i][j] == 1:
+                cell_perimeter = 4
                 for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-                    if 0 <= x < n and 0 <= y < m and grid[x][y]:
-                        neighbors += 1
-    return land * 4 - neighbors
+                    if 0 <= x < n and 0 <= y < m and grid[x][y] == 1:
+                        cell_perimeter -= 1
+                res += cell_perimeter
+    return res
 
 
 class Test(unittest.TestCase):
