@@ -7,24 +7,28 @@ import unittest2 as unittest
 
 
 def can_place_flowers_v1(flowerbed, n):
-    """ We can find out the extra maximum number of flowers, 'count', that can be planted for the given flowerbed
-        arrangement. To do so, we can traverse over all the elements of the flowerbed and find out those elements which
-        are 0 (implying an empty position). For every such element, we check if its both adjacent positions are also
-        empty. If so, we can plant a flower at the current position without violating the no-adjacent-flowers-rule.
-        For the first and last elements, we need not check the previous and the next adjacent positions, respectively.
-        We can stop the process of checking the positions for planting the flowers as soon as 'count' becomes equal to
-        n. If 'count' never becomes equal to n, n flowers can't be planted at the empty positions.
+    """ We can find out the extra maximum number of flowers, 'planted_flowers', that can be planted for the given
+         flowerbed arrangement. To do so, we iterate over all the elements of the flowerbed and find out those elements
+         which are 0 (implying an empty position).
+
+            - For every such element, we check if its both adjacent positions are also empty.
+
+            - If so, we can plant a flower at the current position without violating the no-adjacent-flowers rule.
+
+            - For the first and last elements, we need not check the previous and the next adjacent positions.
+
+            - We stop as soon as 'planted_flowers' becomes equal to n. If 'planted_flowers' never becomes equal to,
+               it means we can't plant n flowers at the empty positions.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    if not n:
-        return True
-    m, count = len(flowerbed), 0
+    m, planted_flowers = len(flowerbed), 0
     for i in range(m):
         if flowerbed[i] == 0 and (i == 0 or flowerbed[i - 1] == 0) and (i == m - 1 or flowerbed[i + 1] == 0):
             flowerbed[i] = 1
-            count += 1
-            if count == n:
+            planted_flowers += 1
+            if planted_flowers == n:
                 return True
     return False
 
