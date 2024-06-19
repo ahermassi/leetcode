@@ -3,7 +3,8 @@
 import unittest2 as unittest
 
 
-def valid_palindrome(s):
+# Video explanation: https://youtu.be/JrxRYBwG6EI
+def valid_palindrome_v1(s):
     """ An important thing to notice is that once we verify two characters match at positions i and j, we only care
         about the indices between i and j.
 
@@ -47,12 +48,35 @@ def valid_palindrome(s):
     return True
 
 
+def valid_palindrome_v2(s):
+    """ To generalize the previous implementation to more than one delete, we can use a counter initialized to how many
+         characters we are allowed to delete and stop allowing for recursive calls when it reaches 0.
+
+    Time complexity: O(N), each character is visited at most once
+    Space complexity: O(allowed_deletes), for call stack
+    """
+
+    def palindrome_with_deletes(left, right, allowed_deletes):
+        while left < right:
+            if s[left] == s[right]:
+                left += 1
+                right -= 1
+            else:
+                if allowed_deletes == 0:
+                    return False
+                return palindrome_with_deletes(left + 1, right, allowed_deletes - 1) \
+                       or palindrome_with_deletes(left, right - 1,allowed_deletes - 1)
+        return True
+
+    return palindrome_with_deletes(0, len(s) - 1, 1)
+
+
 class Test(unittest.TestCase):
     data = [('abca', True), ('ecced', True), ('notaplindrome', False)]
 
     def test_valid_palindrome(self):
         for test_string, result in self.data:
-            self.assertEqual(result, valid_palindrome(test_string))
+            self.assertEqual(result, valid_palindrome_v1(test_string))
 
 
 if __name__ == '__main__':
