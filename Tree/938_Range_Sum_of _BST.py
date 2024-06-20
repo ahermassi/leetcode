@@ -12,17 +12,21 @@ class TreeNode:
 
 
 def range_sum_bst_v1(root, L, R):
-    """ We traverse the tree using a depth first search. If node's value falls outside the range [L, R], (for example
-        node.val < L), then we know that only the right branch could have nodes with value inside [L, R].
-    Time complexity: O(N), DFS will traverse all nodes in worst case
+    """ We traverse the tree using a DFS. If the node's value falls outside the range [L,R], for instance node.val < L),
+         then we know that only the right branch could have nodes with values inside [L,R].
+
+    Time complexity: O(N), DFS will traverse all nodes in the worst case
     Space complexity: O(h)
     """
     if not root:
         return 0
     if root.val < L:
+        # Left branch excluded
         return range_sum_bst_v1(root.right, L, R)
     if root.val > R:
+        # Right branch excluded
         return range_sum_bst_v1(root.left, L, R)
+    # Count in both children
     return root.val + range_sum_bst_v1(root.right, L, R) + range_sum_bst_v1(root.left, L, R)
 
 
