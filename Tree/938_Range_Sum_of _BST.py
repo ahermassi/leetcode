@@ -11,6 +11,7 @@ class TreeNode:
         self.right = None
 
 
+# Video explanation: https://youtu.be/uLVG45n4Sbg
 def range_sum_bst_v1(root, L, R):
     """ We traverse the tree using a DFS. If the node's value falls outside the range [L,R], for instance node.val < L),
          then we know that only the right branch could have nodes with values inside [L,R].
@@ -32,6 +33,13 @@ def range_sum_bst_v1(root, L, R):
 
 def range_sum_bst_v2(root, L, R):
     """ Another way to look at the problem.
+
+        If the root's value is less than L, then it's useless to further recurse the left subtree because we know that
+        every node in left subtree will be less than L as well. So explore root.left only when root.val > L.
+
+        Similarly, if the root's value is greater than R, we must not further recurse the right subtree. So explore
+        root.right only when root.val < R.
+
     Time complexity: O(N)
     Space complexity: O(h)
     """
@@ -41,9 +49,11 @@ def range_sum_bst_v2(root, L, R):
     if L <= root.val <= R:
         res += root.val
     if root.val > L:
-        res += range_sum_bst_v2(root.left, L, R)  # Left child is a possible candidate
+        # Left subtree is a possible candidate
+        res += range_sum_bst_v2(root.left, L, R)
     if root.val < R:
-        res += range_sum_bst_v2(root.right, L, R)  # Right child is a possible candidate
+        # Right subtree is a possible candidate
+        res += range_sum_bst_v2(root.right, L, R)
     return res
 
 
