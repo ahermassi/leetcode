@@ -161,3 +161,33 @@ def min_cost_climbing_stairs_v4(cost):
     return dfs(n)
 
 
+def min_cost_climbing_stairs_v5(cost):
+    """ Notice that the recurrence relation from the first approach only cares about 2 steps below the current step.
+         For example, if we are calculating the minimum cost to reach step 12, we only care about data from step 10 and
+         step 11. While we would have needed to calculate the minimum cost for steps 2-9 as well, at the time of the
+         actual calculation for step 12, we no longer care about any of those steps.
+
+         Therefore, instead of using O(N) space to keep an array, we can improve to O(1) space using only two variables.
+
+            - Initialize two variables, down_one and down_two, that represent the minimum cost to reach one step and two
+               steps below the current step, respectively. We start iteration from step 2, which means these variables
+               initially represent the minimum cost to reach steps 0 and 1, so we initialize each of them to 0.
+
+            - Iterate over the array, again with 1 extra iteration at the end to treat the top floor as the final "step".
+               At each iteration, simulate moving 1 step up. This means down_one will now refer to the current step,
+               so apply the recurrence relation to update down_one. down_two will be whatever down_one was prior to the
+               update.
+
+            - In the end, since we treated the top floor as a step, down_one will refer to the minimum cost to reach the
+               top floor. Return down_one.
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    n = len(cost)
+    down_one = down_two = 0
+    for i in range(2, n + 1):
+        down_one, down_two = min(down_one + cost[i - 1], down_two + cost[i - 2]), down_one
+    return down_one
+
+
