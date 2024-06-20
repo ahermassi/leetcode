@@ -4,6 +4,7 @@ Two binary trees are considered the same if they are structurally identical and 
 from collections import deque
 
 
+# Video explanation: https://youtu.be/vRbbcKXCxOw
 def is_same_tree_v1(p, q):
     """ The simplest strategy here is to use recursion.
 
