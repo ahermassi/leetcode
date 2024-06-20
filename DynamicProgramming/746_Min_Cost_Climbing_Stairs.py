@@ -75,6 +75,7 @@ def min_cost_climbing_stairs_v1(cost):
     return dp[n]
 
 
+# Video explanation: https://www.youtube.com/watch?v=ktmzAZWkEZ0
 def min_cost_climbing_stairs_v2(cost):
     """ Bottom-up dynamic programming but with a different recurrence relationship:
 
