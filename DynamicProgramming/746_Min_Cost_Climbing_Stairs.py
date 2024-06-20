@@ -121,3 +121,42 @@ def min_cost_climbing_stairs_v3(cost):
     return min(dp[-1], dp[-2])
 
 
+def min_cost_climbing_stairs_v4(cost):
+    """ Top-Down Dynamic Programming
+
+         Similar to the first approach, we make use of the recurrence relation we found. This time, we implement
+         minimumCost as a function instead of an array. Again, minimumCost(i) represents the minimum cost to reach the
+         ith step starting from either step 0 or step 1.
+
+         The base cases for this function are minimumCost(0) = minimumCost(1) = 0, since we are allowed to start on
+         either step 0 or step 1. For any other step i, we can refer to the recurrence relation:
+
+                        minimumCost(i) = min(cost[i - 1] + minimumCost(i - 1), cost[i - 2] + minimumCost(i - 2))
+
+        We can implement this function easily enough, but there's a major problem - repeated computations. If we want to
+        find minimumCost(5), then we call minimumCost(3) and minimumCost(4). However, minimumCost(4) will then call
+        minimumCost(3), and both minimumCost(3) calls will call minimumCost(2), on top of another minimumCost(2) call
+        from minimumCost(4).
+
+        If we calculate, say, minimumCost(3), then why should we calculate it again? Instead of going through the entire
+        subtree every time we want to calculate minimumCost(3), let's just store the value of minimumCost(3) after
+        calculating it the first time, and refer to that instead.
+
+    Time complexity: O(N), dfs(index) gets called with each index from 0 to N. Because of the memoization, each call
+    will only take O(1) time.
+    Space complexity: O(N), for call stack and memo hashmap
+    """
+
+    def dfs(index):
+        if index <= 1:
+            # Base case, we are allowed to start at either step 0 or step 1
+            return 0
+        if index not in memo:
+            memo[index] = min(cost[index - 1] + dfs(index - 1), cost[index - 2] + dfs(index - 2))
+        return memo[index]
+
+    memo = {}
+    n = len(cost)
+    return dfs(n)
+
+
