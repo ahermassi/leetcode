@@ -93,6 +93,31 @@ def min_cost_climbing_stairs_v2(cost):
     dp[n - 1] = cost[-1]
     for i in reversed(range(n - 1)):
         dp[i] = cost[i] + min(dp[i + 1], dp[i + 2])
-    return min(dp[0], dp[1])
+    return min(dp[0], dp[1])  # Minimum cost of starting from either 0th or 1st step
+
+
+def min_cost_climbing_stairs_v3(cost):
+    """ Bottom-up dynamic programming but with yet a different recurrence relationship:
+
+                dp[i] = minimum cost at ith step if we climb further from here (with paying cost)
+                dp[i] = cost[i] + min(dp[i-1], dp[i-2])
+
+        dp[i-1] is the minimum cost incurred at (i-1)th step after (i-1)th step cost is paid to climb 1 more step to i.
+        dp[i-2] is the minimum cost incurred at (i-2)th step after (i-2)th step cost is paid to climb 2 more steps to i.
+
+        The result is min(dp[n-1], dp[n-2]). To finish the stairs journey, there are 2 ways to be the last step before
+        we finish the staircase. The last step might come from both last two stairs. So, we want to know the min of
+		the costs of last 2 stairs from the dp array.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    n = len(cost)
+    dp = [0] * n
+    dp[0] = cost[0]
+    dp[1] = min(dp[0] + cost[1], cost[1])
+    for i in range(2, n):
+        dp[i] = cost[i] + min(dp[i - 1], dp[i - 2])
+    return min(dp[-1], dp[-2])
 
 
