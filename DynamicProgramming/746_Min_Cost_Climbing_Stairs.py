@@ -7,7 +7,7 @@ Return the minimum cost to reach the top of the floor.
 """
 
 
-def min_cost_climbing_stairs(cost):
+def min_cost_climbing_stairs_v1(cost):
     """ Bottom-Up Dynamic Programming
 
          Before we begin, let's clear up some confusion surrounding the problem statement. The "top of the floor" does
@@ -73,5 +73,26 @@ def min_cost_climbing_stairs(cost):
         #                   reach (i-2)th step and pay (i-2)th cost to take two steps)
         dp[i] = min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2])
     return dp[n]
+
+
+def min_cost_climbing_stairs_v2(cost):
+    """ Bottom-up dynamic programming but with a different recurrence relationship:
+
+                dp[i] = minimum cost to climb to the top starting from the ith staircase
+                dp[i] = cost[i] + min(dp[i+1], dp[i+2])
+
+        We build the results going from right to left. dp[n] = 0 marks that if we are at the top, the cost is 0.
+        Again, dp array should contain one additional element because we will treat the top floor as the step to reach.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    n = len(cost)
+    dp = [0] * (n + 1)
+    dp[n] = 0
+    dp[n - 1] = cost[-1]
+    for i in reversed(range(n - 1)):
+        dp[i] = cost[i] + min(dp[i + 1], dp[i + 2])
+    return min(dp[0], dp[1])
 
 
