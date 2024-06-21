@@ -8,9 +8,11 @@ import unittest2 as unittest
 
 # Video explanation: https://youtu.be/jzZsG8n2R9A
 def three_sum_v1(nums):
-    """ We will follow the same two pointers pattern as in other similar sum problems. It requires the array to be
-        sorted, so we'll do that first. To make sure the result contains unique triplets, we need to skip duplicate
-        values. It is easy to do because repeating values are next to each other in a sorted array.
+    """ We follow the same two pointers pattern as in other similar sum problems. It requires the array to be sorted, so
+         we do that first.
+
+         To make sure the result contains unique triplets, we need to skip duplicate values. It is easy to do because
+         repeating values are next to each other in a sorted array.
 
         To find the combinations of 3 numbers, we iterate over the array with the first pointer. The other two pointers
         are initially set to the first and the last element respectively. We compare the sum of the three elements to
@@ -23,9 +25,10 @@ def three_sum_v1(nums):
         If the number is the same as the number before, then it is equivalent to repeating the previous calculation. [2]
 
         Now we calculate the total:
-            If the total is less than zero, we need it to be larger, so we move the left pointer
-            If the total is greater than zero, we need it to be smaller, so we move the right pointer
-            If the total is zero, bingo! [5]
+
+            - If the total is less than zero, we need it to be larger, so we move the left pointer
+            - If the total is greater than zero, we need it to be smaller, so we move the right pointer
+            - If the total is zero, bingo! [5]
 
             We need to move the left (and right, but not necessarily) pointers to the next different numbers, so we do
             not get duplicate results [3], [4]
@@ -50,7 +53,6 @@ def three_sum_v1(nums):
                 # while left < right and nums[right] == nums[right-1]:  # [4]
                 #     right -= 1
                 left += 1
-                right -= 1
             elif s < 0:
                 left += 1
             else:
