@@ -38,10 +38,10 @@ def rotate(matrix):
         for j in range(i):
             matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
     # Reverse rows
-    for i in range(n):
+    for row in matrix:
         left, right = 0, n - 1
         while left < right:
-            matrix[i][left], matrix[i][right] = matrix[i][right], matrix[i][left]
+            row[left], row[right] = row[right], row[left]
             left += 1
             right -= 1
     # Equivalent to:
