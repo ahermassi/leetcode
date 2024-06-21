@@ -105,30 +105,30 @@ def three_sum_v3(nums):
     """ What if we cannot modify the input array, and we want to avoid copying it due to memory constraints?
          We can adapt the hashset approach to work for an unsorted array.
 
-            - We add the triplets to a hashset to avoid duplicates.
+            - We add the result triplets to a hashset to avoid duplicates.
 
             - Values in a triplet should be ordered (e.g. ascending). Otherwise, we would have results with the same
                values in the different positions.
 
-            - We also use another 'duplicates' hashset to skip duplicates in the outer loop.
+            - We also use another 'start_of_triplet' hashset to skip duplicates in the outer loop.
 
     Time complexity: O(N^2)
     Space complexity: O(N)
     """
     n, res = len(nums), set()
-    duplicates = set()
+    start_of_triplet = set()
     for i in range(n - 2):
-        if nums[i] in duplicates:
+        if nums[i] in start_of_triplet:
             continue
         a = nums[i]
-        duplicates.add(a)
+        start_of_triplet.add(a)
         # Find a pair of numbers (b, c) in [i + 1, n - 1] whose sum is equal to -a
         seen = set()
         for j in range(i + 1, n):
             b = nums[j]
-            c = - (a + b)
-            if c in seen:
-                res.add(tuple(sorted([a, b, c])))
+            complement = - (a + b)
+            if complement in seen:
+                res.add(tuple(sorted([a, b, complement])))
             seen.add(b)
     return map(list, res)
 
