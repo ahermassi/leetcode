@@ -65,13 +65,14 @@ def three_sum_v2(nums):
 
          We move the pivot element nums[i] and analyze elements to its right. We find all pairs whose sum is equal
          to -nums[i] using the Two Sum: One-pass Hash Table approach, so that the sum of the pivot element (nums[i])
-         and the pair is equal to zero.
+         and the pair is equal to zero. Note that in this implementation we use a hash set instead of a hashmap since we
+         don't need to store the index information.
 
-         To do that, we process each element nums[j] to the right of the pivot, and check whether a complement
+         To do that, we process each element nums[j] to the right of the pivot and check whether a complement
          -(nums[i] + nums[j]) is already in the hashset. If it is, we found a triplet. Then, we add nums[j] to the
          hashset, so it can be used as a complement from that point on.
 
-         Like in the previous approach, we also sort the array so we can skip duplicate values.
+         Like in the previous approach, we also sort the array, so we can skip duplicate values.
 
     Time complexity: O(N logN + N^2) = O(N^2)
     Space complexity: O(N)
@@ -89,13 +90,13 @@ def three_sum_v2(nums):
         seen = set()
         while j < n:
             b = nums[j]
-            c = - (a + b)
-            if c in seen:
-                res.append([a, b, c])
-                seen.add(b)
+            complement = - (a + b)
+            if complement in seen:
+                res.append([a, b, complement])
                 # Skip duplicates
                 while j < n - 1 and nums[j] == nums[j + 1]:
                     j += 1
+            seen.add(b)
             j += 1
     return res
 
