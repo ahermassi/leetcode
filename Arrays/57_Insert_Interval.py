@@ -77,15 +77,16 @@ def insert_v2(intervals, new_interval):
     while i < n and intervals[i][1] < start:
         res.append(intervals[i])
         i += 1
+    merged_intervals_start,  merged_intervals_end = start, end
     while i < n and intervals[i][0] <= end:
-        # Merge overlapping intervals. We're mutating newInterval to represent the overall merged interval of
-        # intervals that overlap with newInterval
-        start = min(start, intervals[i][0])
-        end = max(end, intervals[i][1])
+        # Merge overlapping intervals. [merged_intervals_start, merged_intervals_end] will represent the overall merged
+        # interval of intervals that overlap with newInterval
+        merged_intervals_start = min(merged_intervals_start, intervals[i][0])
+        merged_intervals_end = max(merged_intervals_end, intervals[i][1])
         i += 1
     # Add the union of previous intervals that overlapped with newInterval. Notice that if no interval overlaps with
-    # newInterval, [start, end] is the same as newInterval.
-    res.append([start, end])
+    # newInterval, [merged_intervals_start, merged_intervals_end] is the same as newInterval, or [start, end].
+    res.append([merged_intervals_start, merged_intervals_end])
     res.extend(intervals[i:])  # Add all the remaining intervals
     return res
 
