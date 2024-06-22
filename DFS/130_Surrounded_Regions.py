@@ -88,14 +88,14 @@ def solve_v2(board):
          We could reuse the bulk of the DFS approach, while simply replacing the dfs() function with a queue.
          At each iteration of the loop, we pop out the head element from the queue.
 
-            - If the popped element is a candidate cell (i.e. O), we mark it as escaped, otherwise we skip this
-               iteration.
+            - Mark the popped element as escaped
 
-            - For a candidate cell, we then simply append its neighbor cells to the queue, which would get their turns
-               to be visited in the next iterations.
+            - For a candidate cell, we then simply append its neighbor cells that have 'O' value to the queue, which
+               would get their turns to be visited in the next iterations.
 
          The interesting part is that we could easily convert the BFS to DFS by changing one single line of code, and
          the obtained DFS implementation is done in iteration, instead of recursion.
+
          The key is that instead of using the queue data structure which follows the principle of FIFO, if we use the
          stack data structure which follows the principle of LIFO, we then switch from BFS to DFS.
 
@@ -111,16 +111,21 @@ def solve_v2(board):
     n, m = len(board), len(board[0])
     queue = deque()
     for i in range(n):
-        queue.extend([(i, 0), (i, m-1)])
+        if board[i][0] == 'O':
+            queue.append([(i, 0)])
+        if board[i][m-1] == 'O':
+            queue.append([(i, m-1)])
     for j in range(m):
-        queue.extend([(0, j), (n-1, j)])
+        if board[0][j] == 'O':
+            queue.append([(0, j)])
+        if board[n-1][j] == 'O':
+            queue.append([(n-1, j)])
     while queue:
         i, j = queue.popleft()
-        if board[i][j] == 'O':
-            board[i][j] = 'T'
-            for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1):
-                if 0 <= x < n and 0 <= y < m:
-                    queue.append((x, y))
+        board[i][j] = 'T'
+        for x, y in (i-1, j), (i+1, j), (i, j-1), (i, j+1):
+            if 0 <= x < n and 0 <= y < m and board[x][y] == 'O':
+                queue.append((x, y))
     for i in range(n):
         for j in range(m):
             if board[i][j] == 'O':
