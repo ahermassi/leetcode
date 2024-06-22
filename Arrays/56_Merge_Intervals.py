@@ -9,14 +9,14 @@ def merge(intervals):
 
         Two intervals i1 and i2 overlap if the following two conditions are met:
 
-                    i2.start <= i1.end
                     i1.start <= i2.end
+                    i2.start <= i1.end
 
         i1: #......................#
              s1                   e1
         i2:       #.....................#
                    s2                  e2
-        s2 <= e1 and s1 <= e2
+        s1 <= e2 and s2 <= e1
         If any of the two conditions is not verified, the intervals wouldn't overlap.
 
         If s2 > e1:
@@ -31,13 +31,16 @@ def merge(intervals):
         i2:       #.....................#
                    s2                  e2
 
-        We pre-process the list by sorting intervals by start. This way, requirement 2 i1.start <= i2.start < i2.end is
-        met. We only have to compare i1.end with i2.start to see if requirement 1 is satisfied.
+        We pre-process the list by sorting intervals by start. This way, requirement #1 i1.start <= i2.start < i2.end is
+        met. We only have to compare i1.end with i2.start to see if requirement #2 is satisfied.
 
-        First, we sort the list. Then, we consider each interval in turn as follows: If the current interval begins
-        after the previous interval ends, then they do NOT overlap, and we can append the current interval to 'merged'.
-        Otherwise, they do overlap, and we merge them by updating the end of the previous interval if it is less than
-        the end of the current interval.
+        First, we sort the list. Then, we consider each interval in turn as follows:
+
+            - If the current interval begins after the previous interval ends, then they do NOT overlap, and we can
+               append the current interval to 'merged'.
+
+            - Otherwise, they do overlap, and we merge them by updating the end of the previous interval if it is less
+               than the end of the current interval.
 
         When the intervals are sorted, all mergeable intervals form contiguous blocks.
 
