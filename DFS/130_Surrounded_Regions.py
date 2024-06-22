@@ -23,7 +23,7 @@ def solve_v1(board):
 
         The algorithm consists of three steps:
 
-            1- Select all the cells that are located on the borders of the board.
+            1- Select all the cells that are located on the borders of the board and have 'O' value.
 
             2- Starting from each of the above selected cells, perform a DFS traversal.
 
@@ -56,19 +56,22 @@ def solve_v1(board):
     """
 
     def dfs(i, j):
-        if not 0 <= i < n or not 0 <= j < m or board[i][j] != 'O':
-            return
         board[i][j] = 'T'
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            dfs(x, y)
+            if 0 <= x < n and 0 <= y < m and board[x][y] == 'O':
+                dfs(x, y)
 
     n, m = len(board), len(board[0])
     for i in range(n):
-        dfs(i, 0)  # Left border
-        dfs(i, m - 1)  # Right border
+        if board[i][0] == 'O':
+            dfs(i, 0)  # Left border
+        if board[i][m - 1] == 'O':
+            dfs(i, m - 1)  # Right border
     for j in range(m):
-        dfs(0, j)  # Top border
-        dfs(n - 1, j)  # Bottom border
+        if board[0][j] == 'O':
+            dfs(0, j)  # Top border
+        if board[n - 1][j] == 'O':
+            dfs(n - 1, j)  # Bottom border
     for i in range(n):
         for j in range(m):
             if board[i][j] == 'O':
