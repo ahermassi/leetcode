@@ -101,16 +101,20 @@ def insert_v3(intervals, new_interval):
     start, end = new_interval
     for i, interval in enumerate(intervals):
         if interval[1] < start:
-            # Current interval starts first and doesn't overlap with newInterval
+            # Current interval ends first and doesn't overlap with newInterval
             res.append(interval)
         elif interval[0] <= end:
-            # Overlap. Merge current interval and newInterval
+            # We're here because new_interval.start <= interval.end (negation of the previous if) AND
+            # interval.start <= new_interval.end: the 2 conditions of overlap. Merge current interval and newInterval.
             start = min(start, interval[0])
             end = max(end, interval[1])
         else:
+            # We're here because we added the intervals that don't overlap with newInterval AND merged all the ones
+            # that do; the merged interval has "start" and "end" as boundaries. Any subsequent intervals are guaranteed
+            # not to overlap with this merged interval and are already sorted, so append them to the final output.
             res.append([start, end])
             return res + intervals[i:]
-    # If we reach this statement, newInterval overlapped with a bunch of other intervals but there was no interval X
-    # that started after the end of the merged intervals (X[0] > end)
+    # If we reach this statement, newInterval overlapped with the last merged interval and possibly other prior
+    # intervals. We need to append the final merged interval.
     res.append([start, end])
     return res
