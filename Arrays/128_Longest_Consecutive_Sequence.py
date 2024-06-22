@@ -43,10 +43,10 @@ def longest_consecutive_v1(nums):
     for num in nums:
         if num - 1 in nums:
             continue
-        next_num = num + 1
-        while next_num in nums:
-            next_num += 1
-        res = max(res, next_num - num)
+        sequence_start = num
+        while num in nums:
+            num += 1
+        res = max(res, num - sequence_start)
     return res
 
 
