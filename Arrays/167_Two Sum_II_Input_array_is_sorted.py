@@ -14,10 +14,10 @@ def two_sum_v1(numbers, target):
     Space complexity: O(N)
     """
     indices = {}
-    for i, val in enumerate(numbers, 1):  # enumerate(numbers, 1) to account for 1-based indexing
-        if target - val in indices:
-            return [indices[target - val], i]
-        indices[val] = i
+    for i, num in enumerate(numbers):
+        if target - num in indices:
+            return [indices[target - num], i+1]
+        indices[num] = i + 1
 
 
 def two_sum_v2(numbers, target):
