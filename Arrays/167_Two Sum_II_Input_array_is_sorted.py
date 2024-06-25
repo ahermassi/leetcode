@@ -48,8 +48,8 @@ def two_sum_v3(numbers, target):
     Space complexity: O(1)
     """
     n = len(numbers)
-    for i in range(n - 1):
-        complement = target - numbers[i]
+    for i, num in enumerate(numbers):
+        complement = target - num
         left, right = i + 1, n - 1
         while left <= right:
             mid = (left + right) // 2
