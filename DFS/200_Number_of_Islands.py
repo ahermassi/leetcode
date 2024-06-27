@@ -46,11 +46,10 @@ def num_islands_v2(grid):
     Space complexity: O(N * M)
     """
     def dfs(i, j):
-        if not 0 <= i < n or not 0 <= j < m or grid[i][j] == '0':
-            return
         grid[i][j] = '0'
         for x, y in directions:
-            dfs(i+x, j+y)
+            if 0 <= i + x < n and 0 <= j + y < m and grid[i + x][j + y] == '1':
+                dfs(i+x, j+y)
 
     n, m, islands = len(grid), len(grid[0]), 0
     directions = {(-1, 0), (1, 0), (0, -1), (0, 1)}
