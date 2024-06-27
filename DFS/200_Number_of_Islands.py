@@ -22,11 +22,10 @@ def num_islands_v1(grid):
     Space complexity: O(N * M), for both 'visited' set and recursion call stack
     """
     def dfs(i, j):
-        if not 0 <= i < n or not 0 <= j < m or (i, j) in visited or grid[i][j] == '0':
-            return
         visited.add((i, j))
         for x, y in directions:
-            dfs(i+x, j+y)
+            if 0 <= i+x < n and 0 <= j+y < m and grid[i+x][j+y] == '1' and (i+x, j+y) not in visited:
+                dfs(i+x, j+y)
 
     n, m = len(grid), len(grid[0])
     islands, visited = 0, set()
