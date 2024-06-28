@@ -6,7 +6,15 @@ given researcher has published at least h papers that have each been cited at le
 
 
 def hIndex_v1(citations):
-    """
+    """ Sorts the citations list in ascending order. Then, for each number of citations at index i, if n-i (number of
+        papers with at least n-i citations) is less than or equal to the number of citations itself (the current
+        citation count), it means the h-index is n-i. If no valid h-index is found, return 0.
+
+        In other words, there are n-i papers (including citations[i]) on the right-hand side of citations[i], so there
+        are n-i papers >= citations[i]. Let h = n - i, if citations[i] >= n - i, then there must be n-i papers with
+        citations >= n - i, so n-i is the h-index.
+
+        Note that because we want the maximum of h, so we start i from 0 (minimizing i maximizes n-i).
 
     Time complexity: O(N logN)
     Space complexity: O(N)
@@ -17,6 +25,12 @@ def hIndex_v1(citations):
         if citation >= n - i:
             return n - i
     return 0
+    # citations.sort(reverse=True)
+    # for i, citation in enumerate(citations):
+    #     if i >= citation:
+    #         # Find the first index where citation is smaller than or equal to array index
+    #         return i
+    # return len(citations)
 
 
 def hIndex_v2(citations):
