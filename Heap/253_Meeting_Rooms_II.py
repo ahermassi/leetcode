@@ -82,9 +82,9 @@ def min_meeting_rooms_v1(intervals):
             # Otherwise, if a new room is to be assigned, we also add the ending time to the heap.
             heappush(earliest_ending, end)
         # That can be rewritten as follows:
-        if earliest_ending and start >= earliest_ending[0]:
-            heappop(earliest_ending)
-        heappush(earliest_ending, end)
+        # if earliest_ending and start >= earliest_ending[0]:
+        #     heappop(earliest_ending)
+        # heappush(earliest_ending, end)
     return len(earliest_ending)
 
 
