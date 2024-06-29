@@ -105,7 +105,7 @@ def find_duplicate_v4(nums):
 
          Consider an example: [4, 6, 4, 2, 1, 4, 3, 5]. This has 8 elements in the range [1, 7].
          Take each number from 1 to 7 and count how many numbers are less than or equal to it. In this example,
-         count_less_than_or_equal(1,2,3,4,5,6,7) = (1,2,3,6,7,8,8). If we performed a linear scan, we would find that
+         count_less_than_or_equal(1,2,3,4,5,6,7) = (1,2,3,5,6,7,8). If we performed a linear scan, we would find that
          the number 4 is the first number to have its count exceed the actual number (i.e. 6 > 4) - hence 4 is the
          duplicate.
 
