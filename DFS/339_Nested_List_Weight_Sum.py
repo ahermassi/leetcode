@@ -39,10 +39,11 @@ def depth_sum_v1(nested_list):
 def depth_sum_v2(nested_list):
     """ We can also solve the problem using a breadth-first search. The algorithm for this is closely based on the
         standard breadth-first search template. The algorithm fully processes each depth before moving to the next one.
-    Time complexity: O(N)
-    Space complexity: O(N), the worst-case for space complexity in BFS occurs where most of the elements are in a
-    single layer, for example, a flat list such as [1, 2, 3, 4, 5] as all of the elements must be put on the queue at
-    the same time. Therefore, this approach also has a worst-case space complexity of O(N).
+
+    Time complexity: O(N), each nested element is put on the queue and removed from the queue exactly once
+    Space complexity: O(N), the worst-case for space complexity in BFS occurs when most of the elements are in a
+    single layer, for example a flat list such as [1, 2, 3, 4, 5] as all the elements must be put on the queue at the
+    same time. Therefore, this approach also has a worst-case space complexity of O(N).
     """
     queue = deque(nested_list)
     depth, res = 1, 0
