@@ -141,18 +141,18 @@ def game_of_life_v3(board):
          right amount of neighbors.
     """
     n, m = len(board), len(board[0])
-    alive = {(i, j) for i in range(n) for j in range(m) if board[i][j]}
+    initially_alive = {(i, j) for i in range(n) for j in range(m) if board[i][j]}
     alive_neighbors_counter = defaultdict(int)
-    for i, j in alive:
-        for cell in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j - 1), (i - 1, j + 1), (i + 1, j - 1), (i + 1, j + 1):
-            if 0 <= cell[0] < n and 0 <= cell[1] < m:
-                alive_neighbors_counter[cell] += 1
+    for i, j in initially_alive:
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j - 1), (i - 1, j + 1), (i + 1, j - 1), (i + 1, j + 1):
+            if 0 <= x < n and 0 <= y < m:
+                alive_neighbors_counter[(x, y)] += 1
     for i in range(n):
         for j in range(m):
-            if board[i][j] == 0 and alive_neighbors_counter[(i, j)] == 3:
-                board[i][j] = 1
-            elif (i, j) in alive and alive_neighbors_counter[(i, j)] not in {2, 3}:
+            if (i, j) in initially_alive and (alive_neighbors_counter[(i, j)] < 2 or alive_neighbors_counter[(i, j)] > 3):
                 board[i][j] = 0
+            elif (i, j) not in initially_alive and alive_neighbors_counter[(i, j)] == 3:
+                board[i][j] = 1
 
 # The only problem with this solution would be when the entire board cannot fit into memory. If that is indeed the case,
 # then we would have to approach this problem in a different way.
