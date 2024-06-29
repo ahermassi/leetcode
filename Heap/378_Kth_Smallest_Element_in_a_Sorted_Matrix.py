@@ -9,50 +9,86 @@ import unittest2 as unittest
 def kth_smallest_v1(matrix, k):
     """ As each row (or column) of the given matrix can be seen as a sorted list, we essentially need to find the Kth
         smallest number in ‘N’ sorted lists.
+
         Before we get to this problem, let's first talk about a simpler version of the problem which is to find the
         Kth smallest element from amongst 2 sorted lists. This is easy enough to solve since all we need are a pair of
         pointers which act as indices in the two lists. At each step, we check which element is smaller amongst the two
         being pointed at by the indices and progress the corresponding index accordingly. We just need to run the
         algorithm for merging two sorted lists without actually merging them. We need to keep on running this algorithm
-        until we find our Kth element.
+        until we find the Kth element.
+
         In this particular problem, we have N sorted lists instead of just 2. That's what adds to the complexity. We
-        can't really keep N different pointers now, can we? The heap data structure is perfect for this problem since
-        at all times, we want to maintain N different variables with each of them pointing to an element in their
-        corresponding lists. We want to be able to find the minimum amongst these N pointers quickly and then replace
-        that element with the next one in its corresponding list.
-        We will take the first element of each row and add each of these elements to the heap. It's important to know
-        what row and column an element belongs to. Without knowing that, we won't be able to move forward in that
-        particular list. So, apart from adding an element to the heap, we also need to add its row and column number.
-        Hence, our min-heap will contain a triplet of information (number, row, column). The heap will be arranged on
-        the basis of the values and we will use the row and column number to add a replacement for the next element in
+        can't really keep N different pointers now, can we?
+
+        The heap data structure is perfect for this problem since at all times, we want to maintain N different
+        variables with each of them pointing to an element in their corresponding lists. We want to be able to find the
+        minimum amongst these N pointers quickly and then replace that element with the next one in its corresponding
+        list.
+
+        We take the first element of each row (i.e. the entire first column) and add each of these elements to the heap.
+        It's important to know what row and column an element belongs to. Without knowing that, we won't be able to move
+        forward in that particular list. So, apart from adding an element to the heap, we also need to add its row and
+        column indices.
+
+        Hence, the min heap will contain a triplet of information (number, row, column). The heap will be arranged on
+        the basis of the values, and we will use the row and column indices to add a replacement for the next element in
         case it gets popped off the heap.
-        Do the following operations k times :
-        Every time when we poll out the root (top element in heap), we need to know the row number and column number
-        of that element. Replace that root with the next element from the same row (which is a sorted array).
+
+        Note that we could also start with only the top left element in the matrix (the smallest). However, if we do
+        that, we need to maintain a visited set of the cells' indices that were pushed to the heap in order to avoid
+        duplicates. Why? we first push (0,0) to the heap, and then we push (1,0) and (0,1). After we process the lower
+        valued one, which could be for example (1,0), then we push (1,1) and (2,0). Notice that if we were to then
+        process (0,1), we would be pushing (1,1) and (0,2), but (1,1) is already in the heap.
+
+        Do the following operations k times:
+
+            Every time when we poll out a cell (top element in heap), we need to know the row and column indices of
+            that cell. Replace the cell with the next element from the same row (which is a sorted array).
+
         The invariant of the algorithm is:
-            At iteration i, the front of the heap is the (i+1)th smallest element in the matrix (i is 0-based)
+
+                At iteration i, the front of the heap is the (i+1)th smallest element in the matrix (i is 0-based)
+
         Think of the first element of each column (or row) we initially push to the heap as a representative of each
         column (or row). Each row (or column) keeps bringing the next greater element and the heap adjusts accordingly
-        to keep the smallest in the front. As we know, the smallest element in the matrix is at the top left corner,
-        so no matter what our choice was (pushing first element of each row or column), the very first element in the
-        heap will be always the absolute smallest.
-    Time complexity: O(N + k logN), First, we inserted N elements from each of the ‘N’ rows, which will take O(N).
-    Then we went through at most K elements in the matrix and removed/added one element in the heap in each step. As
-    we can’t have more than N elements in the heap in any condition, therefore, the overall time complexity of the above
-    algorithm will be O(N + k logN)
+        to keep the smallest in the front. As we know, the smallest element in the matrix is in the top left corner, so
+        no matter what the choice was (pushing first element of each row or column), the very first element in the heap
+        will be always the absolute smallest.
+
+    Time complexity: O(N + k logN), first we insert N elements from each of the ‘N’ rows which takes O(N), then we go
+    through at most K elements in the matrix and remove/add one element in the heap in each step. As we can’t have more
+    than N elements in the heap in any case, therefore, the overall time complexity of the algorithm will be O(N + k logN)
     Space complexity: O(N), for the heap
     """
+    n = len(matrix[0])
     heap = []
-    for i, row in enumerate(matrix):  # Push the 1st element of each row (= 1st column) to the min heap
+    for i, row in enumerate(matrix):
+        # Push the 1st element of each row (= 1st column) to the min heap
         heappush(heap, (row[0], i, 0))
-    n, number = len(matrix[0]), 0
-    for _ in range(k):
-        number, row, col = heappop(heap)  # Take the smallest (top) element from the min heap. If the running count is
-        # equal to k, return the number. If the row of the top element has more elements, add the next element to the
-        # heap
+    while k:
+        # Take the smallest (top) element from the min heap
+        value, row, col = heappop(heap)
+        k -= 1
+        if not k:
+            return value
         if col + 1 < n:
+            # If the row of the popped element has more elements, add the next element to the heap
             heappush(heap, (matrix[row][col + 1], row, col + 1))
-    return number
+    # Alternatively:
+    # n = len(matrix[0])
+    # heap = [(matrix[0][0], 0, 0)]
+    # visited = set()
+    # while k:
+    #     value, row, col = heappop(heap)
+    #     k -= 1
+    #     if not k:
+    #         return value
+    #     if row + 1 < n and (row + 1, col) not in visited:
+    #         heappush(heap, (matrix[row + 1][col], row + 1, col))
+    #         visited.add((row + 1, col))
+    #     if col + 1 < n and (row, col + 1) not in visited:
+    #         heappush(heap, (matrix[row][col + 1], row, col + 1))
+    #         visited.add((row, col + 1))
 
 
 def kth_smallest_v2(matrix, k):
