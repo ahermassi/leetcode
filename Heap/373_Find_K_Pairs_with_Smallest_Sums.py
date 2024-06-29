@@ -32,6 +32,12 @@ def k_smallest_pairs(nums1, nums2, k):
          We start off only with the very first pairs of the first column of the matrix, consisting of the combinations
          of every number in nums1 and the first number in nums2, and we expand from there as needed.
 
+         Note that we could also start with the pair formed with the first number in nums1 and the first number in
+         nums2. However, if we do that, we need to maintain a visited set of the indices that were pushed to the heap in
+         order to avoid duplicates. Why? we first push (0,0) to the heap, and then we push (1,0) and (0,1). After we
+         process the lower valued one, which could be for example (1,0), then we push (1,1) and (2,0). Notice that if we
+         were to then process (0,1), we would be pushing (1,1) and (0,2), but (1,1) is already in the heap.
+
          To obtain the minimum sum of a pair among all the pairs under consideration, the top of the heap is popped out.
          We save the triplet in _, i and j. We add the pair (nums1[i], nums2[j]) to the output. The next pair in the row
          at cell (i, j+1) gets added to the priority queue of current options.
@@ -74,6 +80,21 @@ def k_smallest_pairs(nums1, nums2, k):
             heappush(heap, (nums1[i] + nums2[j + 1], i, j + 1))
         k -= 1
     return res
+    # Alternatively:
+    # n, m = len(nums1), len(nums2)
+    # heap = [(nums1[0] + nums2[0], 0, 0)]
+    # visited, res = set(), []
+    # while k and heap:
+    #     _, i, j = heappop(heap)
+    #     res.append([nums1[i], nums2[j]])
+    #     if i < n - 1 and (i + 1, j) not in visited:
+    #         heappush(heap, (nums1[i + 1] + nums2[j], i + 1, j))
+    #         visited.add((i + 1, j))
+    #     if j < m - 1 and (i, j + 1) not in visited:
+    #         heappush(heap, (nums1[i] + nums2[j + 1], i, j + 1))
+    #         visited.add((i, j + 1))
+    #     k -= 1
+    # return res
 
 
 class Test(unittest.TestCase):
