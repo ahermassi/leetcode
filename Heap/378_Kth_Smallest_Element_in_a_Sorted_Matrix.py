@@ -93,70 +93,89 @@ def kth_smallest_v1(matrix, k):
 
 def kth_smallest_v2(matrix, k):
     """ Since each row and column of the matrix is sorted, is it possible to use binary search to find the Kth smallest
-        number? The biggest problem in using binary search in this case is that we don’t have a straightforward sorted
-        array, instead we have a matrix. As we remember, in binary search, we calculate the middle index of the search
-        space (1 to N) and see if our required number is pointed out by the middle index. If not, we either search in
-        the lower half or the upper half. In a sorted matrix, we can’t really find a middle. Even if we do consider some
-        index as middle, it is not straightforward to find the search space containing numbers bigger or smaller than
-        the number pointed out by the middle index.
+        number?
+
+        The biggest problem in using binary search in this case is that we don’t have a straightforward sorted array,
+        instead we have a matrix. As we remember, in binary search, we calculate the middle index of the search space
+        (1 to N) and see if the desired number is pointed at by the middle index. If not, we either search in the lower
+        half or the upper half.
+
+        In a sorted matrix, we can’t really find a middle. Even if we do consider some index as middle, it is not
+        straightforward to find the search space containing numbers bigger or smaller than the number pointed at by the
+        middle index.
+
         An alternate could be to apply the binary search on the VALUES RANGE instead of the INDICES RANGE. As we know
-        that the smallest number of our matrix is at the top left corner and the biggest number is at the bottom lower
+        that the smallest number of the matrix is in the top left corner and the biggest number is in the bottom right
         corner. These two numbers can represent the range i.e. the start and the end for the binary search.
-        Here is how our algorithm will work:
-            1- Start the binary search with left = matrix[0][0] and right = matrix[n-1][n-1].
-            2- In a normal, one-dimensional binary search, we use the indices to find the middle element. In this case,
-               the left and the right ends of our sorted matrix are the two values. So, we use them to find the
-               hypothetical middle of the matrix. The reason we call this hypothetical is because it is NOT necessary
-               that the middle value will exist in the matrix.
-            3- Count all the numbers smaller than or equal to middle in the matrix. As the matrix is sorted, we can do
-               this in O(N). So, after finding the middle element, we need to determine the size of the left half. Why,
-               you might ask? Well, because we want the Kth smallest element and not the largest. If the question asked
-               us for the largest, we would be determining the size of the right half.
-            4- While counting, we need to keep track of the smallest number greater than the middle (let’s call it R)
+
+        Here is how the algorithm works:
+
+            - Start the binary search with left = matrix[0][0] and right = matrix[n-1][n-1].
+
+            - In a normal, one-dimensional binary search, we use the indices to find the middle element. In this case,
+               the left and the right ends of the sorted matrix are the two values. So, we use them to find the
+               "hypothetical" middle of the matrix. The reason we call this hypothetical is that it is NOT necessary
+               that the middle value exists in the matrix.
+
+            - Count all the numbers smaller than or equal to middle in the matrix. As the matrix is sorted, we can do
+               this in O(N). So, after finding the middle element, we need to determine the size of the left half. Why?
+               Because we want the Kth smallest element and not the largest. If the question asked for the Kth largest,
+               we would be determining the size of the right half.
+
+            - While counting, we need to keep track of the smallest number greater than the middle (let’s call it R)
                and at the same time the biggest number less than or equal to the middle (let’s call it L). These two
                numbers will be used to adjust the number range for the binary search in the next iteration.
-            5- If the count is equal to K, L will be our required number as it is the biggest number less than or equal
+
+            - If the count is equal to K, L will be the desired number as it is the biggest number less than or equal
                to the middle, and is definitely present in the matrix.
-            6- If the count is less than K, we can update left = R to search in the higher part of the matrix
-            7- If the count is greater K, we can update right = L to search in the lower part of the matrix
+
+            - If the count is less than K, we can update left = R to search in the higher part of the matrix
+
+            - If the count is greater K, we can update right = L to search in the lower part of the matrix
+
         How to count the number of elements less than or equal to x efficiently?
         Since the matrix is sorted in ascending order by rows and columns, we use two pointers, one points to the
-        rightmost column c = m-1, and one points to the first row r = 0.
+        rightmost column c = m-1, and one points to the first row r = 0:
+
             - If matrix[r][c] <= x then the number of elements in row r less or equal to x is (c + 1) because row[r] is
               sorted in ascending order, so if matrix[r][c] <= x then matrix[r][c-1] is also <= x. Then we move down to
               next row to continue counting.
+
             - If matrix[r][c] > x, we decrease column c (move left) until matrix[r][c] <= x
-    Time complexity: O(N log(max - min)), we are defining our binary search space in terms of the minimum and the
-    maximum numbers in the matrix. The complexity for our binary search should be O(log(max − min)) where 'max' is the
+
+    Time complexity: O(N log(max - min)), we are defining the binary search space in terms of the minimum and the
+    maximum numbers in the matrix. The complexity for the binary search should be O(log(max − min)) where 'max' is the
     maximum element in the array and 'min' is the minimum element. In each iteration of the binary search approach, we
     iterate over the matrix trying to determine the size of the left half as explained above. That takes O(N).
     Space complexity: O(1)
     """
 
-    def get_less_or_equal(mid):
-        count = 0
+    def count_less_or_equal(mid):
+        count = 0  # This is the count of elements smaller than mid
         smallest_greater_than_mid, largest_smaller_than_mid = float('inf'), float('-inf')
-        row, col = 0, m - 1
+        row, col = 0, n - 1
         while row < n and col >= 0:
-            if matrix[row][col] > mid:  # As matrix[row][col] is bigger than the mid, let's keep track of the smallest
-                # number greater than mid
+            if matrix[row][col] > mid:
+                # As matrix[row][col] is bigger than the mid, keep track of the smallest number greater than mid
                 smallest_greater_than_mid = min(smallest_greater_than_mid, matrix[row][col])
                 col -= 1
             else:
-                count += col + 1  # If matrix[row][col] <= val, then all the elements in the row 'row' before this
-                # element i.e. (col) other elements in this row are also going to be less than this element.
-                # Why? Because the rows are sorted as well!
-                largest_smaller_than_mid = max(largest_smaller_than_mid, matrix[row][col])  # As matrix[row][col] is
-                # less than or equal to the mid, let's keep track of the biggest number less than or equal to the mid
+                # If matrix[row][col] <= mid, then all the elements in the row before mid i.e. (col) other elements in
+                # this row are also going to be less than mid. Why? Because the rows are sorted as well!
+                count += col + 1
+                # As matrix[row][col] is less than or equal to mid, keep track of the biggest number less than or equal
+                # to mid
+                largest_smaller_than_mid = max(largest_smaller_than_mid, matrix[row][col])
                 row += 1
         return count, smallest_greater_than_mid, largest_smaller_than_mid
 
-    n, m = len(matrix), len(matrix[0])
+    n = len(matrix)
     left, right = matrix[0][0], matrix[n - 1][n - 1]
     while left < right:
         mid = (left + right) // 2
-        count, smallest_greater_than_mid, largest_smaller_than_mid = get_less_or_equal(mid)
+        count, smallest_greater_than_mid, largest_smaller_than_mid = count_less_or_equal(mid)
         if count == k:
+            # There is "count" elements smaller than mid, so the kth smallest in the matrix is the largest amongst them
             return largest_smaller_than_mid
         if count < k:
             left = smallest_greater_than_mid
