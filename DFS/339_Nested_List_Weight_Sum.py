@@ -14,7 +14,11 @@ def depth_sum_v1(nested_list):
                with (depth + 1).
 
     Time complexity: O(N), where N is the total number of nested elements in the input list. For example, the list
-    [ [[[[1]]]], 2 ] contains 4 nested lists and 2 nested integers (1 and 2), so N = 6
+    [ [[[[1]]]], 2 ] contains 4 nested lists and 2 nested integers (1 and 2), so N = 6. The recursive function is called
+    exactly once for each nested list. As N also includes nested integers, we know that the number of recursive calls
+    has to be less than N. On each nested list, it iterates over all the nested elements directly inside that list (in
+    other words, not nested further). As each nested element can only be directly inside one list, we know that there
+    must only be one loop iteration for each nested element. This is a total of N loop iterations.
     Space complexity: at most O(D) recursive calls are placed on the stack, where D is the maximum level of nesting
     in the input. For example, D=2 for input [[1,1],2,[1,1]], and D=3 for input [1,[4,[6]]]. In the worst case, D=N
     (e.g. the list [[[[[[]]]]]]), so the worst-case space complexity is O(N).
