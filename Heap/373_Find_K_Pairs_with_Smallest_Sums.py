@@ -21,13 +21,13 @@ def k_smallest_pairs(nums1, nums2, k):
          element of nums1 and the first element of nums2, (7, 2), whichever has smaller sum. We only need to look at
          these two pairs because the sum of all the other pairs will be greater.
 
-         We can keep a "horizon" of possible candidates, implemented as a heap / priority queue, and roughly speaking
-         we'll grow from the top left corner towards the right/bottom. We must store the information of the indices of
-         nums1 and nums2 that lead to the formation of a particular sum in the heap in order to return the pair of
+         We can keep a "horizon" of possible candidates, implemented as a heap/priority queue, and roughly speaking we
+         grow from the top left corner towards the bottom right. We must store the information of the indices of nums1
+         and nums2 that lead to the formation of a particular sum in the heap in order to return the pair of
          integers.
 
-         In the heap, we would store a triplet of integers: the pair's sum, the first element's index in nums1, and the
-         second element's index in nums2.
+         In the heap, we store a triplet of integers: the pair's sum, the first element's index in nums1, and the second
+         element's index in nums2.
 
          We start off only with the very first pairs of the first column of the matrix, consisting of the combinations
          of every number in nums1 and the first number in nums2, and we expand from there as needed.
