@@ -60,41 +60,63 @@ def find_min_arrow_shots_v1(points):
     return arrows
 
 
-# def find_min_arrow_shots_v1(points):
-#     """ The idea of greedy algorithm is to pick the locally optimal move at each step, that will lead to the globally
-#         optimal solution.
-#         Let's consider the following combinations of the balloons: [[10, 16], [2, 8], [1, 6], [7, 12]].
-#         That's quite obvious that two arrows is enough to burst them all, let's figure out how to compute this result
-#         with the help of greedy algorithm.
-#         Let's sort the balloons by the end coordinate, and then check them one by one:
-#         [[1, 6], [2, 8] [7, 12], [10, 16]]
-#         The first balloon ends at coordinate 6, and there is no balloons ending before it because of sorting. The other
-#         balloons have two possibilities:
-#             - To have a start coordinate smaller than 6, like the second balloon. These ones could be burst together
-#               with the first balloon by one arrow.
-#             - To have a start coordinate larger than 6, like the third balloon. These ones couldn't be burst together
-#               with the first balloon by one arrow, and hence we need to increase the number of arrows here.
-#         That means that we could always track the end of the current balloon, and ignore all the balloons which end
-#         before it. Once the current balloon is ended (= the next balloon starts after the current balloon), we have to
-#         increase the number of arrows by one and start to track the end of the next balloon.
-#         What arrow limit should we pick each time? We should shoot as to the right as possible, because since balloons
-#         are sorted, this gives us the best chance to take down more balloons. Therefore the arrow limit should always be
-#         balloon[i][1] for the ith balloon.
-#         So basically the idea is to sort by end points. This is because the end point decides how many balloons
-#         intersect when we start moving towards right. If there is no intersection with the next balloon, then this
-#         balloon needs a new arrow to be burst.
-#     Time complexity: O(N logN)
-#     Space complexity: O(N), for sorting
-#     """
-#     if not points:
-#         return 0
-#     points.sort(key=lambda interval: interval[1])
-#     arrow_limit, count = points[0][1], 1
-#     for start, end in points:
-#         if start > arrow_limit:  # If the current balloon starts after the end of another one, we need one more arrow
-#             arrow_limit = end
-#             count += 1
-#     return count
+def find_min_arrow_shots_v2(points):
+    """ The previous approach was based on choosing points greedily based on the starting position. In this approach, we
+        choose greedily based on the end position.
+
+        For this, we sort the given points based on the end position. Then, we traverse the sorted points. We can
+         encounter 2 possibilities:
+
+            - The current and previous diameters are non-overlapping: in this case, we shoot an arrow to burst all
+               active balloons, and start to record next active balloons.
+
+            - The current and previous diameters are overlapping: we don't need to update prev_end, because the current
+               diameter's end position is greater than 'prev_end' (points are sorted by end time).
+
+        Let's consider the following combinations of the balloons: [[10, 16], [2, 8], [1, 6], [7, 12]].
+        It's quite obvious that two arrows are enough to burst them all, let's figure out how to compute this result
+        with the help of greedy algorithm.
+
+        Let's sort the balloons by the end coordinate, and then check them one by one:
+        [[1, 6], [2, 8] [7, 12], [10, 16]]
+        The first balloon ends at coordinate 6, and there is no balloons ending before it because of sorting. The other
+        balloons have two possibilities:
+
+            - To have a start coordinate smaller than 6, like the second balloon. These could be burst together with the
+               first balloon using one arrow.
+
+            - To have a start coordinate larger than 6, like the third balloon. These couldn't be burst together with
+               the first balloon using one arrow, and hence we need to increase the number of arrows here.
+
+        That means that we could always track the end of the current balloon, and ignore all the balloons which end
+        before it. Once the current balloon is ended (= the next balloon starts after the current balloon), we have to
+        shoot a new arrow and start tracking the end of the next active set of balloons.
+
+        What arrow limit should we pick each time? We should shoot as to the right as possible, because since balloons
+        are sorted, this gives us the best chance to take down more balloons. Therefore, the arrow limit should always be
+        balloon[i][1] for the ith balloon.
+
+        So basically the idea is to sort by end points. This is because the end point decides how many balloons
+        intersect when we start moving towards right. If there is no intersection with the next balloon, then this
+        balloon needs a new arrow to be burst.
+
+        This solution works because if we sort the intervals by their end point, it will always be optimal to use the
+        minimum number of arrows to burst the intervals that end first. This is because, if we have two intervals A and
+        B such that A ends before B and we use one arrow to burst A, it means that we cannot use that same arrow to
+        burst B, and therefore we must use an additional arrow for B. Therefore, it is always optimal to use the minimum
+        number of arrows to burst the intervals that end first.
+
+    Time complexity: O(N logN)
+    Space complexity: O(N), for sorting
+    """
+    points.sort(key=lambda point: point[1])
+    prev_end = float('-inf')
+    arrows = 0
+    for start, end in points:
+        if start > prev_end:
+            arrows += 1
+            prev_end = end
+    return arrows
 
 
 class Test(unittest.TestCase):
@@ -103,6 +125,7 @@ class Test(unittest.TestCase):
     def test_find_min_arrow_shots(self):
         for test_points, result in self.data:
             self.assertEqual(result, find_min_arrow_shots_v1(test_points))
+            self.assertEqual(result, find_min_arrow_shots_v2(test_points))
 
 
 if __name__ == '__main__':
