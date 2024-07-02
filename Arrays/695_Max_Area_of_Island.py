@@ -9,7 +9,7 @@ import unittest2 as unittest
 def max_area_of_island_v1(grid):
     """ We want to know the area of each connected shape in the grid, then take the maximum of these.
 
-         If we are on a land square and explore every square connected to it 4-directionally (and recursively squares
+         If we are on a land cell and explore every cell connected to it 4-directionally (and recursively squares
          connected to those squares, and so on), then the total number of squares explored will be the area of that
          connected shape.
 
@@ -22,7 +22,7 @@ def max_area_of_island_v1(grid):
          To ensure we don't count squares in a shape more than once, we use a 'visited' set to keep track of squares we
          visited previously. It will also prevent us from counting the same shape more than once.
 
-    Time complexity: O(N * M), where N is the number of rows in the given grid and M is the number of columns. We visit
+    Time complexity: O(N * M), where N is the number of rows in the given grid and M is the number of columns, we visit
     every square once.
     Space complexity: O(N * M), for both 'visited' set and recursion call stack
     """
@@ -41,8 +41,7 @@ def max_area_of_island_v1(grid):
     visited, max_area = set(), 0
     for i in range(n):
         for j in range(m):
-            area = dfs(i, j)
-            max_area = max(max_area, area)
+            max_area = max(max_area, dfs(i, j))
     return max_area
 
 
