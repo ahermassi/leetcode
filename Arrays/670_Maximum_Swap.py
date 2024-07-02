@@ -6,29 +6,32 @@ import unittest2 as unittest
 
 def maximum_swap_v1(num):
     """ At each digit of the input number in order, if there is a larger digit that occurs later, we know that the best
-        swap must occur with the digit we are currently considering.
-        We first compute last_occurrence[d] = i, the index i of the last occurrence of digit d.
-        Afterwards, when scanning the number from left to right, if there is a larger digit that occurs after the
-        current index, we will swap it with the largest such digit. If there are multiple such digits, we will swap it
-        with the one that occurs the latest.
+         swap must occur with the digit we are currently considering.
+
+        We first compute last_occurrence[digit] = i, the index i of the last occurrence of each digit.
+        Afterwards, when scanning the number from left to right, if there is a larger digit that occurs after the index
+        of the current digit, we swap it with the largest such digit. If there are multiple such digits, we swap it with
+        the one that occurs the latest.
+
         Why record the last index of each digit?
-        Because we want to lose as least as possible. For example, num = 943848, which 8 should we swap with 4?
+        Because we want to "lose" as little as possible. For example, num = 943848, which 8 should we swap with 4?
         Rightmost 8, because no matter which 8 is chosen, we gain the same at 4's position. However, if we choose the
         1st 8 (from the left), then we lose 400 for that position. If we choose the 2nd 8, then we only lose 4. So we
-        always choose the rightmost one.
+        always choose the rightmost larger digit.
+
         Thinking process:
-        To make num maximum, we need to find the most significant digit who has a higher value to its right. It makes
-        the direction to scan from left(most significant) to right(least significantly).
+        To make the number maximum, we need to find the most significant digit who has a higher value to its right.
+        It makes the scan direction from left (most significant) to right (least significant).
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
     digits = [int(c) for c in str(num)]
-    last_occurrence, n = {val: i for i, val in enumerate(digits)}, len(digits)
-    for i in range(n - 1):
-        cur_digit = digits[i]
-        for val in reversed(range(cur_digit + 1, 10)):  # Start from 9 down to (current digit + 1)
-            if val in last_occurrence and last_occurrence[val] > i:  # This greater digit occurs at a later index
-                digits[i], digits[last_occurrence[val]] = digits[last_occurrence[val]], digits[i]
+    last_occurrence = {digit: i for i, digit in enumerate(digits)}
+    for i, digit in enumerate(digits):
+        for j in reversed(range(digit + 1, 10)):  # Search from 9 down to digit+1
+            if j in last_occurrence and last_occurrence[j] > i:  # This greater digit occurs at a later index
+                digits[i], digits[last_occurrence[j]] = digits[last_occurrence[j]], digits[i]
                 return int(''.join(map(str, digits)))
     return num
 
