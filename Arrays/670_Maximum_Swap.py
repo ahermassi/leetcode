@@ -37,27 +37,30 @@ def maximum_swap_v1(num):
 
 
 def maximum_swap_v2(num):
-    """ Actually this problem can be easily solved by only one pass from backward. During the scan, we only need to do
-        2 things:
-        - Record the largest digit cur_max and its corresponding index max_index
-        - If the current digit is smaller than the largest digit, this digit and the largest digit are the best
-          candidates for max swap so far. In this case, this digit pair is recorded (left_index and right_index).
+    """ This problem can be easily solved with only one pass from backward. During the scan, we only need to do
+         2 things:
+
+            - Record the largest digit max_digit and its corresponding index max_digit_index seen so far
+
+            - If the current digit is smaller than the largest digit, this digit and the largest digit are the best
+              candidates for max swap AT THIS MOMENT. In this case, this digit pair is recorded
+              (left_swap_index, right_swap_index).
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
     digits = [int(c) for c in str(num)]
+    max_digit, max_digit_index = -1, -1
+    left_swap_index = right_swap_index = -1
     n = len(digits)
-    cur_max, max_index = -1, 0
-    left_index = right_index = 0
     for i in reversed(range(n)):
-        cur_digit = digits[i]
-        if cur_digit > cur_max:
-            cur_max, max_index = cur_digit, i
-        elif cur_digit < cur_max:
+        if digits[i] > max_digit:
+            max_digit, max_digit_index = digits[i], i
+        elif digits[i] < max_digit:
             # Best candidates for max swap if there is no more similar situation on the left side
-            left_index = i
-            right_index = max_index
-    digits[left_index], digits[right_index] = digits[right_index], digits[left_index]
+            left_swap_index = i
+            right_swap_index = max_digit_index
+    digits[left_swap_index], digits[right_swap_index] = digits[right_swap_index], digits[left_swap_index]
     return int(''.join(map(str, digits)))
 
 
