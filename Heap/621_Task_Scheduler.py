@@ -41,25 +41,22 @@ def least_interval_v1(tasks, n):
     while heap:
         remaining, work_units = [], 0
         for _ in range(cycle):
-            # If a task is pending in the heap, it's going to be actual work time. Otherwise, it's idle time. Therefore,
-            # increment work_units in all cases.
-            # Idle time is the time that is needed in the cycle because no task is available. It is the remaining cycle
-            # length. Idle time should be only added if the priority queue is empty and remaining list is not.
+            instances = -heappop(heap)
+            # If a task is pending in the heap, it's going to be actual work time
             work_units += 1
-            if heap:
-                instances = -heappop(heap)
-                if instances > 1:
-                    remaining.append(instances - 1)
-            # Check if we're out of tasks. If at any point the heap is empty (no more tasks to extract) and remaining
-            # list is empty (no more tasks to put back in the heap), we break out of the current cycle because CPU
-            # can't be idle after finishing the execution of the entire set of tasks.
-            if not heap and not remaining:
+            if instances > 1:
+                remaining.append(instances - 1)
+            # Check if we're out of tasks. If at any point the heap is empty (no more tasks to extract), we break out
+            # of the current cycle.
+            if not heap:
                 break
+        # Idle time is the time that is needed in the cycle because no task is available. It is the remaining cycle
+        # length. Idle time should be only added if the priority queue is empty and remaining list is not.
+        work_time += work_units if not remaining else cycle
         # Because we transferred all the items from the heap to remaining list, we're transferring them back for the
         # next round of scheduling.
         for instance in remaining:
             heappush(heap, -instance)
-        work_time += work_units
     return work_time
 
 
