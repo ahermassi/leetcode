@@ -60,6 +60,8 @@ def partition_labels_v2(s):
          string fom left to right). We then build the result by merging the intervals and calculating the range size of
          each merged interval.
 
+         Alternatively, we can keep track of the start and end positions of "virtual" intervals.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -76,6 +78,16 @@ def partition_labels_v2(s):
         else:
             merged[-1][1] = max(merged[-1][1], end)  # Extend the current partition
     return [rng[-1] - rng[0] + 1 for rng in merged]
+    # Alternatively:
+    # res = []
+    # start, end = ranges[0]
+    # for a, b in ranges:
+    #     if a > end:
+    #         res.append(end - start + 1)
+    #         start = a
+    #     end = max(end, b)
+    # res.append(end - start + 1)
+    # return res
 
 
 class Test(unittest.TestCase):
