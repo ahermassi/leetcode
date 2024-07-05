@@ -50,9 +50,11 @@ def min_add_to_make_valid_v2(S):
 
 
 def min_add_to_make_valid_v3(S):
-    """ Since there is only one kind of char, '(', in the stack, only a counter will also work.
+    """ Since there is only one kind of char, '(', in the stack, using only a counter will also work.
+
         To make a string valid, we can add some '(' on the left, and add some ')' on the right. We need to find the
-        number of each.
+        number of each that need to be matched.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -62,7 +64,8 @@ def min_add_to_make_valid_v3(S):
             left_unmatched += 1
         elif left_unmatched > 0:
             left_unmatched -= 1
-        else:  # This is a right parenthesis ')' and there isn't an open one '(' to balance it out
+        else:
+            # This is a right parenthesis ')' and there isn't an open '(' to balance it out
             right_unmatched += 1
     return left_unmatched + right_unmatched
 
