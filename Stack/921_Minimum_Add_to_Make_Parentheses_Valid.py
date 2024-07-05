@@ -31,17 +31,21 @@ def min_add_to_make_valid_v1(S):
 
 def min_add_to_make_valid_v2(S):
     """ The previous solution could use one less variable. The stack can hold both unmatched left and right parenthesis.
+
     Time complexity: O(N)
-    Space complexity: O(1)
+    Space complexity: O(N)
     """
     stack = []
     for c in S:
-        if c == '(':  # Push the open parenthesis anticipating for a closing match
+        if c == '(':
+            # Push the open parenthesis anticipating for a closing match
             stack.append(c)
-        elif not stack or stack[-1] == ')':  # Push the closing parenthesis if it has no opening match
+        elif not stack or stack[-1] == ')':
+            # Push the closing parenthesis if it has no opening match
             stack.append(c)
         else:
-            stack.pop()  # It's a match! Pop
+            # It's a match! Pop
+            stack.pop()
     return len(stack)
 
 
