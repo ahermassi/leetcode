@@ -11,9 +11,10 @@ import unittest2 as unittest
 
 def min_add_to_make_valid_v1(S):
     """ Each time we encounter an open parenthesis '(', we add it to the stack. If we come across a closing
-        parenthesis ')' we check if there is a matching '(' on top of stack. If yes, we pop it out. Otherwise, we
-        increment 'right_unmatched' counter by 1. At the end, we count in the unmatched parenthesis remaining in the
-        stack.
+        parenthesis ')' we check if there is a matching '(' at top of stack. If yes, we pop it out. Otherwise, we
+        have one more unmatched right bracket. At the end, the stack holds the count of unmatched parenthesis, to which
+        we add the value of unmatched right parenthesis.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
