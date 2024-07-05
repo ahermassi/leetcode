@@ -6,17 +6,53 @@ import unittest2 as unittest
 
 # Great visual explanation:
 # https://leetcode.com/problems/interval-list-intersections/discuss/647482/Python-Two-Pointer-Approach-%2B-Thinking-Process-Diagrams
-
 def interval_intersection_v1(first_list, second_list):
-    """ There is guaranteed to be a overlap interval if:
-            A[i].start <= B[j].end AND B[j].start <= A[i].end
-        After we have made sure that there is an overlapping range, we need to figure out the start and end of the
-        overlapping range. Think of this as trying to squeeze the overlapping range as tight as possible (pushing as
-        far right as possible for start and pushing as far left as possible for end).
-        Now how do we increment the pointers?
+    """ Two intervals i1 and i2 overlap if the following two conditions are met:
+
+                    i1.start <= i2.end
+                    i2.start <= i1.end
+
+        i1: #......................#
+             s1                   e1
+        i2:       #.....................#
+                   s2                  e2
+        s1 <= e2 and s2 <= e1
+        If any of the two conditions is not verified, the intervals wouldn't overlap.
+
+        If s2 > e1:
+        i1: #......................#
+             s1                   e1
+        i2:                            #.....................#
+                                        s2                  e2
+
+        If s1 > e2:
+        i1:                                 #......................#
+                                             s1                   e1
+        i2:       #.....................#
+                   s2                  e2
+
+        After we make sure that there is an overlapping range, we need to figure out the start and end of the overlap.
+        Think of this as trying to squeeze the overlapping range as tight as possible (pushing as far right as possible
+        for start and pushing as far left as possible for end).
+
+        Now how do we advance the pointers?
+
         The idea behind this is to increment the pointer based on the end values of the two intervals. Let's say the
-        current interval in A has end value smaller than the end value of the current interval B. That essentially
-        means that we have exhausted that interval A and we should move on to the next interval in that same list.
+        current interval in A has end value smaller than the end value of the current interval B:
+
+        A: #......................#
+             s1                   e1
+        B:       #.....................#
+                   s2                  e2
+
+        That essentially means that we have exhausted that interval A, and we should move on to the next interval in
+        that same list as A can ONLY intersect B. We can find more overlaps with B only if we advance in A's list.
+
+        Lists are sorted. Therefore, the interval whose end came first will never be a potential candidate for
+        intersection with other intervals, because if it didn't intersect with current interval of the other list, it
+        won't intersect with any further interval as well, and if it did intersect with the current interval of the
+        other list, it intersected all the way till its endpoint.
+
     Time complexity: O(N + M), where N is the length of A and M is the length of B
     Space complexity: O(1)
     """
@@ -26,15 +62,17 @@ def interval_intersection_v1(first_list, second_list):
     while i < n and j < m:
         first_start, first_end = first_list[i]
         second_start, second_end = second_list[j]
-        if first_start <= second_end and second_start <= first_end:  # Criss-cross lock
+        if first_start <= second_end and second_start <= first_end:
             overlap_start = max(first_start, second_start)
             overlap_end = min(first_end, second_end)
             res.append([overlap_start, overlap_end])
         # Advance the interval with smaller endpoint in hopes of finding another overlap
-        if first_end < second_end:  # If A has the smallest endpoint, it can only intersect B ..
-            i += 1  # .. so we can discard A since it cannot intersect anything else
-        else:  # If B has the smallest endpoint, it can only intersect A ..
-            j += 1  # .. so we can discard B since it cannot intersect anything else
+        if first_end < second_end:
+            # If A has the smallest endpoint, it can only intersect B, so we can discard A since it cannot
+            # intersect any other interval
+            i += 1  #
+        else:
+            j += 1
     return res
 
 
