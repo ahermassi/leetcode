@@ -63,15 +63,16 @@ class TimeMapV2(object):
         Space complexity: O(1)
         """
         values = self.values[key]
-        if not values or timestamp < values[0][1]:
+        timestamps = [val[1] for val in values]
+        if not timestamps or timestamp < timestamps[0]:
             return ''
-        if timestamp >= values[-1][1]:
+        if timestamp >= timestamps[-1]:
             return values[-1][0]
-        left, right = 0, len(values) - 1
+        left, right = 0, len(timestamps) - 1
         index = 0
         while left <= right:
             mid = (left + right) // 2
-            if values[mid][1] <= timestamp:
+            if timestamps[mid] <= timestamp:
                 index = mid
                 left = mid + 1
             else:
