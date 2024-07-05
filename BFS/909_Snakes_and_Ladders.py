@@ -44,9 +44,27 @@ def snakes_and_ladders(board):
     """
 
     def get_coordinates(square):
-        a, b = (square - 1)//n, (square - 1) % n  # Subtract 1 to make the values of the squares 0-based
+        # How does this work?
+        # Take the example of the board in the image (909_Snakes_and_Ladders_image.png).
+        # square=28; subtract 1 to make the squares 0-based.
+        # a = (square-1)//n = 4
+        # b = (square-1)% n = 3
+        # Now we want to derive the row from a, so we want to make a = 1
+        # --> n - a = 2 -> subtract 1 more --> row = n - a - 1
+        # We also want to derive the column from b, so we want to make b = 3
+        # --> b is already 3, so we can conclude that column = b.
+        # HOWEVER, take the example of square=21
+        # a = (square-1)//n = 3
+        # b = (square-1)% n = 2
+        # Again, we want to derive the row from a, so we want to make a = 2
+        # --> n - a = 3 -> subtract 1 more --> row = n - a - 1
+        # We also want to derive the column from b, so we want to make b = 3
+        # --> n - b = 4 -> subtract 1 more --> column = n - b - 1.
+        # Notice anything? column = n - b - 1 AND a is an odd number.
+        # We can conclude that row = n - a - 1 and column = {b if a is even, n - b - 1 if a is odd}.
+        a, b = (square - 1)//n, (square - 1) % n
         row = n - a - 1
-        col = b if a % 2 == 0 else n - 1 - b
+        col = b if a % 2 == 0 else n - b - 1
         return row, col
 
     n, m = len(board), len(board[0])
