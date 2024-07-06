@@ -44,28 +44,33 @@ def longest_ones_v1(nums, k):
     return res
 
 
-def longest_ones_v2(nums, K):
-    """ Same algorithm, but we can solve this problem a little efficiently. Since we have to find the MAXIMUM window
-        (in terms of size), we never reduce the size of the window. We either increase the size of the window or keep
-        it the same but never reduce the size. If the limit of zeros is reached, we contract only by one, thus we keep
-        the window size the same.
-        Take A = [0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1], K = 3 for example.
-        We know the answer is 10 with sub-array from A[2] to A[11].
-        Through the iteration, this sub-array would be found while right = 11 and left = 2.
-        What happens next ?
-        As we keep advancing 'right', we will find out that 'left' and 'right' keep adding 1 in every iteration, which
-        makes the distance between 'left' and 'right' the same (and is the CURRENT best).
-        The distance between 'left' and 'right' would change again if a longer sub-array exists. So in short:
+def longest_ones_v2(nums, k):
+    """ Same algorithm, but we can solve this problem a t more efficiently.
 
-            We are looking for a bigger window size. When we find one, we use this window to iterate till we find a
-            larger one (if any). Increasing 'left' and 'right' by 1 allows the distance between 'left' and 'right' for
-            the currently best found window to be preserved. Later on, only 'right' will expand if longer sub-array is
-            found.
+         Since we have to find the MAXIMUM window (in terms of size), we never reduce the size of the window. We either
+         increase the size of the window or keep it the same but never reduce the size. If the limit of zeros is
+         reached, we contract only by one, thus keeping the same window size (as the window expands by 1 index with each
+         iteration).
+
+        Take nums = [0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1], k = 3.
+        We know the answer is 10 with the subarray from nums[2] to nums[11], corresponding to left=2 , right=11.
+        What happens next ?
+        As we keep advancing 'right', we find out that 'left' and 'right' keep adding 1 in every iteration, which makes
+        the distance between 'left' and 'right' fixed (and is the CURRENT best window in terms of size).
+        The distance between 'left' and 'right' would change again if a longer subarray exists. So in short:
+
+                We are looking for a bigger window size. When we find one, we use this window to iterate till we find
+                a bigger one (if any). Increasing 'left' and 'right' by 1 allows the distance between 'left' and 'right'
+                for the currently best found window to be fixed. Later, only 'right' will expand if a longer subarray is
+                found.
+
         So it's crucial to realize that this code does NOT find the max VALID window but rather the maximum size of a
-        valid window (this size is preserved when 'left' and 'right' move forward together). So when the loop exits,
-        'left' and 'right' do NOT represent the actual indexes of the longest VALID window.
-        Example: nums = [1, 1, 1, 0, 0, 0, 0, 0], K = 2 . The maximum window's SIZE will get carried through until the
-        loop terminates with right == 7 and left == 3.
+        valid window (this size is fixed when 'left' and 'right' advance in tandem). So when the loop exits, 'left' and
+        'right' do NOT represent the actual indices of the longest VALID window.
+
+        Example: nums = [1, 1, 1, 0, 0, 0, 0, 0], k = 2 . The maximum window's SIZE is carried through until the loop
+        terminates with left=3 and right=7.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -73,13 +78,16 @@ def longest_ones_v2(nums, K):
     left = right = 0
     while right < n:
         if nums[right] == 0:
-            K -= 1
-        if K < 0:  # A negative K denotes we have consumed all allowed flips and window has more than allowed zeros,
+            k -= 1
+        if k < 0:
+            # A negative k denotes we have consumed all allowed flips and window has more than allowed zeros,
             # thus increment left pointer by 1 to keep the window size same.
-            if nums[left] == 0:  # If the left element to be thrown out is zero we increase K
-                K += 1
-            left += 1  # Regardless of whether we had a 1 or a 0 we can move left side by 1. If we keep seeing 1's, the
+            if nums[left] == 0:
+                # If the left element to be thrown out is zero we increment k
+                k += 1
+            # Regardless of whether we had a 1 or a 0 we can move left side by 1. If we keep seeing 1's, the
             # window still keeps moving as-is
+            left += 1
         right += 1
     return right - left  # Not (right - left + 1) because 'right' is already outside the window
 
