@@ -21,8 +21,8 @@ def find_diagonal_order_v1(nums):
          To collect the cells on each diagonal in the correct order, reverse the order of each stored diagonal. This is
          because the diagonals move upward and to the right, but we're collecting them top to bottom, right to left.
 
-    Time complexity: O(N * M)
-    Space complexity: O(N * M)
+    Time complexity: O(N), where N is the number of integers in the grid
+    Space complexity: O(N)
     """
     diagonals = defaultdict(list)
     for i, row in enumerate(nums):
@@ -35,19 +35,24 @@ def find_diagonal_order_v1(nums):
 
 
 def find_diagonal_order_v2(nums):
-    """ To avoid reversing the values, we can iterate starting from the bottom rows as theey are the starting values of
-        the diagonals.
-    Time complexity: O(N * M)
-    Space complexity: O(N * M)
+    """ To avoid reversing the values, we iterate through each row from left to right starting with the bottom row.
+         The reason we choose the bottom-up, left-to-right order is that the diagonals move upward and to the right, so
+         by iterating to the upper right, we will visit the squares in the correct order.
+
+         Note that, for this implementation, we need to find out the number of diagonals before collecting the cells.
+
+    Time complexity: O(N), where N is the number of integers in the grid
+    Space complexity: O(N)
     """
     diagonals = defaultdict(list)
-    n = len(nums)
+    n, res = len(nums), []
     for i in reversed(range(n)):
-        for j in range(len(nums[i])):
-            diagonals[i + j].append(nums[i][j])
-    res = []
-    for values in diagonals.values():
-        res.extend(values)
+        row = nums[i]
+        for j, cell in enumerate(row):
+            diagonals[i + j].append(cell)
+    max_diagonal = max(diagonals.keys())
+    for diagonal in range(max_diagonal + 1):
+        res.extend(diagonals[diagonal])
     return res
 
 
