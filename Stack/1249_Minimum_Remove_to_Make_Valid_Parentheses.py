@@ -105,6 +105,53 @@ def min_remove_to_make_valid_v2(s):
     return ''.join(chars)
 
 
+# Video explanation: https://youtu.be/mgQ4O9iUEbg
+def min_remove_to_make_valid_v3(s):
+    """ This approach is a simplification of the previous one, and only needs to keep track of the balance. It does not
+         need a stack.
+
+         We can do a first pass and then look at the balance to see how many '(' we need to remove. It turns out that if
+         we remove the rightmost '('s, we are guaranteed to have a balanced string. So for the second pass, we only need
+         to remove balance '('s, starting from the right.
+
+         It might be difficult initially to see why this works, so here's a justification.
+
+         Consider a string s that contains no invalid ')'s (it has had all the invalid ')'s removed by the first pass of
+         the algorithm). It's important to understand that we therefore know there is a way of removing a number of '('s
+         equal to the balance that will make it valid.
+         
+         For a given '(' to be valid, there needs to be more ')'s than '('s after it in s (if not, there won't be a ')' 
+         leftover for it). If this is true for every '(' in s, then s would be valid.
+         
+         When we remove a '(', all other '('s to the left see their ratio of ')' to '(' go up (in other words, they have
+         less others to compete for the ')' with). So by removing a number of '('s equal to the balance from the right,
+         every other '(' now has balance less '(' after it, which is the biggest improvement in the ratios we could have
+         possibly got. If any '(' was still not valid after this, then that would mean s had invalid ')' at the start
+         (which it didn't, because it had all of those removed already).
+
+         Therefore, this has to be a valid solution.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    chars, balance = list(s), 0
+    for i, c in enumerate(s):
+        if c == '(':
+            balance += 1
+        elif c == ')':
+            if balance > 0:
+                balance -= 1
+            else:
+                chars[i] = ''
+    i = len(chars) - 1
+    while balance > 0:
+        if chars[i] == '(':
+            chars[i] = ''
+            balance -= 1
+        i -= 1
+    return ''.join(chars)
+
+
 class Test(unittest.TestCase):
     data = [('lee(t(c)o)de)', 'lee(t(c)o)de'), ('))((', '')]
 
@@ -112,6 +159,7 @@ class Test(unittest.TestCase):
         for test_s, result in self.data:
             self.assertEqual(result, min_remove_to_make_valid_v1(test_s))
             self.assertEqual(result, min_remove_to_make_valid_v2(test_s))
+            self.assertEqual(result, min_remove_to_make_valid_v3(test_s))
 
 
 if __name__ == '__main__':
