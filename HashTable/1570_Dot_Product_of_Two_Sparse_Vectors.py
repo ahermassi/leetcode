@@ -16,15 +16,20 @@ class SparseVectorV1:
 
     def __init__(self, nums):
         """ A sparse vector is a vector that has mostly zero values, while a dense vector is a vector where most of
-        the elements are non-zero. It is inefficient to store a sparse vector as a one-dimensional array. Instead, we
-        can store the non-zero values and their corresponding indices in a dictionary, with the index being the key.
-        Any index that is not present corresponds to a value 0 in the input array.
-        Dot product requires two vectors of equal length. However, after we store the vector as a hash map, their
-        length is different based on the sparsity. Therefore, the performance will be better if we iterate through the
-        shorter hash map to see if each key is present in the other vector or not (this answers the follow up).
-        Time complexity: O(N) for creating the Hash Map; O(L) for calculating the dot product, where L is the length
-        of the shortest hash map
-        Space complexity: O(L) for creating the Hash Map, as we only store elements that are non-zero. O(1) for
+             the elements are non-zero.
+
+             It is inefficient to store a sparse vector as a one-dimensional array. Instead, we can store the non-zero
+             values and their corresponding indices in a dictionary, with the index being the key. Any index that is not
+             present corresponds to a value 0 in the input array.
+
+             Dot product requires two vectors of equal length. However, after we store the vector in a hashmap, their
+             sizes are different based on the sparsity. Therefore, the performance can be improved by iterating over the
+             shorter hashmap and check whether each key is present in the other vector. This effectively answers the
+             follow-up question.
+
+        Time complexity: O(N), for creating the hashmap; O(L) for calculating the dot product, where L is the length
+        of the shortest hashmap
+        Space complexity: O(L), for creating the hashmap, as we only store elements that are non-zero. O(1) for
         calculating the dot product
         """
         self.non_zeros = defaultdict(int)
