@@ -72,31 +72,35 @@ def min_remove_to_make_valid_v1(s):
 
 
 def min_remove_to_make_valid_v2(s):
-    """ Similar idea but operating on the string's characters while we go.
-        Convert string to list, because String is an immutable data structure in Python and it's much easier and
-        memory-efficient to deal with a list for this task.
-        Iterate over the list.
-        Keep track of indices with open parentheses in the stack. In other words, when we come across open parenthesis
-        we add an index to the stack.
-        When we come across close parenthesis we pop an element from the stack. If the stack is empty we replace the
-        current list element with an empty string.
-        After iteration, we replace all indices we have in the stack with empty strings because we don't have close
-        parentheses for them.
-        Convert list to string and return.
+    """ Similar idea but operating on the string's characters as we go.
+
+         A key observation we might have made from the previous algorithm is that for all invalid ')', we know
+         immediately that they are invalid (they are the ones we were putting in the set). It is the '(' that we don't
+         know about until the end (as they are what was left on the stack at the end).
+
+        Keep track of indices of unmatched left parentheses in the stack. In other words, when we come across an open
+        parenthesis we add its index to the stack.
+
+        When we come across a right parenthesis, we pop an element from the stack. If the stack is empty, we replace the
+        current character with an empty string.
+
+        At the end, we replace all indices we have in the stack with empty strings because they don't have matching
+        right parentheses.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
     chars = list(s)
-    stack = []
+    unmatched_left = []
     for i, c in enumerate(s):
         if c == '(':
-            stack.append(i)
+            unmatched_left.append(i)
         elif c == ')':
-            if not stack:
+            if not unmatched_left:
                 chars[i] = ''
             else:
-                stack.pop()
-    for index in stack:
+                unmatched_left.pop()
+    for index in unmatched_left:
         chars[index] = ''
     return ''.join(chars)
 
