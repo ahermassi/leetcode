@@ -7,15 +7,21 @@ Return the final string after all such duplicate removals have been made. It is 
 unique. """
 
 
+# Video explanation: https://youtu.be/w6LcypDgC4w
 def remove_duplicates_v1(s, k):
     """ Notice that we consider groups of elements with the same value which are adjacent. If we delete them, other
-        symbols will become adjacent. Stack is just ideal for this purposes.
-        So, we maintain a stack with pairs of elements: the character and its frequency. For each element:
-            - Check if the current character matches to the previous one in stack. If it does, increment the count on
-              the top of the stack. Otherwise, create a new instance with a count of 1.
-            - Check if we can delete groups of k equal elements: If last frequency in stack is equal to k, pop from
-              the stack.
-        Finally, we build the result string using characters and counts in the stack.
+        symbols will become adjacent. The stack is ideal for this purpose. When a character does not match the previous
+        one, we push 1 to the stack. Otherwise, we increment the count on the top of the stack.
+
+        So, we maintain a stack with pairs of elements: the character and its count. For each character:
+
+            - If the current character is the same as the one before, increment the count on the top of the stack.
+               Otherwise, push 1 to the stack.
+
+            - If the count on the top of the stack equals k, erase last k characters and pop from the stack.
+
+        Finally, build the result string using characters and counts in the stack.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
