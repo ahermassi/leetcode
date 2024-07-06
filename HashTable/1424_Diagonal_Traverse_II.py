@@ -5,21 +5,29 @@ from collections import defaultdict, deque
 
 
 def find_diagonal_order_v1(nums):
-    """ Similar to 498- Diagonal Traverse.
-        In a 2D matrix, elements in the same diagonal have the same sum of their indices. So if we have all elements
-        with the same sum of their indices together, then it’s just a matter of printing those elements in order.
-        We can loop through the matrix, store each element by the sum of its indices in a hash map. We end up with
-        a collection of all elements on shared diagonals.
-        Note: Here, diagonals are from bottom to top, but we traverse the input matrix from first row to last row.
-        Hence we need to print the elements in reverse order.
+    """ The crux of the problem is figuring out how to identify the diagonals and how to iterate over them. We will make
+         use of an important property of diagonals in this approach.
+
+         Let's say we are currently at the start of a diagonal (bottom-left) and the coordinates are (row, col). How do
+         we get to the next value in the diagonal? We go up and right. By going up, we move to row-1. By going right, we
+         move to col+1. That is, the row decreases by 1, and the col increases by 1.
+
+         This is true for any given point in any given diagonal. If we were to consider the sum row+col, it would be
+         constant along the diagonal since the -1 from moving up cancels out the +1 from moving right.
+
+         For each square, we will use the sum row+col as an identifier to the diagonal that it belongs to. We use a
+         'diagonals' hashmap where diagonals[x] is a list of all values that appear in the diagonal with identifier x.
+
+         To collect the cells on each diagonal in the correct order, reverse the order of each stored diagonal. This is
+         because the diagonals move upward and to the right, but we're collecting them top to bottom, right to left.
+
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
     diagonals = defaultdict(list)
-    n = len(nums)
-    for i in range(n):
-        for j in range(len(nums[i])):
-            diagonals[i + j].append(nums[i][j])
+    for i, row in enumerate(nums):
+        for j, cell in enumerate(row):
+            diagonals[i + j].append(cell)
     res = []
     for values in diagonals.values():
         res.extend(values[::-1])
