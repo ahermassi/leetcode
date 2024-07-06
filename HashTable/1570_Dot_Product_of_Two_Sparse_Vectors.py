@@ -54,18 +54,26 @@ class SparseVectorV1:
 
 class SparseVectorV2:
     def __init__(self, nums):
-        """ We can also represent elements of a sparse vector as a list of <index, value> pairs. We use two pointers to
-        iterate through the two vectors to calculate the dot product.
-        Time complexity: O(N) for creating the <index, value> pair for non-zero values, O(L1 + L2) for calculating the
+        """ Hashing/lookups, while on surface look efficient, for large sparse vectors, hashing function takes up bulk
+             of the computation. Technically, a hashmap uses an array of nodes internally, but to get an element we hash
+             the key, and then access this array based on the hashcode. Depending on the hashing function, can result in
+             collisions. Also, the hashmap resizes when it gets to 75% (by default) capacity, but then it will rehash
+             everything. And this is likely to happen a lot as size grows. So between the resizing and the collisions,
+             the hashmap approach isn't going to scale well to a very large vector.
+
+             We can represent the elements of a sparse vector as a list of <index, value> pairs. We then use two
+             pointers to iterate through the two vectors to calculate the dot product.
+
+        Time complexity: O(N), for creating the <index, value> pair for non-zero values, O(L1 + L2) for calculating the
         dot product, where L1 is the number of non-zero values in the first vector and L2 is the number of non-zero
         values in the second vector
-        Space complexity: O(L) for creating the <index, value> pairs for non-zero values, O(1) for calculating the dot
+        Space complexity: O(L), for creating the <index, value> pairs for non-zero values, O(1) for calculating the dot
         product
         """
-        self.pairs = []
+        self.non_zeros = []
         for i, num in enumerate(nums):
             if num:
-                self.pairs.append((i, num))
+                self.non_zeros.append((i, num))
 
     # Return the dotProduct of two sparse vectors
     def dotProduct(self, vec):
@@ -73,18 +81,20 @@ class SparseVectorV2:
         :type vec: 'SparseVector'
         :rtype: int
         """
+        n, m = len(self.non_zeros), len(vec.non_zeros)
         res = 0
         i = j = 0
-        n, m = len(self.pairs), len(vec.pairs)
         while i < n and j < m:
-            self_index, self_val = self.pairs[i]
-            vec_index, vec_val = vec.pairs[j]
-            if self_index == vec_index:  # Both elements at this index are non-zero, so they contribute to the product
+            self_index, self_val = self.non_zeros[i]
+            vec_index, vec_val = vec.non_zeros[j]
+            if self_index == vec_index:
+                # Both elements at this index are non-zero, so they contribute to the product
                 res += self_val * vec_val
                 i += 1
                 j += 1
-            elif self_index < vec_index:  # We've got a non-zero value at the current index, but the next non-zero
-                # value of the other vector is ahead of us
+            elif self_index < vec_index:
+                # We've got a non-zero value at the current index, but the next non-zero value of the other vector is
+                # ahead
                 i += 1
             else:
                 j += 1
