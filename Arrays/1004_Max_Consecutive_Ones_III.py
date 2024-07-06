@@ -4,18 +4,24 @@ Return the length of the longest (contiguous) sub-array that contains only 1s. "
 import unittest2 as unittest
 
 
-def longest_ones_v1(nums, K):
-    """ We can use a simple sliding window approach to solve this problem. The solution is pretty intuitive. We keep
-        expanding the window by moving the right pointer. When the window has reached the limit of 0's allowed, we
-        contract (if possible) and save the longest window till now. The answer is the longest desirable window.
-        Initialize two pointers. The two pointers help us to mark the left and right end of the window/sub-array with
-        contiguous 1's.
-        We use the right pointer to expand the window until the window/sub-array is desirable. i.e. number of 0's in
-        the window are in the allowed range of [0, K].
-        Once we have a window which has more than the allowed number of 0's, we can move the left pointer ahead one by
-        one until we encounter 0 on the left too. This step ensures we are throwing out the extra zero.
-        Note that using a 'while' loop means we always have a valid window, not only a window whose size is equal to
-        the maximum size of a valid window.
+def longest_ones_v1(nums, k):
+    """ We can use a simple sliding window approach to solve this problem.
+
+        The solution is pretty intuitive. We keep expanding the window by moving the right pointer. When the window has
+        reached the limit of 0's allowed, we contract (if possible) and save the longest window till now. The answer is
+        the longest desirable window.
+
+            - Initialize two pointers. The two pointers help us mark the left and right end of the window/subarray with
+               contiguous 1's.
+
+            - Use the right pointer to expand the window until the window/subarray is desirable. i.e. number of 0's in
+               the window is in the allowed range of [0, k].
+
+            - Once we have a window which has more than the allowed number of 0's, we can move the left pointer ahead
+               one by one until we encounter 0 on the left too. This step ensures we are throwing out the extra zero.
+               Note that using a 'while' loop means we always have a valid window, not only a window whose size is equal
+               to the maximum size of a valid window.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -23,12 +29,15 @@ def longest_ones_v1(nums, K):
     left = right = 0
     while right < n:
         if nums[right] == 0:
-            K -= 1  # If we include a zero in the window we reduce the value of K since K is the maximum zeros allowed
-            # in a window.
-        while K < 0:  # A negative K denotes we have consumed all allowed flips and window has more than allowed zeros.
+            # If we include a zero in the window we reduce the value of k since k is the maximum zeros allowed in
+            # a window.
+            k -= 1
+        while k < 0:
+            # A negative k denotes we have consumed all allowed flips and the window has more than allowed zeros.
             # We need to advance the left pointer until the current window is valid
-            if nums[left] == 0:  # If the left element to be thrown out is zero we increase K
-                K += 1
+            if nums[left] == 0:
+                # If the left element to be thrown out is a zero, we increment k
+                k += 1
             left += 1
         res = max(res, right - left + 1)
         right += 1
