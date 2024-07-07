@@ -94,18 +94,30 @@ def find_buildings_v2(heights):
 
 
 def find_buildings_v3(heights):
-    """ We can traverse the buildings from the nearest to the ocean to the furthest. We record the maximum to the
-    right while traversing to determine if we can see the ocean or not. Put index in the result array if the current
-    building is taller than the highest building seen so far. In the end, we need to reverse the array.
+    """ Do we really need to store all the shorter buildings the right of the current building in the stack?
+
+         As we iterated over the array from right to left, we pushed each building into the stack. Each building would
+         remain in the stack until we reached a shorter building. At which point, the shorter building would only need
+         to peek at the top of the stack to determine whether it could have an ocean view. would be popped from the stack.
+
+         This means that the tallest building seen so far would always be in the stack unless the current building is
+         the tallest building seen so far. Simply put, while traversing from right to left, the current building will
+         only have an ocean view if it is the tallest building seen so far.
+
+         Therefore, we can simplify the previous approach by traversing from right to left and just keep one variable to
+         denote the tallest building seen so far. Then, if the current building's view is not blocked by the tallest
+         building seen so far, the current building must have an ocean view. Thus, we just need to track the maximum
+         height building encountered so far while traversing from right to left.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
     n, res = len(heights), []
-    cur_max = 0
+    tallest_building = float('-inf')
     for i in reversed(range(n)):
-        cur_height = heights[i]
-        if cur_height > cur_max:  # If the current building is taller than the tallest building to its right, then it's
-            # taller than all buildings to its right, so it has an ocean view.
+        if heights[i] > tallest_building:
+            # If the current building is taller than the tallest building to its right, then it's taller than all
+            # buildings to its right, so it has an ocean view.
+            tallest_building = heights[i]
             res.append(i)
-            cur_max = cur_height
     return res[::-1]
