@@ -53,6 +53,47 @@ def find_buildings_v1(heights):
 
 
 def find_buildings_v2(heights):
+    """ Monotonically increasing stack
+
+        In the previous approach, by removing all shorter buildings from the array before adding the current building,
+        we inadvertently maintained a monotonic stack where the building heights are in decreasing order. So the key to
+        the first approach's success was using a monotonic stack and traversing the array from left to right but looking
+        left (to see which buildings are blocked) instead of looking right (to see if any building is blocking the
+        current building's view).
+
+        This time, we traverse from right to left and check if the current building's ocean view is blocked by any
+        building to its right. We use a stack to store the buildings to the right in increasing order. For each
+        building, we check if the top of the stack is strictly shorter than the current building and then add the
+        current building to the stack.
+
+        This process of checking for shorter buildings on the top of the stack before adding the current building to the
+        stack means that the stack will always contain buildings in increasing order of height, hence it is called
+        monotonically increasing stack.
+
+        The basic idea is to only push the new element onto the stack if it is strictly larger than the top element.
+        Since we are traversing the buildings from right to left, this means that the stack will only contain buildings
+        of smaller height that are to the right of the current building. Thus, the current building will only have an
+        ocean view.
+
+        Therefore, by maintaining a monotonically increasing stack as we traverse the buildings from right to left, we
+        can tell if a building has an ocean view by whether it is taller than the top of the stack. If it is, then it's
+        taller than every other building to its right.
+
+        Note that since we traverse the input array from right to left, the building indices are added to the stack in
+        reverse order. Thus, before returning, we must reverse the stack so that it is in ascending order.
+
+    Time complexity: O(N), each building's index can be pushed at most once
+    Space complexity: O(N), an extra stack is created
+    """
+    n = len(heights)
+    stack = []
+    for i in reversed(range(n)):
+        if not stack or heights[i] > heights[stack[-1]]:
+            stack.append(i)
+    return stack[::-1]
+
+
+def find_buildings_v3(heights):
     """ We can traverse the buildings from the nearest to the ocean to the furthest. We record the maximum to the
     right while traversing to determine if we can see the ocean or not. Put index in the result array if the current
     building is taller than the highest building seen so far. In the end, we need to reverse the array.
