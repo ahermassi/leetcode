@@ -96,9 +96,9 @@ class DetectSquaresV2:
 
         To get the count of all possible squares, we need to multiply the count of all possible p2, p3, and p4 points.
 
-            - Count of right side squares = count(p3') * count(p4')
-            - Count of left side squares = count(p3'') * count(p4'')
-            => Result = count(p2) * (count of left side squares + count of right side squares)
+            - Count of right side squares =  count(p2) * count(p3') * count(p4')
+            - Count of left side squares =  count(p2) * count(p3'') * count(p4'')
+            => Result = count of left side squares + count of right side squares
 
     Time complexity: O(1) for add(point), O(N) for count(point)
     Space complexity: O(N)
@@ -114,14 +114,17 @@ class DetectSquaresV2:
     def count(self, point):
         x, y = point
         res = 0
-        for y1 in self.x_axis[x]:
+        for y1, y1_count in self.x_axis[x].items():
             if y1 == y:
                 continue
             side_length = abs(y - y1)
+            p1 = (x + side_length, y)
+            p2 = (x + side_length, y1)
+            p3 = (x - side_length, y)
+            p4 = (x - side_length, y1)
             squares = 0
-            squares += self.x_axis[x - side_length][y] * self.x_axis[x - side_length][y1]
-            squares += self.x_axis[x + side_length][y] * self.x_axis[x + side_length][y1]
-            squares *= self.x_axis[x][y1]
+            squares += y1_count * self.x_axis[x + side_length][y] * self.x_axis[x + side_length][y1]
+            squares += y1_count * self.x_axis[x - side_length][y] * self.x_axis[x - side_length][y1]
             res += squares
         return res
 
