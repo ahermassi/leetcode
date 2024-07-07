@@ -66,8 +66,12 @@ class DetectSquaresV1:
             if y1 == y:
                 continue
             side_length = abs(y - y1)
-            squares += self.points[(x - side_length, y)] * self.points[(x - side_length, y1)]
-            squares += self.points[(x + side_length, y)] * self.points[(x + side_length, y1)]
+            p1 = (x + side_length, y)
+            p2 = (x + side_length, y1)
+            p3 = (x - side_length, y)
+            p4 = (x - side_length, y1)
+            squares += self.points[p1] * self.points[p2]
+            squares += self.points[p3] * self.points[p4]
         return squares
 
 
