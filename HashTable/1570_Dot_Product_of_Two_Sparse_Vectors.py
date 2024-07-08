@@ -144,7 +144,7 @@ class SparseVectorV3:
         if len(vec_non_zeros) < len(self_non_zeros):
             return vec.dotProduct(self)
         res = 0
-        for i, num1 in enumerate(self_non_zeros):
+        for i, num1 in self_non_zeros:
             num2 = binary_search(i, vec_non_zeros)
             if num2 != float('inf'):
                 res += num1 * num2
