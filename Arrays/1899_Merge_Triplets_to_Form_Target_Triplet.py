@@ -12,7 +12,7 @@ Return true if it is possible to obtain the target triplet [x, y, z] as an eleme
 
 
 # Video explanation: https://www.youtube.com/watch?v=kShkQLQZ9K4
-def merge_triplets(triplets, target):
+def merge_triplets_v1(triplets, target):
     """ There are 2 key insights that are crucial to solving this problem:
 
             1- Any triplet with an element larger than the target at that index cannot possibly be combined to form the
@@ -57,5 +57,27 @@ def merge_triplets(triplets, target):
             if z == c:
                 c_found = True
         if a_found and b_found and c_found:
+            return True
+    return False
+
+
+def merge_triplets_v2(triplets, target):
+    """ Similarly to the previous approach, we consider only triplets that do not exceed the target in any dimension.
+         Then, we greedily apply the "merge" operation using all qualified triplets.
+
+         Keeping track of the maximum values that match the target is not just about finding the target values in the
+         triplets but ensuring that these values can co-exist in a way that forms the target triplet, given the
+         operation's constraints.
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    a = b = c = 0
+    for x, y, z in triplets:
+        if x <= target[0] and y <= target[1] and z <= target[2]:
+            a = max(a, x)
+            b = max(b, y)
+            c = max(c, z)
+        if [a, b, c] == target:
             return True
     return False
