@@ -59,19 +59,19 @@ def simplify_path_v2(path):
     Space complexity: O(N)
     """
     n = len(path)
-    stack, i = [], 0
+    directories, i = [], 0
     while i < n:
         j = i
         while j < n and path[j] != '/':
             j += 1
         directory = path[i:j]
         if directory == '..':
-            if stack:
-                stack.pop()
+            if directories:
+                directories.pop()
         elif directory and directory != '.':
-            stack.append(directory)
+            directories.append(directory)
         i = j + 1
-    return '/' + '/'.join(stack)
+    return '/' + '/'.join(directories)
 
 
 class Test(unittest.TestCase):
