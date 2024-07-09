@@ -14,10 +14,8 @@ import unittest2 as unittest
 
 def group_anagrams_v1(strs):
     """ Two strings are anagrams if and only if their sorted strings are equal.
-        Maintain a hash map where each key K is a sorted string, and each value is the list of strings from the initial
-        input that when sorted are equal to K.
-
-        We will store the key as a hashable tuple, as Python lists are mutable and can't be used as hash table keys.
+         Maintain a hashmap where each key K is a sorted string, and each value is the list of strings from the initial
+         input that when sorted are equal to K.
 
     Time Complexity: O(N * (K logK)), where N is the number of strings and K is the length of the longest string
     The outer loop has complexity O(N) as we iterate through each string. Then, we sort each string in O(K logK) time.
@@ -26,8 +24,8 @@ def group_anagrams_v1(strs):
     """
     anagrams = defaultdict(list)
     for s in strs:
-        key = tuple(sorted(s))
         # sorted('abc') == ['a', 'b', 'c']; array is not hashable, which means it is not allowed to be a key
+        key = ''.join(sorted(s))
         anagrams[key].append(s)
     return anagrams.values()
 
