@@ -30,6 +30,7 @@ def group_anagrams_v1(strs):
     return anagrams.values()
 
 
+# Video explanation: https://www.youtube.com/watch?v=vzdNOK2oB2E
 def group_anagrams_v2(strs):
     """ Two strings are anagrams if and only if their character counts (respective number of occurrences of each
          character) are the same. We can transform each string into a character count, char_count, consisting of 26
