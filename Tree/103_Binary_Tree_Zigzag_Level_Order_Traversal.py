@@ -73,7 +73,7 @@ def zigzag_level_order_v2(root):
 
          We can also perform a BFS and maintain a dictionary that can contain values in deque for a particular level.
          So, based on the parity of each level, we can append right or append left in the deque. Odd levels mean
-         right-to-left ordering, while even levels mean right-to-left ordering.
+         right-to-left ordering, while even levels mean left-to-right ordering.
 
     Time complexity: O(N)
     Space complexity: O(N)
@@ -108,7 +108,7 @@ def zigzag_level_order_v3(root):
 
         - If the deque for this level exists, then depending on the ordering, we insert the current node value either to
            the head or to the tail of the queue. Odd levels mean right-to-left ordering, while even levels mean
-           right-to-left ordering.
+           left-to-right ordering.
 
         - At the end, we recursively call the function for each of its child nodes.
 
