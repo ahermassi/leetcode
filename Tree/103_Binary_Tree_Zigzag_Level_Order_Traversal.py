@@ -71,6 +71,10 @@ def zigzag_level_order_v2(root):
     """ The same BFS approach, but we use a queue to hold the values of the popped nodes of the current level which
          makes it easier to append to either end.
 
+         We can also perform a BFS and maintain a dictionary that can contain values in deque for a particular level.
+         So, based on the parity of each level, we can append right or append left in the deque. Odd levels mean
+         right-to-left ordering, while even levels mean right-to-left ordering.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
