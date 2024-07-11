@@ -1,4 +1,5 @@
-""" Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and alternate between).
+""" Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then
+right to left for the next level and alternate between).
 
 For example:
 Given binary tree [3,9,20,null,null,15,7],
@@ -19,8 +20,6 @@ import unittest2 as unittest
 
 
 # Definition for a binary tree node.
-
-
 class TreeNode(object):
     def __init__(self, x):
         self.val = x
@@ -92,6 +91,46 @@ def zigzag_level_order_v2(root):
         res.append(values)
         direction *= -1
     return res
+
+
+def zigzag_level_order_v3(root):
+    """ DFS. Similar to 102- Binary Tree Level Order Traversal.
+
+        We define a recursive function called dfs(root, depth) which only takes care of the current node which is
+        located at the specified depth/level. Within the function, there are three steps that we would perform:
+
+        - If this is the first time that we visit any node at the level, i.e. the deque for the level does not exist,
+           then we simply create the deque with the current node value as the initial element.
+
+        - If the deque for this level exists, then depending on the ordering, we insert the current node value either to
+           the head or to the tail of the queue. Odd levels mean right-to-left ordering, while even levels mean
+           right-to-left ordering.
+
+        - At the end, we recursively call the function for each of its child nodes.
+
+    Time complexity: O(N), we visit each node once
+    Space complexity: O(N), the size of the call stack for any invocation of dfs(root, depth) will be exactly the number
+    of level that the current node resides on. Therefore, the space complexity of the DFS algorithm is O(H), where H is
+    the height of the tree. In the worst-case scenario, when the tree is very skewed, the tree height could be N. Thus,
+    the space complexity is also O(N).
+    """
+
+    def dfs(root, depth):
+        if not root:
+            return
+        if depth == len(levels):
+            levels.append(deque())
+        if depth % 2 == 0:
+            levels[depth].append(root.val)
+        else:
+            levels[depth].appendleft(root.val)
+        dfs(root.left, depth + 1)
+        dfs(root.right, depth + 1)
+
+    levels = []
+    # levels = defaultdict(deque) could also be used
+    dfs(root, 0)
+    return levels
 
 
 class Test(unittest.TestCase):
