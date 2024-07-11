@@ -15,8 +15,9 @@ class TreeNode(object):
         self.right = None
 
 
+# Video explanation: https://www.youtube.com/watch?v=6ZnyEApgFYg
 def level_order_v1(root):
-    """ Let's keep nodes of each tree level in the queue structure. The zero level contains only one node root.
+    """ Let's keep the nodes of each tree level in the queue structure. The zero level contains only one the root node.
          While the queue is not empty:
 
             - Start the current level by creating an empty list
