@@ -108,41 +108,46 @@ def calculate_v1(s):
 
 # Check out:
 # https://leetcode.com/problems/basic-calculator-ii/discuss/63088/Explanation-for-Java-O(n)-time-and-O(1)-space-solution
-
 def calculate_v2(s):
-    """ In the previous approach, we used a stack to track the values of the evaluated expressions. In the end, we pop
-        all the values from the stack and add to the result. Instead of that, we could add the values to the result
-        beforehand and keep track of the last calculated number, thus eliminating the need for the stack.
-        Instead of using a stack, we use a variable 'prev_num' to track the value of the last evaluated expression.
-        If the operation is Addition (+) or Subtraction (-), add the 'prev_num' to the result instead of pushing it to
-        the stack. The 'prev_num' would be updated to 'cur_num' for the next iteration.
-        If the operation is Multiplication (*) or Division (/), we must evaluate the expression (prev_num * cur_num)
-        and update the 'prev_num' with the result of the expression. This would be added to the result after the entire
-        string is scanned.
+    """ In the previous implementation, we used a stack to track the values of the evaluated expressions. In the end,
+         we popped all the values from the stack and added to the result.
+
+         Instead, we could add the values to the result beforehand and keep track of the last calculated number, thus
+         eliminating the need for the stack.
+
+        To replace the stack, we use a variable 'prev_exp_eval' to track the value of the last evaluated expression.
+
+            - If the last operator is addition (+) or subtraction (-), add the 'prev_exp_eval' to the result instead of
+               pushing it to the stack. 'prev_exp_eval' would then be updated to 'cur_num' for the next iteration.
+
+            - If the last operator is multiplication (*) or division (/), we must evaluate the expression
+               (prev_exp_eval * cur_operand) and update 'prev_exp_eval' with the result of the expression. This would be
+               added to the result after the entire string is scanned.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
     n = len(s)
-    cur_num = prev_num = 0
+    cur_operand = prev_exp_eval = 0
     last_operator = '+'
     res = 0
     for i, c in enumerate(s):
         if c.isdigit():
-            cur_num = cur_num * 10 + int(c)
-        if i == n - 1 or c in '+-/*':
+            cur_operand = cur_operand * 10 + int(c)
+        if c in '+-/*' or i == n - 1:
             if last_operator == '+':
-                res += prev_num
-                prev_num = cur_num
+                res += prev_exp_eval
+                prev_exp_eval = cur_operand
             elif last_operator == '-':
-                res += prev_num
-                prev_num = -cur_num
+                res += prev_exp_eval
+                prev_exp_eval = -cur_operand
             elif last_operator == '*':
-                prev_num *= cur_num
+                prev_exp_eval *= cur_operand
             else:
-                prev_num = int(float(prev_num) / cur_num)
+                prev_exp_eval = int(float(prev_exp_eval) / cur_operand)
             last_operator = c
-            cur_num = 0
-    return res + prev_num
+            cur_operand = 0
+    return res + prev_exp_eval
 
 
 class Test(unittest.TestCase):
