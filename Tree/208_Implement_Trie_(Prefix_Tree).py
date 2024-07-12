@@ -3,10 +3,6 @@
 import unittest as unittest
 from collections import defaultdict
 
-# Video explanation: https://www.youtube.com/watch?v=oobqoCJlHA0
-
-# Do yourself a favor and check out this article: https://leetcode.com/articles/implement-trie-prefix-tree/
-
 
 class TrieNode:
     def __init__(self):
@@ -14,6 +10,8 @@ class TrieNode:
         self.end_of_word = False
 
 
+# Do yourself a favor and check out this article: https://leetcode.com/articles/implement-trie-prefix-tree/
+# Video explanation: https://www.youtube.com/watch?v=oobqoCJlHA0
 class TrieV1(object):
     """ There are several other data structures, like balanced trees and hash tables, which give us the possibility to
          search for a word in a dataset of strings. Then why do we need trie? Trie could use less space compared to
@@ -48,8 +46,7 @@ class TrieV1(object):
                    continues with searching for the next key character.
                 - A link does not exist. Then we create a new node and link it with the parent's link matching the
                    current key character.
-                   We repeat this step until we encounter the last character of the key, then we mark the current node
-                   as an end node.
+            We repeat this until we reach the last character of the key, then we mark the current node as an end node.
         """
         root = self.root
         for c in word:
@@ -82,11 +79,11 @@ class TrieV1(object):
         return root.end_of_word
 
     def startsWith(self, prefix):
-        """ The approach is very similar to the one we used for searching a key in a trie. We traverse the trie from
-             the root, till there are no characters left in key prefix, or it is impossible to continue the path in the
-             trie with the current key character. The only difference with the mentioned above search for a key is that
-             when we come to an end of the key prefix, we always return true. We don't need to consider the end_of_word
-             mark of the current trie node, because we are searching for a prefix of a key, not for a whole key.
+        """ The approach is very similar to the one we used for searching a key in the trie. We traverse the trie from
+             the root till there are no characters left in key prefix, or it is impossible to continue the path in the
+             trie with the current key character. The only difference with the search for a key is that when we come to
+             the end of the key prefix, we always return true. We don't need to consider the end_of_word marker of the
+             current trie node, because we are searching for a prefix of a key, not for a whole key.
         """
         root = self.root
         for c in prefix:
