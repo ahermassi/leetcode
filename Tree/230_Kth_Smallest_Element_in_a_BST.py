@@ -52,6 +52,9 @@ def kth_smallest_v2(root, k):
          If the length of the inorder list reaches k, then we have enough elements. Break out of the recursion and
          return the last element in the list.
 
+         Note that we could also use a one-element list of inorder values that we keep overwriting at each recursive
+         call while decrementing the value of k. Once k drops to 0, we break out of the recursion.
+
     Time complexity: O(N)
     Space complexity: O(logN) average case, O(N) worst case
     """
@@ -67,6 +70,21 @@ def kth_smallest_v2(root, k):
     inorder_values = []
     inorder(root)
     return inorder_values[-1]
+    # Alternatively:
+    # def inorder(node):
+    #     if not node:
+    #         return
+    #     inorder(node.left)
+    #     if k[0] == 0:
+    #         return
+    #     inorder_values[0] = node.val
+    #     k[0] -= 1
+    #     inorder(node.right)
+    #
+    # inorder_values = [0]
+    # k = [k]
+    # inorder(root)
+    # return inorder_values[0]
 
 
 def kth_smallest_v3(root, k):
