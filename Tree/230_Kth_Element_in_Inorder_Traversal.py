@@ -7,6 +7,7 @@ class TreeNode(object):
         self.val = x
         self.left = None
         self.right = None
+        self.size = 0
 
 
 def find_kth_node_binary_tree(root, k):
