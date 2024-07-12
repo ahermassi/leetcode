@@ -32,3 +32,16 @@ def find_k_largest_in_bst(tree, k):
     res = []
     reverse_inorder(tree)
     return res
+    # Alternatively:
+    # cur = root
+    # stack, res = [], []
+    # while stack or cur:
+    #     while cur:
+    #         stack.append(cur)
+    #         cur = cur.right
+    #     node = stack.pop()
+    #     res.append(node.val)
+    #     k -= 1
+    #     if not k:
+    #         return res
+    #     cur = node.left
