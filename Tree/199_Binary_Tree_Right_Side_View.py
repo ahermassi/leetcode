@@ -64,8 +64,8 @@ def right_side_view_v3(root):
          The first step is to initialize the first level [root, null]. Once it's done, keep popping the nodes one by one
          from the front of the queue and add their children to the rear.
 
-         Stop each time the popped node is null because it means we hit the end of the current level. Each stop is a
-         time to update the right side view list and to push null to the queue to mark the end of the next level.
+         Stop each time the popped node is null it means we hit the end of the current level. Each stop is the time to
+         update the right side view list and to push null to the queue to mark the end of the next level.
 
     Time complexity: O(N)
     Space complexity: O(D)
@@ -74,14 +74,15 @@ def right_side_view_v3(root):
         return None
     res, queue = [], deque([root, None])
     while queue:
-        cur = queue.popleft()
-        prev = cur
-        while cur:
-            queue.extend([kid for kid in (cur.left, cur.right) if kid])
-            prev, cur = cur, queue.popleft()
-        # Now the current node is null, i.e. we reached the end of the current level. Hence, the previous node
-        # is the rightmost and is part of the right side view.
-        res.append(prev.val)
+        right_side_node = None
+        node = queue.popleft()
+        while node:
+            queue.extend([kid for kid in (node.left, node.right) if kid])
+            right_side_node = node
+            node = queue.popleft()
+        # Now the last popped node is null, i.e. we reached the end of the current level. Hence, right_side_node is the
+        # rightmost and is part of the right side view.
+        res.append(right_side_node.val)
         if queue:
             queue.append(None)
     return res
