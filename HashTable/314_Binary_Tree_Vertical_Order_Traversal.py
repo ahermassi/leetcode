@@ -15,33 +15,50 @@ class TreeNode(object):
 
 
 def vertical_order_v1(root):
-    """ If we look at a binary tree horizontally, each node can be aligned to a specific column, based on its relative
-        offset to the root node of the tree.
-        Let us assume that the root node has a column index of 0, then its left child node would have a column index
-        of -1 and its right child node would have a column index of +1, and so on.
-        Now if we put the nodes into a vertical dimension, each node would be assigned to a specific row based on its
-        level (i.e. the vertical distance to the root node).
-        Let us assume that the root node has a row index of 0, then both its child nodes would have the row index of 1.
-        Given the above definitions, we can now formulate the problem as a task to order the nodes based on the
-        2-dimensional coordinates that we defined above. More specifically, the nodes should be ordered by column
-        first, and further the nodes on the same column should be ordered vertically based on their row indices.
-        With the BFS traversal, we naturally can guarantee the vertical order of the visits, i.e. the nodes at higher
-        levels (large row values) would get visited later than the ones at lower levels. However, we are still missing
-        the horizontal order (the column order). To ensure this order, we need to do some additional processing during
-        the BFS traversal.
-        The idea is that we keep a hash table where we keep the node values grouped by the column index. The key in the
-        hash table would be the column index, and the corresponding value would be a list which contains the values of
-        all the nodes that share the same column index. In addition, the values in the corresponding list should be
-        ordered by their row indices, which would be guaranteed by the BFS traversal as we mentioned before.
-        At each iteration within the BFS, we pop out an element from the queue. The element consists of a node and its
-        corresponding column index. If the node is not empty, we then populate the hash table with the value of the
-        node. Subsequently, we then put its child nodes along with their respective column indices: (column - 1) and
-        (column + 1) into the queue.
-        During the BFS traversal, we could obtain the range of the column indices, i.e. with the variable of
-        min_column and max_column. At the end of the BFS traversal, we would then walk through the column range
-        [min_column, max_column] and retrieve the results accordingly.
-    Time complexity: O(N)
-    Space complexity: O(N)
+    """ We are asked to return the vertical order of a binary tree, which actually implies two sub-orders, where each
+         node would have a 2-dimensional index (denoted as <column, row>)
+
+         If we look at a binary tree horizontally, each node can be aligned to a specific column, based on its relative
+         offset to the root node of the tree.
+         Let us assume that the root node has a column index of 0, then its left child node would have a column index
+         of -1 and its right child node would have a column index of +1, and so on.
+
+         Now, if we put the nodes into a vertical dimension, each node would be assigned to a specific row based on its
+         level (i.e. the vertical distance to the root node).
+         Let us assume that the root node has a row index of 0, then both its child nodes would have the row index of 1.
+
+         Given the above definitions, we can now formulate the problem as a task to order the nodes based on the
+         2-dimensional coordinates that we defined above. More specifically, the nodes should be ordered by column
+         first, and further the nodes on the same column should be ordered vertically based on their row indices.
+
+         With the BFS traversal, we naturally can guarantee the vertical order of the visits, i.e. the nodes at higher
+         levels (large row values) would get visited later than the ones at lower levels. However, we are still missing
+         the horizontal order (the column order). To ensure this order, we need to do some additional processing during
+         the BFS traversal.
+
+         The idea is that we keep a hashmap where we keep the node values grouped by the column index. The key in the
+         hashmap would be the column index, and the corresponding value would be a list which contains the values of
+         all the nodes that share the same column index. In addition, the values in the corresponding list should be
+         ordered by their row indices, which would be guaranteed by the BFS traversal as mentioned before.
+
+         At each iteration within the BFS, we pop out an element from the queue. The element consists of a node and its
+         corresponding column index. We then populate the hashmap with the value of the node. Subsequently, we then put
+         its child nodes along with their respective column indices: (column - 1) and (column + 1) into the queue.
+
+         At the end of the BFS traversal, we obtain a hashmap that contains the desired node values grouped by their
+         column indices. For each group of values, they are further ordered by their row indices.
+
+         Note that we only need to know the range of the column index (i.e. [min_column, max_column]). Then we can
+         simply iterate through this range to generate the outputs without the need for sorting by column.
+
+         Therefore, during the BFS traversal, we could obtain the range of the column indices, i.e. with the variable of
+         min_column and max_column. At the end of the BFS traversal, we would then walk through the column range
+         [min_column, max_column] and retrieve the results accordingly.
+
+    Time complexity: O(N), we visit each node once and only once
+    Space complexity: O(N), for the hashmap. Also, at any given moment, the queue would hold no more two levels of
+    nodes. For a binary tree, the maximum number of nodes at a level would be (N+1)/2 which is also the number of leafs
+    in a full binary tree. As a result, in the worst case, the queue would consume at most O((N+1)/2) = O(N) space.
     """
     if not root:
         return None
