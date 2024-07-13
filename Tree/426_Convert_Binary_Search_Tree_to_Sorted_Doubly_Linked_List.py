@@ -53,7 +53,8 @@ def tree_to_doubly_list_v1(root):
 
 
 def tree_to_doubly_list_v2(root):
-    """ Same as previous algorithm, but iteratively. The classic iterative in-order BST traversal.
+    """ The classic iterative in-order BST traversal.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -70,7 +71,9 @@ def tree_to_doubly_list_v2(root):
         node.left = dummy_tail
         dummy_tail = dummy_tail.right
         cur = node.right
-    dummy_tail.right = dummy_head.right  # At this stage, 'tail' points to the last node in the doubly linked list.
-    # In order to close the circle, the last node's next should point to the first node ...
-    dummy_head.right.left = dummy_tail  # ... and the first node's prev should point to the last node.
+    # At this point, 'dummy_tail' points to the last node in the doubly linked list. In order to close the circle, the
+    # last node's next should point to the first node ...
+    dummy_tail.right = dummy_head.right
+    # ... and the first node's prev should point to the last node
+    dummy_head.right.left = dummy_tail
     return dummy_head.right
