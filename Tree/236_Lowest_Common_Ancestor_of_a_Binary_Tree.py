@@ -84,11 +84,11 @@ def lowest_common_ancestor_v2(root, p, q):
     left_search = lowest_common_ancestor_v2(root.left, p, q)
     right_search = lowest_common_ancestor_v2(root.right, p, q)
     if left_search and right_search:
-        # We got something back from the left AND right. That means this node is the LCA because our recursion
-        # returns from bottom to top, and we have found both p and q in different subtrees of the current root, so we
-        # return what we hold: 'root'.
-        # In other words, if the left subtree contains one of the descendants (p or q), and the right subtree
-        # contains the remaining descendant (q or p),  then the root is their LCA
+        # We got something back from the left AND right. That means this node is the LCA because recursion returns
+        # from bottom to top, and we have found both p and q in different subtrees of the current root, so we return
+        # what we hold: 'root'.
+        # In other words, if the left subtree contains one of the descendants (p or q), and the right subtree contains
+        # the remaining descendant (q or p),  then the root is their LCA
         return root
     # Either one of the children returned a node, meaning either p or q found on left or right branch.
     # If the left subtree contains both p and q then return left as their LCA.
