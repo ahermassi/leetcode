@@ -57,28 +57,28 @@ def construct_v1(grid):
     Time complexity: O(N^2 * logN), after every level of recursion the original length of matrix gets reduced to half,
     this implies that the size of matrix will be reduced down to 1 after logN iterations. At each of these logN
     iterations, we have a number of recursive calls for the current matrix size. For example, we initially have one call
-    for the matrix of size N*N, then we have 4 recursive calls each matrices of size (N*N)/4 and so on. At each level,
-    the total number of iterations over the matrix cells remains the same N^2. Hence, N^2 iterations at each of the logN
-    levels makes a time complexity of O(N^2 * logN).
+    for the matrix of size N*N, then we have 4 recursive calls for each of the matrices of size (N*N)/4 and so on. At
+    each level, the total number of iterations over the matrix cells remains the same N^2. Hence, N^2 iterations at each
+    of the logN levels makes a time complexity of O(N^2 * logN).
     Space complexity: O(logN), for the recursion call stack; the maximum number of active stack calls is logN
     """
 
-    def dfs(top, left, side_length):
+    def dfs(top_left_i, top_left_j, side_length):
         if side_length == 1:
-            return Node(grid[top][left], True, None, None, None, None)
+            return Node(grid[top_left_i][top_left_j], True, None, None, None, None)
         all_same_value = True
-        for i in range(top, top + side_length):
-            for j in range(left, left + side_length):
-                if grid[i][j] != grid[top][left]:
+        for i in range(top_left_i, top_left_i + side_length):
+            for j in range(top_left_j, top_left_j + side_length):
+                if grid[i][j] != grid[top_left_i][top_left_j]:
                     all_same_value = False
                     break
         if all_same_value:
-            return Node(grid[top][left], True, None, None, None, None)
-        top_left = dfs(top, left, side_length // 2)
-        top_right = dfs(top, left + side_length // 2, side_length // 2)
-        bottom_left = dfs(top + side_length // 2, left, side_length // 2)
-        bottom_right = dfs(top + side_length // 2, left + side_length // 2, side_length // 2)
-        return Node(grid[top][left], False, top_left, top_right, bottom_left, bottom_right)
+            return Node(grid[top_left_i][top_left_j], True, None, None, None, None)
+        top_left_square = dfs(top_left_i, top_left_j, side_length // 2)
+        top_right_square = dfs(top_left_i, top_left_j + side_length // 2, side_length // 2)
+        bottom_left_square = dfs(top_left_i + side_length // 2, top_left_j, side_length // 2)
+        bottom_right_square = dfs(top_left_i + side_length // 2, top_left_j + side_length // 2, side_length // 2)
+        return Node(grid[top_left_i][top_left_j], False, top_left_square, top_right_square, bottom_left_square, bottom_right_square)
 
     return dfs(0, 0, len(grid))
 
