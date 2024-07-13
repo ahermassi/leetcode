@@ -11,12 +11,21 @@ class Node(object):
         
 
 def tree_to_doubly_list_v1(root):
-    """ Step 1: in-order traversal by recursion to connect the original BST
-        Step 2: connect the head and tail to make it circular
-        Use a dummy node to handle corner cases
-    Time complexity: O(N), since each node is processed exactly once
+    """ The standard inorder traversal follows left -> node -> right order, where left and right parts are the recursion
+         calls, and node part is where all processing is done.
+
+         Processing here is basically to link the previous node with the current one, and because of that we have to
+         track the last node which is the largest node in a new doubly linked list so far. We have to keep the first, or
+         the smallest, node as well to close the ring of the doubly linked list.
+
+         We use a dummy head node to handle corner cases.
+
+         By definition, an in-place algorithm is an algorithm which transforms input using no auxiliary data structure.
+         This implementation uses no auxiliary data structure and hence it's an in-place solution.
+
+    Time complexity: O(N), each node is processed exactly once
     Space complexity: O(N), we have to keep a recursion stack of the size of the tree height, which is O(logN) for the
-    best case of completely balanced tree and O(N) for the worst case of skewed tree
+    best case of a completely balanced tree and O(N) for the worst case of a skewed tree
     """
 
     def inorder(root):
@@ -35,11 +44,11 @@ def tree_to_doubly_list_v1(root):
     global dummy_tail
     dummy_tail = dummy_head
     inorder(root)
-    dummy_tail.right = dummy_head.right  # After inorder() exits, dummy_tail would point to the last node in the
-    # sorted circular doubly-linked list. dummy_tail's right (or next) should point to the first node which is nothing
-    # but dummy_head.right
-    dummy_head.right.left = dummy_tail  # The first node in the sorted list should have its left (or prev) point to
-    # the last node in the list which is nothing but dummy_tail
+    # After inorder() exits, dummy_tail points to the last node in the sorted circular doubly-linked list. dummy_tail's
+    # right (or next) should point to the first node which is dummy_head.right
+    dummy_tail.right = dummy_head.right
+    # The first node in the sorted list should have its left (or prev) point to the list's last node which is dummy_tail
+    dummy_head.right.left = dummy_tail
     return dummy_head.right
 
 
