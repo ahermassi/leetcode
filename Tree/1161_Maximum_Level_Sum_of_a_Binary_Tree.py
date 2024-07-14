@@ -45,11 +45,15 @@ def max_level_sum_v1(root):
 
 
 def max_level_sum_v2(root):
-    """ Create a hash map 'level_sum' which keeps a sum for the current level. Implement recursive traversal which
-        takes a node and its level as input variables and recursively updates level_sum[level]. Return the key with max
-        value in 'level_sum'.
+    """ We can also perform a DFS traversal and pass the level of each node as an extra parameter.
+
+         Initialize a hash map 'level_sum', where level_sum[i] stores the sum of all the values of nodes at level i.
+         Whenever we visit a node at a level, say l, we increment level_sum[l] by the value of the current node.
+
+         The answer is the smallest key with the max value in the hashmap.
+
     Time complexity: O(N)
-    Space complexity: O(h), O(logN) in the average case of balanced tree and O(N) in the worst case of the skewed tree
+    Space complexity: O(h), O(logN) in the best case of a balanced tree and O(N) in the worst case of a skewed tree
     """
 
     def dfs(root, cur_level):
