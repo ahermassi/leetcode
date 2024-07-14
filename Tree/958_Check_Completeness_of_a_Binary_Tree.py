@@ -48,19 +48,24 @@ def is_complete_tree_v1(root):
 
 
 def is_complete_tree_v2(root):
-    """ Similar approach but with early termination.
-        Perform a standard left-to-right BFS and keep a boolean flag 'null_found' that is set to true whenever we
-        encounter the first null node. If the tree is complete, no non-null node should be met after 'null_found' is
-        set to true. Otherwise, exit early and return False.
+    """ Same idea, but we use a boolean flag, null_found, to keep track of whether we have seen a null node.
+
+         While the BFS queue is not empty, we fetch the front node in the queue. If the node is null, we mark
+         null_found = true. Otherwise, if the node is not null, we check if we have already visited a null node.
+         If we've previously visited a null node and the current node is not null, the given tree isn't a complete
+         binary tree as we are encountering a node after visiting a null node.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
     queue, null_found = deque([root]), False
     while queue:
         node = queue.popleft()
-        if not node:  # This is the first time we meet a null node
+        if not node:
+            # This is the first time we meet a null node
             null_found = True
-        elif null_found:  # The current node is not null but 'null_found' is true: The tree is not complete
+        elif null_found:
+            # The current node is not null but 'null_found' is true: the tree is not complete
             return False
         else:
             queue.extend([kid for kid in (node.left, node.right)])
