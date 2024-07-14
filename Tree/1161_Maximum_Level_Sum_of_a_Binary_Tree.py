@@ -5,11 +5,24 @@ from collections import deque, defaultdict
 
 
 def max_level_sum_v1(root):
-    """ Do BFS traversal, level by level. Compute the cur_sum for each level, and update global maximum at the end of
-        each level. Return the number of level with max sum.
-    Time complexity: O(N)
+    """ We can use a standard breadth-first searchBFS traversal because we need to analyze nodes by level.
+
+         We initialize a queue of integers and an integer cur_level=0 to track the current level. In the queue, we push
+         the root node.
+
+         We perform a level-wise traversal, incrementing cur_level by 1 each time we move to a new level. At each
+         iteration, we remove all nodes at level, compute the sum of all node values at this level, and insert all their
+         neighbouring nodes at level cur_level+1.
+
+         To get the answer, we compare the sum of all node values at the current level to the maximum sum of values
+         we've already seen. If the current sum of node values is greater than what we've seen before, we update the
+         answer to cur_level, and the current sum becomes the largest sum of values seen thus far. Since we are
+         traversing the higher levels first, by only updating the answer when the level sum is greater than what we've
+         seen before, we handle the tiebreakers automatically.
+
+    Time complexity: O(N), each node is pushed and popped once
     Space complexity: O(N), at each moment the queue contains not more than all nodes from one level. The max number of
-    nodes at one level is (N + 1)/2, in the case of perfect tree
+    nodes at one level is (N + 1)/2, in the case of a complete binary tree
     """
     max_sum, res = float('-inf'), 1
     queue, cur_level = deque([root]), 1
