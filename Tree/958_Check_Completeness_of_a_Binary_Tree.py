@@ -17,6 +17,7 @@ class TreeNode(object):
         self.right = None
 
 
+# Video explanation: https://www.youtube.com/watch?v=olbiZ-EOSig
 def is_complete_tree_v1(root):
     """ By analyzing the definition, we can see that a binary tree is complete if there is no node to the right of the
          first null node and no node at a greater level than the first null node.
