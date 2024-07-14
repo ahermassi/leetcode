@@ -18,19 +18,33 @@ class TreeNode(object):
 
 
 def is_complete_tree_v1(root):
-    """ Use BFS to do a level order traversal, add children to the BFS queue, until we meet the first empty node.
-        For a complete binary tree, there should not be any node after we meet an empty one.
-        It's using the key feature of level order traversal - from top to bottom and from left to right, so as soon as
-        we see null node (previous level or last level), there should be no more non-null nodes as we continue the
-        traversal.
-    Time complexity: O(N), where N is the number of nodes in the tree
-    Space complexity: O(N)
+    """ By analyzing the definition, we can see that a binary tree is complete if there is no node to the right of the
+         first null node and no node at a greater level than the first null node.
+
+         It means that if we traverse the tree level by level from left to right, and we come across a null node, all
+         subsequent nodes in this traversal should be null as well. The level-order traversal of a complete binary tree
+         will never have a null node in between non-null nodes.
+
+         Use BFS to do a level order traversal, add children to the BFS queue, until we meet the first empty node.
+         We use a key feature of level order traversal - from top to bottom and from left to right, so as soon as
+         we see a null node (previous level or last level), there should be no more non-null nodes as we continue the
+         traversal.
+
+    Time complexity: O(N), where N is the number of nodes in the tree. Each node can only be pushed and popped once
+    Space complexity: O(N), the last or second-to-last level would have the most nodes (the last level can have multiple
+    null nodes) in a complete binary tree. The BFS queue will be most crowded when all the nodes from the last level
+    (or second-to-last level) are in the queue. In a complete binary tree, the last level has (N+1)/2 nodes.
     """
     queue = deque([root])
-    while queue[0]:
+    while queue:
         node = queue.popleft()
+        if not node:
+            break
         queue.extend([node.left, node.right])
-    return not any(queue)
+    while queue:
+        if queue.popleft():
+            return False
+    return True
 
 
 def is_complete_tree_v2(root):
