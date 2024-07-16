@@ -15,14 +15,13 @@ class TreeNode:
 
 
 def good_nodes_v1(root):
-    """ In this first approach, we'll be using recursion. A powerful idea for any tree or graph problem involving
-         BFS/DFS is that instead of just adding nodes to the stack or stack, we can store extra data to represent state.
+    """ In this approach, we'll be using recursion. A powerful idea for any tree or graph problem involving DFS/BFS is
+         that instead of only adding nodes to the stack or the queue, we can store extra data to represent state.
 
          For this problem, we're concerned about the greatest value seen, so instead of the recursive function only
-         taking nodes as an input, such as dfs(node), let's also have each call take an integer as well, like
-         dfs(node, integer). This integer will represent the greatest value on the path from the root to the associated
-         node. This means that at each node, we can simply check if it is "good" by comparing this integer to the
-         node's value.
+         taking nodes as an input, such as dfs(node), let's also have each call take an integer as well. This integer
+         will represent the greatest value on the path from the root to the current node. This means that at each node,
+         we can simply check if it is "good" by comparing this integer to the node's value.
 
          How do we calculate this number? For the root, the path from the root contains no other nodes, so we can
          initially set this value to the value of root itself. For every call afterwards, we should compare this number
@@ -42,7 +41,7 @@ def good_nodes_v1(root):
             return
         if root.val >= cur_path_max:
             res[0] += 1
-        cur_path_max = max(cur_path_max, root.val)
+            cur_path_max = max(cur_path_max, root.val)
         dfs(root.left, cur_path_max)
         dfs(root.right, cur_path_max)
 
