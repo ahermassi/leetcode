@@ -117,6 +117,6 @@ def good_nodes_v4(root):
         node, cur_path_max = queue.popleft()
         if node.val >= cur_path_max:
             res += 1
-        cur_path_max = max(cur_path_max, node.val)
+            cur_path_max = max(cur_path_max, node.val)
         queue.extend([(child, cur_path_max) for child in (node.left, node.right) if child])
     return res
