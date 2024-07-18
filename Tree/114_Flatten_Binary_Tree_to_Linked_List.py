@@ -75,11 +75,10 @@ def flatten_v1(root):
 
 
 def flatten_v2(root):
-    """ In the flattened tree, each node's right child is the node's successor in the preorder traversal. So we're
-         basically performing a reverse postorder traversal (right -> left -> root).
-         In this implementation, 'pre' is the next (right) node of the current node,  pointing initially to None.
+    """ In the flattened tree, each node's right child is the node's successor in the preorder traversal.
 
-         Example:
+         If we look carefully at the following example:
+
             1
            / \
           2   5
@@ -100,13 +99,41 @@ def flatten_v2(root):
                       6
 
         If we traverse the flattened tree in the reverse order, we would notice that [6 -> 5 -> 4 -> 3 -> 2 -> 1] is in
-        (right, left, root) order of the original tree:
+        (right, left, root) order of the original tree. Therefore:
 
                 The reverse postorder traversal of the original tree is the reverse order of the flattened tree
 
+        So we perform a reverse postorder traversal (right -> left -> root) on the tree. In this implementation, 'pre'
+        is the next (right) node of the current node, pointing initially to None.
+
         The idea is to traverse the original tree in reverse postorder and then set each node's right pointer to the
-        previous node in the traversal and the left child to null. It turns out the afore mentioned previous node is the
+        previous node in the traversal and the left child to null. It turns out the aforementioned previous node is the
         root node of the previous recursion.
+
+        !!! IMPORTANT!!!
+        As with most tree problems, it's easier to work our way from a "base" case. For this problem, consider the
+        following tree:
+            1
+           / \
+          2   3
+
+          The flattened tree looks like this:
+
+            1
+             \
+              2
+               \
+                3
+
+        It's clear that we need to:
+            1- Visit the right node and save a reference to it
+            2- Visit the left node, set its right to the previously saved reference, and set its left to null
+            3- Set the current node as a future previous reference for the root
+            4- Bubble up to the root, set its right to the previously saved reference, and set its left to null
+
+        Here, the order we visit the nodes follows right -> left -> root, hence the intuition behind reverse postorder.
+
+        Example:
 
             1
            / \
