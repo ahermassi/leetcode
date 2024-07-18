@@ -87,13 +87,13 @@ def reverse_between_v2(head, left, right):
     prev, cur = dummy, head
     for _ in range(left - 1):
         prev, cur = cur, cur.next
-    connector, reversed_list_tail = prev, cur
+    node_before_left, reversed_sublist_tail = prev, cur
     for _ in range(right - left + 1):
         nxt = cur.next
         cur.next = prev
         prev, cur = cur, nxt
-    connector.next = prev
-    reversed_list_tail.next = cur
+    node_before_left.next = prev
+    reversed_sublist_tail.next = cur
     return dummy.next
 
 
