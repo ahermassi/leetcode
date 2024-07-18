@@ -3,9 +3,8 @@ original list. """
 
 import unittest2 as unittest
 
-# Definition for singly-linked list.
 
-
+# Definition of singly-linked list.
 class ListNode(object):
     def __init__(self, x):
         self.val = x
@@ -13,8 +12,25 @@ class ListNode(object):
 
 
 def delete_duplicates(head):
-    """ Pretty straightforward. Use two pointers, 'pre' to track the node before the duplicate node, and 'cur' to find
-        the last node of duplicates.
+    """ Let's start from the most challenging situation: the list head is to be removed.
+
+         The standard way to handle this use case is to use the so-called Sentinel Node. Sentinel nodes are widely used
+         for trees and linked lists such as pseudo-heads, pseudo-tails, etc. They are purely functional and usually
+         don't hold any data. Their primary purpose is to standardize the situation to avoid edge case handling.
+
+         Let's use here a pseudo-head with +inf value to ensure that the situation "delete the list head" could never
+         happen, and all nodes to delete are "inside" the list.
+
+         The input list is sorted, and we can determine if a node is a duplicate by comparing its value to the node
+         after it in the list. Step by step, we could identify the current sublist of duplicates.
+
+         Now it's time to delete it using pointer manipulations. Note that the first node in the duplicates sublist
+         should be removed as well. That means that we have to track the predecessor of the duplicates sublist, i.e.,
+         the last node before the sublist of duplicates.
+
+         Having the predecessor, we skip the entire duplicate sublist and make the predecessor point to the node after
+         the sublist.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -24,10 +40,13 @@ def delete_duplicates(head):
     while cur and cur.next:
         if cur.val != cur.next.val:
             pre, cur = cur, cur.next
-        else:  # Duplicate node detected
-            while cur and cur.next and cur.val == cur.next.val:  # Advance to last duplicate node whose value is cur.val
+        else:
+            # Duplicate node detected
+            # Advance to the last duplicate of the current node
+            while cur.next and cur.val == cur.next.val:
                 cur = cur.next
             cur = cur.next
+            # Skip all duplicates
             pre.next = cur
     return dummy.next
 
