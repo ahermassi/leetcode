@@ -3,9 +3,8 @@ Note: 1 ≤ m ≤ n ≤ length of list. """
 
 import unittest2 as unittest
 
-# Definition for singly-linked list.
 
-
+# Definition of singly-linked list.
 class ListNode(object):
     def __init__(self, x):
         self.val = x
@@ -26,21 +25,21 @@ def reverse_between_v1(head, left, right):
             - Keep progressing the two pointers in this way until cur pointer reaches the node at 'left' position.
                This is the point from where we start reversing the linked list.
 
-            - Create two additional pointers called reversed_list_tail and connector. reversed_list_tail points to the
-               node at 'left' position from the beginning of the linked list, since this node becomes the tail of the
-               reversed sublist. The connector points to the node before 'left' and connects to the head of the reversed
-               sublist.
+            - Create two additional pointers called reversed_sublist_tail and node_before_left. reversed_sublist_tail
+               points to the node at 'left' position from the beginning of the linked list, since this node becomes the
+               tail of the reversed sublist. The node_before_left points to the node before 'left' and connects to the
+               head of the reversed sublist.
 
-            - reversed_list_tail and connector pointers are set once initially and then used at the end to finish the
-               linked list reversal.
+            - reversed_sublist_tail and node_before_left pointers are set once initially and then used at the end to
+               finish the linked list reversal.
 
             - Once we reach the 'left' node, we iteratively reverse the links. We keep doing this until we are done
                reversing the link (next pointer) for the 'right' node. At that point, the prev pointer points to the
                'right' node.
 
-            - Use the connector pointer to attach to the prev pointer since the node now pointed at by the prev pointer
-               (the 'right' node) will come in place of the 'left' node after the reversal. Similarly, we make use of
-               reversed_list_tail pointer to connect to the node next to the prev node i.e. (right+1)th node.
+            - Use the node_before_left pointer to attach to the prev pointer since the node now pointed at by the prev
+               pointer (the 'right' node) will come in place of the 'left' node after the reversal. Similarly, we make
+               use of reversed_sublist_tail pointer to connect to the node next to the prev node i.e. (right+1)th node.
 
         To summarize:
 
@@ -55,25 +54,25 @@ def reverse_between_v1(head, left, right):
     for _ in range(left - 1):
         # Move the two pointers until they reach the proper starting point in the list
         prev, cur = cur, cur.next
-    connector, reversed_list_tail = prev, cur  # The two pointers that will fix the final connections
+    node_before_left, reversed_sublist_tail = prev, cur  # The two pointers that will fix the final connections
     for _ in range(right - left + 1):
         # Iteratively reverse the nodes
         nxt = cur.next
         cur.next = prev
         prev, cur = cur, nxt
     # Adjust the final connections.
-    # 'connector' always points to the node preceding the leftmost node of the sublist before reversal.
+    # 'node_before_left' always points to the node preceding the leftmost node of the sublist before reversal.
     # At the end of reversal, 'prev' points to the head of the reversed sublist (the node at 'right' position)
-    if connector:
-        connector.next = prev
+    if node_before_left:
+        node_before_left.next = prev
     else:
         # The case where the head of the linked list is the leftmost node of the sublist to reverse. We have 2 facts:
-        # 1- 'connector' always points to the node preceding the leftmost node of the sublist before reversal.
+        # 1- 'node_before_left' always points to the node preceding the leftmost node of the sublist before reversal.
         # 2- At the end of reversal, 'prev' points to the head of the reversed sublist (the node at 'right' position)
         # 1- and 2- combined mean that if the head of the linked list is the leftmost node of the sublist to reverse,
         # then the final linked list to return should have 'prev' as head.
         head = prev
-    reversed_list_tail.next = cur
+    reversed_sublist_tail.next = cur
     return head
 
 
