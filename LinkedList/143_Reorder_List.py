@@ -36,7 +36,7 @@ def reorder_list_v1(head):
     slow, fast = head, head
     while fast and fast.next:
         slow, fast = slow.next, fast.next.next
-    cur, prev = slow, None
+    prev, cur = None, slow
     while cur:
         nxt = cur.next
         cur.next = prev
@@ -47,6 +47,9 @@ def reorder_list_v1(head):
     # 'prev' points to the head of second reversed half, which used to be the last 'cur'
     first_head, second_head = head, prev
     while second_head.next:
+        # second_head.next because in the case of an odd-length list, the second reversed half is 1 node longer than the
+        # first half. This ensures the merge processes an equal number of nodes in both lists and stops BEFORE the last
+        # node of the longer list.
         nxt1, nxt2 = first_head.next, second_head.next
         # Rewire the nodes
         first_head.next = second_head
