@@ -103,22 +103,23 @@ def sort_list_v2(head):
         tail.next = head1 or head2
         node.next = dummy.next  # This connects 'node' to the head of the two merged lists
         while tail.next:
-            tail = tail.next  # Advance 'tail' all the way to the end of the two merged lists
+            # Advance 'tail' all the way to the end of the two merged lists
+            tail = tail.next
         return tail
 
     # Split the linked list to two sub-lists. The first list contains 'sublist_size' nodes. Disconnect the two
     # sub-lists and return the head of second sublist.
     def split(sublist_head, sublist_size):
-        i = 1
+        i = 1 # Move sublist_size-1 steps to stop at the node BEFORE the second list head
         while i < sublist_size and sublist_head:
             # Move the sublist head for a window of size 'sublist_size'
             sublist_head = sublist_head.next
             i += 1
-        # If head is null, then the head of the second sublist is null
+        # If sublist_head is null, then the head of the second sublist is null
         second = sublist_head.next if sublist_head else None
-        if head:
+        if sublist_head:
             # Disconnect the first and second lists
-            head.next = None
+            sublist_head.next = None
         return second
 
     if not head or not head.next:
@@ -133,12 +134,12 @@ def sort_list_v2(head):
     while step < size:
         tail = dummy
         # At the start of every iteration, 'cur' points to the head of the original list. During the iteration, 'tail'
-        # is the pointer whose preceding the 2 merged consecutive lists.
+        # is the pointer who precedes the 2 merged consecutive sub-lists.
         cur = dummy.next
         while cur:
             first_sublist_head = cur
             # Remember that the return value of split() is the head of the second list after splitting the list at
-            # the node at index 'step'
+            # the node at index 'step' (1-indexed)
             second_sublist_head = split(first_sublist_head, step)
             cur = split(second_sublist_head, step)  # After this call, the second sublist whose head is
             # 'second_sublist_head' has the same size as the first sublist after splitting at index 'step' again.
@@ -148,10 +149,10 @@ def sort_list_v2(head):
             # We connect 'tail' to the head of the two merged lists.
             # tail.next = head_of_merged_lists has the same effect as dummy.next = tail_of_merged_lists the first time
             # this statement is executed in every iteration. After that, 'tail' can move freely as dummy.next is taking
-            # the stripe of the first two merged lists. merge() returns the tail of the two merged lists, to which
+            # the stride of the first two merged lists. merge() returns the tail of the two merged lists, to which
             # 'tail' will now point. This ensures that 'tail' connects the two merged lists at iteration (k-1) to those
             # at iteration k.
-        step *= 2  # Now go and merge consecutive lists of next order of size.
+        step *= 2  # Now merge consecutive lists of next order of size
     return dummy.next
 
 
