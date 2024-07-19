@@ -58,7 +58,8 @@ def reorder_list_v1(head):
 
 
 def reorder_list_v2(head):
-    """ Straightforward stack solution. Push all nodes to stack and connect them by alternation.
+    """ Straightforward stack solution. Push all nodes to the stack and connect them by alternation.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -70,7 +71,8 @@ def reorder_list_v2(head):
         cur = cur.next
     size = len(stack)
     cur = head
-    for _ in range(size // 2):  # Between every two nodes insert the one in the top of the stack
+    for _ in range(size // 2):
+        # Between every two nodes insert the one in the top of the stack
         nxt = cur.next
         top = stack.pop()
         cur.next = top
