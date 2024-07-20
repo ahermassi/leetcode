@@ -152,11 +152,10 @@ def multiply_v3(num1, num2):
             b = (ord(num2[j]) - ord('0'))
             prod = a * b
             res[i + j + 1] += prod
-    carry = 0
-    for i in reversed(range(n+m)):
-        res[i] += carry
-        carry = res[i] // 10
-        res[i] %= 10
+    for i in reversed(range(n + m)):
+        div, mod = res[i] // 10, res[i] % 10
+        res[i - 1] += div
+        res[i] = mod
     zero = 0
     while zero < n + m and res[zero] == 0:
         zero += 1
