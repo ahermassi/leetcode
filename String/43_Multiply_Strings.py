@@ -94,7 +94,7 @@ def multiply_v1(num1, num2):
 
 
 def multiply_v2(num1, num2):
-    """ If coming up with left and right insertion indices if not intuitive, we can use a writing index that we keep
+    """ If coming up with left and right write indices is not intuitive, we can use a writing index that keeps
          shifting to the left once a digit multiplication is exhausted.
 
     Time complexity: O(N * M)
@@ -104,10 +104,10 @@ def multiply_v2(num1, num2):
     res = [0] * (n + m)
     write_index = n + m - 1
     for i in reversed(range(n)):
-        a = (ord(num1[i]) - ord('0'))
+        a = ord(num1[i]) - ord('0')
         index = write_index
         for j in reversed(range(m)):
-            b = (ord(num2[j]) - ord('0'))
+            b = ord(num2[j]) - ord('0')
             prod = a * b
             prod += res[index]
             res[index] = prod % 10
