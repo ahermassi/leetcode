@@ -60,9 +60,9 @@ def multiply_v1(num1, num2):
     n, m = len(num1), len(num2)
     res = [0] * (n + m)  # Placeholder for multiplication, n digits by m digits results in n+m digits
     for i in reversed(range(n)):
-        a = (ord(num1[i]) - ord('0'))
+        a = ord(num1[i]) - ord('0')
         for j in reversed(range(m)):
-            b = (ord(num2[j]) - ord('0'))
+            b = ord(num2[j]) - ord('0')
             prod = a * b
             # 'left' and 'right' are where we're going to place the result of current multiplication in the list.
             # We use the observation that 'left' and 'right' are always going to be equal to i+j and i+j+1, respectively
@@ -70,7 +70,7 @@ def multiply_v1(num1, num2):
             prod += res[right]  # There could be an integer at 'right' index from a previous calculation
             res[right] = prod % 10
             res[left] += prod // 10
-            # res[left] could be 9 and mul > 10, but it will be ultimately taken care of by res[right] = mul % 10 in
+            # res[left] could be 9 and prod > 10, but it will be ultimately taken care of by res[right] = prod % 10 in
             # later iteration where left will become the right of following iteration. Current 'left' will be 'right'
             # in next iteration, and the % operation will always get right result in 'right' position. Finally, the
             # overflow will end at head but will not overflow again.
