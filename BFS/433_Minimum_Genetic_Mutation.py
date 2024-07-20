@@ -100,6 +100,30 @@ def min_mutation_v2(start_gene, end_gene, bank):
     return -1
 
 
+def min_mutation_v3(start_gene, end_gene, bank):
+    """ A different way of creating the intermediate mutations using string slicing.
+
+    Time complexity: O(1)
+    Space complexity: O(1)
+    """
+    bank = set(bank)
+    if end_gene not in bank:
+        return -1
+    choices = 'ACGT'
+    queue = deque([(start_gene, 0)])
+    while queue and bank:
+        gene, mutations = queue.popleft()
+        for i in range(len(gene)):
+            for choice in choices:
+                mutation = gene[:i] + choice + gene[i + 1:]
+                if mutation == end_gene:
+                    return mutations + 1
+                if mutation in bank:
+                    queue.append((mutation, mutations + 1))
+                    bank.remove(mutation)
+    return -1
+
+
 class Test(unittest.TestCase):
     data = [('AACCGGTT', 'AACCGGTA', ['AACCGGTA'], 1),
             ('AACCGGTT', 'AAACGGTA', ['AACCGGTA', 'AACCGCTA', 'AAACGGTA'], 2)]
@@ -108,6 +132,7 @@ class Test(unittest.TestCase):
         for start_gene, end_gene, bank, result in self.data:
             self.assertEqual(result, min_mutation_v1(start_gene, end_gene, bank))
             self.assertEqual(result, min_mutation_v2(start_gene, end_gene, bank))
+            self.assertEqual(result, min_mutation_v3(start_gene, end_gene, bank))
 
 
 if __name__ == '__main__':
