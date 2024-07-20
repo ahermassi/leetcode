@@ -5,19 +5,39 @@ problem, assume that your function returns 0 when the reversed integer overflows
 import unittest2 as unittest
 
 
+# Video explanation: https://www.youtube.com/watch?v=HAgLH58IgJQ
 def reverse_v1(x):
-    """" Same as in 9-Palindrome Number problem, reverse the integer using division operations. Pay attention to
-         overflow cases (although INT doesn't overflow in Python, test had to be done to pass Leetcode's OJ).
+    """" We can build up the reverse integer one digit at a time. While doing so, we can check beforehand
+          whether appending another digit would cause overflow.
+
+          We want to repeatedly "pop" the last digit off of x and "push" it to the back of the rev. In the end, rev will
+          be the reverse of the x.
+
+          However, this approach is dangerous, because the statement rev * 10+last_digit can cause overflow.
+          Luckily, it is easy to check beforehand whether this statement would cause an overflow.
+
     Time complexity: O(log10 x)
     Space complexity: O(1)
     """
-    sign = [1, -1][x < 0]  # COOL trick to get the sign of x. [1,-1] is a list which has two elements, [x<0] works as
-    # an index, when false it evaluates to 0 , when true to 1.
-    rev, p = 0, abs(x)
-    while p:
-        rev = rev * 10 + p % 10
-        p = p // 10
-    return sign * rev if pow(-2, 31) <= rev <= pow(2, 31) else 0
+    # COOL trick to get the sign of x. [1,-1] is a list which has two elements, [x<0] works as an index, when false
+    # it evaluates to 0 , when true to 1.
+    sign = [1, -1][x < 0]
+    rev = 0
+    num = abs(x)
+    while num:
+        last_digit = num % 10
+        if rev > (pow(2, 31) - last_digit) // 10:
+            # Check if adding the last digit won't make the reversed number too big and overflow. We have to reverse the
+            # operations we intend to perform from the absolute limit of the system, to determine the highest value that
+            # rev could hold BEFORE applying them, to not go past the boundary.
+            # If we check rev > pow(2, 31) AFTER adding the last digit, we've already overflown and will get an error.
+            # rev * 10 + last_digit > pow(2, 31)
+            # --> rev * 10 > pow(2, 31) - list_digit
+            # --> rev > (pow(2, 31) - list_digit) // 10
+            return 0
+        rev = rev * 10 + last_digit
+        num = num // 10
+    return sign * rev
 
 
 def reverse_v2(x):
