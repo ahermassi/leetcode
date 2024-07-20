@@ -68,12 +68,12 @@ def my_pow_v2(x, n):
         Starting to see the bits of the puzzle coming together now? We can decompose n as a binary number and then keep
         multiplying for x raised to some power of 2 value as we go along.
 
-        Example: x = 2, n = 10
-                                        res               = 1,          x = 2,      n = 10
-        n % 2 == 1 ? No;      res               = 1,          x = 4,      n = 5
-        n % 2 == 1 ? Yes;     res = 1 * 4   = 4,          x = 16,    n = 2
-        n % 2 == 0 ? No;      res               = 4,          x = 256,  n = 1
-        n % 2 == 1 ? Yes;     res = 4 * 256 = 1024,  x = - ,     n = 0
+        Example: x = 2, n = 10 = (1010) base 2
+                                        res               = 1,          x = 2,      n = 1010
+        n & 1 == 1 ? No;      res               = 1,          x = 4,      n = 101
+        n & 1 == 1 ? Yes;     res = 1 * 4   = 4,          x = 16,    n = 10
+        n & 1 == 1 ? No;      res               = 4,          x = 256,  n = 1
+        n & 1 == 1 ? Yes;     res = 4 * 256 = 1024,  x = - ,     n = 0
 
     Time complexity: O(log n)
     Space complexity: O(1)
@@ -90,11 +90,11 @@ def my_pow_v2(x, n):
             # x ^ (2 ^ i), where i is the ith bit of the exponent.
             # Example: n = 11 = (1 0 1 1)
             #                                8 4 2 1 <-- Corresponding place values of each bit
-            # x^n = 7^8 × 7^2 × 7^1 = 7^(8 + 2 + 1).
-            # We don't consider 7^4 as the bit is OFF.
+            # x^n = x^8 * x^2 * x^1 = x^(8 + 2 + 1).
+            # We don't consider x^4 as the bit is OFF.
             res *= x
         x *= x
-        n /= 2
+        n //= 2
     return res
 
 
