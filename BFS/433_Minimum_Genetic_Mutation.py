@@ -16,7 +16,7 @@ from collections import deque
 import unittest2 as unittest
 
 
-def min_mutation(start_gene, end_gene, bank):
+def min_mutation_v1(start_gene, end_gene, bank):
     """ Similar to 127- Word Ladder.
 
          We can model the problem as a graph. Each gene string is a node, and mutations are the edges. Two nodes have an
@@ -66,13 +66,48 @@ def min_mutation(start_gene, end_gene, bank):
     return -1
 
 
+def min_mutation_v2(start_gene, end_gene, bank):
+    """ A different style of BFS.
+
+        Instead of actually mutating the genes, we can check the difference between the current gene string and those in
+        the bank. The transformation is valid if the difference is only 1 character.
+
+        We also use a visited set to prevent visiting a node more than once and also because it's not possible not
+        remove a string from a hash set while iterating over the set.
+
+    Time complexity: O(1)
+    Space complexity: O(1)
+    """
+    bank = set(bank)
+    if end_gene not in bank:
+        return -1
+    queue = deque([(start_gene, 0)])
+    visited = set()
+    while queue:
+        gene, mutations = queue.popleft()
+        for mutation in bank:
+            if mutation in visited:
+                continue
+            diff = 0
+            for i, c in enumerate(mutation):
+                if gene[i] != c:
+                    diff += 1
+            if diff == 1:
+                if mutation == end_gene:
+                    return mutations + 1
+                queue.append((mutation, mutations + 1))
+                visited.add(mutation)
+    return -1
+
+
 class Test(unittest.TestCase):
     data = [('AACCGGTT', 'AACCGGTA', ['AACCGGTA'], 1),
             ('AACCGGTT', 'AAACGGTA', ['AACCGGTA', 'AACCGCTA', 'AAACGGTA'], 2)]
 
     def test_ladder_length(self):
         for start_gene, end_gene, bank, result in self.data:
-            self.assertEqual(result, min_mutation(start_gene, end_gene, bank))
+            self.assertEqual(result, min_mutation_v1(start_gene, end_gene, bank))
+            self.assertEqual(result, min_mutation_v2(start_gene, end_gene, bank))
 
 
 if __name__ == '__main__':
