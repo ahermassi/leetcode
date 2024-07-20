@@ -6,19 +6,21 @@ import unittest2 as unittest
 
 
 def single_number_v1(nums):
-    """ Iterate through all elements in nums. Try if hash table has the key for pop. If not, set up key/value pair.
-        In the end, there is only one element in hash table, so use popitem to get it.
+    """ Iterate through the nums array. For every element num, check if the hash set contains num. If it does, remove
+         it. Otherwise, add the number to the set.
+
+         At the end of iteration, there is only one element in the hash set.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    counter = {}
+    seen = set()
     for num in nums:
-        # try-except, EAFP fashion
-        try:
-            counter.pop(num)
-        except KeyError:
-            counter[num] = 1
-    return counter.popitem()[0]
+        if num in seen:
+            seen.remove(num)
+        else:
+            seen.add(num)
+    return seen.pop()
 
 
 def single_number_v2(nums):
