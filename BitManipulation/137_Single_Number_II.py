@@ -39,3 +39,32 @@ def single_number_v2(nums):
     which is O(N)
     """
     return (3 * sum(set(nums)) - sum(nums)) // 2
+
+
+def single_number_v3(nums):
+    """ What if all the numbers were clustered together? Then we can compare the first occurrence of each number with
+         the element present at the next index. If they are the same, we can conclude that this element is not the
+         loner. We don't need to traverse till the very end of the array.
+
+         The integers can be clustered together by sorting the array.
+
+         After sorting, we can check every integer with its next integer starting from the zeroth index. If they are the
+         same, we can conclude that the integer is not the loner. We will jump three indices ahead. This is because we
+         are given that if an integer is not the loner, it appears exactly three times. So, we can skip the next two
+         indices. Otherwise, we can conclude that the integer is the loner and return it.
+
+         The last index doesn't have any next index. Thus, if until the last index we don't find any loner, we can
+         conclude that the last integer is the loner because nums has exactly one loner.
+
+    Time complexity: O(N + N logN) = O(N logN
+    Space complexity: O(N), for sorting
+    """
+    nums.sort()
+    n = len(nums)
+    i = 0
+    while i < n - 1:
+        if nums[i] == nums[i + 1]:
+            i += 3
+        else:
+            return nums[i]
+    return nums[-1]
