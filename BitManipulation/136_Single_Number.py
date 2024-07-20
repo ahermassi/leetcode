@@ -23,15 +23,19 @@ def single_number_v1(nums):
     return seen.pop()
 
 
+# Video explanation: https://www.youtube.com/watch?v=qMPX1AOa83k
 def single_number_v2(nums):
-    """ Knowing that A XOR A = 0 and A XOR 0 = A and the XOR operator is commutative, the solution will be very
-        straightforward.
-        If the array is {2, 1, 4, 5, 2, 4, 1}: ((2^2)^(1^1)^(4^4)^(5)) => (0^0^0^5) => 5
-        It's worth noting that this XOR solution is not a generic 'find the non duplicate' function. It works only as
-        long as we know each other number appears exactly twice (which is indeed what the question states, so it's
-        totally valid here). But if the array was allowed to contain an arbitrary number of duplicates (ie. the same
-        number appears 3 or 5 times), then this solution breaks down. This solution works if the duplicates always
-        appear an even number of times (2x, 4x, 6x, etc.).
+    """ Knowing that A XOR A = 0 and A XOR 0 = A and the XOR operator is commutative, the solution can be very
+         straightforward.
+
+        If the array is [2, 1, 4, 5, 2, 4, 1], then (2^2) ^ (1^1) ^ (4^4) ^ 5 =0 ^ 0 ^ 0 ^ 5 = 5
+
+        It's worth noting that this XOR solution is not a generic 'find the non-duplicate' method. It works only as
+        long as we know each other number appears exactly twice, which is indeed what the question states, so it's
+        totally valid here. But if the array was allowed to contain an arbitrary number of duplicates (i.e. the same
+        number appears 3 or 5 times), then this solution breaks down. This only works if the duplicates always appear an
+        even number of times (2x, 4x, 6x, etc.).
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
