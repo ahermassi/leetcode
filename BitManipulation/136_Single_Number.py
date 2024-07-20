@@ -47,8 +47,9 @@ def single_number_v2(nums):
 
 def single_number_v3(nums):
     """ Math: 2 * (a+b+c) − (a+a+b+b+c) = c
+
     Time complexity: O(N)
-    Space complexity: O(N)
+    Space complexity: O(N), for the hash set
     """
     return 2 * sum(set(nums)) - sum(nums)
 
