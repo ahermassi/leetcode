@@ -9,7 +9,7 @@ Note: The solution set must not contain duplicate combinations. """
 # Video explanation: https://youtu.be/rSA3t6BDDwg
 def combination_sum(candidates, target):
     """  This is an extension or variation of the earlier problem 39- Combination Sum. Despite all the differences,
-          the key algorithm to solving the combination sum problems remains the same, which is backtracking.
+          the key algorithm to solve the combination sum problems remains the same, which is backtracking.
 
           We incrementally build the combination by adding numbers one at a time, and once we find the current
           combination is not valid, we backtrack (by abandoning the last number we added to the combination) and try
@@ -17,7 +17,7 @@ def combination_sum(candidates, target):
 
           There are two differences between this problem and the earlier problem:
 
-            - The number in the input are not unique. The implication of this difference is that we need some mechanism
+            - The numbers in the input are not unique. The implication of this difference is that we need some mechanism
                to avoid generating duplicate combinations.
 
             - Each number can be used only once. The implication of this difference is that once a number is chosen as
@@ -31,26 +31,26 @@ def combination_sum(candidates, target):
         certain positions to avoid generating duplicate combinations. We skip the index if the following two conditions
         are met:
 
-            - i > index: we will pick the number at the current index into the combination, regardless of the other
-               conditions. This is important, since the iteration should allow us to add multiple instances of a unique
-               number to the combination.
+            - i > index: we add the number at the current index to the combination, regardless of the other conditions.
+               This is important, since the iteration should allow us to add multiple instances of a unique number to
+               the combination.
 
             - candidates[i] == candidates[i-1]: we will skip the occurrences of duplicate numbers in-between.
 
         We optimize the backtracking by adopting the measure of early stopping, i.e. once the sum of current combination
-        exceeds the target, we can stop the exploration for the rest of the numbers. Because all the numbers are
-        positive, the sum of combination will increase monotonically. It is needless to explore combinations whose sums
+        exceeds the target, we can stop the exploration of the rest of the numbers. Because all the numbers are
+        positive, the sum of the combination increases monotonically. It is needless to explore combinations whose sums
         exceed the desired target.
 
-        How does (if i > index and candidates[i] == candidates[i - 1]: continue) help skip duplicate combinations?
+        How does (if i > index and candidates[i] == candidates[i-1]: continue) help skip duplicate combinations?
 
         i > index means position 'index'' has been processed, and we have found all the combinations starting from
         that index using dfs(). Therefore, if candidates[i] == candidates[i-1] (first time around it evaluates to
-        candidates[index+1] == candidates[index]),  there is no need to process position (i + 1) as it will create
-        combinations which have already been found by dfs() from position (i - 1). Hence, we skip the step to avoid
+        candidates[index+1] == candidates[index]),  there is no need to process position i+1 as it will create
+        combinations which have already been found by dfs() from position i-1. Hence, we skip the step to avoid
         duplicate combinations.
 
-        Consider the following example: candidates = [1, 1, 1, 2, 2], target 4. Without that condition, we will get 3
+        Consider the following example: candidates = [1, 1, 1, 2, 2], target 4. Without the above condition, we get 3
         identical combinations:
         [1, 1, 2, 2] from indices [0, 1, 3, 4] of the candidates;
         [1, 1, 2, 2] from indices [0, 2, 3, 4] of the candidates;
@@ -58,20 +58,20 @@ def combination_sum(candidates, target):
 
         i > index: Before explaining this, first recall what index is. index points to the index from which we start in
         the first place before entering the for loop. It is the starting value from which we start picking numbers.
-        Since it's the starting point, we definitely pick this number. i indicates the index which we are currently
-        processing. In one recursive call stack, the value of index is not going to change but the value of i will keep
-        changing. i > index means that we are currently considering a position which is greater than index.
+        Since it's the starting point, we definitely pick candidates[index]. i indicates the index which we are
+        currently processing. In one recursive call stack, the value of index is not going to change but the value of i
+        will keep changing. i > index means that we are currently considering a position which is greater than index.
 
-        In the second condition candidates[i] == candidates[i - 1], we are considering an index which is greater than
+        In the second condition candidates[i] == candidates[i-1], we are considering an index which is greater than
         'index', meaning we have already used the number at 'index', so if the number after 'index' has the same value,
         then we won't consider it again because that will be a duplicate combination.
 
         i > index prevents candidates = [1, 1, 1, 2] and target = 3 from generating duplicate [1, 2].
         Backtracking starts at index = 0 (i.e. starts with [1]), and we want to find all combinations which add up to 3,
-        mainly [1, 1, 1] and [1, 2]. Once we are done with i = 0, we move on to i = 1. However, since when i = 1, we
-        also start with [1] (but with one less 1 compared to i = 0), we don't want to consider starting with another [1]
-        because it will probably result in a duplicate combination. In this case, we will get another [1,2].
-        Hence, the condition is like saying - "Hmmmm, I have seen 1 before. It's literally the last i I considered
+        mainly [1, 1, 1] and [1, 2]. Once we are done with i=0, we move to i=1. However, since at i=1 we also start with
+        [1] (but with one less 1 compared to i=0), we don't want to consider starting with another [1] because it would
+        probably result in a duplicate combination. In this case, we get another [1,2].
+        Hence, the condition is like saying - "Hmmmm, I have seen 1 before. It's literally the last index i I considered
         (since candidates is sorted), so I better keep incrementing i until i no longer points to a value equal to its
         predecessor".
 
@@ -80,7 +80,7 @@ def combination_sum(candidates, target):
     we can only use the elements found in the list once. To generate all possible combinations with a list of size N,
     for every index in the list, we have two options - either pick the value at this index or don't pick it. So we have
     2 options for N indices, resulting in 2^N. In 39- Combination Sum, we are not bounded by the number of elements in
-    the list. We can use any element in "candidates" an unlimited number of times.
+    the list, we can use any element in "candidates" an unlimited number of times.
     Space complexity: O(N), for the call stack
     """
 
