@@ -73,6 +73,13 @@ def permute_v1(nums):
     Space complexity: O(N), for the recursive call stack (max depth of call tree)
     """
     def compute_permutations_at_index(index, path):
+        # This helper function builds possible permutations out of the elements of the subarray nums[index:].
+        # The way it does it is by using every single element between indices index and n as a prefix for the
+        # permutation, to which is appended each of the possible permutations of this subarray minus the first element,
+        # which is nums[index+1:].
+        # Translated into code, for every index i in [index..n], bring nums[i] to the front at index 'index' to use as a
+        # prefix, add nums[index] to the permutation, then find and append the permutations of the rest of the subarray,
+        # nums[index+1:], which is nothing but a call to the same helper function f(index+1, permutation+[nums[index]]).
         if index == n:
             res.append(path)
             return
