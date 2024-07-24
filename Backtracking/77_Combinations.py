@@ -95,7 +95,7 @@ def combine_v2(n, k):
     Space complexity: O(k)
     """
 
-    def dfs(index, path):
+    def compute_combinations_at_index(index, path):
         if len(path) == k:
             res.append(path)
             return
@@ -103,9 +103,9 @@ def combine_v2(n, k):
         remaining = n - index + 1
         available = remaining - needed
         for i in range(index, index + available + 1):
-            dfs(i + 1, path + [i])
+            compute_combinations_at_index(i + 1, path + [i])
             i += 1
 
     res = []
-    dfs(1, [])
+    compute_combinations_at_index(1, [])
     return res
