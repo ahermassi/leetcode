@@ -3,20 +3,20 @@
 
 # Video explanation: https://youtu.be/q0s6m7AiM7o
 def combine_v1(n, k):
-    """ We are given that n <= 20. Typically, problems that ask to find all of something with low bounds can be solved
+    """ We are given that n <= 20. Typically, problems that ask to find "all of something" with low bounds can be solved
          with backtracking.
 
          Backtracking is a general algorithm for finding all (or some) solutions to some computational problems which
          incrementally builds candidates to the solution and abandons a candidate ("backtracks") as soon as it
          determines that the candidate cannot lead to a valid solution.
-         It is due to this backtracking behaviour, the backtracking algorithms are often much faster than the brute
-         force search algorithm, since it eliminates many unnecessary explorations.
+         It is due to this backtracking behavior that backtracking algorithms are often much faster than the brute
+         force search algorithm, since they eliminate many unnecessary explorations.
 
          Overall, the enumeration of candidates is done in two levels:
 
             1- At the first level, the function is implemented as recursion. At each occurrence of recursion, the
                  function is one step further to the final solution.
-            2- As the second level, within the recursion, we have an iteration that allows us to explore all the
+            2- At the second level, within the recursion, we have an iteration that allows us to explore all the
                  candidates that are of the same progress to the final solution.
 
         The range of elements we are working with is [1, n]. To generate a combination one element at a time, we will
@@ -36,13 +36,14 @@ def combine_v1(n, k):
         Once we find all the combinations that start with [1], we backtrack by removing the 1 from path and adding the
         next element. We have path = [2], and now we need to find all combinations that start with 2.
 
-        This process is very recursive in nature. Each time we add an element, we solve a new version of the problem
-        (find all combinations that start with path). The initial version of the problem is to find all combinations
-        that start with [], which represents all possible combinations.
+        This process is recursive in nature. Each time we add an element, we solve a new version of the problem (find
+        all combinations that start with the PREFIX path). The initial version of the problem is to find all
+        combinations that start with [], which represents all possible combinations.
 
         The best way to think about the backtracking process is by modeling it as a tree. Imagine the solution space as
         a tree, with each node representing a version of path. Label each node with a number that represents the last
         number in path. Moving to a child is like adding the child's label to path.
+
         To prevent duplicate combinations like [1, 2] and [2, 1], a node only has children with labels greater than its
         own. The root node represents an empty []. From the root, every node's path represents the path taken from the
         root. The nodes at depth k represent the answer combinations.
@@ -50,20 +51,22 @@ def combine_v1(n, k):
         Solving this problem is equivalent to "traversing" this tree. The easiest way to perform the traversal is by
         using recursion and passing path as an argument.
 
+        Refer to 46- Permutations for details about a similar process.
+
     Time complexity: O(choose(n, k)), the number of combinations to build. The number of combinations of length k
     from a set of n elements is equal to the binomial coefficient, also known as "n choose k": n!/(k! * (n-k)!)
     Space complexity: O(k), for the call stack
     """
 
-    def dfs(index, path):
+    def compute_combinations_at_index(index, path):
         if len(path) == k:
             res.append(path)
             return
         for i in range(index, n + 1):
-            dfs(i + 1, path + [i])
+            compute_combinations_at_index(i + 1, path + [i])
 
     res = []
-    dfs(1, [])
+    compute_combinations_at_index(1, [])
     return res
 
 
