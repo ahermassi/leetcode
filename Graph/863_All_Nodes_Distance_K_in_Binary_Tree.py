@@ -128,3 +128,51 @@ def distance_k_v3(root, target, k):
             queue.extend([neighbor for neighbor in graph[node] if neighbor not in visited])
         k -= 1
     return [node.val for node in queue]
+
+
+def distance_k_v4(root, target, k):
+    """ We can also perform the graph search using DFS.
+
+         In the equivalent graph, we only need to recursively visit all unvisited neighboring nodes of the current node,
+         which include nodes that are equivalent to the left and right children and the parent in the original tree.
+
+         We define a recursive function to explore nodes as far as possible along each branch. Upon reaching the end of
+         the current branch, we backtrack to the next possible branch and continue exploring. Once we encounter an
+         unvisited node, we take one of its neighbor nodes (left child, right child, or parent) as the next node on this
+         branch. Recursively call the function to the next node and solve the sub-problem.
+
+         If we reach the end of this branch, we backtrack to the previous node and visit the next neighbor node, and
+         repeat the process.
+
+         If we reach a node with a distance of k to target, it denotes that this node is one of the destination nodes.
+         Since continuing on with this branch leads to nodes with a distance larger than k, we also backtrack to the
+         previous node and try visiting the next neighbor node.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def build_graph(node, par):
+        if not node:
+            return
+        if par:
+            graph[node].append(par)
+            graph[par].append(node)
+        build_graph(node.left, node)
+        build_graph(node.right, node)
+
+    def dfs(node, distance):
+        if distance == k:
+            res.append(node.val)
+            return
+        visited.add(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                dfs(neighbor, distance + 1)
+
+    graph = defaultdict(list)
+    build_graph(root, None)
+    visited = set()
+    res = []
+    dfs(target, 0)
+    return res
