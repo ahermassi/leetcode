@@ -111,9 +111,9 @@ def exist_v2(board, word):
 
     n, m, length = len(board), len(board[0]), len(word)
     directions = {(-1, 0), (1, 0), (0, -1), (0, 1)}
-    visited = set()
     for i in range(n):
         for j in range(m):
+            visited = set()
             if search(i, j, 0):
                 return True
     return False
