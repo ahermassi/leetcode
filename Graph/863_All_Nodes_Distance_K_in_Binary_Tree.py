@@ -82,26 +82,31 @@ def distance_k_v2(root, target, k):
     return [node.val for node in queue]
 
 
+# Video explanation: https://www.youtube.com/watch?v=nPtARJ2cYrg
+def distance_k_v3(root, target, k):
+    """ We can take the hash map of the previous implementation one step further and transform the given binary tree
+         into an equivalent graph, where each pointer is treated as an undirected edge. Hence, the graph retains all the
+         connected nodes from the original binary tree, including the pointers from children to parents. Consequently,
+         we can perform a regular search on this graph.
 
-# Watch: https://www.youtube.com/watch?v=nPtARJ2cYrg
-def distance_k_v3(root, target, K):
-    """ If we view the tree structure as a graph, then it is easy to come up the BFS solution to find the nodes that
-        are located at a certain distance from the target node.
-        What is missing in the original tree data structure that makes the above idea a bit tricky to implement is the
-        explicit pointer to a node's parent which is the neighbor for a node, the same as its children nodes.
-        Due to this missing pointer, there is no explicit way for a node to reach out directly its neighbor nodes that
-        is connected through the parent node.
-        So the solution becomes clear, let's construct a graph from a given tree structure.
-        A recursive dfs function 'build_graph' helps build a map 'graph', similar to a graph's adjacency list. The
-        key of map is node and the value of map is a list of nodes connected to the key node.
-        Then we do K times a BFS search loop to find all nodes of distance K from target.
-        This solution is more suitable when the given tree is read-only and the parent annotation is not possible.
+         In the equivalent graph, we only need to visit all unvisited neighboring nodes of the current node, which
+         include nodes that are equivalent to the left and right children and the parent in the original tree.
+
+         Similarly, we use a hash set to keep track of all the visited nodes. Whenever we find an unvisited neighbor
+         node, we add it to the hash set so it won't be visited anymore.
+
+         A recursive dfs function build_graph helps build a hash map similar to a graph's adjacency list. The key of the
+         map is a node and the value is a list of nodes connected to the key node.
+
+         This solution is more suitable when the given tree is read-only and the parent annotation is not possible.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
 
-    def build_graph(node, par):  # This function serves the purpose of annotation of the previous solution. If
-        # modifying the tree is not possible, we map each node to its children and each child node to its parent.
+    def build_graph(node, par):
+        # This function serves the purpose of annotation of the first implementation. If modifying the tree is not
+        # possible, we map each node to its children and each child node to its parent.
         # This results in an undirected graph, which is a more flexible representation of the given tree.
         if not node:
             return
@@ -115,10 +120,11 @@ def distance_k_v3(root, target, K):
     build_graph(root, None)
     queue = deque([target])
     visited = set()
-    for _ in range(K):
-        n = len(queue)
-        for _ in range(n):
+    while k:
+        size = len(queue)
+        for _ in range(size):
             node = queue.popleft()
             visited.add(node)
             queue.extend([neighbor for neighbor in graph[node] if neighbor not in visited])
+        k -= 1
     return [node.val for node in queue]
