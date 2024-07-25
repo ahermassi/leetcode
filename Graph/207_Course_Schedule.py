@@ -136,6 +136,7 @@ def can_finish_bfs(numCourses, prerequisites):
             1- If there are still some edges left in the graph, then these edges must have formed certain cycles, which
                  is similar to the deadlock situation. It is due to these cyclic dependencies that we cannot remove them
                  during the above processes.
+
             2- Otherwise, we have removed all the edges from the graph, and we got ourselves a topological order of the
                  graph.
 
@@ -157,18 +158,17 @@ def can_finish_bfs(numCourses, prerequisites):
         courses_that_depend_on[prereq].append(course)
         # Record the number of prerequisites (outgoing edges) each course has
         outdegree[course] += 1
-    # Iterate over the outdegrees list and find the node that has 0 outdegree, which maps to 0 prerequisites. If none
+    # Iterate over the outdegrees list and find the nodes that have outdegree=0, which maps to 0 prerequisites. If none
     # is found, then there must be a cycle.
     queue = deque(course for course in range(numCourses) if outdegree[course] == 0)
-    # 'courses_finished' is initialized to len(queue) because the queue contains the courses that have 0
-    # prerequisites, so they can be finished without any pre-processing
-    courses_finished = len(queue)
+    courses_finished = 0
     while queue and courses_finished != numCourses:  # adding courses_finished != numCourses to exit the loop early
         course = queue.popleft()
         courses_finished += 1 # One more course has been finished
-        for neighbor in courses_that_depend_on[course]:  # Iterate over the courses that have 'course' as prerequisite
-            # This is equivalent to removing the edge neighbor -> course, which in other words means taking course
-            # 'course' and 'course' is no longer in the list of prerequisite of 'neighbor'
+        for neighbor in courses_that_depend_on[course]:
+            # Iterate over the courses that have 'course' as prerequisite. This is equivalent to removing the edge
+            # neighbor -> course, which in other words means taking course  'course' and 'course' is no longer in the
+            # list of prerequisite of 'neighbor'
             outdegree[neighbor] -= 1
             if outdegree[neighbor] == 0:  # We've taken all the prerequisites of course 'neighbor'
                 queue.append(neighbor)  # Now explore the courses that have 'neighbor' as prerequisite
