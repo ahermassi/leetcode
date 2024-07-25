@@ -45,18 +45,18 @@ def min_eating_speed(piles, h):
          Therefore, any answer that we report should fall in the closed interval [1, max(piles)].
 
          Each hour, Koko chooses some pile of bananas and eats K bananas from that pile. There is a limited range of
-         K's to enable her to eat all the bananas within h hours. We ought to reduce the searching space and to return
-         the minimum valid K. Binary Search is born for that.
+         K's to enable her to eat all the bananas within h hours. We ought to reduce the searching space and return the
+         minimum valid K. Binary Search is born for that.
 
          We can observe that:
 
-            - If Koko can eat all the piles with a speed of n, she can also finish the task with the speed of (n + 1).
+            - If Koko can eat all the piles with a speed of n, she can also finish the task with the speed of n+1.
                With a larger eating speed, Koko will spend less or equal time on every pile. Thus, the overall time is
                guaranteed to be less than or equal to that of the speed n.
 
-            - If Koko can't finish with a speed of n, then she can't finish with the speed of (n - 1) either. With a
-               smaller eating speed, Koko will spend more or equal time on every pile, thus the overall time will be
-               greater than or equal to that of the speed n.
+            - If Koko can't finish with a speed of n, then she can't finish with the speed of n-1 either. With a smaller
+               eating speed, Koko will spend more or equal time on every pile, thus the overall time will be greater
+               than or equal to that of the speed n.
 
         Given the previous observations, we conclude that if the current speed is workable, then the minimum workable
         speed should be on its left inclusively. If the current speed is not workable, that is, too slow to finish the
@@ -65,8 +65,8 @@ def min_eating_speed(piles, h):
          Therefore, we can use binary search to locate the boundary that separates workable speeds and unworkable
          speeds to get the minimum workable speed.
 
-        First, let's set a reasonable upper and lower bound for binary search (to ensure that we do not miss any
-        workable speed). Let the lower bound be 1, the minimum possible eating speed since there is no speed slower
+        First, let's set a reasonable upper and lower bound for binary search to ensure that we do not miss any
+        workable speed. Let the lower bound be 1, the minimum possible eating speed since there is no speed slower
         than 1. The upper bound will be the maximum eating speed, that is the maximum number of bananas in a pile.
         For instance, if the piles are [3,5,7,9], then 9 is the maximum number of bananas in a single pile, we can
         set the upper boundary as 9. Because Koko can eat every pile within 1 hour with a speed of 9, or any other
@@ -85,18 +85,21 @@ def min_eating_speed(piles, h):
     """
     left, right = 1, max(piles)
     while left < right:
-        mid, hours_needed = (left + right) // 2, 0
+        mid = (left + right) // 2
+        hours_needed = 0
         for bananas in piles:
-            hours_needed += bananas // mid if bananas % mid == 0 else (bananas // mid) + 1
+            hours_needed += bananas // mid
+            if bananas % mid:
+                hours_needed +=  1
         if hours_needed <= h:
             right = mid
-            # We could also use a 'res' variable as follows:
-            # res = mid
+            # We could also use an 'ans' variable as follows:
+            # ans = mid
             # right = mid - 1
         else:
             left = mid + 1
     return left
-    # or return res
+    # or return ans
 
 
 class Test(unittest.TestCase):
