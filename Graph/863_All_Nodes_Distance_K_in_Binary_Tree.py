@@ -52,10 +52,39 @@ def distance_k_v1(root, target, k):
         k -= 1
     return [node.val for node in queue]
 
+
+def distance_k_v2(root, target, k):
+    """ The previous approach of dynamically adding attributes is not a recommended practice. A safer method is to
+         use a hash map to save pointers to each node's parent before performing the BFS.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+
+    def get_parents(root, parent):
+        if not root:
+            return
+        parents[root] = parent
+        get_parents(root.left, root)
+        get_parents(root.right, root)
+
+    parents = dict()
+    get_parents(root, None)
+    queue = deque([target])
+    visited = set()
+    while k:
+        size = len(queue)
+        for _ in range(size):
+            node = queue.popleft()
+            visited.add(node)
+            queue.extend(neighbor for neighbor in (node.left, node.right, parents[node]) if neighbor and neighbor not in visited)
+        k -= 1
+    return [node.val for node in queue]
+
+
+
 # Watch: https://www.youtube.com/watch?v=nPtARJ2cYrg
-
-
-def distance_k_v2(root, target, K):
+def distance_k_v3(root, target, K):
     """ If we view the tree structure as a graph, then it is easy to come up the BFS solution to find the nodes that
         are located at a certain distance from the target node.
         What is missing in the original tree data structure that makes the above idea a bit tricky to implement is the
