@@ -51,6 +51,8 @@ def count_components_v2(n, edges):
          If we start it from any node, we may only find that one connected component, so instead we start it from all
          nodes and visit the max number of nodes using BFS and only increment the count once we visit a new node from
          the adjacency list, meaning we only increment the count when we're exploring a new connected component.
+
+         The queue can be replaced with a stack to produce an equivalent DFS implementation.
     """
     graph = defaultdict(list)
     for src, dest in edges:
