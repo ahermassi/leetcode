@@ -22,7 +22,7 @@ def check_inclusion_v1(s1, s2):
 
          When a character enters the window, we increment that character's count. When a character is dropped from the
          window, we decrement that character's count. We maintain a valid window by decrementing the count of the
-         character at index (i - len(s1)). After, we only need to check if the two frequency maps are equal.
+         character at window's leftmost index. After, we only need to check if the two frequency maps are equal.
 
          Thus, the substrings considered can be viewed as a window of length as that of s1 iterating over s2.
 
@@ -39,13 +39,16 @@ def check_inclusion_v1(s1, s2):
         window[s2[i]] += 1
     if counter == window:
         return True
-    for i in range(n, m):
-        window[s2[i]] += 1
-        window[s2[i - n]] -= 1
-        if window[s2[i - n]] == 0:
-            del window[s2[i - n]]
+    left, right = 0, n
+    while right < m:
+        window[s2[right]] += 1
+        window[s2[left]] -= 1
+        if window[s2[left]] == 0:
+            del window[s2[left]]
         if window == counter:
             return True
+        left += 1
+        right += 1
     return False
 
 
