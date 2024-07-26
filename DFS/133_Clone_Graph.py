@@ -31,16 +31,17 @@ def clone_graph_v1(node):
                cloned. The key for the hashmap would be the node of the original graph and its corresponding value would
                be the cloned node of the clone graph.
 
-               - If the node already exists in the map, we return the stored  reference of the cloned node.
+            - If the node already exists in the map, we return the stored reference of the cloned node.
 
-            - If we don't find the node in the hashmap, we create a copy of it and put it in the hashmap. It's important
-               to create a copy of the node and add it to the hashmap before entering the recursion. In the absence of
-               such an ordering, we would be caught in an infinite loop because of encountering the node again somewhere
-               down the recursion path, we will be traversing it again thus getting into cycles.
+            - If we don't find the node in the hashmap, we create a copy of it and put it in the hashmap.
+               !!! IMPORTANT !!!
+               It's important to add the clone to the hashmap BEFORE entering the recursion. In the absence on such an
+               ordering, we would be caught in an infinite loop when we encounter the node again somewhere down
+               the recursion path because the graph is UNDIRECTED, thus getting into a cycle.
 
             - Now make the recursive call for the neighbors of the node. Each recursive call would return the clone of
-               a neighbor. We will prepare the list of these clones returned and put into neighbors of clone node which
-               we had created earlier. This way we will have cloned the given node and its neighbors.
+               a neighbor. We prepare the list of these clones returned and put into neighbors of clone node which we
+               had created earlier. This way we will have cloned the given node and its neighbors.
 
     Time complexity: O(|V| + |E|), we will touch V nodes and traverse E edges
     Space complexity: O(|V|), this space is occupied by the hashmap and in addition to that, space would also be
