@@ -44,13 +44,18 @@ def my_sqrt(x):
 
         !! IMPORTANT!!
         The algorithm tries to find the largest value of mid whose square is less than x IF x is not a perfect square.
+        If define the predicate f(mid) = mid * mid > x and apply it on the search space, we get a BINARY array
+        [F, F, F, ..., F, T, T, ..., T]. We're trying to locate the LAST FALSE in this array.
+        Note that if f(mid) = mid * mid <= x, the binary array becomes [T, T, T,...,T, F, F, ..., F], and we need to
+        locate the LAST TRUE.
 
         For example, if x = 21, we initialize the interval to [0, 21].
-        mid = (0 + 21) // 2 = 10. Since 10^2 > 21, we update the interval to [0, 9].
-        mid = (0 + 9) // 2 = 4. Since 4^2 < 21, we update the interval to [5, 9].
-        mid = (5 + 9) // 2 = 7. Since 7^2 > 21, we update the interval to [5, 6].
-        mid = (5 + 6) // 2 = 5. Since 5^2 > 21, we update the interval to [5, 4].
-        Now the right endpoint is less than the left endpoint, i.e., the interval is empty, so the result is 5 - 1 = 4.
+        mid = (0 + 21) // 2 = 10; is 10^2 > 21 ? T, so we update the interval to [0, 9].
+        mid = (0 + 9) // 2 = 4; is 4^2 > 21 ? F, so we update the interval to [5, 9].
+        mid = (5 + 9) // 2 = 7; is 7^2 > 21? T, so we update the interval to [5, 6].
+        mid = (5 + 6) // 2 = 5; is 5^2 > 21? T, we update the interval to [5, 4].
+        Now the right boundary is less than the left boundary, i.e., with right pointing to the LAST F and left
+        pointing to the FIRST T, so the result is LAST F = right = 4.
 
     Time complexity: O(log x)
     Space complexity: O(1)
@@ -62,10 +67,10 @@ def my_sqrt(x):
         mid_squared = mid * mid
         if mid_squared == x:
             return mid
-        if mid_squared < x:
-            left = mid + 1
-        else:
+        if mid_squared > x:
             right = mid - 1
+        else:
+            left = mid + 1
     # No exact integer square root is found within the range, i.e. the true square root is a floating point value
     # between 'left' and 'right', and we want to round it down to the smaller number out of the 2.
     # The loop exits when left > right, and at this moment right^2 < x < left^2
