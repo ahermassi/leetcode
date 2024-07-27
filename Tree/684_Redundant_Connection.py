@@ -16,7 +16,7 @@ import unittest2 as unittest
 def find_redundant_connection_v1(edges):
     """ The algorithm is based on the following fact in graph theory:
 
-                An undirected connected graph with no cycles is a tree
+                An undirected connected graph with no trivial cycles is a tree
 
          The statement of the problem guarantees that by deleting one and only one edge, the graph is a tree.
          So, we know it is connected and has exactly one cycle. The goal is to find the edge in this cycle with the
@@ -53,15 +53,12 @@ def find_redundant_connection_v1(edges):
 
     def path_exists(src, target):
         # path_exists(src, target) returns True if target node is reachable from src in the current graph
-        if src in visited:
-            # If a node was visited, we cannot find a path through it as it itself formed a cycle which we do not want.
-            return False
         if src == target:
             # A path was found
             return True
         visited.add(src)
         for neighbor in graph[src]:
-            if path_exists(neighbor, target):
+            if neighbor not in visited and path_exists(neighbor, target):
                 return True
         return False
 
