@@ -81,6 +81,8 @@ def valid_tree_v1(n, edges):
     """
 
     def dfs(vertex, parent):
+        # The return value of this method is whether a DFS starting from the current vertex results in a
+        # non-trivial cycle
         visited.add(vertex)
         for neighbor in graph[vertex]:
             if neighbor == parent:
@@ -105,8 +107,8 @@ def valid_tree_v1(n, edges):
         graph[b].append(a)
     visited = set()
     if not dfs(0, -1):
-        # Make sure there's no cycle. Note: node 0 isn't guaranteed to exist, so we can get a key error if we don't
-        # use a defaultdict.
+        # Make sure there's no trivial cycle.
+        # Note: node 0 isn't guaranteed to exist, so we can get a key error if we don't use a defaultdict.
         return False
     # Check that all vertices are connected. If the graph is a tree, all nodes will be visited by the end of DFS.
     return len(visited) == n
