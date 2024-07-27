@@ -84,6 +84,12 @@ def find_redundant_connection_v2(edges):
          Note that we no longer need to use a visited set because, with the introduction of parent, we're working with
          a "directed" graph, and we already know that no cycle exists yet before each call to path_exists().
 
+         !!! IMPORTANT !!!
+         261- Graph Valid Tree introduces a way to detect non-trivial cycles in an undirected graph based on the parent
+         pointer. Please be aware that a visited set is used in that method because the EDGE THAT CAUSES THE CYCLE MIGHT
+         ALREADY EXIST in the graph. However, in this problem, we're doing cycle prevention NOT cycle detection, so the
+         problematic edge doesn't exist yet.
+
     Time complexity: O(N^2)
     Space complexity: O(N)
     """
