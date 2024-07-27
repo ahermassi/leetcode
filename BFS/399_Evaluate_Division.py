@@ -30,7 +30,7 @@ def calc_equation_v1(equations, values, queries):
         reinterpret the problem as:
 
                 Given two nodes, we are asked to check if there exists a path between them. If so, we should return
-                the running products along the path as the result.
+                the running product along the path as the result.
 
          Visualize a/b = k as a link between nodes a and b, the weight from a to b is k, the reverse link is 1/k. Query
          is to find a path between the two nodes.
@@ -62,15 +62,14 @@ def calc_equation_v1(equations, values, queries):
     """
 
     def dfs(vertex, destination, running_prod):
-        if vertex in visited:
-            return -1
         if vertex == destination:
             return running_prod
         visited.add(vertex)
         for neighbor, division in divisions[vertex]:
-            result = dfs(neighbor, destination, running_prod * division)
-            if result != -1:
-                return result
+            if neighbor not in visited:
+                result = dfs(neighbor, destination, running_prod * division)
+                if result != -1:
+                    return result
         return -1
 
     divisions = defaultdict(list)
