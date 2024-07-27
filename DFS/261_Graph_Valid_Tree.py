@@ -118,9 +118,9 @@ def valid_tree_v2(n, edges):
     """ Depending on how much graph theory you know, there's a better definition for determining whether a given graph
          is a tree.
 
-         For an undirected graph to be a valid tree, it must have exactly n-1 edges. Any less, and it can't possibly be
-         fully connected. Any more, and it has to contain cycles. Additionally, if the graph is fully connected and
-         contains exactly n-1 edges, it can't possibly contain a cycle, and therefore must be a tree!
+         For a CONNECTED undirected graph to be a valid tree, it must have exactly n-1 edges. Any less, and it can't
+         possibly be fully connected. Any more, and it has to contain cycles. Additionally, if the graph is fully
+         connected and contains exactly n-1 edges, it can't possibly contain a cycle, and therefore must be a tree!
 
          Going by this definition, the algorithm needs to do the following:
 
@@ -128,22 +128,22 @@ def valid_tree_v2(n, edges):
 
             - Check whether the graph is fully connected. Return true if it is, false if otherwise.
 
-        Recall that the most complicated part of the previous approach was in checking whether the graph contained
-        cycles. This was because in an undirected graph, we need to be careful of trivial cycles. Checking whether a
-        graph is fully connected is straightforward—we simply check if all nodes were reachable from a search starting
-        at a single node.
+        Recall that the most complicated part of the previous approach was checking whether the graph contained cycles.
+        This was because in an undirected graph, we need to be careful of trivial cycles. Checking whether a graph is
+        fully connected is straightforward—we simply check if all nodes were reachable from a search starting at a
+        single node.
 
         Like before, we can check for connectivity using recursive depth-first search, iterative depth-first search, or
-        iterative breadth-first search. We still need to use a visited set to prevent the algorithm getting caught in an
-        infinite loop due to the trivial cycles.
+        breadth-first search. We still need to use a visited set to prevent the algorithm getting caught in an infinite
+        loop due to the trivial cycles.
 
-        In other words: In order for an undirected graph to be a tree, it must satisfy the following conditions:
+        In other words: in order for an undirected graph to be a tree, it must satisfy the following conditions:
 
                     Number of edges = Number of nodes - 1
                                             AND
                                 The graph is connected
 
-                (the 1st condition implies that the connected graph has no cycle)
+                (the 1st condition implies that the connected graph has no cycles)
 
         The DFS followed by length of visited set check allows us to verify that there is only one connected component
         in the graph.
@@ -153,11 +153,10 @@ def valid_tree_v2(n, edges):
     """
 
     def dfs(vertex):
-        if vertex in visited:
-            return
         visited.add(vertex)
         for neighbor in graph[vertex]:
-            dfs(neighbor)
+            if neighbor not in visited:
+                dfs(neighbor)
 
     if len(edges) != n - 1:
         return False
