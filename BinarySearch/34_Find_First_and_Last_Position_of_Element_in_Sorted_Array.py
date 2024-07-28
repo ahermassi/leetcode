@@ -14,34 +14,50 @@ def search_range_v1(nums, target):
                       0  1  2  3  4  5  6  7  8  9  10 11 12
         nums = [1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7,  9,  9], target = 5
 
+        Finding the first position:
         left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, we set right = mid - 1. By doing that
         and narrowing down the search range, we're essentially locating the last/rightmost element LESS THAN OR EQUAL TO
         target. Let's call it X.
             - When 'left' steps over 'right', 'left' is at the index of the first element to the right of X, and by the
-               definition of X that's the index of the first occurrence of target.
-            - When 'right' steps over 'left', 'left' is at the index of the first occurrence of target.
+               definition of X that's the index of the first occurrence of target IF IT'S FOUND in nums.
+            - When 'right' steps over 'left', 'left' is at the index of the first occurrence of target IF IT'S FOUND in
+               nums.
 
         left = 0, right = 5, mid = 2
         left = 3, right = 5, mid = 4
         left = 5, right = 5, mid = 5
         left = 6, right = 5 -> return left = 6
+        !!! IMPORTANT !!!
+        This binary search finds the INSERTION INDEX of target in nums in a manner similar to bisect_left: if target is
+        already present in nums, the insertion point will be before (to the left of) any existing entries.
+        In the previous example, if nums[returned_index] = nums[6] = 7 instead of 5, it would still be a valid
+        bisect_left result: that's the index where target=5 would be inserted.
 
+        Finding the last position:
         left = 0, right = 12, mid = 6: notice that nums[mid] == target. However, we set left = mid + 1. By doing that
         and narrowing down the search range, we're essentially locating the first/leftmost element GREATER than target.
         Let's call it Y.
             - When 'right' steps over 'left', 'right' is at the index of the first element to the left of Y, and by the
-               definition of Y that's the index of the last occurrence of target.
-            - When 'left' steps over 'right', 'right' is at the index of the last occurrence of target.
+               definition of Y that's the index of the last occurrence of target IF IT'S FOUND in nums.
+            - When 'left' steps over 'right', 'right' is at the index of the last occurrence of target IF IT'S FOUND in
+               nums.
 
         left = 7, right = 12, mid = 9
         left = 7, right = 8, mid = 7
         left = 8, right = 8, mid = 8
         left = 9, right = 8 -> return right = 8
+        !!! IMPORTANT !!!
+        This binary search finds the INSERTION INDEX of target in nums in a manner similar to bisect_right: if target is
+        already present in nums, the insertion point will be after (to the right of) any existing entries.
+        In the previous example, if nums[returned_index] = nums[8] = 7 instead of 5, it would still be a valid
+        bisect_right result: that's the index where target=5 would be inserted.
 
     Time complexity: O(logN)
     Space complexity: O(1)
     """
     def find_first_position():
+        # This binary search is essentially bisect_left(target, nums). It's merely an insertion index. There is
+        # NO GUARANTEE target exists in nums.
         left, right = 0, len(nums) - 1
         while left <= right:
             mid = (left + right) // 2
@@ -52,6 +68,8 @@ def search_range_v1(nums, target):
         return left
 
     def find_last_position():
+        # This binary search is essentially bisect_right(target, nums). It's merely an insertion index. There is
+        # NO GUARANTEE target exists in nums.
         left, right = 0, len(nums) - 1
         while left <= right:
             mid = (left + right) // 2
@@ -62,6 +80,7 @@ def search_range_v1(nums, target):
         return right
 
     left, right = find_first_position(), find_last_position()
+    # Left insertion index <= right insertion index means target is in nums.
     return [left, right] if left <= right else [-1, -1]
 
 
