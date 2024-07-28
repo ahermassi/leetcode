@@ -35,7 +35,7 @@ def find_peak_element_v1(nums):
     Space complexity: O(1)
     """
     n = len(nums)
-    for i in range(1, n-1):
+    for i in range(n-1):
         if nums[i] > nums[i + 1]:
             return i
     return n - 1
