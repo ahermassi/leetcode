@@ -88,7 +88,7 @@ def search_insert_v2(nums, target):
             left = mid + 1
         else:
             right = mid
-    return left
+    return right
     # Contrast this to 278- First Bad Version solution.
     # left, right = 1, n
     # while left < right:
@@ -97,7 +97,7 @@ def search_insert_v2(nums, target):
     #         left = mid + 1
     #     else:
     #         right = mid
-    # return left
+    # return right
 
 
 class Test(unittest.TestCase):
