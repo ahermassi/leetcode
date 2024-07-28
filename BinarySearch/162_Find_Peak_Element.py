@@ -153,4 +153,15 @@ def find_peak_element_v2(nums):
             left = mid + 1
         else:
             right = mid
-    return left
+    return right
+
+
+# NOTE: binary search using a predicate
+
+# f(mid) = nums[mid] < nums[mid + 1]
+# -> [T, T,...,T, F, F,..., F]
+# Find the first F
+# That's the reason if nums[mid] < target we completely discard [left, mid] because it's filled with T's.
+# HOWEVER, this binary search case requires the existence of at least TWO ELEMENTS in the array,
+# otherwise nums[mid] < nums[mid + 1] would cause an index out of bound error. For this reason,
+# the left <= right version doesn't work here.
