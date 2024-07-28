@@ -97,7 +97,7 @@ def find_min_v2(nums):
     left, right = 0, len(nums) - 1
     while left < right:
         mid = (left + right) // 2
-        if nums[mid] > nums[right]:
+        if nums[mid] > nums[right]:  # Could also use if nums[mid] > nums[-1]
             left = mid + 1
             # If nums[mid] > nums[right], we know that the right sorted half is somewhere to the right of mid.
             # mid can't be the minimum, so we can safely move left to mid + 1, which ensures the interval is always
@@ -117,7 +117,17 @@ def find_min_v2(nums):
     # At this point, left and right converge to a single index (for minimum value). The if/else block forces the
     # boundaries of left/right to shrink each iteration.
     # We shrink the left/right boundaries to one value, without ever disqualifying a possible minimum value.
-    return nums[left]
+    return nums[right]
+
+    # Equivalent binary search to find the first F in [T, T,...,T, F, F,..., F], where f(mid) = nums[mid] > nums[-1]
+    # left, right = 0, len(nums) - 1
+    # while left <= right:
+    #     mid = (left + right) // 2
+    #     if nums[mid] > nums[-1]:
+    #         left = mid + 1
+    #     else:
+    #         right = mid - 1
+    # return nums[left]
 
 
 class Test(unittest.TestCase):
