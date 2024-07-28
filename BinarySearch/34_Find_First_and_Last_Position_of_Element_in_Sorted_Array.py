@@ -125,6 +125,23 @@ def search_range_v2(nums, target):
     return [find_first_position(), find_last_position()]
 
 
+# NOTES: binary search using predicates
+
+# find_first_position(): f(mid) = nums[mid] < target
+# -> [T, T,...,T, F, F,..., F]
+# Find the first F
+# That's the reason if nums[mid] < target we completely discard [left, mid] because it's filled with T's.
+# When nums[mid] >= target, we move left to find the leftmost F, BUT nums[mid] COULD be the target, so
+# we save it. Since we always move left, the last saved element equal to target is the leftmost, aka the first.
+
+# find_last_position(): f(mid) = nums[mid] <= target
+# ->[T, T,...,T, F, F,..., F]
+# Find the last T
+# That's the reason if nums[mid] > target we completely discard [mid, right] because it's filled with F's.
+# When nums[mid] <= target, we move right to find the rightmost T, BUT nums[mid] COULD be the target, so
+# we save it. Since we always move right, the last saved element equal to target is the rightmost, aka the last.
+
+
 # def search_range_v3(nums, target):
 #     """ We can use a single binary search helper method to find both first and last insertion positions of target.
 #         Here, find_first_occurrence(target) is a simple binary search, telling the first index where we could insert a
