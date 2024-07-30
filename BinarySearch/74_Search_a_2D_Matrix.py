@@ -48,6 +48,7 @@ def search_matrix_v2(matrix, target):
     """
     n, m = len(matrix), len(matrix[0])
     top_row, bottom_row = 0, n - 1
+    search_row = None
     while top_row <= bottom_row:
         mid_row = (top_row + bottom_row) // 2
         if target < matrix[mid_row][0]:
@@ -55,10 +56,10 @@ def search_matrix_v2(matrix, target):
         elif target > matrix[mid_row][-1]:
             top_row = mid_row + 1
         else:
+            search_row = mid_row
             break
-    if top_row > bottom_row:
+    if search_row is None:
         return False
-    search_row = (top_row + bottom_row) // 2 # search_row is the last value of 'mid_row' before exiting the loop
     left, right = 0, m - 1
     while left <= right:
         mid = (left + right) // 2
