@@ -17,7 +17,7 @@ def search_matrix_v1(matrix, target):
 
         The row to which an item belongs depends on the number of items that can fit in each row.
 
-        Another way to took at it is that if we have a matrix A with 4 rows and 3 columns, when we want to access
+        Another way to look at it is that if we have a matrix A with 4 rows and 3 columns, when we want to access
         A[2][1], the way the memory address is calculated is 2*3 + 1 = 7. So, we are reversing the calculation, where
         row = 7 // 3 = 2, and column is the offset in that row which for 7th element is 7 % 3 = 1.
 
