@@ -7,7 +7,7 @@ import unittest2 as unittest
 
 def search_matrix_v1(matrix, target):
     """ We can partition a sorted two-dimensional matrix into four sorted sub matrices, two of which might contain
-        target and two of which definitely do not.
+         target and two of which definitely do not.
 
         Base Case:
             For a sorted two-dimensional array, there are two ways to determine in constant time whether an arbitrary
@@ -17,14 +17,14 @@ def search_matrix_v1(matrix, target):
             definitely is not present.
 
         Recursive Case:
-            If the base case conditions have not been met, then the array has positive area and target could
-            potentially be present. Therefore, we seek along the matrix's MIDDLE column for an index row such that:
+            If the base case conditions are not met, then the array has positive area and target could potentially be
+            present. Therefore, we seek along the matrix's MIDDLE column for an index row such that:
 
-                matrix[row-1][mid] < target < matrix[row][mid]
+                    matrix[row-1][mid] < target < matrix[row][mid]
 
             (obviously, if we find target during this process, we immediately return true).
             The existing matrix can be partitioned into four sub matrices around this index; the top-left and
-            bottom-right sub matrices cannot contain target (via the argument outlined in the Base Case), so we can
+            bottom-right sub matrices cannot contain target (via the argument outlined in the base case), so we can
             prune them from the search space. Additionally, the bottom-left and top-right sub matrices are sorted
             two-dimensional matrices, so we can recursively apply this algorithm on them.
 
@@ -34,24 +34,24 @@ def search_matrix_v1(matrix, target):
     calls), the height of the tree is bounded by logN.
     """
 
-    def search_submatrix(left, right, top, bottom):
-        if left > right or top > bottom:
+    def search_submatrix(top, bottom, left, right):
+        if top > bottom or left > right:
             return False
-        if target < matrix[top][left] or target > matrix[bottom][right]:  # Top-left corner element is always the
-            # smallest of the matrix, and the bottom-right element is always the biggest
+        if target < matrix[top][left] or target > matrix[bottom][right]:
+            # Top-left corner element is always the smallest of the matrix, and the bottom-right element is always
+            # the biggest
             return False
         mid = (left + right) // 2
-        cur_row = top
+        row = top
         # Locate a row such that matrix[row-1][mid] <= target < matrix[row][mid]
-        while cur_row <= bottom and matrix[cur_row][mid] <= target:
-            if matrix[cur_row][mid] == target:
+        while row <= bottom and matrix[row][mid] <= target:
+            if matrix[row][mid] == target:
                 return True
-            cur_row += 1
-        return search_submatrix(left, mid - 1, cur_row, bottom) or search_submatrix(mid + 1, right, top, cur_row - 1)
+            row += 1
+        return search_submatrix(top, row - 1, mid + 1, right) or search_submatrix(row, bottom, left, mid - 1)
 
-    if not matrix:
-        return False
-    return search_submatrix(0, len(matrix[0]) - 1, 0, len(matrix) - 1)
+    n, m = len(matrix), len(matrix[0])
+    return search_submatrix(0, n - 1, 0, m - 1)
 
 
 # Watch: https://youtu.be/FOa55B9Ikfg?t=945
