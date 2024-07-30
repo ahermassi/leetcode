@@ -99,8 +99,6 @@ def search_matrix_v2(matrix, target):
     cannot run for more than (N + M) iterations.
     Space complexity: O(1)
     """
-    if not matrix:
-        return False
     n, m = len(matrix), len(matrix[0])
     row, col = n - 1, 0
     while row >= 0 and col < m:
@@ -114,12 +112,11 @@ def search_matrix_v2(matrix, target):
 
 
 def search_matrix_v3(matrix, target):
-    """ This time, we initiate a search from the top-right corner.
+    """ This time, we start a search from the top-right corner.
+
     Time complexity: O(N + M)
     Space complexity: O(1)
     """
-    if not matrix:
-        return False
     n, m = len(matrix), len(matrix[0])
     row, col = 0, m - 1
     while row < n and col >= 0:
