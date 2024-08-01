@@ -48,10 +48,10 @@ def rob_v1(nums):
 
         At each step, the robber has two options:
 
-            1- Rob current house i: If this option is selected, it means the robber can't rob previous (i-1) house but
-                 can safely proceed to the one before previous (i-2) and get all cumulative loot that follows.
+            1- Rob current house i: If this option is selected, it means the robber can't rob previous i-1 house but
+                 can safely proceed to the one before previous i-2 and get all cumulative loot that follows.
             2- Don't rob current house i: If this option is selected, the robber gets all the possible loot from robbery
-            of house (i-1) and all the following houses.
+                 of house i-1 and all the following houses.
 
         So it boils down to calculating what is more profitable:
 
