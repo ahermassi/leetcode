@@ -50,7 +50,7 @@ def climb_stairs_v1(n):
 
 
 def climb_stairs_v2(n):
-    """ Top down DP + memoization
+    """ Top-Down Dynamic Programming
 
          In the previous approach, we are redundantly calculating the result for every step. Let's think about
          calculating the ways to climb 6 stairs, climbStairs(6).
@@ -75,8 +75,8 @@ def climb_stairs_v2(n):
         dictionary memo in which we store the values of climbStairs that we have computed, and if we ever have to
         compute that value again we just check memo in (average) O(1) time instead of doing the work all over again.
 
-         In this way, we are pruning recursion tree with the help of memo map and educing the size of recursion tree
-         down to n.
+         In this way, we are pruning recursion tree with the help of memo map and reducing the size of the recursion
+         tree down to n.
 
          This top-down paradigm works well when we approach the problem from the top of the stairs (the last step we
          needed to climb, n) down.
