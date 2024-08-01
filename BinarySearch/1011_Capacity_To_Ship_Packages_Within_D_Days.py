@@ -7,6 +7,7 @@ within D days. """
 import unittest2 as unittest
 
 
+# Video explanation: https://www.youtube.com/watch?v=ER_oLmdc-nw
 def ship_within_days(weights, days):
     """ An intuitive approach would be to start with checking ship capacity equal to the largest weight in weights,
          say w. The ship's capacity cannot be smaller than w, otherwise the conveyor belt couldn't ship the heaviest
