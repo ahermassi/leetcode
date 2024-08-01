@@ -104,23 +104,23 @@ def rob_v3(nums):
         The idea here is the same as before except that instead of following a recursive approach, we will be sticking
         with a tabular approach. The recursive approach may run into trouble when the recursion stack grows too large.
 
-        The cache we had before will still exist in this approach but instead of calling it a cache, we will refer to
-        it as our dynamic programming table. Every DP solution has a table that we populate starting with the base case
-        or the simplest of cases for which we already know the answer. E.g. for our problem, we know that in the absence
-        of houses, the robber will make 0 profit. Similarly, if there is just one house left to rob, the robber will rob
-        that house, and that will be the maximum profit.
+        The cache we had before will still exist in this approach but instead of calling it a cache, we will refer to it
+        as the dynamic programming table. Every DP solution has a table that we populate starting with the base case
+        or the simplest of cases for which we already know the answer. E.g. for this problem, we know that in the
+        absence of houses, the robber will make 0 profit. Similarly, if there is just one house left to rob, the robber
+        will rob that house, and that will be the maximum profit.
 
         We start by populating the dynamic programming table with these initial values and then build the table in a
         bottom-up fashion which is the essence of this solution.
 
-        Let dp[i] be the maximum profit that can be made from robbing houses up to index (i-1). Therefore:
+        Let dp[i] be the maximum profit that can be made from robbing the first i houses (up to index i-1). Therefore:
 
-                    dp[i] = max(nums[i] + dp[i - 2], dp[i - 1])
+                    dp[i] = max(nums[i] + dp[i-2], dp[i-1])
 
         At every index:
 
-            - We can keep same loot as we had at previous index: dp[i-1]. Or,
-            - We can rob the current house and add it to the loot we have at (i-2)th index: nnums[i] + dp[i-2]
+            - We can keep the same loot as we had at the previous index: dp[i-1]. Or,
+            - We can rob the current house and add it to the loot we had at (i-2)th index: nums[i] + dp[i-2]
 
         Note that this is the same as the recursive formulation in the previous solution. The only difference is that we
         have already calculated the solutions to the sub-problems, and we simply reuse the solutions in O(1) time when
