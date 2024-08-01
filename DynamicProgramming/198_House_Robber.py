@@ -158,7 +158,7 @@ def rob_v4(nums):
     rob_previous = rob_before_previous = 0
     for i in range(n):
         cur_max_loot = max(nums[i] + rob_before_previous, rob_previous)
-        rob_before_previous, rob_previous = rob_previous, cur_max_loot
+        rob_previous, rob_before_previous = cur_max_loot, rob_previous
     return rob_previous
 
 
