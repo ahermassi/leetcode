@@ -34,9 +34,9 @@ def jump_v1(nums):
 
 # Video explanation: https://www.youtube.com/watch?v=dJ7sWiOoK7g
 def jump_v2(nums):
-    """  Imagine that we are at index i in the array. The element in the current position defines the maximum distance
-          that we can jump. Therefore, our next step will fall somewhere in the range [start, end], where start is the
-          next index (i + 1) and end is (i + nums[i]). Then the question is, where to jump?
+    """  Imagine that we are at index i in the array. The element at the current position defines the maximum distance
+          that we can jump. Therefore, the next step will fall somewhere in the range [start, end], where start is index
+          i (since nums[i] could be 0) and end is i+nums[i]. Then the question is, where to jump?
 
           If we greedily jump as far as we can, we may end up at an index with small jump power.
           If we choose to jump only 1 step, we may have a strong jump power for the next jump.
@@ -50,7 +50,7 @@ def jump_v2(nums):
          The idea is to maintain two pointers 'start' and 'end', initially set to 0, such as indices between 0 and
          nums[0] are the ones we can reach by making only 1 jump from the first index.
 
-         Next, we want to find the indices we can reach making 2 jumps, so new 'start' is set to (end + 1) and new 'end'
+         Next, we want to find the indices we can reach making 2 jumps, so new 'start' is set to end+1 and new 'end'
          is set to the farthest index we can reach by making 2 jumps, which is:
 
                     end = max(i + nums[i] for i in range(start, end + 1)
@@ -58,8 +58,8 @@ def jump_v2(nums):
         Why do we set start = end + 1?
         Suppose the starting indices of jump 0 are in the range [0, 2]. When looking for the starting indices of the
         next jump, do we still consider the range [0, 2]? The answer is NO! We want to reach the ending position by
-        using the least number of jumps possible, so there is no reason in reaching an index in the same range with
-        more jumps. Therefore, we shall take a greedy approach that tries to reach each index using the least number of
+        using the least number of jumps possible, so there is no reason to reach an index within the same range with
+        more jumps. Therefore, we should take a greedy approach that tries to reach each index using the least number of
         jumps and ignore updates that result in more jumps.
 
          Back to the example, even if we can move to [0, 2] in jump 1, we would not consider doing so since we already
