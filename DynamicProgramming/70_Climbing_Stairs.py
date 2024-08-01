@@ -126,14 +126,15 @@ def climb_stairs_v3(n):
 
 
 def climb_stairs_v4(n):
-    """ While the above works well enough, we can optimize our approach even further by making a simple but important
-         observation: we are only using the last 2 sub-problem answers when solving each sub-problem. If we look at the
-         recurrence again, we can see that the only pieces information we use are climb(n−1) and climb(n−2). Since we're
-         computing from bottom-up, once we compute those answers, the smaller sub-problems (such as climb(n−3)) are not
-         needed anymore.
+    """ While the above works well enough, we can optimize the approach even further by making a simple but important
+         observation: we are only using the last 2 sub-problems' answers when solving each sub-problem.
+
+         If we look at the recurrence again, we can see that the only pieces of information we use are climb(n−1) and
+         climb(n−2). Since we're computing from bottom up, once we get those answers the smaller sub-problems (such as
+         climb(n−3)) are not needed anymore.
 
          Thus, instead of keeping the entire dp array, we can save some space and just maintain 2 variables that track
-         our last 2 sub-problem answers.
+         the last 2 sub-problems' answers.
 
     Time complexity: O(n)
     Space complexity: O(1)
