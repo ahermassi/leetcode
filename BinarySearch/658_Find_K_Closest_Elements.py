@@ -92,6 +92,18 @@ def find_closest_elements_v1(arr, k, x):
             left = mid + 1
         else:
             right = mid
+        # An alternative implementation if the absence of abs() comparison is not intuitive
+        # This link goes into details about the absence of abs():
+        # https://leetcode.com/problems/find-k-closest-elements/editorial/comments/1052417
+        # if arr[mid] == arr[mid + k]:
+        #     if arr[mid] < x:
+        #         left = mid + 1
+        #     else:
+        #         right = mid
+        # elif abs(x - arr[mid]) > abs(arr[mid + k] - x):
+        #     left = mid + 1
+        # else:
+        #     right = mid
     return arr[left:left + k]
 
 
