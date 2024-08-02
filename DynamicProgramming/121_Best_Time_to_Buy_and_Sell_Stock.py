@@ -5,71 +5,71 @@ Note that you cannot sell a stock before you buy one. """
 
 import unittest2 as unittest
 
+
 # Video explanation: https://www.youtube.com/watch?v=1pkOgXD63yU
-
-
 def max_stock_profit_v1(prices):
     """ If we plot the stock prices on a graph, we can clearly see that the points of interest are the peaks and
-        valleys in the given graph. For every stock, we need to calculate the difference between that stock price and
-        the minimum of all the values before that element, and update the maximum profit so far.
+         valleys in the given graph. For every stock, we need to calculate the difference between that stock price and
+         the minimum of all the values before that element, and update the maximum profit so far.
 
-        We can maintain two variables - lowest_buying_price and max_profit, corresponding to the smallest valley and
-        maximum profit (maximum difference between selling price and min buying price) obtained so far, respectively.
+         We can maintain two variables - lowest_buying_price and max_profit, corresponding to the smallest valley and
+         maximum profit (maximum difference between selling price and min buying price) obtained so far, respectively.
 
-        While iterating over the array, we consider selling on day i and calculate what would be the best profit against
-        the current minimum buying price.
+         While iterating over the array, we consider selling on day i and calculate what would be the best profit against
+         the current minimum buying price.
 
-        Example:
-        prices = [5, 6, 2, 4, 8, 9, 5, 1, 5]
+         Example:
+         prices = [5, 6, 2, 4, 8, 9, 5, 1, 5]
 
-        Note: In the following code run, 'Sell' has an undefined value every time a buy operation is carried out
-        (a lower buying price is found) since we can't buy and sell on the same day, but in reality the 'profit'
-        is calculated in all cases as implemented in the algorithm, and profit is equal to 0 when we sell and buy
-        on the same day.
+         Note: in the following code run, 'Sell' has an undefined value every time a buy operation is carried out
+         (a lower buying price is found) since we can't buy and sell on the same day, but in reality the 'profit'
+         is calculated in all cases as implemented in the algorithm, and profit is equal to 0 when we sell and buy
+         on the same day.
 
-        Now we will traverse the array from left to right. So in the given array 5 is the stock we bought.
-            Min Buying Price:5     Sell:-               Profit:-             max profit=-
+         Now we will traverse the array from left to right. So in the given array 5 is the stock we bought.
+             Min Buying Price:5     Sell:-               Profit:-             max profit=-
 
-        So next element is 6. If we sell the stock at that price we will earn profit of $1.
-            Min Buying Price:5     Sell:6               Profit:$1             max profit=$1
+         So next element is 6. If we sell the stock at that price we will earn profit of $1.
+             Min Buying Price:5     Sell:6               Profit:$1             max profit=$1
 
-        Now the next element is 2 which is lower price than the stock we bought previously which was 5. So if we buy
-        this stock at price $2 and sell it in the future, we will surely earn more profit than the stock we bought at
-        price 5. So we buy stock at $2.
-            Min Buying Price:2     Sell:-              Profit:-                  max profit=$1
+         Now the next element is 2 which is lower price than the stock we bought previously which was 5. So if we buy
+         this stock at price $2 and sell it in the future, we will surely earn more profit than the stock we bought at
+         price 5. So we buy stock at $2.
+             Min Buying Price:2     Sell:-              Profit:-                  max profit=$1
 
-        Next element is 4 which has higher price than the stock we bought. So we sell the stock at this price.
-            Min Buying Price:2     Sell:4              Profit:$2               max profit=$2
+         Next element is 4 which has higher price than the stock we bought. So we sell the stock at this price.
+             Min Buying Price:2     Sell:4              Profit:$2               max profit=$2
 
-        Moving further, now the next stock price is $8. We still have $2 stock we bought previously. If instead of
-        selling it at price $4, if we sell it for $8 then the profit would be $6.
-            Min Buying Price:2     Sell:8              Profit:$6                max profit=$6
+         Moving further, now the next stock price is $8. We still have $2 stock we bought previously. If instead of
+         selling it at price $4, if we sell it for $8 then the profit would be $6.
+             Min Buying Price:2     Sell:8              Profit:$6                max profit=$6
 
-        Now next stock is of $9 which is also higher than the price we bought at ($2).
-            Min Buying Price:2     Sell:9              Profit:$7                max profit=$7
+         Now next stock is of $9 which is also higher than the price we bought at ($2).
+             Min Buying Price:2     Sell:9              Profit:$7                max profit=$7
 
-        Now the next stock is $5. If we sell at this price then we will earn profit of $3, but we already have a max
-        profit of $7 because of our previous transaction.
-            Min Buying Price:2     Sell:5              Profit:$3                max profit=$7
+         Now the next stock is $5. If we sell at this price then we will earn profit of $3, but we already have a max
+         profit of $7 because of our previous transaction.
+             Min Buying Price:2     Sell:5              Profit:$3                max profit=$7
 
-        Now next stock price is $1 which is less than the stock we bought of $2. If we buy this stock and sell it in
-        the future then obviously we will gain more profit.
-            Min Buying Price:1     Sell:-              Profit:-                   max profit=$7
+         Now next stock price is $1 which is less than the stock we bought of $2. If we buy this stock and sell it in
+         the future then obviously we will gain more profit.
+             Min Buying Price:1     Sell:-              Profit:-                   max profit=$7
 
-        Now next stock is of $5. So this price is higher than the stock we bought.
-            Min Buying Price:1     Sell:5              Profit:$4                max profit=$7
+         Now next stock is of $5. So this price is higher than the stock we bought.
+             Min Buying Price:1     Sell:5              Profit:$4                max profit=$7
 
-        Our maximum profit is $7.
+         The maximum profit is $7.
 
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    max_profit, lowest_buying_price = 0, float('inf')
+    max_profit, lowest_buying_price = 0, prices[0]
     for cur_price in prices:
-        lowest_buying_price = min(cur_price, lowest_buying_price)  # This is the min buying price so far
+        # This is the min buying price so far
+        lowest_buying_price = min(cur_price, lowest_buying_price)
         # This is the best possible profit if stock is sold now at this current selling price
-        profit = cur_price - lowest_buying_price
-        max_profit = max(profit, max_profit)
+        cur_profit = cur_price - lowest_buying_price
+        max_profit = max(cur_profit, max_profit)
     return max_profit
 
 
