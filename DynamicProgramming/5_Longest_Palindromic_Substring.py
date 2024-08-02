@@ -6,13 +6,13 @@
 def longest_palindrome_v1(s):
     """ Expand from centers.
 
-        We observe that a palindrome mirrors around its center. Therefore, a palindrome can be expanded from its center.
+         We observe that a palindrome mirrors around its center. Therefore, a palindrome can be expanded from its center.
 
-        We can consider odd-length palindromes by starting the pointers at (i, i). To consider the even length
-        palindromes, we can start the pointers at (i, i + 1). There are N starting points for the odd-length palindromes
-        and N-1 starting points for the even-length palindromes.
+         We can consider odd-length palindromes by starting the pointers at (i, i). To consider the even length
+         palindromes, we can start the pointers at (i, i + 1). There are N starting points for the odd-length palindromes
+         and N-1 starting points for the even-length palindromes.
 
-        We expand from the center as far as we can to find the longest palindrome, and then return the length of this
+        We expand from the center as far as we can to find the longest palindrome, and then return the longest
         palindrome.
 
     Time complexity: O(N^2), since expanding a palindrome around its center could take O(N) and there are N centers
@@ -28,9 +28,9 @@ def longest_palindrome_v1(s):
 
     n, res = len(s), ''
     for i in range(n):
-        odd_palindrome = palindrome_at(i, i)  # Odd case, like "aba"
-        even_palindrome = palindrome_at(i, i + 1)  # Even case, like "abba"
-        res = max(res, odd_palindrome, even_palindrome, key=len)
+        longest_odd_palindrome = palindrome_at(i, i)  # Odd case, like "aba"
+        longest_even_palindrome = palindrome_at(i, i + 1)  # Even case, like "abba"
+        res = max(res, longest_odd_palindrome, longest_even_palindrome, key=len)
     return res
 
 
