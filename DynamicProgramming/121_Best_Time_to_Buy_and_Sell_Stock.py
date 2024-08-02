@@ -76,26 +76,29 @@ def max_stock_profit_v1(prices):
 # Below are two variations of the solution.
 
 def max_stock_profit_v2(prices):
-    """ Here the logic is to calculate the difference (max_cur += prices[i] - prices[i-1]) of the original array, and
-        find a contiguous sub-array giving maximum profit. If the difference falls below 0, reset it to zero. By
-        resetting max_cur to 0, it essentially means that we have found a point i where prices[i] is lower than the
-        time we bought at and that we should then try to buy at point i to see if we can achieve a bigger gain.
+    """ The problem can be formulated as follows:
 
-        We are basically applying Kadane's algorithm to the difference array of prices to find the maximum sub-array
-        sum.
+                Calculate the prices' differences array of the original array, then find a contiguous subarray of
+                the differences array with a maximum sum.
 
-        Example:
-        prices = [7, 1, 5, 3, 6, 4] --> prices_difference = [0, -6, 4, -2, 3, -2]
-        At each step i, we update cur_max: cur_max = max(0, cur_max + prices_difference[i]), such as:
-        prices_difference[i] = prices[i] - prices[i-1]
+         We use max_cur += prices[i] - prices[i-1], and if the difference falls below 0, reset it to zero. By resetting
+         max_cur to 0, it essentially means that we have found an index i where prices[i] is lower than the rate we
+         bought at and that we should then try to buy at prices[i] to see if we can achieve a bigger gain.
 
-        A more clear explanation on why sum of subarray works:
+         We are basically applying Kadane's algorithm to the differences array to find the maximum subarray sum.
 
-        Suppose we have original array is prices = [a0, a1, a2, a3, a4, a5, a6]
-        What we are given here (or we calculate ourselves) is: prices_difference = [b0, b1, b2, b3, b4, b5, b6]
-        where b[i] = 0, when i == 0; b[i] = a[i] - a[i - 1], when i > 0
-        Suppose if a2 and a6 are the points that give us the max difference (a2 < a6). Then in prices_difference array,
-        we need to find the sum of sub array from b3 to b6:
+         Example:
+         prices = [7, 1, 5, 3, 6, 4] --> prices_difference = [0, -6, 4, -2, 3, -2]
+         At each step i, we update cur_max: cur_max = max(0, cur_max + prices_difference[i]), such as:
+         prices_difference[i] = prices[i] - prices[i-1]
+
+         A clearer explanation on why sum of subarray works:
+
+         Suppose the original array is prices = [a0, a1, a2, a3, a4, a5, a6]
+         What we are given here (or we calculate ourselves) is: prices_difference = [b0, b1, b2, b3, b4, b5, b6]
+         where b[0] = 0; b[i] = a[i] - a[i-1], when i > 0
+         Suppose a2 and a6 are the points that give us the max difference (a2 < a6). Then in prices_difference array,
+         we need to find the sum of sub array from b3 to b6:
 
         b3 = a3 - a2
         b4 = a4 - a3
@@ -106,17 +109,26 @@ def max_stock_profit_v2(prices):
 
         a6 - a2 = b3 + b4 + b5 + b6
 
-        (a6 - a2) is the required solution. So we need to find the largest sub array sum to get the most profit
+        (a6 - a2) is the answer. So we need to find the largest sub array sum to get the maximum profit.
+
+        !!! IMPORTANT !!!
+        This is a key observation. For example, if prices = [7, 1, 5, 3, 6, 4], buying at price=1 and selling at price=6,
+        making a profit of 6-1=5, is "equivalent" to the following operations:
+        buy=1, sell=5 -> profit=4
+        buy=5, sell=3 -> profit=-2, add that to the previous profit=4 -> profit=2
+        buy=3, sell=6 -> profit = 3, add that to the previous profit=-2 -> profit=5
 
     Time complexity: O(N)
     Space complexity: O(1)
     """
     cur_max = max_profit = 0
     for i in range(1, len(prices)):
-        cur_max = max(0, cur_max + prices[i] - prices[i-1])  # At any point, we either buy stock and have a current
-        # maximum profit of 0 (buying and selling at the same day is not possible, so we're basically starting over),
-        # or sell stock and update our new current max profit
-        max_profit = max(cur_max, max_profit)  # Keep track of the maximum profit found so far
+        # At any point, we either:
+        # Buy stock and have a current maximum profit of 0 (buying and selling at the same day is not possible, so we're
+        # basically starting over), or
+        # Sell stock and update the current max profit
+        cur_max = max(0, cur_max + prices[i] - prices[i-1])
+        max_profit = max(cur_max, max_profit)  # Keep track of the maximum profit obtained so far
     return max_profit
 
 
