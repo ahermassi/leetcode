@@ -133,20 +133,25 @@ def max_stock_profit_v2(prices):
 
 
 def max_stock_profit_v3(prices):
-    """ Let dp[i] denote the max profit on ith day. dp[i] = 0 means that it's not possible to make any (positive)
-        profit selling the stock at hand. Resetting it to 0 is like saying start over and buy stock at time i. Positive
-        dp[i] indicates how much profit can be made selling stock at time i.
-        At any given day, we can either be in a trade, or not. If we're in a trade, our profit at the end of that day
-        is:
-            dp[i] = prices[i] - prices[i-1] + dp[i-1]
-        The price movement today, plus the profit from yesterday. If we're not in a trade, our profit is 0. Since we're
-        looking for profitable trades, we can take the max of that:
-            dp[i] = max(0, prices[i] - prices[i-1] + dp[i-1])
+    """ Bottom-Up Dynamic Programming.
+
+         Let dp[i] be the max profit on ith day. dp[i] = 0 means that it's not possible to make any (positive)
+         profit selling the stock at hand. Resetting it to 0 is like saying start over and buy stock at time i. Positive
+         dp[i] indicates how much profit can be made selling stock at time i.
+
+         On any given day, we can either be in a trade, or not. If we're in a trade, the profit at the end of that day
+         is:
+
+                    dp[i] = dp[i-1] + prices[i] - prices[i-1]
+
+         The price movement today, plus the profit from yesterday. If we're not in a trade, the profit is 0. Since we're
+         looking for profitable trades, we can take the max of that:
+
+                    dp[i] = max(0, prices[i] - prices[i-1] + dp[i-1])
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    if not prices:
-        return 0
     dp = [0] * len(prices)
     for i in range(1, len(prices)):
         dp[i] = max(0, dp[i-1] + prices[i] - prices[i-1])
