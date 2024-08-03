@@ -65,18 +65,19 @@ def rob_v1(nums):
 def rob_v2(nums):
     """ Space optimized version of the previous solution.
 
-        Imagine two thieves (t1 and t2) coordinating a grand robbery. They are equipped with walkie-talkies to
+        Imagine two thieves, t1 and t2, coordinating a grand robbery. They are equipped with walkie-talkies to
         communicate the values of houses to each other.
 
         Before entering any of the houses, both t1 and t2 have values of zero.
 
-        t1, enters the first house and records the value of the house.
+        t1 enters the first house and records the value of the house.
         If that is the only house to rob, they can rob this house and be done with it.
         If there is more than one house, t1 will leave a note of maximum value reaped until this point (which is just
-        the value of the first house) and move to the next house while t2 moves into the house t1 was in. Now, t1 and t2
-        are going to communicate over the walkie-talkie to ask who has the most value. At this point, t2 will read the
-        note left by t1 when the values are compared. If they have only two houses to rob, they would rob the house with
-        the most value and be done with it.
+        the value of the first house) and move to the next house while t2 moves into the house t1 was in.
+
+        Now, t1 and t2 are going to communicate over the walkie-talkie to ask who has the most value. At this point,
+        t2 will read the note left by t1 when the values are compared. If they have only two houses to rob, they would
+        rob the one with the most value and be done with it.
 
         If there are three houses, t1 will leave a note of the maximum value reaped until this point and move to the
         next house. Then t1 will compare the value of the sum of the current house and the house which t2 is in with the
@@ -88,8 +89,8 @@ def rob_v2(nums):
         value of the house t1 was in. The maximum value between those two will be chosen and t2 will move into the house
         next to it.
 
-        This procedure is done over and over again as long as there are houses in nums. If t1 has reached to the end of
-        nums, t1 should have reaped the maximum amount obtainable from houses in nums.
+        This procedure is done over and over again as long as there are houses left. If t1 has reached the last house,
+        t1 should have reaped the maximum amount obtainable from all the houses.
 
     Time complexity: O(N)
     Space complexity: O(1)
@@ -102,12 +103,10 @@ def rob_v2(nums):
             rob_before_previous, rob_previous = rob_previous, cur_max_loot
         return rob_previous
 
-    if not nums:
-        return 0
     n = len(nums)
     if n == 1:
         return nums[0]
-    return max(rob_houses(0, n - 2), rob_houses(1, n - 1))  # Pass left and right boundaries as parameters
+    return max(rob_houses(0, n-2), rob_houses(1, n-1))  # Pass left and right boundaries as parameters
 
 
 class Test(unittest.TestCase):
