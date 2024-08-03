@@ -24,16 +24,16 @@ def maximum_subarray_v1(nums):
         We need a general way to figure out when a part of the array is worth keeping.
 
         As expected, any subarray whose sum is positive is worth keeping. Let's start with an empty array, and iterate
-        through the input, adding numbers to our array as we go along. Whenever adding the current element to the
-        current sub array results in smaller value than the current element taken alone , we know the entire array is
+        through the input, adding numbers to the subarray as we go along. Whenever adding the current element to the
+        current subarray results in smaller value than the current element taken alone , we know the entire subarray is
         not worth keeping, so we'll reset it back to a single element sub array made up of the current element only.
 
         However, we don't actually need to build the subarray, we can just keep an integer variable max_ending_here and
-        add the values of each element ending at the current index. When it becomes negative, we reset it to 0
-        (an empty array).
+        add the values of each element ending at the current index.
 
          Iterate over the array, and at each step ask the following question: which is greater, the current element x or
-         (sum thus far + x) ? If max_ending_here becomes negative, we know it isn't worth keeping, so throw it away.
+         (sum thus far + x) ? If the answer is x, we know the subarray we've built so far it isn't worth keeping, so
+         throw it away nd start over with x.
 
          Judging if a subarray is "worth keeping" happens every time we reach a new number. Even if all the numbers are
          negative, it just means that it is never worth keeping more than 1 element.
@@ -44,9 +44,9 @@ def maximum_subarray_v1(nums):
     n = len(nums)
     max_so_far = max_ending_here = nums[0]
     for i in range(1, n):
-        # What's the maximum sub array ending here ? Either [current element] or [previous sub array, current element]
+        # What's the maximum sum subarray ending here ? Either [current element] or [previous subarray, current element]
         max_ending_here = max(nums[i], max_ending_here + nums[i])
-        max_so_far = max(max_so_far, max_ending_here)  # Update global max
+        max_so_far = max(max_so_far, max_ending_here)  # Update the global max
     return max_so_far
 
 
