@@ -15,7 +15,7 @@ def rob_v1(nums):
          first and the last houses are adjacent to each other and therefore, if the thief has robbed the first house,
          they cannot steal the last house and vice versa.
 
-         Therefore, the problem becomes to rob either nums[0]...nums[n-2] or nums[1]...nums[n-1], depending on which
+         Therefore, the problem becomes to rob either [nums[0]...nums[n-2]] or [nums[1]...nums[n-1]], depending on which
          choice offers more money. Now the problem has degenerated to the original house robber.
 
          Assume we have nums = [7,4,1,9,3,8,6,5].
@@ -25,11 +25,11 @@ def rob_v1(nums):
          between houses of list [7,4,1,9,3,8,6] and [4,1,9,3,8,6,5]. For each of the lists, all we need to do is to
          figure out the maximum value the thief can get using the approach in the original house robber problem.
 
-        Suppose there are n houses. Since house 0 and n - 1 are now neighbors, we cannot rob them together, and thus
+        Suppose there are n houses. Since houses 0 and n-1 are now neighbors, we cannot rob them together, and thus
         the solution is now the maximum of:
 
-            1- Rob houses 0 to n - 2
-            2- Rob houses 1 to n - 1
+            1- Rob houses 0 to n-2
+            2- Rob houses 1 to n-1
 
         You want the first, leave the last. You want the last, leave the first.
 
@@ -48,8 +48,6 @@ def rob_v1(nums):
     """
 
     def rob_houses(houses):
-        if not houses:
-            return 0
         n = len(houses)
         if n == 1:
             return houses[0]
