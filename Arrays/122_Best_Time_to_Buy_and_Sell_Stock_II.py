@@ -52,11 +52,20 @@ def max_profit_v1(prices):
     return max_profit
 
 
+# Video explanation: https://youtu.be/3SJ3pUkPQMc
 def max_profit_v2(prices):
-    """ In this case, instead of looking for every maxima following a minima, we can simply go on crawling over the
-        slope and keep on adding the profit obtained from every consecutive transaction. We can directly keep on adding
-        the difference between the consecutive numbers of the array if the second number is larger than the first one,
-        and the total sum we obtain will be the maximum profit.
+    """ Instead of looking for every peak following a valley, we can simply go on crawling over the slope and keep on
+         adding the profit obtained from every consecutive transaction.
+
+         We can directly keep on adding the difference between the consecutive prices if the current price is higher
+         than the previous one, and the total sum we obtain will be the maximum profit.
+
+         !!! IMPORTANT !!!
+         Notice that this is equivalent to considering EVERY day a buying day and realizing a profit only when an
+         opportunity arises THE FOLLOWING DAY. The previous day's price is the LAST buying price. This step simulates
+         selling the stock bought at start price, capturing the profit, and then considering the current price as a new
+          buying price for potential future transactions.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
@@ -64,6 +73,13 @@ def max_profit_v2(prices):
     for i in range(1, len(prices)):
         if prices[i] > prices[i - 1]:
             max_profit += prices[i] - prices[i - 1]
+    # The following is equivalent and more explicit:
+    # max_profit = 0
+    # buying_price = prices[0]
+    # for i in range(1, len(prices)):
+    #     if prices[i] > buying_price:
+    #         max_profit += prices[i] - buying_price
+    #     buying_price = prices[i]
     return max_profit
 
 
