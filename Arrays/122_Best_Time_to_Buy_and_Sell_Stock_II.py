@@ -11,33 +11,43 @@ import unittest2 as unittest
 
 def max_profit_v1(prices):
     """ The profit is the sum of sub-profits. Each sub-profit is the difference between selling at day j, and buying at
-        day i (with j > i). The range [i, j] should be chosen so that the sub-profit is maximum:
-            sub-profit = prices[j] - prices[i]
-        We should choose j that prices[j] is as big as possible, and choose i that prices[i] is as small as possible
-        (of course in their local range).
-        From this observation, from day X, the buying day will be the last continuous day that the price is smallest.
-        Then, the selling day will be the last continuous day that the price is biggest.
-        In other words:
-        Consider a contiguous sub-sequence of increasing prices. The profit-maximizing strategy within this sub-sequence
-        is to buy on the first day and sell on the last day because this is the only strategy that realizes all of the
-        day-to-day gains within the sub-sequence.
-        Therefore, profit can be maximized by identifying each maximally-sized contiguous sub-sequence of increasing
-        prices, and buying at the beginning of it and selling at the end of it.
-        Since we are only asked to return the total profit and not the actual transaction log, it suffices to sum
-        together the day-to-day gains across the entire sequence.
+         day i (with j > i). The range [i, j] should be chosen so that the sub-profit is maximum:
+
+                    sub-profit = prices[j] - prices[i]
+
+         We should choose j that prices[j] is as big as possible, and choose i that prices[i] is as small as possible
+         (of course within their local range).
+
+         From this observation, from day X, the buying day will be the last continuous day that the price is smallest.
+         Then, the selling day will be the last continuous day that the price is biggest.
+
+         In other words:
+
+         Consider a contiguous sub-sequence of increasing prices. The profit-maximizing strategy within this
+         sub-sequence is to buy on the first day and sell on the last day because this is the only strategy that
+         realizes all the day-to-day gains within the sub-sequence.
+
+         Therefore, profit can be maximized by identifying each maximally-sized contiguous sub-sequence of increasing
+         prices, and buying at the beginning of it and selling at the end of it.
+
+         Since we are only asked to return the total profit and not the actual transaction log, it suffices to sum
+         together the day-to-day gains across the entire sequence.
+
     Time complexity: O(N)
     Space complexity: O(1)
     """
     max_profit, i, n = 0, 0, len(prices)
     while i < n - 1:
         # Finding local minima
-        while i < n - 1 and prices[i + 1] <= prices[i]:  # While we can find a smaller price ahead, we keep moving
+        while i < n - 1 and prices[i + 1] <= prices[i]:
+            # While we can find a lower price ahead, we keep moving
             i += 1
-        buy = prices[i]  # Buy with this locally smallest price
+        buy = prices[i]  # Buy at this locally lowest price
         # Finding local maxima
-        while i < n - 1 and prices[i + 1] >= prices[i]:  # While we can find a bigger price ahead, we keep moving
+        while i < n - 1 and prices[i + 1] >= prices[i]:
+            # While we can find a higher price ahead, we keep moving
             i += 1
-        sell = prices[i]  # Sell at this locally biggest price
+        sell = prices[i]  # Sell at this locally highest price
         max_profit += sell - buy
     return max_profit
 
