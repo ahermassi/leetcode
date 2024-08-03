@@ -8,9 +8,12 @@ import unittest2 as unittest
 
 
 # For more details: https://leetcode.com/articles/best-time-to-buy-and-sell-stock-ii/
-
 def max_profit_v1(prices):
-    """ The profit is the sum of sub-profits. Each sub-profit is the difference between selling at day j, and buying at
+    """ The points of interest are the consecutive valleys and peaks. The key point is we need to consider every peak
+         immediately following a valley to maximize the profit. In case we skip one of the peaks (trying to obtain more
+         profit), we will end up losing the profit over one of the transactions leading to an overall lesser profit.
+
+        The profit is the sum of sub-profits. Each sub-profit is the difference between selling at day j, and buying at
          day i (with j > i). The range [i, j] should be chosen so that the sub-profit is maximum:
 
                     sub-profit = prices[j] - prices[i]
