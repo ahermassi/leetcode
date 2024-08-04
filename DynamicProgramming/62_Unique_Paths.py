@@ -49,24 +49,40 @@ def unique_paths_v1(m, n):
     return dfs(0, 0)
 
 
+# Video explanation: https://youtu.be/IlEsdxuD4lY
 def unique_paths_v2(m, n):
-    """ Bottom-up dynamic programming.
-        Let dp[i][j] be the number of unique ways we can reach the current cell (i, j) moving only right and/or down
-        and starting from top-left corner cell (0, 0). Therefore, dp[i][j] is the sum of unique ways we can reach
-        the left cell (i, j-1) and top cell (i-1, j) (since starting from left and top, we can move right and down,
-        respectively, to arrive at (i,j)).
-            dp[i][j] = dp[i][j-1] + dp[i-1][j]
-        The first column and first row must be 1's since there is only one path to get there (i.e. to get anywhere in
-        the first row we must have just done all right moves, and similarly for the first column we must have just done
-        all down moves).
+    """ Bottom-Up Dynamic Programming.
+
+         A cell (i,j) can be reached either from (i−1,j) or (i,j−1), and thus the number of unique paths to (i,j) is the
+         sum of the number of unique paths to these two cells.
+
+         Let dp[i][j] be the number of unique paths to reach cell (i, j) moving only right and/or down and starting
+         from top-left corner cell (0, 0). Therefore, dp[i][j] is the sum of unique paths to reach the left cell
+         (i, j-1) and the top cell (i-1, j):
+
+                    dp[i][j] = dp[i][j-1] + dp[i-1][j]
+
+        The first column and first row must be initialized to 1. The robot can move either down or right, so there is
+        only one path to reach the cells in the first row: right->right->...->right. The same is valid for the first
+        column, though the path here is down->down->...->down.
+
+        Note that for simplicity, we could also initialize the entire DP array with 1's since dp[i][j]  depends only on
+        the previously calculated cells.
+
     Time complexity: O(n * m)
     Space complexity: O(n * m)
     """
-    dp = [[1 for _ in range(m)] for _ in range(n)]
-    for i in range(1, n):
-        for j in range(1, m):
+    dp = [[1] * n for _ in range(m)]
+    # Alternatively:
+    # dp = [[0] * n for _ in range(m)]
+    # for i in range(m):
+    #     dp[i][0] = 1
+    # for j in range(n):
+    #     dp[0][j] = 1
+    for i in range(1, m):
+        for j in range(1, n):
             dp[i][j] = dp[i][j - 1] + dp[i - 1][j]
-    return dp[n-1][m-1]  # This is the bottom-right corner where we want to stop
+    return dp[m-1][n-1]  # This is the bottom-right corner where we want to stop
 
 # For more details about the 1D optimization: https://leetcode.com/problems/unique-paths/discuss/22954/C%2B%2B-DP
 
