@@ -8,7 +8,7 @@ import unittest2 as unittest
 
 
 def unique_paths_v1(m, n):
-    """ Top- Down + Dynamic Programming
+    """ Top-Down Dynamic Programming
 
          A key observation is that since paths must advance down or right, the number of ways to get to the
          bottom-right corner is the number of ways to get to the cell immediately above it, plus the number of ways to
