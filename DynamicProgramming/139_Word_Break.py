@@ -117,8 +117,8 @@ def word_break_v4(s, word_dict):
          the set of dictionary words, we instead verify if a word of the dictionary is a substring of s starting at
          index (i - len(word)).
 
-        If dp[i - len(word)] == True，it would make sure that s[:i - len(word)] can be divided using the dictionary.
-        Then combined with s[i - len(word) : i] == word , we can conclude that dp[i] can also be divided.
+         If dp[i - len(word)] == True, it would make sure that s[:i - len(word)] can be divided using the dictionary.
+         Then combined with s[i - len(word) : i] == word , we can conclude that dp[i] can also be divided.
 
     Time complexity: O(N * M * L), where N is the length of s, M is the number of words in the dictionary, and L is the
     average length of the words in the words' dictionary.
