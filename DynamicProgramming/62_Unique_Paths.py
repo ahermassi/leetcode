@@ -8,31 +8,45 @@ import unittest2 as unittest
 
 
 def unique_paths_v1(m, n):
-    """ Top down + memoization
-        A key observation is that because paths must advance down or right, the number of ways to get to the
-        bottom-right entry is the number of ways to get to the entry immediately above it, plus the number of ways to
-        get to the entry immediately to its left.
-        The idea is to notice that:
-            When we are at cells (n - 2, m - 1) or (n - 1, m - 2), there is exactly only one way to reach bottom right
-            corner, which is to either move down or right, respectively
-        This is the base case.
-        So if we know the number of ways to get to these points, then the total ways to get to the bottom right corner
-        is the sum.
+    """ Top- Down + Dynamic Programming
+
+         A key observation is that since paths must advance down or right, the number of ways to get to the
+         bottom-right corner is the number of ways to get to the cell immediately above it, plus the number of ways to
+         get to the cell immediately to its left.
+
+         The idea is to notice that:
+
+                When we are at cell (n - 2, m - 1) or at cell (n - 1, m - 2), there is exactly only one way to reach the
+                bottom -right corner, which is to either move down or right, respectively
+
+         This is the base case.
+         So if we know the number of ways to get to these cells, the total ways to get to the bottom-right corner
+         is their sum.
+
     Time complexity: O(n * m)
     Space complexity: O(n * m)
     """
 
-    def helper(i, j):
-        if not 0 <= i < n or not 0 <= j < m:
-            return 0
-        if (i, j) in {(n - 1, m - 2), (n - 2, m - 1), (n - 1, m - 1)}:
-            return 1
-        if (i, j) not in memo:
-            memo[(i, j)] = helper(i + 1, j) + helper(i, j + 1)
-        return memo[(i, j)]
+    def dfs(i, j):
+        # dfs(i, j) returns the number of unique paths from cell (i, j) to the bottom-right corner
+            if (i, j) == (m - 1, n - 1):
+                return 1
+            if (i, j) in {(n - 1, m - 2), (n - 2, m - 1)}:
+                return 1
+            if (i, j) in memo:
+                return memo[(i, j)]
+            right_paths = down_paths = 0
+            if j < n - 1:
+                right_paths = dfs(i, j+1)
+            if i < m - 1:
+                down_paths = dfs(i+1, j)
+            memo[(i, j)] = right_paths + down_paths
+            return memo[(i, j)]
 
+    if n == 1 and m == 1:
+        return 1
     memo = {}
-    return helper(0, 0)
+    return dfs(0, 0)
 
 
 def unique_paths_v2(m, n):
