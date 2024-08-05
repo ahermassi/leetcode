@@ -76,13 +76,13 @@ def max_product_v2(nums):
     """ Same intuition as the previous solution.
 
          What do we need to know to calculate the maximum product at index i? The logic sounds similar to Kadane's
-         algorithm, except that knowing only the maximum ending at index (i-1) is not enough for this problem.
+         algorithm, except that knowing only the maximum ending at index i-1 is not enough for this problem.
 
-         Due to negative numbers, we need the maximum and minimum ending at index (i-1). In case of a negative
-         number at index i, we can swap min and max.
+         Due to negative numbers, we need the maximum and minimum ending at index i-1. In the case of a negative number
+         at index i, we can swap min and max.
 
-        Takeaway: If the current number is negative, the candidate for max should instead become the previous min
-        product, because a bigger number multiplied by negative becomes smaller, hence the swap.
+        Takeaway: if the current number is negative, the candidate for max should instead become the previous min
+        product, because a bigger number multiplied by a negative becomes smaller, hence the swap.
 
     Time complexity: O(N)
     Space complexity: O(1)
@@ -94,8 +94,8 @@ def max_product_v2(nums):
             # Multiplying by a negative makes a big number smaller and a small number bigger, so we redefine
             # min and max by swapping them
             max_so_far, min_so_far = min_so_far, max_so_far
-        # max/min product for the current index is either the current number itself or the max/min of the previous
-        # index times the current number
+        # max/min product for the current index is either the current number itself or the max/min up to the previous
+        # index multiplied by the current number
         max_so_far = max(num, max_so_far * num)
         min_so_far = min(num, min_so_far * num)
         global_max = max(global_max, max_so_far)
