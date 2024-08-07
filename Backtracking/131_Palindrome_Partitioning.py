@@ -66,13 +66,13 @@ def partition_v1(s):
     pipes?" - answer is 4 choose 3, i.e. 4C3 = 4. The 4 ways to partition are:
     { {"a", "b", "c", "de"}, {"a", "b", "cd", "e"}, {"a", "bc", "d", "e"}, {"ab", "c", "d", "e"}
     Arguing like the above, the total number of ways to partition this example string is when we ask all questions
-    "how many ways can we select 0 or 1 or 2 or 3 or 4 pipes?" = 4C0 + 4C1 + 4C2 + 4C3 + 4C4 = 24 = 16.
+    "how many ways can we select 0 or 1 or 2 or 3 or 4 pipes?" = 4C0 + 4C1 + 4C2 + 4C3 + 4C4 = 16.
     In general, a string of length N will have N-1C0 + N-1C1 + ... +N-1CN-2 = 2N-1 = 2N-1 = O(2^N) partitioning.
-    So to summarize: For a string of length N, there will be (N - 1) intervals between characters. For every interval,
-    we can cut it or not cut it, so there will be 2^N ways to partition the string. For every partition way, we need to
+    So to summarize: for a string of length N, there will be N-1 intervals between characters. For every interval, we
+    can cut it or not cut it, so there will be 2^N ways to partition the string. For every partition way, we need to
     check if it is palindrome, which is O(N).
-    Space complexity: O(N), at worst we will always go N stack frames deep in the recursion since an all single
-    character decomposition is always a palindromic decomposition.
+    Space complexity: O(N), at worst we always go N stack frames deep in the recursion since an all single character
+    decomposition is always a palindromic decomposition.
     """
 
     def dfs(index, path):
@@ -82,8 +82,8 @@ def partition_v1(s):
             # Take every snippet from 'index' to the end of the string. This is the 'possibility space'.
             if is_palindrome(index, i):
                 # Only recurse if the snippet from 'index' (inclusive) to current index i (inclusive) is a palindrome.
-                # Take the snippet and add it to the current decomposition 'path', then advance 1 past right bound of
-                # the palindromic snippet which is (i + 1)
+                # Take the snippet and add it to the current decomposition 'path', then advance 1 past the right
+                # bound of the palindromic snippet which is i+1
                 dfs(i + 1, path + [s[index:i + 1]])
 
     def is_palindrome(left, right):
