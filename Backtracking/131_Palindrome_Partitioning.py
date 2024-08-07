@@ -134,10 +134,10 @@ def partition_v2(s):
 def partition_v3(s):
     """ Backtracking + Dynamic Programming.
 
-        This approach uses a similar backtracking algorithm. However, the previous approaches perform one extra
+         This approach uses a similar backtracking algorithm. However, the previous approaches perform one extra
          iteration to determine if a given substring is a palindrome. We are repeatedly iterating over the same
          substrings multiple times and the result is always the same. There are overlapping sub-problems, and we could
-         further optimize the algorithm by using Dynamic Programming to determine if a string is a palindrome in a
+         further optimize the algorithm by using Dynamic Programming to determine if a string is a palindrome in
          constant time.
 
          A given string s starting at index 'start' and ending at index 'end' is a palindrome if the following two
@@ -152,7 +152,7 @@ def partition_v3(s):
                    dp[start][end] = true if s[start:end+1] is a palindrome.
                    Otherwise, dp[start][end] = false
 
-        Also, we must update the dp array if we find that the current string is a palindrome.
+        Also, we must update the dp array if we find that the current substring is a palindrome.
 
         The logic is similar to the DP solution of 5- Longest Palindromic Substring.
 
