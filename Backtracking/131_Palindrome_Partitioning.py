@@ -114,8 +114,8 @@ def partition_v2(s):
             if is_palindrome(index, i):
                 path.append(s[index:i + 1])  # Choose
                 dfs(i + 1)  # Recurse
-                path.pop()  # Backtrack, un-choose. We are done searching, remove the snippet from the 'path'. Next
-                # loop iteration will try another snippet in this stack frame.
+                path.pop()  # Backtrack, undo the choice. We are done searching, remove the snippet from the
+                # 'path'. Next loop iteration will try another snippet in this stack frame.
 
     def is_palindrome(left, right):
         while left < right:
