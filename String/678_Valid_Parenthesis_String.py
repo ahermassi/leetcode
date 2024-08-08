@@ -201,15 +201,16 @@ def check_valid_string_v3(s):
     for i, c in enumerate(s):
         if c == '(':
             left_unmatched.append(i)
-        elif c == '*':
-            wildcards.append(i)
-        elif left_unmatched:
-            left_unmatched.pop()
-        elif wildcards:
-            wildcards.pop()
+        elif c == ')':
+            if left_unmatched:
+                left_unmatched.pop()
+            elif wildcards:
+                wildcards.pop()
+            else:
+                # We can't match the current ')'
+                return False
         else:
-            # We can't match the current ')'
-            return False
+            wildcards.append(i)
     # So far, we have cleared all the ')' using '(' accordingly. But, we may have more '(' and '*' than ')'. In the
     # second part, if there is any '(' after '*', we return False. We can only close an '(' if there is an '*' that
     # appears at a later index.
