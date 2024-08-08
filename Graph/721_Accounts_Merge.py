@@ -112,23 +112,26 @@ def accounts_merge_v1(accounts):
 
 # Similar to https://leetcode.com/problems/accounts-merge/discuss/109161/Python-Simple-DFS-with-explanation!!!
 # 4th comment
-
 def accounts_merge_v2(accounts):
-    """ We give each account owner an ID based on its index within the list of accounts.
-        Next, build an email_owners_map that maps an email to a list of account owners, which can be used to track which
-        email is linked to which account. This is essentially our graph.
-        Next we do a DFS on each account in accounts list and look up email_owners_map to tell us which accounts are
-        linked to that particular account via common emails. This will make sure we visit each account only once. This
-        is a recursive process and we should collect all the emails that we encounter along the way.
-        Lastly, sort the collected emails and add it to final results, res along with the name.
-        Example:
+    """ We assign an ID to each account owner based on its index in the list of accounts.
+
+         Next, build a graph that maps an email to a list of account owners, which can be used to track which email is
+         linked to which account.
+
+         After that, we perform a DFS on each account in accounts list and look up the graph to tell us which accounts
+         are linked to that particular account via common emails. This will make sure we visit each account only once.
+         This is a recursive process, and we should collect all the emails that we encounter along the way.
+
+         Lastly, sort the collected emails and add it to final result.
+
+         Example:
             [
                 ["John", "johnsmith@mail.com", "john00@mail.com"], # Account 0
                 ["John", "johnnybravo@mail.com"], # Account 1
                 ["John", "johnsmith@mail.com", "john_newyork@mail.com"],  # Account 2
                 ["Mary", "mary@mail.com"] # Account 3
             ]
-            emails_accounts_map of email to account ID
+            graph:
             {
                 "johnsmith@mail.com": [0, 2],
                 "john00@mail.com": [0],
@@ -136,39 +139,40 @@ def accounts_merge_v2(accounts):
                 "john_newyork@mail.com": [2],
                 "mary@mail.com": [3]
             }
-    Time complexity: O(sum(a_i log(a_i))
-    Space complexity: O(sum(a_i)), the space used by our graph and our search
-    """
-    def build_graph():
-        for i, account in enumerate(accounts):
-            for j in range(1, len(account)):
-                email = account[j]
-                email_owners_map[email].append(i)  # key:value, email:[list of account ids it's associated with]
 
-    # DFS code for traversing accounts. It collects the emails associated with the current id and recursively
-    # collects the other emails that are shared with the rest of ids that exist in email_owners_map[email]
-    def dfs(id, emails):
-        if id in visited:
-            return
-        visited.add(id)
-        cur_account = accounts[id]  # [owner_name, ...emails]
-        for j in range(1, len(cur_account)):
-            email = cur_account[j]
-            emails.add(email)
-            for neighbor in email_owners_map[email]:  # Navigate to the different account ids to which this email is
-                # associated and collect the rest of email addresses
-                dfs(neighbor, emails)
+    Time complexity: O(NK logNK)
+    Space complexity: O(NK)
+    """
+
+    def dfs(index):
+        # Collect the emails associated with the current index ID and recursively collect the other emails that are
+        # shared with the rest of ids that exist in graph[email]
+        visited.add(index)
+        account = accounts[index]
+        n = len(account)
+        for j in range(1, n):
+            email = account[j]
+            component.add(email)
+            for neighbor in graph[email]:
+                # Navigate to the different account ids to which this email is associated and collect the rest of email
+                # addresses
+                if neighbor not in visited:
+                    dfs(neighbor)
 
     visited, res = set(), []
-    email_owners_map = defaultdict(list)
-    build_graph()
-
-    # Perform DFS for accounts and add to results.
-    for id, account in enumerate(accounts):
-        if id not in visited:
-            owner_name, emails = account[0], set()
-            dfs(id, emails)
-            res.append([owner_name] + sorted(emails))
+    graph = defaultdict(list)
+    for i, account in enumerate(accounts):
+        n = len(account)
+        for j in range(1, n):
+            email = account[j]
+            # email:[list of account ids it's associated with]
+            graph[email].append(i)
+    for i, account in enumerate(accounts):
+        if i not in visited:
+            name = account[0]
+            component = set()
+            dfs(i)
+            res.append([name] + sorted(component))
     return res
 
 
