@@ -10,7 +10,7 @@ class TreeNode:
 
 
 # Video explanation: https://youtu.be/m907FlQa2Yc
-def generate_trees(n):
+def generate_trees_v1(n):
     """ Top-Down Dynamic Programming.
 
          Note that 1...n is the inorder traversal for any BST with nodes 1 to n. We know that in a BST all nodes in the
@@ -68,4 +68,62 @@ def generate_trees(n):
 
     memo = {}
     return construct_trees(1, n) if n else []
+
+
+def generate_trees_v2(n):
+    """ Bottom-Up Dynamic Programming.
+
+         Let dp[i][j] be the list of all BSTs that have node values ranging from i to j (inclusive).
+
+         When i=j, the range contains only one node with value i. We push a single node with value i in the list
+         dp[i][i] for all the values of i from 1 to n. This acts as the base case of the solution while we move in
+         bottom to top manner.
+
+         We form the answer with a smaller number of nodes having consecutive node values and move on to form answers
+         for a bigger number of nodes. We run an outer loop from number_of_nodes = 2 to number_of_nodes = n,
+         incrementing number_of_nodes by 1 after each iteration. This loop controls the total number of nodes under
+         consideration.
+
+         We further need to choose a node value to start with. Let's call it lower. As we have number_of_nodes nodes
+         under consideration with consecutive values, the maximum node value in such a BST would be
+         start+number_of_nodes-1. We move lower from 1 to n -number_of_nodes+1.
+
+         Now we have the lower value and the upper value, we can implement the same logic that we did in the
+         previous implementation: lock a value i, find all left and right subtrees, and then iterate over each
+         (left, right) pair and create a new root with value i for each pair.
+
+         As we move from bottom to top, we have a list of all the root nodes for all BSTs for every range of node values
+         with fewer nodes.
+
+         Locking a value i as the root node, we can find all left subtrees in dp[lower][i-1] and all right subtrees in
+         dp[i+1][upper]. If i == lower, the left subtree would be empty. Similarly, if i == upper, the right subtree
+         would be empty. We can handle these cases separately.
+
+         We run an outer loop from number_of_nodes = 2 to n. We run an inner loop that selects the starting node value.
+         It runs from lower = 1 to n-number_of_nodes+1. We define upper = lower+number_of_nodes-1. We run a third nested
+         loop that selects the root of the BSTs under consideration. It runs from i = lower to upper.
+
+         We then iterate over the both the lists of left and right subtrees. For each root node left of the left subtree
+         and right of the right subtree, we create a new root node with value i and set the left and right child to left
+         and right, respectively, to form all the BSTs with root node as i. We also push each BST into dp[lower][upper]
+         to be used later to build answer for other dp states with larger number of nodes.
+
+    Time complexity: the main computations are to construct all possible trees with a given root, that is actually
+    Catalan number G_n. This is done n times, that results in time complexity n * G_n, that gives the final time
+    complexity O(4^n)
+    """
+    dp = [[[] for _ in range(n + 1)] for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        dp[i][i] = [TreeNode(i)]
+    for number_of_nodes in range(2, n + 1):
+        for lower in range(1, n - number_of_nodes + 2):
+            upper = lower + number_of_nodes - 1
+            for i in range(lower, upper + 1):
+                left_subtrees = dp[lower][i - 1] if i != lower else [None]
+                right_subtrees = dp[i + 1][upper] if i != upper else [None]
+                for left in left_subtrees:
+                    for right in right_subtrees:
+                        root = TreeNode(i, left, right)
+                        dp[lower][upper].append(root)
+    return dp[1][n]
 
