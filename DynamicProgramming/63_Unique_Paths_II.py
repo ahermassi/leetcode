@@ -120,12 +120,14 @@ def unique_paths_with_obstacles_v2(obstacle_grid):
     return dp[m - 1][n - 1]  # This is the bottom-right corner where we want to stop
 
 
-def unique_paths_with_obstacles_v2(obstacle_grid):
+def unique_paths_with_obstacles_v3(obstacle_grid):
     """ Same as previous solution, but with a cool trick to handle all edge cases in a more elegant way.
-        We use a DP array with one extra row and one extra column such as dp[i][j] relates to obstacle_grid[i-1][j-1]
-        and dp[1][1] is the starting point. We set dp[0][1] = 1 to make dp[1][1] (starting point) equal to 1 if
-        obstacle[0][0] is not 1 and make it 0 otherwise. This is also equivalent to setting dp[1][0] = 1 because we
-        can only arrive at dp[1][1] from dp[0][1] or dp[1][0].
+
+         We use a DP array with one extra row and one extra column such as dp[i][j] relates to obstacle_grid[i-1][j-1]
+         and dp[1][1] is the starting point. We set dp[0][1] = 1 to make dp[1][1] (starting point) equal to 1 if
+         obstacle_grid[0][0] is not an obstacle and make it 0 otherwise. This is also equivalent to setting dp[1][0] = 1
+         because we can only reach dp[1][1] from dp[0][1] or dp[1][0].
+
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
@@ -134,7 +136,8 @@ def unique_paths_with_obstacles_v2(obstacle_grid):
     dp[0][1] = 1  # Or dp[1][0] = 1
     for i in range(1, n + 1):
         for j in range(1, m + 1):
-            dp[i][j] = dp[i - 1][j] + dp[i][j - 1] if not obstacle_grid[i - 1][j - 1] else 0
+            if obstacle_grid[i][j] != 1:
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
     return dp[-1][-1]
 
 
