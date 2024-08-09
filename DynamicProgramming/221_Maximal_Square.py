@@ -58,33 +58,37 @@ def maximal_square_v1(matrix):
 
 
 def maximal_square_v2(matrix):
-    """ Bottom up dynamic programming.
-        We initialize another matrix (dp) with the same dimensions as the original one initialized with all 0’s.
-        dp[i, j] represents the side length of the maximal square whose bottom right corner is the cell at index (i,j)
+    """ Bottom-Up Dynamic Programming.
+
+        We initialize a 2D matrix dp with the same dimensions as the original one initialized with all 0’s.
+        Let dp[i, j] be the side length of the maximal square whose bottom-right corner is the cell at index (i,j)
         in the original matrix.
+
+        Since the current cell is the bottom-right corner, we recursively examine the remaining 3 corners,
+         mainly top right (i -1, j), bottom left (i, j -1 1), and top left (i -1, j - 1). The result is the
+         minimum of the maximal side length that each corner contributes with plus 1.
+
         Starting from index (0,0), for every 1 found in the original matrix, we update the value of the current element
         as:
-            dp[i, j] = min(dp[i−1, j], dp[i−1, j−1], dp[i, j−1]) + 1
+                    dp[i, j] = min(dp[i−1, j], dp[i, j−1], dp[i−1, j−1]) + 1
+
         We use min() because that is what limits the size of the square. If for example any corner was a 0, we know we
         don't have that row or column to form the bigger square at (i,j).
+
         Logic : Top right, bottom left, and top left decide the size of the square. If all of them are same, then the
         size of square increases by 1. If they're not same, they can increase by 1 to the minimal square.
+
     Time complexity: O(N * M)
     Space complexity: O(N * M)
     """
-    if not matrix:
-        return 0
     n, m = len(matrix), len(matrix[0])
-    dp, max_len = [[0] * m for _ in range(n)], 0
+    dp, max_square_side = [[0] * m for _ in range(n)], 0
     for i in range(n):
         for j in range(m):
-            if i == 0 or j == 0:  # First row and first column are not changed as each square whose bottom right is
-                # at first row/column has only 1 element. So if matrix[i][j] == c --> dp[i][j] = c; c in {0, 1}
-                dp[i][j] = int(matrix[i][j])
-            elif matrix[i][j] == '1':
-                dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1  # min(top right, bottom left, top left) + 1
-                max_len = max(max_len, dp[i][j])
-    return max_len * max_len
+            if matrix[i][j] == '1':
+                dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
+                max_square_side = max(max_square_side, dp[i][j])
+    return max_square_side * max_square_side
 
 # Review the following code. There is a bug somewhere.
 
