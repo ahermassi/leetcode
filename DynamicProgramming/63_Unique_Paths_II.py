@@ -173,20 +173,23 @@ def unique_paths_with_obstacles_v4(obstacle_grid):
     return pre[-1]
 
 
-def unique_paths_with_obstacles_v4(obstacle_grid):
+def unique_paths_with_obstacles_v5(obstacle_grid):
     """ We can use the obstacle_grid array as the DP array thus not utilizing any additional space.
+
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
+    if obstacle_grid[0][0] == 1:
+        return 0
     n, m = len(obstacle_grid), len(obstacle_grid[0])
-    obstacle_grid[0][0] = 1 - obstacle_grid[0][0]
-    for j in range(1, m):
-        obstacle_grid[0][j] = obstacle_grid[0][j - 1] * (1 - obstacle_grid[0][j])
+    obstacle_grid[0][0] = 1
     for i in range(1, n):
-        obstacle_grid[i][0] = obstacle_grid[i - 1][0] * (1 - obstacle_grid[i][0])
+        obstacle_grid[i][0] = obstacle_grid[i - 1][0] if obstacle_grid[i][0] != 1 else 0
+    for j in range(1, m):
+        obstacle_grid[0][j] = obstacle_grid[0][j - 1] if obstacle_grid[0][j] != 1 else 0
     for i in range(1, n):
         for j in range(1, m):
-            obstacle_grid[i][j] = obstacle_grid[i - 1][j] + obstacle_grid[i][j - 1] if not obstacle_grid[i][j] else 0
+            obstacle_grid[i][j] = obstacle_grid[i - 1][j] + obstacle_grid[i][j - 1] if obstacle_grid[i][j] != 1 else 0
     return obstacle_grid[-1][-1]
 
 
