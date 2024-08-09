@@ -90,33 +90,36 @@ def maximal_square_v2(matrix):
                 max_square_side = max(max_square_side, dp[i][j])
     return max_square_side * max_square_side
 
-# Review the following code. There is a bug somewhere.
-
 
 def maximal_square_v3(matrix):
-    """ In the previous approach for calculating dp of ith row, we are using only the previous element and the (i−1)th
-        row. Therefore, we don't need 2D dp matrix as 1D dp array will be sufficient for this.
-        Initially, the dp array contains all 0's. As we scan the elements of the original matrix across a row, we keep
-        on updating the dp array as per the equation:
-            dp[j] = min(dp[j-1],dp[j],prev)
-        where prev refers to the old dp[j-1]. For every row, we repeat the same process and update in the same dp array.
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
+         In the previous, to calculate dp of the ith row, we used only the previous element and the (i−1)th
+         row. Therefore, we don't need 2D dp matrix as 1D dp array will be sufficient for this.
+
+         Initially, the dp array contains all 0's. As we scan the elements of the original matrix across a row, we keep
+         updating the dp array as per the equation:
+                    dp[j] = min(dp[j-1], dp[j], pre)
+
+         where pre refers to the old dp[j-1] of the previous row. For every row, we repeat the same process and update
+         in the same dp array.
+
     Time complexity: O(N * M)
     Space complexity: O(M)
     """
-    if not matrix:
-        return 0
     n, m = len(matrix), len(matrix[0])
-    dp, max_len = [0] * (m + 1), 0
-    prev = 0
-    for i in range(1, n):
-        for j in range(1, m):
-            temp = dp[j]
-            if matrix[i - 1][j - 1] == '1':
-                dp[j] = min(dp[j], min(dp[j - 1], prev)) + 1
-                max_len = max(max_len, dp[j])
+    cur, pre = [0] * m, 0
+    max_len = 0
+    for i in range(n):
+        for j in range(m):
+            if matrix[i][j] == '1':
+                if i == 0 or j == 0:
+                    cur[j], pre = 1, cur[j]
+                else:
+                    cur[j], pre = min(cur[j], cur[j-1], pre) + 1, cur[j]
+                max_len = max(max_len, cur[j])
             else:
-                dp[j] = 0
-            prev = temp
+                cur[j] = 0
     return max_len * max_len
 
 
