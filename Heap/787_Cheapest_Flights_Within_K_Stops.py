@@ -49,8 +49,8 @@ def find_cheapest_price_v1(n, flights, src, dst, k):
 
             - Initialize a queue storing {node, total cost} pairs. Initially, the queue should have only (src, 0).
 
-            - Perform BFS until the queue is empty or k >= 0 (alternatively, we can create a variable to keep track of
-               the number of BFS "layers" if we don't want to modify the input parameter k):
+            - Perform BFS while the queue is not empty and k >= 0 (alternatively, we can create a variable to keep track
+               of the number of BFS "layers" if we don't want to modify the input parameter k):
 
                     * Iterate over all the nodes of the current level. This is done by starting a nested loop and
                        extracting all the nodes present in the queue.
@@ -63,8 +63,8 @@ def find_cheapest_price_v1(n, flights, src, dst, k):
                        the current level and are ready to process the next level of nodes.
 
             - Once we reach a condition where either the queue is empty or k < 0, we have the answer at costs[dst].
-               If costs[dst] hasn't changed from the initial large value, it means the destination is unreachable, and
-               so return -1.
+               If costs[dst] hasn't changed from the initial large value, it means the destination is unreachable in k
+               stops, and so return -1.
 
     Time complexity: O(V + E*k), where E is the number of flights and V is the number of cities. Depending on
     improvements in the shortest distance for each node, we may process each edge multiple times. However, the maximum
