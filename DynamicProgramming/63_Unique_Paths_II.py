@@ -7,6 +7,55 @@ import unittest2 as unittest
 
 
 def unique_paths_with_obstacles_v1(obstacle_grid):
+    """ Top-Down Dynamic Programming.
+
+         A key observation is that since paths must advance down or right, the number of ways to get to the
+         bottom-right corner is the number of ways to get to the cell immediately above it, plus the number of ways to
+         get to the cell immediately to its left.
+
+         The idea is to notice that:
+
+                When we are at cell (n - 2, m - 1) or at cell (n - 1, m - 2), there is exactly only one way to reach the
+                bottom -right corner, which is to either move down or right, respectively
+
+         This is the base case.
+         So if we know the number of ways to get to these cells, the total ways to get to the bottom-right corner
+         is their sum.
+
+         This is identical to 62- Unique Paths solution, except that a second base case is needed. If at any time we
+         reach a cell with value 1, then it is an obstacle cell, and we can't move any further. So, we just stop
+         exploring further paths from this cell.
+
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+
+    def dfs(i, j):
+        # dfs(i, j) returns the number of unique paths from cell (i, j) to the bottom-right corner
+        if obstacle_grid[i][j] == 1:
+            return 0
+        if (i, j) == (m - 1, n - 1):
+            return 1
+        if (i, j) in {(n - 1, m - 2), (n - 2, m - 1)}:
+            return 1
+        if (i, j) in memo:
+            return memo[(i, j)]
+        right_paths = down_paths = 0
+        if j < n - 1:
+            right_paths = dfs(i, j + 1)
+        if i < m - 1:
+            down_paths = dfs(i + 1, j)
+        memo[(i, j)] = right_paths + down_paths
+        return memo[(i, j)]
+
+    m, n = len(obstacle_grid), len(obstacle_grid[0])
+    if obstacle_grid[m - 1][n - 1] == 1:
+        return 0
+    memo = {}
+    return dfs(0, 0)
+
+
+def unique_paths_with_obstacles_v1(obstacle_grid):
     """ This problem is similar to 62- Unique Paths. The introduction of obstacles only changes the boundary conditions
         and makes some points unreachable (simply set to 0).
         The robot can only move either down or right. Hence any cell in the first row can only be reached from the cell
