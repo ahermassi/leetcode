@@ -1,49 +1,60 @@
 """ Given a 2D binary matrix filled with 0's and 1's, find the largest square containing only 1's and return its
 area. """
 
+from collections import defaultdict
 import unittest2 as unittest
 
 
 # For full details, check out this article: https://leetcode.com/articles/maximal-square/
-
+# Video explanation: https://youtu.be/6X7Ha2PrDmM
 def maximal_square_v1(matrix):
-    """ Top down, recursive solution with memoization.
-        dfs(i, j) returns the maximal side length of the square whose bottom right corner is (i, j).
-        Base case: each square whose bottom right is at first row/column has only 1 element. So if matrix[i][j] == c,
-        then dfs(i, j) = c, where c is in {0, 1}.
-        After that, since the current cell is the bottom right corner, we recursively examine the remaining 3 corners,
-        mainly top right (i - 1, j), bottom left (i, j - 1), and top left (i - 1, j - 1). The result is the minimum of
-        the maximal side length that each corner contributes with plus 1.
-        So we go to the first 1 and ask it, 'Hey, what's the largest square of 1s that begins with you?'.
-        To calculate that, it needs to know the largest squares its adjacent cells can begin.
-        So, it'll ask the same question to its adjacent cells which will in turn will ask their adjacent cells and so
-        on. The cell that began the question will deduce that the largest square that begins with it is 1 + the
-        minimum of all the values its adjacent cells returned.
-        We then ask the same question to every 1 we find in the grid and keep track of the global maximum. In doing
-        so, we'll notice that the recursion causes many cells to be asked the same question again and again
-        (overlapping sub-problems), so we use memoization.
+    """ Top-Down Dynamic Programming.
+
+         At first sight, this problem requires a DFS traversal - a dead giveaway that we need recursion. And it also
+         wants us to find the largest square. So we'd go to the first 1 and ask it, "Hey, what's the largest square of
+         1s that begins with you?". To calculate that it needs to know the largest squares its ADJACENT cells can begin.
+         So, it'll ask the same question to its adjacent cells which will in turn will ask their adjacent cells and so
+         on... The cell that began the question will deduce that the largest square that begins with it is:
+
+                1 + the minimum of all the values its adjacent cells returned
+
+         We then ask the same question to every 1 we find in the grid and keep track of the global maximum. In doing
+         so, we notice that the recursion causes many cells to be asked the same question again and again
+         (overlapping sub-problems)- so we use memoization.
+
+         Let dfs(i, j) be the maximal SIDE LENGTH of the square whose top-left corner is (i, j).
+
+         Base case: when we go out of boundaries, return 0.
+
+         Since the current cell is the top-left corner, we recursively examine the remaining 3 corners,
+         mainly bottom left (i + 1, j), top right (i, j + 1), and bottom right (i + 1, j + 1). The result is the
+         minimum of the maximal side length that each corner contributes with plus 1.
+         So we go to the first 1 and ask it, 'Hey, what's the largest square of 1s that begins with you?'.
+
     Time complexity: O((N * M)^2), in worst case we need to traverse the complete matrix for every cell equal to 1
     Space complexity: O(N * M)
     """
+
     def dfs(i, j):
-        if matrix[i][j] == '0':
+        if not 0 <= i < n or not 0 <= j < m:
             return 0
-        if (i, j) not in memo:
-            memo[(i, j)] = min(dfs(i - 1, j), dfs(i, j - 1), dfs(i - 1, j - 1)) + 1
+        if (i, j) in memo:
+            return memo[(i, j)]
+        down = dfs(i + 1, j)
+        right = dfs(i, j + 1)
+        diagonal = dfs(i + 1, j + 1)
+        if matrix[i][j] == '1':
+            memo[(i, j)] = 1 + min(down, right, diagonal)
         return memo[(i, j)]
 
     if not matrix:
         return 0
-    n, m, memo = len(matrix), len(matrix[0]), {}
-    for j in range(m):
-        memo[(0, j)] = int(matrix[0][j])
-    for i in range(n):
-        memo[(i, 0)] = int(matrix[i][0])
-    res = 0
+    n, m, memo = len(matrix), len(matrix[0]), defaultdict(int)
+    max_square_side = 0
     for i in range(n):
         for j in range(m):
-            res = max(res, dfs(i, j))
-    return res * res
+            max_square_side = max(max_square_side, dfs(i, j))
+    return max_square_side * max_square_side
 
 
 def maximal_square_v2(matrix):
