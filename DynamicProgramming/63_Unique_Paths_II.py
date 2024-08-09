@@ -141,21 +141,34 @@ def unique_paths_with_obstacles_v3(obstacle_grid):
     return dp[-1][-1]
 
 
-def unique_paths_with_obstacles_v3(obstacle_grid):
-    """  In the previous solutions, each time we update dp[i][j], we only need dp[i-1][j] (at the same column) and
-        dp[i][j-1] (at the left column), so it is unnecessary to maintain the full grid. Maintaining two rows is enough.
+def unique_paths_with_obstacles_v4(obstacle_grid):
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
+         Notice that each time when we update dp[i][j], we only need dp[i-1][j] (in the previous row) and dp[i][j-1]
+         (in the current row but previous column). We only need to store the previous row/column to perform the
+         calculation for the current one. So a 1D array would suffice.
+
+         pre is analogous to dp[i-1] and cur is analogous to dp[i].
+
     Time complexity: O(N * M)
     Space complexity: O(M)
     """
+    if obstacle_grid[0][0] == 1:
+        return 0
     n, m = len(obstacle_grid), len(obstacle_grid[0])
     pre, cur = [0] * m, [0] * m
-    pre[0] = 1 - obstacle_grid[0][0]
-    for j in range(1, m):  # Populating the first row
-        pre[j] = pre[j - 1] * (1 - obstacle_grid[0][j])
+    pre[0] = 1
+    for j in range(1, m):
+        # Populating the first row
+        if obstacle_grid[0][j] != 1:
+            pre[j] = pre[j - 1]
     for i in range(1, n):
-        cur[0] = pre[0] * (1 - obstacle_grid[i][0])  # Edge case j=0, the result depends only on the above cell pre[0]
+        if obstacle_grid[i][0] != 1:
+            # Edge case j=0, the result depends only on the above cell pre[0]
+            cur[0] = pre[0]
         for j in range(1, m):
-            cur[j] = cur[j - 1] + pre[j] if not obstacle_grid[i][j] else 0
+            if obstacle_grid[i][j] != 1:
+                cur[j] = cur[j - 1] + pre[j]
         pre, cur = cur, [0] * m
     return pre[-1]
 
