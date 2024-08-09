@@ -93,7 +93,7 @@ def find_cheapest_price_v1(n, flights, src, dst, k):
 
 
 def find_cheapest_price_v2(n, flights, src, dst, k):
-    """ Dijkstra's algorithm using priority queue.
+    """ (Modified) Dijkstra's algorithm using priority queue.
 
         If we forget about the part where the number of stops is limited, then the problem simply becomes the shortest
         path in a weighted graph. Dijkstra's algorithm is used to find the shortest paths from a source node to all the
@@ -160,11 +160,11 @@ def find_cheapest_price_v2(n, flights, src, dst, k):
 
             - We check if number of stops to reach the node is greater than the recorded minimum number of stops for the
                current node. If that is the case, then it means the currently considered path from the source to the
-               node is slightly more expensive (in terms of number of stops) than a previous path and hence should not
+               node is slightly more expensive IN TERMS OF NUMBER OF STOPS than a previous path and hence should not
                be considered.
 
             - Otherwise, we iterate over all the current node's neighbors which we can obtain from the adjacency list.
-               For each neighbor, we push it to the heap with updated cost and number of stops
+               For each neighbor, we push it to the heap with the updated cost and number of stops.
 
         The key difference with the classic Dijkstra's algorithm is that we don't maintain the global optimal cost for
         each node, i.e. ignore below optimization:
@@ -172,8 +172,8 @@ def find_cheapest_price_v2(n, flights, src, dst, k):
             if dist[u] + length(u, v) < dist[v]: ...
 
         because there could be cheaper routes but use more stops, and those routes don't necessarily constitute the best
-        route in the end. To handle this, instead than maintaining the optimal routes with 0...k stops for each node,
-        the algorithm simply puts all possible routes into the priority queue, so that all of them have a chance of being
+        routes in the end. To handle this, instead of maintaining the optimal routes with 0...k stops for each node, the
+        algorithm simply puts all possible routes into the priority queue, so that all of them have a chance of being
         processed. The algorithm returns the first qualified route.
 
         The reason for this is that Dijkstra's (and this modified Dijkstra's) always selects greedily, as in it always
@@ -199,9 +199,10 @@ def find_cheapest_price_v2(n, flights, src, dst, k):
             return total_cost
         if stops_from_src_to_node > stops[node]:
             # The current path used more stops to reach the node than some previous paths. Unlike Dijkstra's which
-            # updates only if the distance is shorter, a node should be updated here if (i) cost is cheaper (ii) fewer
-            # stops. If the current number of stops is greater than a previous stops[node], there is no need to revisit
-            # this node.
+            # updates only if the distance is shorter, a node should be updated here if:
+            # (i) cost is cheaper, AND
+            # (ii) fewer stops
+            # If the current number of stops > a previous stops[node], there is no need to revisit this node.
             continue
         stops[node] = stops_from_src_to_node
         for neighbor, cost in graph[node]:
