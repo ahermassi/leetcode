@@ -9,37 +9,54 @@ Given a non-empty string containing only digits, determine the total number of w
 
 import unittest2 as unittest
 
-# Watch: https://www.youtube.com/watch?v=YcJTyrG3bZs
 
-
+# Video explanation: https://www.youtube.com/watch?v=YcJTyrG3bZs
+# Video explanation: https://youtu.be/6aEyTjOwlJ
 def num_decodings_v1(s):
-    """ Top-down, recursive. TLE. The logic is similar to 70- Climbing Stairs.
-        The most important point to understand in this problem is that, at any given step, when we are trying to decode
-        a string of numbers it can either be a single digit decode e.g. 1 to 'A' or a double digit decode e.g. 25 to
-        'Y'. As long as it's a valid decoding, we move ahead to decode the rest of the string.
-        The sub-problem could be thought of as number of ways decoding a substring.
-        What helps to crack the problem is to think why there would be many ways to decode a string. The reason is
-        simple since at any given point we either decode using two digits or single digit. This choice while decoding
-        can lead to different combinations.
-        Recursively decompose the string using a decoding pointer 'index'. At every point of the recursion, we can make
-        2 decisions:
-            1- Decode one character out: valid if current character at 'index' is between 1 and 9
-            2- Decode two characters out: valid if s[index:index+2] is between 10 and 26
-        If at any point the decoding is possible, we recurse on the rest of the string.
-        This leads to multiple paths to decoding the entire string. If a given path leads to the end of the string,
-        this means we could successfully decode the string. If at any point in the traversal we encounter digits which
-         cannot be decoded, we backtrack from that path.
+    """ Similar to 70- Climbing Stairs. TLE.
+
+         The most important point to understand in this problem is that, at any given step, when we are trying to decode
+         a string of numbers it can either be a single digit decode e.g. 1 to 'A', or a double-digit decode e.g. 25 to
+         'Y'. As long as it's a valid decoding, we move ahead to decode the rest of the string.
+
+         The sub-problem could be thought of as number of ways of decoding a substring.
+
+         What helps to crack the problem is to think why there would be many ways to decode a string. The reason is
+         simple since at any given point we either decode using a single digit or two digits. This choice while decoding
+         can lead to different combinations.
+
+         Thus, at any given time for a string we enter a recursion after successfully decoding a single digit to a
+         character or two digits to a single character. This leads to multiple paths to decoding the entire string.
+         If a given path leads to the end of the string, this means we could successfully decode the entire string.
+         If at any point in the traversal we encounter digits which cannot be decoded, we backtrack from that path.
+
+         Recursively decompose the string using a decoding pointer 'index'. At every point of the recursion, we can make
+         2 decisions:
+
+            1- Decode one character: valid if the current character at 'index' is between 1 and 9
+            2- Decode two characters: valid if s[index:index+2] is between 10 and 26
+
+        When we reach the end of the string, this means that we have found a possible way to decode. So this will
+        contribute to the answer and return 1.
+
+        If the first character is 0 then terminate that path by returning 0. Thus, this path won't contribute to the
+        number of decoding ways.
+
     Time complexity: O(2^N)
     Space complexity: O(N)
     """
 
     def dfs(index):
-        if index >= n:  # Nothing left to decompose, so this is a valid decomposition
+        if index >= n:
+            # Nothing left to decompose, so this is a valid decomposition
             return 1
+        if s[index] == '0':
+            # If the string starts with a zero, it can't be decoded
+            return 0
         one = two = 0
-        if s[index] != '0':  # Current character is between 1 and 9
-            one = dfs(index + 1)
-        if 10 <= int(s[index:index + 2]) <= 26:  # Current character is between 10 and 26
+        one = dfs(index + 1) # Current character is between 1 and 9
+        if index + 1 < n and (s[index] == '1' or s[index] == '2' and '0' <= s[index+1] <= '6'):
+            # Current character is between 10 and 26
             two = dfs(index + 2)
         return one + two
 
