@@ -65,24 +65,29 @@ def num_decodings_v1(s):
 
 
 def num_decodings_v2(s):
-    """ Recursion + memoization.
+    """ Top-Down Dynamic Programming.
+
+         Above code will give TLE, since there are overlapping sub-problems, and we are calculating them over and over
+         again. For that we need to do memoization.
+
     Time complexity: O(N), memoization helps in pruning the recursion tree and hence decoding for an index only once
     Space complexity: O(N), the dictionary used for memoization would take the space equal to the length of the string.
     There would be an entry for each index value. The recursion stack would also be equal to the length of the string.
     """
 
     def dfs(index):
-        if index >= n:  # Nothing left to decompose, so this is a valid decomposition
+        if index >= n:
             return 1
+        if s[index] == '0':
+            return 0
         if index in memo:
             return memo[index]
-        total_decompositions = 0
-        if s[index] != '0':  # Current character is between 1 and 9
-            total_decompositions += dfs(index + 1)
-        if 10 <= int(s[index:index + 2]) <= 26:  # Current character is between 10 and 26
-            total_decompositions += dfs(index + 2)
-        memo[index] = total_decompositions
-        return total_decompositions
+        one = two = 0
+        one = dfs(index + 1)
+        if index + 1 < n and (s[index] == '1' or s[index] == '2' and '0' <= s[index + 1] <= '6'):
+            two = dfs(index + 2)
+        memo[index] = one + two
+        return one + two
 
     n, memo = len(s), {}
     return dfs(0)
