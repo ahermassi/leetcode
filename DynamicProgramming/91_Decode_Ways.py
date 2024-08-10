@@ -149,6 +149,34 @@ def num_decodings_v3(s):
     # return dp[0]
 
 
+def num_decodings_v4(s):
+    """ Space-Optimized Bottom-Up Dynamic Programming.
+
+         In the previous approach we used a dp array to save the results for future reference. As we move ahead
+         character by character in the string, we look back only two steps. To calculate dp[i] we only need dp[i-1] and
+         dp[i-2] only. Thus, we can easily cut down the space utilization to O(1) by using two variables to store the
+         last two results.
+
+         This is similar to the space-optimized DP's of 70- Climbing Stairs and 198- House Robber.
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    if s[0] == '0':
+        return 0
+    n = len(s)
+    one = two = 1
+    for i in range(1, n):
+        current = 0
+        if s[i] != '0':
+            current += one
+        two_digit = int(s[i - 1: i + 1])
+        if 10 <= two_digit <= 26:
+            current += two
+        two, one = one, current
+    return one
+
+
 class Test(unittest.TestCase):
     data = [('12', 2), ('226', 3)]
 
@@ -157,6 +185,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, num_decodings_v1(test_string))
             self.assertEqual(result, num_decodings_v2(test_string))
             self.assertEqual(result, num_decodings_v3(test_string))
+            self.assertEqual(result, num_decodings_v4(test_string))
 
 
 if __name__ == '__main__':
