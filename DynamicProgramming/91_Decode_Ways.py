@@ -94,18 +94,26 @@ def num_decodings_v2(s):
 
 
 def num_decodings_v3(s):
-    """ Let dp[i] be the number of ways to parse the first i characters of s, or the number of ways to decode a string
-        of length i. The basic concept is to build up the number of ways to get to state i from all the previous states
-        less than i. We set dp[0] to 1 because there is only 1 way to decode an empty string. We can then build up the
-        number of ways to decode starting from the first value and work our way to the end.
-            dp[i] = dp[i-1] + dp[i-2]
-        Which is not always true for this decode ways problem. Only when the decode is possible we add the results of
-        the previous indices.
-        We check if valid single digit decode is possible. This just means the character at index s[i-1] is non-zero
-        since we do not have a decoding for zero. If the valid single digit decoding is possible, then we add dp[i-1]
-        to dp[i] since all the ways up to (i-1)th character now lead up to ith character too.
-        We check if valid two digit decode is possible. This means the substring s[i-2:i] is between 10 to 26. If the
-        valid two digit decoding is possible, then we add dp[i-2] to dp[i].
+    """ Bottom-Up Dynamic Programming.
+
+         Let dp[i] be the number of ways to parse the first i characters of s, or the number of ways to decode a string
+         of length i. The basic concept is to build up the number of ways to get to state i from all the previous states
+         before i.
+
+         We set dp[0] to 1 because there is only 1 way to decode an empty string. We can then build up the
+         number of ways to decode starting from the first value and work our way to the end:
+                    dp[i] = dp[i-1] + dp[i-2]
+
+         Which is not always true for this decode ways problem. Only when the decoding is possible we add the results of
+         the previous indices.
+
+         We check if valid single digit decoding is possible. This just means the character at index i-1 is non-zero
+         since we do not have a decoding for zero. If the valid single digit decoding is possible, then we add dp[i-1]
+         to dp[i] since all the ways up to (i-1)th character now lead up to ith character too.
+
+         We also check if valid two digit decoding is possible. This means the substring s[i-2:i] is between 10 and 26.
+         If the valid two digit decoding is possible, then we add dp[i-2] to dp[i].
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
@@ -114,22 +122,31 @@ def num_decodings_v3(s):
     dp[0] = 1
     for i in range(1, n + 1):
         if s[i - 1] != '0':
-            dp[i] += dp[i - 1]  # One step jump. We only need to ensure that s[i-1] (current character) is not equal to
-            # zero, since only zero does not have a mapping to an alphabet and rest of the digits from 1 through 9 do
-            # in fact have a mapping.
+            dp[i] += dp[i - 1]
+            # One-step jump. We only need to ensure that s[i-1] (current character) is not a zero, since only zero does
+            # not have a mapping to an alphabet.
             # At this step, we're like saying "does it make sense to split the string into whatever came before me and
-            # myself ?", which is only possible if current value is different from 0 so it can have a mapping.
+            # myself ?", which is only possible if the current value is not 0, so it can have a mapping.
             # Example: s = '271'; dp[0] = 1; dp[1] = 1 as there is only one way to decode '2'; dp[2] += dp[1] because
-            # current value is '7' which is different from '0', so it can join the gang: dp[2] = 1 means there is 1 way
-            # to decode first 2 characters at this point: 2 7
-        if i - 2 >= 0 and '10' <= s[i - 2: i] <= '26':
-            dp[i] += dp[i - 2]  # Two-step jump. At this stage, we're like saying "does it make sense to split the
-            # string into (myself + previous character) and whatever came before ?", which is only possible if value of
-            # (myself + previous character) is >= 10 and <= 26 so it can have a mapping. Now continuing with same
-            # example: We're at dp[2] and current value is '7'. Look back one character: '27'. dp[2] += dp[0] is not
+            # the current value is '7' which is different from '0', so it can join the gang: dp[2] = 1 means there is
+            # 1 way to decode the first 2 characters at this point: 2 7
+        if i >= 2 and '10' <= s[i - 2: i] <= '26':
+            dp[i] += dp[i - 2]
+            # Two-step jump. At this stage, we're like saying "does it make sense to split the string into
+            # (myself + previous character) and whatever came before ?", which is only possible if the value of
+            # (myself + previous character) is >= 10 and <= 26, so it can have a mapping. Now continuing with the same
+            # example: we're at dp[2] and the current value is '7'. Look back one character: '27'. dp[2] += dp[0] is not
             # possible because 27 is not <= 26, so splitting the string into '27' and whichever came before that (empty
             # string in this case) is not a viable option.
-    return dp[-1]
+    return dp[n]
+    # We also convert the same top-down DP approach and process the string from right to left:
+    # dp[n] = 1
+    # for i in reversed(range(n)):
+    #     if s[i] != '0':
+    #         dp[i] += dp[i + 1]
+    #     if i + 1 < n and (s[i] == '1' or s[i] == '2' and '0' <= s[i + 1] <= '6'):
+    #         dp[i] += dp[i + 2]
+    # return dp[0]
 
 
 class Test(unittest.TestCase):
