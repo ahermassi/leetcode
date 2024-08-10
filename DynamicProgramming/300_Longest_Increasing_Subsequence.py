@@ -48,28 +48,65 @@ def length_of_lis_v1(nums):
     return max_len
 
 
+# For more details:
+# https://leetcode.com/problems/longest-increasing-subsequence/discuss/74824/JavaPython-Binary-search-O(nlogn)-time-with-explanation
 def length_of_lis_v2(nums):
     """ This approach is known as Patience Sorting.
-        We try to build 'increasing_sub_sequence' where elements are sorted increasingly.
-        We iterate over nums array. If the current element is greater than the largest (last) element in
-        'increasing_sub_sequence', we simply append it. Otherwise, we determine the insertion index of the current
-        element in 'increasing_sub_sequence' if we were to keep it sorted, using binary search. We eventually end up
-        with a list of elements sorted increasingly whose length is the length of (one of) LIS in nums.
-        Note: 'increasing_sub_sequence' array does not result in longest increasing sub-sequence, but length of
-        'increasing_sub_sequence' array will give the length of LIS.
-        Why is this correct ?
-        When we replace increasing_sub_sequence[i] with current num, we don't change the length of answer, but we
-        change the potential best candidate. Replacing increasing_sub_sequence[i] with the first element that is
-        smaller than or equal to it increases our chance of extending the array because increasing_sub_sequence[i] is
-        smaller than that element.
+
+         As stated in the previous approach, the difficult part of this problem is deciding if an element is worth
+         using. Let's try to build an increasing subsequence starting with an empty one.
+
+         The best way to build an increasing subsequence is: for each element num, if num is greater than the largest
+         element in the subsequence, then add it to the subsequence. Otherwise, perform a linear scan through the
+         subsequence starting from the smallest element and replace the first element that is greater than or equal to
+         num with num. This opens the door for elements that are greater than num but less than the element replaced to
+         be included in the sequence.
+
+         Consider the example nums = [8, 1, 6, 2, 3, 10], longest_increasing_subs = [].
+
+         At the first element 8, we might as well take it since it's better than nothing, so longest_increasing_sub=[8].
+
+         At the second element 1, we can't increase the length of the subsequence since 8 >= 1, so we have to choose
+         only one element to keep. Well, this is an easy decision, let's take the 1 since there MAY be elements later on
+         that are greater than 1 but less than 8, now we have longest_increasing_sub = [1].
+
+         At the third element 6, we can build on the subsequence since 6 > 1, now longest_increasing_sub = [1, 6].
+
+         At the fourth element 2, we can't build on the subsequence since 6 >= 2, but can we improve on it for the
+         future? Similar to the decision we made at the second element, if we replace the 6 with 2, we will open the
+         door to using elements that are greater than 2 but less than 6 in the future, so longest_increasing_sub = [1, 2].
+
+         At the fifth element 3, we can build on the subsequence since 3 > 2. Notice that this was only possible because
+         of the swap we made in the previous step, so longest_increasing_sub = [1, 2, 3].
+
+         At the last element 10, we can build on the subsequence since 10 > 3, giving a final subsequence
+         longest_increasing_sub = [1, 2, 3, 10]. The length of longest_increasing_sub is the answer.
+
+         Since longest_increasing_sub is in sorted order, we can use binary search instead of linear search to find the
+         insertion index of the current element in longest_increasing_sub if we were to keep it sorted.
+
+         Why does this work ?
+         When we replace longest_increasing_sub[i] with the current num, we don't change the length of the LIS, but we
+         change the POTENTIAL BEST CANDIDATE. Replacing longest_increasing_sub[i] with the first element that is
+         smaller than or equal to it increases the chance of extending the LIS because longest_increasing_sub[i] is
+         smaller than that element. When we replace an element in longest_increasing_sub, we're not extending the
+         length of the sequence, but we are making the increasing sequence that we can potentially build later MORE
+         FLEXIBLE, i.e., able to accommodate smaller subsequent numbers.
+
+         !!! IMPORTANT !!!
+         This algorithm does not always generate a valid subsequence of the input due to the order being potentially
+         mixed up as a result of replacements, but the length of the subsequence will always equal the length of the
+         longest increasing subsequence.
+         For example, with the input [3, 4, 5, 1], at the end we will have longest_increasing_sub = [1, 4, 5], which
+         isn't a subsequence, but the length is still correct. The length remains correct because the length only
+         changes when a new element is larger than any element in the subsequence. In that case, the element is appended
+         to the subsequence instead of replacing an existing element.
+
         So the main idea is:
-            Use binary search to extend increasing sequence with larger numbers, or minimize existing values with
-            smaller ones, so we can use larger numbers to extend it.
-        Try to make each position's number as small as possible. The actual sequence only changes when we append a
-        number, otherwise it's just a 'virtual change', meaning we don't change the current sequence, but we try to
-        make each number small so we'll have a larger chance to append more numbers.
-        For more details:
-        https://leetcode.com/problems/longest-increasing-subsequence/discuss/74824/JavaPython-Binary-search-O(nlogn)-time-with-explanation
+
+                    Use binary search to extend the increasing sequence with larger numbers, or minimize existing values
+                                    with smaller ones, so we can use larger numbers to extend it.
+
         Example: nums = [0, 8, 4, 12, 2]
         i = 0, increasing_sub_sequence = [0]
         i = 1, increasing_sub_sequence = [0, 8]
@@ -77,30 +114,29 @@ def length_of_lis_v2(nums):
         i = 3, increasing_sub_sequence = [0, 4, 12]
         i = 4, increasing_sub_sequence = [0 , 2, 12] which is not the longest increasing sub-sequence, but its length
         is the length of LIS.
-    Time complexity: O(N logN), binary search takes logN time and it is called N times
+
+    Time complexity: O(N logN), binary search takes logN time and is called N times
     Space complexity: O(N)
     """
 
     def find_insertion_index(val):
-        left, right = 0, len(increasing_subsequence) - 1
+        left, right = 0, len(longest_increasing_subsequence) - 1
         while left <= right:
             mid = (left + right) // 2
-            if increasing_subsequence[mid] == val:
-                return mid
-            if increasing_subsequence[mid] < val:
+            if longest_increasing_subsequence[mid] < val:
                 left = mid + 1
             else:
                 right = mid - 1
         return left
 
-    increasing_subsequence = []
+    longest_increasing_subsequence = []
     for num in nums:
-        index = find_insertion_index(num)
-        if index == len(increasing_subsequence):
-            increasing_subsequence.append(num)
+        if not longest_increasing_subsequence or num > longest_increasing_subsequence[-1]:
+            longest_increasing_subsequence.append(num)
         else:
-            increasing_subsequence[index] = num
-    return len(increasing_subsequence)
+            index = find_insertion_index(num)
+            longest_increasing_subsequence[index] = num
+    return len(longest_increasing_subsequence)
 
 
 class Test(unittest.TestCase):
