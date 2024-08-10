@@ -60,16 +60,16 @@ def maximal_square_v2(matrix):
     """ Bottom-Up Dynamic Programming.
 
         We initialize a 2D matrix dp with the same dimensions as the original one initialized with all 0’s.
-        Let dp[i, j] be the side length of the maximal square whose bottom-right corner is the cell at index (i,j)
+        Let dp[i][j] be the side length of the maximal square whose bottom-right corner is the cell at index (i,j)
         in the original matrix.
 
-        Since the current cell is the bottom-right corner, we recursively examine the remaining 3 corners,
-         mainly top right (i -1, j), bottom left (i, j -1 1), and top left (i -1, j - 1). The result is the
-         minimum of the maximal side length that each corner contributes with plus 1.
+        Since the current cell is the bottom-right corner, we examine the remaining 3 corners, mainly top right
+        (i -1, j), bottom left (i, j -1 1), and top left (i -1, j - 1). The result is the minimum of the maximal side
+        length that each corner contributes with plus 1.
 
         Starting from index (0,0), for every 1 found in the original matrix, we update the value of the current element
         as:
-                    dp[i, j] = min(dp[i−1, j], dp[i, j−1], dp[i−1, j−1]) + 1
+                    dp[i][j] = min(dp[i−1][j], dp[i][j−1], dp[i−1][j−1]) + 1
 
         We use min() because that is what limits the size of the square. If for example any corner was a 0, we know we
         don't have that row or column to form the bigger square at (i,j).
