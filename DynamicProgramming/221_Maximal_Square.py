@@ -38,17 +38,16 @@ def maximal_square_v1(matrix):
     def dfs(i, j):
         if not 0 <= i < n or not 0 <= j < m:
             return 0
+        if matrix[i][j] == '0':
+            return 0
         if (i, j) in memo:
             return memo[(i, j)]
         down = dfs(i + 1, j)
         right = dfs(i, j + 1)
         diagonal = dfs(i + 1, j + 1)
-        if matrix[i][j] == '1':
-            memo[(i, j)] = 1 + min(down, right, diagonal)
+        memo[(i, j)] = 1 + min(down, right, diagonal)
         return memo[(i, j)]
 
-    if not matrix:
-        return 0
     n, m, memo = len(matrix), len(matrix[0]), defaultdict(int)
     max_square_side = 0
     for i in range(n):
