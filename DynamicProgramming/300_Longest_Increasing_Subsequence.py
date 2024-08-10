@@ -21,16 +21,19 @@ def length_of_lis_v1(nums):
 
          At the end, the maximum out of all the dp[i]'s determines the final result.
 
-        Example: nums = [-1, 3, 4, 5, 2, 8]
-        At index 0 we always know that we can have a sub-sequence of length 1. In fact, at all positions the LIS can be
-        at least length 1.
-        We then look at index 1. We need to ask ourselves if the item at index 1 can lengthen the LIS found at index 0.
-        We check if 3 is greater than -1... it is. Great. Index 1 can be tacked on, but should we?
-        dp[1] = 1, dp[0] = 1. It makes sense because if we tack 3 onto the LIS we found for the sub-problem of just
-        [-1], then at index 1 we will also have a LIS. So what we basically do is build a table and ask ourselves these
-        questions all along the way.
-        Each cell represents the answer to the sub-problem asked against the sub-sequence from index 0 to index i
-        (including the element at index i).
+         Example: nums = [-1, 3, 4, 5, 2, 8]
+
+         At index 0 we always know that we can have a subsequence of length 1.
+
+         We then look at index 1. We need to ask ourselves if the item at index 1 can lengthen the LIS found at index 0.
+         We check if 3 is greater than -1... it is. Great. Index 1 can be tacked on, but should we?
+         dp[1] = 1, dp[0] = 1. It makes sense because if we tack 3 onto the LIS we found for the sub-problem [-1], then
+         at index 1 we will also have a LIS. So what we basically do is build a table and ask ourselves these questions
+         all along the way.
+
+         Each cell represents the answer to the sub-problem asked against the sub-sequence from index 0 to index i
+         (including the element at index i).
+
     Time complexity: O(N^2)
     Space complexity: O(N)
     """
