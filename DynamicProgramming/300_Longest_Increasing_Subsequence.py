@@ -1,20 +1,26 @@
-""" Given an unsorted array of integers, find the length of longest increasing sub-sequence. """
+""" Given an unsorted array of integers, find the length of the longest increasing subsequence. """
 
 import unittest as unittest
 
 
-# Watch: https://www.youtube.com/watch?v=fV-TF4OvZpk
-
+# Video explanation: https://www.youtube.com/watch?v=fV-TF4OvZpk
+# Video explanation: https://youtu.be/cjWnW0hdF1Y
 def length_of_lis_v1(nums):
-    """ Let dp[i] be the length of the longest increasing sub-sequence ending at and including index i of the original
-        nums array.
-        Default answer is 1. A single item is neither increasing nor decreasing.
-        In order to find dp[i], we need to try to append the current element nums[i] to every possible increasing
-        sub-sequence up to the (i−1)th index (including the (i−1)th index), such that the new sequence formed by adding
-        the current element is also an increasing sub-sequence. Therefore:
-            dp[i] = max(dp[j] + 1 for 0 <= j < i)
-        At the end, the maximum out of all the dp[i]'s determines the final result:
-            LIS_length = max(dp[i] for 0 <= i < n)
+    """ Let dp[i] be the length of the longest increasing subsequence that ends with the ith element, or nums[:i].
+
+         The default answer is 1. Every element on its own is technically an increasing subsequence.
+
+         We need a way to transition between states, such as dp[5] and dp[7]. Let's say we know dp[0], dp[1], and dp[2].
+         How can we find dp[3] given this information? Well, since dp[2] represents the length of the longest increasing
+         subsequence that ends with nums[2], if nums[3] > nums[2], then we can simply take the subsequence ending at =2
+         and append nums[3] to it, increasing the length by 1. The same can be said for nums[0] and nums[1] if nums[3]
+         is larger. Of course, we should try to maximize dp[3], so we need to check all 3. Formally, the recurrence
+         relation is:
+
+                    dp[i] = max(dp[j] + 1) for all j < i, where nums[j] < nums[i]
+
+         At the end, the maximum out of all the dp[i]'s determines the final result.
+
         Example: nums = [-1, 3, 4, 5, 2, 8]
         At index 0 we always know that we can have a sub-sequence of length 1. In fact, at all positions the LIS can be
         at least length 1.
@@ -28,20 +34,17 @@ def length_of_lis_v1(nums):
     Time complexity: O(N^2)
     Space complexity: O(N)
     """
-    if not nums:
-        return 0
     n = len(nums)
     dp, max_len = [1] * n, 1
-    for i in range(1, n):
-        # We aim to see if we can append the item at nums[i] to extend the Longest Increasing Sub-sequence achieved
+    for i in range(n):
+        # We want to check if we can append the item at nums[i] to extend the Longest Increasing Subsequence built
         # from index j=0...i-1. We want to solve for dp[i] if the value at i is greater than the value at j
         for j in range(i):
             if nums[i] > nums[j]:
-                dp[i] = max(dp[i], dp[j] + 1)  # The value of dp[j] is the length of the LIS from 0...j, we conceptually
-                # 'append' this item to that LIS by adding 1 to that sub-problem answer, yielding a potentially new
-                # answer for LIS[0..i]
-        max_len = max(max_len, dp[i])  # We now have an answer for LIS[0...i]. Compete it against the best LIS length
-        # found so far.
+                # The value of dp[j] is the length of the LIS from 0...j, we conceptually 'append' the current element
+                # to this LIS by adding 1 to that sub-problem answer, yielding a potentially new answer for LIS[0..i]
+                dp[i] = max(dp[i], dp[j] + 1)
+        max_len = max(max_len, dp[i])  # We have an answer for LIS[0...i]. Compare it with the best LIS length so far.
     return max_len
 
 
