@@ -107,9 +107,11 @@ def min_path_sum_v4(grid):
 
 
 def min_path_sum_v5(grid):
-    """ Instead of using another dp matrix, we can store the minimum sums in the original matrix itself, since we don't
-        need to retain the original matrix. Thus, the governing equation now becomes:
-            grid(i,j) = grid(i,j) + min(grid(i-1,j), grid(i,j-1))
+    """ Instead of using dp matrix, we can store the minimum sums in the original matrix itself, IF we don't
+         need to retain the original matrix. Thus, the transition equation now becomes:
+
+                    grid[i][j] = grid[i][j] + min(grid[i-1][j], grid[i][j-1])
+
     Time complexity: O(N * M)
     Space complexity: O(1)
     """
