@@ -63,10 +63,14 @@ def min_path_sum_v2(grid):
     return dp[n-1][m-1]
 
 
+# Video explanation: https://youtu.be/pGMsrvt0fpk
 def min_path_sum_v3(grid):
-    """ As can be seen, each time when we update dp[i][j], we only need dp[i-1][j] (at the previous row) and dp[i][j-1]
-        (at the left column of same row). So we don't need to maintain the full matrix. Keeping two rows at each
-        iteration is enough.
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
+         Notice that each time we update dp[i][j], we only need dp[i-1][j] (at the previous row) and dp[i][j-1]
+         (at the left column of same row). So we don't need to maintain the full dp matrix. Keeping two rows at each
+         iteration is enough.
+
     Time complexity: O(N * M)
     Space complexity: O(M)
     """
@@ -76,11 +80,10 @@ def min_path_sum_v3(grid):
     for j in range(1, m):  # Populating the first row as it is a special case because it has no previous row
         pre[j] = grid[0][j] + pre[j - 1]
     for i in range(1, n):
-        cur[0] = grid[i][0] + pre[0]  # cur[j] has no left neighbor when j = 0
+        cur[0] = grid[i][0] + pre[0]  # cur[j] has no left predecessor when j = 0
         for j in range(1, m):
             cur[j] = grid[i][j] + min(pre[j], cur[j - 1])
-        pre = cur
-        cur = [0] * m
+        pre, cur = cur, [0] * m
     return pre[-1]
 
 
