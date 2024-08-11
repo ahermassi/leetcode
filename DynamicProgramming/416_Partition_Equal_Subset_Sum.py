@@ -4,6 +4,7 @@ such that the sum of elements in both subsets is equal. """
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/IsvocB5BJhw
 def can_partition_v1(nums):
     """ Brute force. BFS-like. Similar to 78- Subsets.
 
