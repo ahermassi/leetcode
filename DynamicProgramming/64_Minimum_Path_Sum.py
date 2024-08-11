@@ -41,9 +41,9 @@ def min_path_sum_v2(grid):
          cumulative sum of the previous elements: [1, 2, 3, 4].
 
          Then for each element starting from the top left (excluding the first row and the first column), we traverse
-         backwards the matrix and fill the required minimum sums. Now, we need to note that at every element, we
-         could've arrived to that cell moving either rightwards or downwards. Therefore, the minimum sum at the current
-         cell can be derived from the minimum path sum to reach the left cell (i, j-1) and the top cell (i-1, j):
+         the matrix and fill the required minimum sums. Now, we need to note that at every element, we could've arrived
+         to that cell moving either rightwards or downwards. Therefore, the minimum sum at the current cell can be
+         derived from the minimum path sum to reach the left cell (i, j-1) and the top cell (i-1, j):
 
                     dp[i][j]= grid[i][j] + min(dp[i-1][j], d[(i][j-1])
 
