@@ -62,7 +62,7 @@ def can_partition_v2(nums):
     In the worst case where there is no overlapping calculation, the maximum number of entries in the memo would be
     N * sum. For each entry, overall we could consider that it takes constant time, i.e. each invocation of dfs() at
     most emits one entry in the memo. The overall computation is proportional to the number of entries in memo.
-    Space complexity: O(N * sum), space used by the memo
+    Space complexity: O(N + N * sum), space used by the call stack and memo
     """
 
     def dfs(index, remaining):
@@ -85,10 +85,12 @@ def can_partition_v2(nums):
 
 
 def can_partition_v3(nums):
-    """ DFS + Memoization with pruning.
-        Similar to previous solution but it prunes the search space by sorting the nums array.
-    Time complexity: O(2^N)
-    Space complexity: O(N), space be used by the recursion stack
+    """ Top-Down Dynamic Programming with pruning.
+
+        Similar to the previous solution but it prunes the search space by sorting the nums array.
+
+    Time complexity: O(N * sum)
+    Space complexity: O(N + N * sum), space used by the call stack and memo
     """
 
     def dfs(index, remaining):
@@ -100,17 +102,17 @@ def can_partition_v3(nums):
         # greater than the remaining target
         if nums[index] > remaining:
             return False
-        if (index, remaining) not in cache:
-            # Either take the current num or leave it
-            cache[(index, remaining)] = dfs(index + 1, remaining - nums[index]) or dfs(index + 1, remaining)
-            return cache[(index, remaining)]
-        return False
+        if (index, remaining) in memo:
+            return memo[(index, remaining)]
+        # Either take the current num or leave it
+        memo[(index, remaining)] = dfs(index + 1, remaining - nums[index]) or dfs(index + 1, remaining)
+        return memo[(index, remaining)]
 
     total = sum(nums)
     if total % 2 == 1:
         return False
     target = total // 2
-    n, cache = len(nums), {}
+    n, memo = len(nums), {}
     nums.sort()
     return dfs(0, target)
 
