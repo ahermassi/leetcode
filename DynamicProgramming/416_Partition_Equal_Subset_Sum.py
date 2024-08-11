@@ -157,13 +157,17 @@ def can_partition_v4(nums):
 
 
 def can_partition_v5(nums):
-    """ We can optimize in space. We used a two dimensional array to solve the problem, but we can also use a one
-        dimensional array of size (target+1).
-        Why iterate from 0 to (target + 1) in reverse order?
-        dp[i][j] only depends on the previous row, so we can optimize the space by only using 2 rows instead of the
-        matrix. Let's say array1 and array2. We can also see that the column indices of dp[i - 1][j - nums[i] and
-        dp[i - 1][j] are <= j. The conclusion we can draw is: The elements of the previous row whose column index
-        is > j (i.e. dp[i - 1][j + 1 : n - 1]) will not affect the update of dp[i][j] since we will not touch them:
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
+         Notice that each time we update dp[i][j], we only need dp[i-1] (at the previous row). So we can also use a one
+         dimensional array of size target+1.
+
+         Why iterate from 0 to target+1 in reverse order?
+
+         dp[i][j] only depends on the previous row, so we can optimize the space utilization by using only 2 rows
+         instead of the matrix, say array1 and array2. We can also see that the column indices of dp[i - 1][j - nums[i]
+         and dp[i - 1][j] are <= j. The conclusion we can draw is: the elements of the previous row whose column indices
+         are > j (i.e. dp[i - 1][j + 1 : n - 1]) will not affect the value of dp[i][j] since we will not touch them:
 
                 			  j
 	            . . . . . . . . . . . .
@@ -176,18 +180,47 @@ def can_partition_v5(nums):
 	            . . . . . . . . . . . .
 	            . . . . . . . . . . . .
 
-        Thus, if we merge array1 and array2 into a single array array, if we update array backwards, all dependencies
-        are not touched!
+         Thus, if we merge array1 and array2 into a single array, if we update the array backwards, all dependencies are
+         not touched!
 
                 (n represents new value, i.e. updated)
 	            . . ? . . ? n n n n n n n
                         #
 
-        However, if we update forwards, dp[j - nums[i]] is updated overwritten, we cannot use it:
+         However, if we update forwards, dp[j - nums[i]] is overwritten, and we cannot use it:
 
                 (n represents new value, i.e. updated)
 	            n n n n n ? . . . . . .  where another ? goes? Oops, it is overwritten, we lost it :(
                         #
+
+        Let's assume we iterate from left to right, i.e, num to target in each inner loop.
+        Let nums = [1, 2, 5]
+
+        Iteration left to right:
+
+        1st iteration: num = 1
+        Inner loop iterates from j = 1 (=num) to 4 (=target):
+            * j = 1: dp[j-num] = dp[1-1] is true. So we set dp[j] = dp[1] = true
+            * j = 2: dp[j-num] = dp[2-1] is again true. So we set dp[j] = dp[2] = true. (This is wrong as we can't form
+              2 using only num=1 unless we are taking it multiple times which is wrong)
+            * j = 3: dp[j-num] = dp[3-1] is true. So we set dp[j] = dp[3] = true (Again, wrong since we can't form 3
+              using only num=1)
+            * j = 4: dp[j-num] = dp[4-1] is true. So we set dp[j] = dp[4] = true
+
+        As you can see, we already set all dp[i] = true meaning we said all sums from 1...4 are achievable which we
+        clearly can't (we can't form 4). The correct iteration is as follows.
+
+        Iteration right to left:
+
+        1st iteration: num = 1
+        Inner loop iterates from j = 4 (=target) to 1 (=num):
+            * j = 4: dp[j-num] = dp[4-1] is false. So continue to next iteration
+            * j = 3: dp[j-num] = dp[3-1] is again false. So move to next iteration
+            * j = 2: dp[j-num] = dp[2-1] is false. Continue
+            * j = 1: dp[j-num] = dp[1-1] is true. So we set dp[j] = dp[1] = true which is correct since we can achieve
+              sum of 1 using num=1.
+
+        And now, dp = [true, true, false, false, false] is correct after 1st iteration
 
     Time complexity: O(N * sum/2)
     Space complexity: O(sum/2)
@@ -200,10 +233,10 @@ def can_partition_v5(nums):
     dp[0] = True
     for num in nums:
         # If we go from left to right, dp[j - num] has been updated during the current iteration and the status from
-        # last iteration is lost
+        # last iteration is lost. So we walk from right to left to avoid overwriting previous results updated in the
+        # current iteration.
         for j in reversed(range(target + 1)):
-            if j - num >= 0:
-                dp[j] = dp[j] or dp[j - num]
+            dp[j] = dp[j] or j - num >= 0 and dp[j - num]
     return dp[target]
 
 
