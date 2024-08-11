@@ -46,12 +46,23 @@ def can_partition_v1(nums):
 
 
 def can_partition_v2(nums):
-    """ DFS + Memoization.
-        We have to find a subset in the array whose smu is equal to sum(nums) / 2. The brute force approach would be to
-        generate all the possible subsets of the array and return true if we find a subset with the required sum.
-    Time complexity: O(2^N), the recursive call takes the form of a binary tree where there are 2 possibilities for
-    every array element and the maximum depth of the tree could be N.
-    Space complexity: O(N), space be used by the recursion stack
+    """ Top-Down Dynamic Programming.
+
+         We have to find a subset in the array whose sum is equal to sum(nums) / 2. The brute force approach would be to
+         generate all the possible subsets of the array and return true if we find a subset with the required sum.
+
+         For a given array element x, there could be either of 2 possibilities:
+
+            - x is included in subset sum. subset_sum = subset_sum + x
+            - x is not included in subset sum, so we must take previous sum without x
+
+        We can use DFS and recursively calculate the subset sum for each case and check if either of them is true.
+
+    Time complexity: O(N * sum), where N is the number of elements in nums and sum is the sum of all elements in nums.
+    In the worst case where there is no overlapping calculation, the maximum number of entries in the memo would be
+    N * sum. For each entry, overall we could consider that it takes constant time, i.e. each invocation of dfs() at
+    most emits one entry in the memo. The overall computation is proportional to the number of entries in memo.
+    Space complexity: O(N * sum), space used by the memo
     """
 
     def dfs(index, remaining):
@@ -59,17 +70,17 @@ def can_partition_v2(nums):
             return True
         if index == n:
             return False
-        if (index, remaining) not in cache:
-            # Either take the current num or leave it
-            cache[(index, remaining)] = dfs(index + 1, remaining - nums[index]) or dfs(index + 1, remaining)
-            return cache[(index, remaining)]
-        return False
+        if (index, remaining) in memo:
+            return memo[(index, remaining)]
+        # Either take the current num or leave it
+        memo[(index, remaining)] = dfs(index + 1, remaining - nums[index]) or dfs(index + 1, remaining)
+        return memo[(index, remaining)]
 
     total = sum(nums)
     if total % 2 == 1:
         return False
     target = total // 2
-    n, cache = len(nums), {}
+    n, memo = len(nums), {}
     return dfs(0, target)
 
 
