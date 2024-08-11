@@ -88,8 +88,9 @@ def min_path_sum_v3(grid):
 
 
 def min_path_sum_v4(grid):
-    """ Further inspecting the above code, it can be seen that maintaining 'pre' is for recovering pre[j], which is
-        simply cur[j] before its update. So it is enough to use only one row. Now the space is further optimized.
+    """ Notice that pre array is only used to recover pre[j], which is nothing but cur[j] before the update. So we can
+         use only one row
+
     Time complexity: O(N * M)
     Space complexity: O(M)
     """
