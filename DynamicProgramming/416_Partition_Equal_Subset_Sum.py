@@ -118,23 +118,27 @@ def can_partition_v3(nums):
 
 
 def can_partition_v4(nums):
-    """ This problem is essentially finding whether there are some numbers in a set sum to a specific value. In our
-        case, this value is sum(nums) / 2.
-        Actually, this is a 0/1 knapsack problem. For each number, we can pick it or not. Let us assume that:
+    """ Bottom-Up Dynamic Programming.
 
-                dp[i][j] = whether sum j can be obtained from SOME of the first i numbers
+         This problem is essentially about finding whether there are some numbers in a set that sum up to a specific
+         value. In this case, the value is sum(nums) / 2.
 
-        If we can find such a series of numbers from 0 to i whose sum is j, dp[i][j] is true, otherwise it is false.
-        Base case:
+         Actually, this is a 0/1 knapsack problem. For each number, we can either pick it or not pick it. Let's assume
+         that:
 
-                dp[0][0] = true (zero numbers sum up to 0 is true)
+                    dp[i][j] = whether sum j can be obtained from a subset of the first i numbers
 
-        Transition function: For each number, if we don't pick it, dp[i][j] = dp[i-1][j], which means if some of the
-        first (i - 1) elements has made it to j, dp[i][j] would also make it to j (we can just ignore nums[i]).
-        If we pick nums[i], dp[i][j] = dp[i-1][j-nums[i]], which means that j is the sum of the current value nums[i]
-        and the other remaining previous numbers. Thus, the transition function is:
+         If we can find such subset of numbers from 0 to i whose sum is j, dp[i][j] is true, otherwise it is false.
 
-                dp[i][j] = dp[i-1][j] OR dp[i-1][j-nums[i]]
+         Base case: dp[0][0] = true (zero numbers sum up to 0 is true)
+
+         Transition function: for each number, if we don't pick it, dp[i][j] = dp[i-1][j], which means if a subset of
+         the first i-1 elements sum up to j, a subset of the first i elements also sums up to j just by not picking
+         nums[i].
+         If we pick nums[i], dp[i][j] = dp[i-1][j-nums[i]], which means that j is the sum of the current element nums[i]
+         and the other remaining previous numbers. Thus, the transition function is:
+
+                dp[i][j] = dp[i-1][j] OR (j >= nums[i] AND dp[i-1][j-nums[i]])
 
     Time complexity: O(N * sum/2)
     Space complexity: O(N * sum/2)
@@ -147,10 +151,8 @@ def can_partition_v4(nums):
     dp[0][0] = True
     for i in range(1, n):
         for j in range(target + 1):
-            if j - nums[i] >= 0:
-                dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i]]
-            else:
-                dp[i][j] = dp[i - 1][j]
+            if dp[i - 1][j] or j >= nums[i] and dp[i - 1][j - nums[i]]:
+                dp[i][j] = True
     return dp[n - 1][target]
 
 
