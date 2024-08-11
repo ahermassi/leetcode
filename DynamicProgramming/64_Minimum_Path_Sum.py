@@ -31,16 +31,22 @@ def min_path_sum_v1(grid):
 
 
 def min_path_sum_v2(grid):
-    """ Dynamic programming. Similar to 62- Unique paths.
-        Let dp(i,j) be the minimum sum of the path from top-left cell to the cell (i,j).
-        We start by initializing the top left element of dp as the first element of the given matrix. Some boundary
-        conditions need to be handled. The boundary conditions happen on the topmost row and the leftmost column.
-        Suppose the grid is like [1, 1, 1, 1], then the minimum sum to arrive at each point is simply an accumulation
-        of previous points and the result is [1, 2, 3, 4].
-        Then for each element, we traverse onwards and fill in the matrix with the required minimum sums. Now, we need
-        to note that at every cell, we could've arrived there from either top or left cell as we can move either
-        rightwards or downwards. Therefore, for filling in the minimum sum, we use the equation:
-            dp(i,j)= grid(i,j) + min(dp(i-1,j), dp(i,j-1))
+    """ Bottom-Up Dynamic Programming. Similar to 62- Unique paths.
+
+         Let dp[i][j] be the minimum sum of the path from the top-left cell to cell (i,j).
+
+         We start by initializing the top left element of dp as the first element of the given matrix. Some boundary
+         conditions need to be handled as well. These relate the topmost row and the leftmost column.
+         Suppose the topmost row is like [1, 1, 1, 1], then the minimum sum to arrive at each point is simply the
+         cumulative sum of the previous elements: [1, 2, 3, 4].
+
+         Then for each element starting from the top left (excluding the first row and the first column), we traverse
+         backwards the matrix and fill the required minimum sums. Now, we need to note that at every element, we
+         could've arrived to that cell moving either rightwards or downwards. Therefore, the minimum sum at the current
+         cell can be derived from the minimum path sum to reach the left cell (i, j-1) and the top cell (i-1, j):
+
+                    dp[i][j]= grid[i][j] + min(dp[i-1][j], d[(i][j-1])
+
     Time complexity: O(N * M), we traverse the entire matrix once
     Space complexity: O(N * M)
     """
@@ -54,7 +60,7 @@ def min_path_sum_v2(grid):
     for i in range(1, n):
         for j in range(1, m):
             dp[i][j] = grid[i][j] + min(dp[i - 1][j], dp[i][j - 1])
-    return dp[-1][-1]
+    return dp[n-1][m-1]
 
 
 def min_path_sum_v3(grid):
