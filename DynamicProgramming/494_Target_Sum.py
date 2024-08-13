@@ -128,15 +128,19 @@ def find_target_sum_ways_v3(nums, target):
 
 
 def find_target_sum_ways_v4(nums, target):
-    """ If we look closely at the last solution, we can observe that for the evaluation of the current row of dp,
-        only the values of the last row of dp are needed. Thus, we can save some space by using a 1D dp array instead
-        of a 2D dp array. The only difference that needs to be made is that now the same dp array will be updated for
-        every row traversed.
+    """ Note that for the evaluation of the current row of dp, only the values of the last row are needed. Thus, we can
+         save some space by using a 1D dp array instead.
+
+         The only change we need to make is that we have to create an array next of the same size as dp so that we can
+         update it while scanning through dp since it is not safe to mutate dp when the iteration is in progress. After
+         the iteration is completed, we set dp equal to next and create a new empty array next before the next iteration
+         starts, and so on.
+
     Time complexity: O(N * L)
     Space complexity: O(L)
     """
     n, nums_sum = len(nums), sum(nums)
-    if nums_sum < target or -nums_sum > target:
+    if not -nums_sum <= target <= nums_sum:
         return 0
     cur = [0] * (2 * nums_sum + 1)
     cur[nums[0] + nums_sum] = 1
