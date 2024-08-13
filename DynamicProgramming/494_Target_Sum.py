@@ -157,13 +157,17 @@ def find_target_sum_ways_v4(nums, target):
 
 
 def find_target_sum_ways_v5(nums, target):
-    """ We can use a dictionary to store all possible sums using all the numbers with +/- signs and return the number
-        of ways the target sum can be obtained. It is a special implementation of level-order BFS, where each element
-        in nums is one level.
+    """ BFS. Similar to 78- Subsets.
+
+         We can use a hashmap to store all the possible sums using all the numbers with +/- signs and return the number
+         of ways the target sum can be obtained. It is a special implementation of BFS, where each element in nums is
+         one level.
+
     Time complexity: O(2^N), since we are trying + and - for every element in the array
-    Space complexity: O(L), where L = largest sum that can be created - smallest sum that can be created
+    Space complexity: O(L), where L = largest sum that can be obtained - smallest sum that can be obtained = 2 * sum
     """
-    counter = {0: 1}  # At first, we have one way with sum = 0. Before we assign + or - to the first element, sum = 0.
+    # At the beginning, we there is only one way to get sum=0. Before we assign + or - to the first element, sum=0.
+    counter = {0: 1}
     for num in nums:
         next_counter = defaultdict(int)
         for sum, count in counter.items():
