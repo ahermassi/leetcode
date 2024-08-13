@@ -39,16 +39,21 @@ def find_target_sum_ways_v1(nums, target):
     return res[0]
 
 
+# Video explanation: https://youtu.be/g0npyaQtAQM
 def find_target_sum_ways_v2(nums, target):
-    """ It can be easily observed that in the last approach, a lot of redundant function calls could be made with the
-        same value of 'index' as the current index and the same value of 'cur_sum' as the current sum, since the same
-        values could be obtained through multiple paths in the recursion tree. In order to remove this redundancy,
-        we make use of memoization as well to store the results which have been calculated earlier.
-        Thus, for every call to dfs(index, cur_sum), we store the result obtained in memo[(index, cur_sum)]. By making
-        use of memoization, we can prune the search space to a good extent.
-    Time complexity: O(N * L), where L = (largest sum that can be created - smallest sum that can be created). For
-    example, for input array [1, 2, 3], the largest sum that can be created from input is 1 + 2 + 3 = 6, and the
-    smallest sum that can be created is -1 - 2 - 3 = -6, so L= 6- (-6) = 12
+    """ Top-Down Dynamic Programming.
+
+         In the last implementation, we can observe that a lot of redundant function calls were made with the same
+         values of current index cumulative sum, since the same values could be obtained through multiple paths in the
+         recursion tree.
+
+         In order to remove this redundancy, we make use of memoization to store the results which have been calculated
+         earlier. Thus, for every call to dfs(index, cur_sum), we store the result obtained in memo[(index, cur_sum)].
+         By making use of memoization, we can prune the search space.
+
+    Time complexity: O(N * L), where L = (largest sum that can be obtained - smallest sum that can be obtained). For
+    example, for nums = [1, 2, 3], the largest sum that can be obtained is 1 + 2 + 3 = 6, and the smallest sum is
+    -1 - 2 - 3 = -6, so L= 6- (-6) = 12. In other words, L is in the range [-sum(nums), sum(nums)].
     Space complexity: O(N)
     """
 
