@@ -8,15 +8,21 @@ import unittest2 as unittest
 
 def find_target_sum_ways_v1(nums, target):
     """ Brute force. TLE
-        The brute force approach is based on recursion. We need to try to put both the + and - symbols at every
-        location in the given nums array and find out the assignments which lead to the required result 'target'.
-        For this, we make use of a recursive function dfs(index, cur_sum), which returns the assignments leading to the
-        sum 'target', starting from index 'index' onwards, provided the sum of elements up to the (index -1)th element
-        is 'cur_sum'. This function appends a + sign and a - sign both to the element at the current index and calls
-        itself with the updated cur_sum as (cur_sum + nums[index]) and (cur_sum - nums[index]) respectively along with
-        the updated current index as (index + 1). Whenever we reach the end of the array, we compare the sum obtained
-        with 'target'. If they are equal, we increment the count value to be returned.
-        Thus, the function call dfs(0, 0) returns the required number of assignments.
+
+         The brute force approach is based on recursion. We need to try to put both the + and - symbols at every
+         location in the given nums array and find out the assignments which lead to the required result 'target'.
+
+         For this, we make use of a recursive function dfs(index, cur_sum), which constructs the assignments leading to
+         the target sum, starting from the current index, provided the sum of elements up to index-1 is cur_sum.
+         This function appends a + sign then a - sign to the element at the current index and calls itself with the
+         updated cur_sum as cur_sum+nums[index] and cur_sum-nums[index], respectively, along with the updated current
+         index as index+1.
+
+         Whenever we reach the end of the array, we compare the sum obtained with the target. If they are equal, we
+         increment the count value to be returned.
+
+         Thus, the call dfs(0, 0) constructs all the possible assignments.
+
     Time complexity: O(2^N)
     Space complexity: O(N), the depth of recursion tree
     """
