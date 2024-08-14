@@ -177,6 +177,77 @@ def find_target_sum_ways_v5(nums, target):
     return counter[target]
 
 
+def find_target_sum_ways_v6(nums, target):
+    """ Bottom-Up Dynamic Programming. Similar to 416- Partition Equal Subset Sum.
+
+         Let's say we have nums = [1,1,1,1,1] and target = 1. We need to add + or - signs in front of the integers.
+         e.g +1 +1 +1 -1 -1 = 1.
+         Essentially, what we are doing is that we are just splitting the numbers into TWO SUBSETS, one with all
+         positive numbers and the other with all negative numbers:
+
+         (1 , 1 , 1) => with positive signs
+         (1 , 1) => with negative signs
+
+         We are then calculating the difference of the sum of these two sets and comparing it with the target:
+         (1 , 1 , 1) => sum = 3
+         (1 , 1) => sum = 2
+         diff = 3-2 = 1 = target
+
+         So we just need to find all such pairs of subsets whose sum difference is equal to the target.
+         Consider S1 and S2 to be one such pair, then the following equations hold:
+
+                    S1 - S2 = target
+                    S1 + S2 = sum of all the elements
+
+        By simplifying the 2 equations we get:
+
+                    2* S1 = target + sum of all the elements
+                    S1 = (target + sum of all the elements) / 2
+
+        So, this problem now reduces to finding the count of subsets that have a sum equal to S1.
+
+        Actually, this is a 0/1 knapsack problem. For each number, we can either pick it or not pick it. Let's assume
+         that:
+
+                    dp[i][j] = number of subsets up to and including index i that sum up to j
+
+         Base case 1: dp[0][nums[0]] = 1; the first number is a subset that sums up to the first number's value
+         Base case2: dp[i][0] = 1 for all 0 <= i < n; we can form subsets whose sum is 0 up to each index by not
+         including any number.
+
+         Transition function: for each number, if we don't pick it, dp[i][j] = dp[i-1][j], which means if a subset of
+         the first i-1 elements sum up to j, a subset of the first i elements also sums up to j just by not picking
+         nums[i].
+         If we pick nums[i], dp[i][j] = dp[i-1][j-nums[i]], which means that j is the sum of the current element nums[i]
+         and the other remaining previous numbers. Thus, the transition function is:
+
+                dp[i][j] = dp[i-1][j] + (dp[i-1][j-nums[i]] IF j >= nums[i])
+
+    Time complexity: O(N * (target + sum))
+    Space complexity: O(N * (target + sum))
+    """
+    n = len(nums)
+    nums_sum = sum(nums)
+    if not -nums_sum <= target <= nums_sum or (nums_sum + target) % 2:
+        return 0
+    target = (target + nums_sum) // 2
+    dp = [[0] * (target + 1) for _ in range(n)]
+    # dp[i][j] = number of subsets up to and including index i that sum up to j
+    if nums[0] < target + 1:
+        dp[0][nums[0]] = 1
+    for i in range(n):
+        # ATTENTION: it's += instead of =. If nums[0] == 0, then we have to consider two choices : include this 0 to
+        # form a subset with sum 0, or exclude this 0 to form a subset with sum 0. dp[0][nums[0]] = dp[0][0] already
+        # accounted the first choice in the previous initialization.
+        dp[i][0] += 1
+    for i in range(1, n):
+        for j in range(target + 1):
+            dp[i][j] = dp[i - 1][j]
+            if j >= nums[i]:
+                dp[i][j] += dp[i - 1][j - nums[i]]
+    return dp[n - 1][target]
+
+
 class Test(unittest.TestCase):
     data = [([1, 1, 1, 1, 1], 3, 5)]
 
@@ -187,6 +258,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, find_target_sum_ways_v3(test_nums, test_s))
             self.assertEqual(result, find_target_sum_ways_v4(test_nums, test_s))
             self.assertEqual(result, find_target_sum_ways_v5(test_nums, test_s))
+            self.assertEqual(result, find_target_sum_ways_v6(test_nums, test_s))
 
 
 if __name__ == '__main__':
