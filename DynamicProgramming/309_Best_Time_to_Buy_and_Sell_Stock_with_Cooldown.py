@@ -181,3 +181,32 @@ def max_profit_v3(prices):
         sold = max(prev_held + price, prev_sold)
     return sold
 
+
+# Video explanation: https://youtu.be/I7j0F7AHpb8
+def max_profit_v4(prices):
+    """ Top-Down Dynamic Programming.
+
+         Every day, we have two choices : buy/sell the stock at hand OR ignore and move to the next one. Along with the
+         current day, we also need to maintain a buy variable which tells us, if we want to perform a transaction today,
+         what type of transaction is permitted (buy or sell).
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+
+    def dfs(index, buy):
+        if index >= n:
+            return 0
+        if (index, buy) in memo:
+            return memo[(index, buy)]
+        no_transaction = dfs(index + 1, buy)
+        if buy:
+            transact = -prices[index] + dfs(index + 1, False)
+        else:
+            transact = prices[index] + dfs(index + 2, True)
+        memo[(index, buy)] = max(no_transaction, transact)
+        return memo[(index, buy)]
+
+    n, memo = len(prices), {}
+    return dfs(0, True)
+
