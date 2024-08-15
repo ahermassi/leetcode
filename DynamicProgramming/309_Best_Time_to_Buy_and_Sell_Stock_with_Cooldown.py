@@ -8,7 +8,7 @@ Note: You may not engage in multiple transactions simultaneously (i.e., you must
 """
 
 
-def max_profit(prices):
+def max_profit_v1(prices):
     """ Bottom-Up Dynamic Programming with State Machine.
 
          Let us treat the problem as a game, and the trader as an agent in the game. The agent can take actions that lead
@@ -116,7 +116,7 @@ def max_profit(prices):
         value of the first stock. Think of it as buying the stock on day -1 and doing nothing on day 0.
 
     Time complexity: O(N)
-    Space complexity: O(1)
+    Space complexity: O(N)
     """
     n = len(prices)
     reset, held, sold = [0] * n, [0] * n, [0] * n
@@ -128,4 +128,23 @@ def max_profit(prices):
         held[i] = max(held[i-1], reset[i-1] - prices[i])
         sold[i] = held[i-1] + prices[i]
     return max(sold[n -1], reset[n -1])
+
+
+def max_profit_v2(prices):
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
+         We only need the intermediate values at exactly one step before the current step. As a result, rather than
+         keeping all the values in the three arrays, we could use a sliding window of size 1 to calculate the value for
+         max(sold[n],reset[n]).
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    n = len(prices)
+    held = -prices[0]
+    reset = 0
+    sold = 0
+    for i in range(1, n):
+        sold, held, reset = held + prices[i], max(held, reset - prices[i]), max(reset, sold)
+    return max(sold, reset)
 
