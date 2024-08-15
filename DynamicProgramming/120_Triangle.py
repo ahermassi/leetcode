@@ -174,14 +174,15 @@ def minimum_total_v5(triangle):
 
 
 def minimum_total_v6(triangle):
-    """ Or even better, since the row (i + 1) would be useless after row i is computed, we can simply use a 1D array
-        and iteratively update itself.
+    """ Or even better, since the row below would be useless after the current row is processed, we can use a single
+         array that we keep updating.
+
     Time complexity: O(N^2)
     Space complexity: O(N)
     """
     n, dp = len(triangle), triangle[-1]
     for i in reversed(range(n - 1)):
         for j in range(i + 1):
-            dp[j] = min(dp[j], dp[j + 1]) + triangle[i][j]
+            dp[j] = triangle[i][j] + min(dp[j], dp[j + 1])
     return dp[0]
 
