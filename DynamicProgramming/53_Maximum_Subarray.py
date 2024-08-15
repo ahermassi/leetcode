@@ -42,12 +42,12 @@ def maximum_subarray_v1(nums):
     Space complexity: O(1)
     """
     n = len(nums)
-    max_so_far = max_ending_here = nums[0]
+    max_ending_here = global_max = nums[0]
     for i in range(1, n):
         # What's the maximum sum subarray ending here ? Either [current element] or [previous subarray, current element]
         max_ending_here = max(nums[i], max_ending_here + nums[i])
-        max_so_far = max(max_so_far, max_ending_here)  # Update the global max
-    return max_so_far
+        global_max = max(global_max, max_ending_here)  # Update the global max
+    return global_max
 
 
 def maximum_subarray_v2(nums):
