@@ -156,18 +156,21 @@ def minimum_total_v4(triangle):
 
 
 def minimum_total_v5(triangle):
-    """ Same as previous solution, but since after we complete processing row i we do not need the results for row
-        (i + 1) to process row (i - 1), we can reuse storage.
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
+            Notice that as we worked our way from bottom to top, we only ever needed to look at the row immediately
+            below. This means that we only need to maintain the current row and the row below.
+
     Time complexity: O(N^2)
     Space complexity: O(N)
     """
-    n, pre = len(triangle), triangle[-1]
+    n, below = len(triangle), triangle[-1]
     for i in reversed(range(n - 1)):
-        cur = [0] * (n + 1)
+        cur = [0] * (i + 1)
         for j in range(i + 1):
-            cur[j] = min(pre[j], pre[j + 1]) + triangle[i][j]
-        pre = cur
-    return pre[0]
+            cur[j] = triangle[i][j] + min(below[j], below[j + 1])
+        below = cur
+    return below[0]
 
 
 def minimum_total_v6(triangle):
