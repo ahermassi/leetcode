@@ -117,16 +117,31 @@ def minimum_total_v3(triangle):
     return min(pre)
 
 
+# Video explanation: https://youtu.be/OM1MTokvxs4
 def minimum_total_v4(triangle):
-    """ Yet another bottom-up dynamic programming solution.
-        If we look closely, we would notice that the adjacent nodes always share a 'branch'. In other word, there are
-        overlapping sub-problems. Also, suppose x and y are 'children' of k. Once minimum paths from x and y to the
-        bottom are known, the minimum path starting from k can be decided in O(1), that is optimal substructure.
-        Therefore, dynamic programming would be the best solution to this problem in terms of time complexity.
-        We start from the nodes on the bottom row; the min path sums for these nodes are the values of the nodes
-        themselves. From there, the min path sum at the jth node on the ith row would be the smallest of the path sums
-        of its two (below) children plus the value of itself:
-            dp[i][j] = min( dp[i+1][j], dp[i+1][j+1]) + triangle[i][j]
+    """ Bottom-up Dynamic Programming.
+
+         The problem description tells us that we need to find the minimum path sum from top to bottom. This immediately
+         suggests that we should be working from top to bottom, like what we did in the previous approaches. But is this
+         actually necessary? Could we go from bottom to top instead?
+
+         It turns out, we can! The exact same ideas apply - each cell instead becomes the sum of itself plus the minimum
+         of the two cells below it. The only difference is that we need to do the edge case handling a bit differently.
+         There is a big advantage though: the code turns out a lot simpler. Some cells only had one cell above them, but
+         here every cell has two cells below it!
+
+         When we worked from top to bottom, the edge cells had only one cell above them. But when we work from bottom to
+         top, all cells, except for those in the bottom row (which are the base case and so don't need to be modified
+         anyway) have exactly two cells below them. Where (row, col) is the current cell, the cells below are located at
+         (row + 1, col) and (row + 1, col + 1).
+
+         Let dp[i][j] be the minimum path sum in the triangle whose top is triangle[i][j]. Based on the rules
+        above, we have the transition function:
+
+                    dp[i][j] = triangle[i][j] + min(dp[i+1][j], dp[i+1][j+1])
+
+        Finally, the answer is the minimum path sum in the triangle whose top is triangle[0][0], i.e. dp[0][0].
+
     Time complexity: O(N^2)
     Space complexity: O(N^2)
     """
