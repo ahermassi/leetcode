@@ -191,7 +191,7 @@ def max_profit_v4(prices):
          what type of transaction is permitted (buy or sell).
 
     Time complexity: O(N)
-    Space complexity: O(1)
+    Space complexity: O(N)
     """
 
     def dfs(index, buy):
@@ -209,4 +209,26 @@ def max_profit_v4(prices):
 
     n, memo = len(prices), {}
     return dfs(0, True)
+
+
+def max_profit_v5(prices):
+    """ Bottom-Up Dynamic Programming.
+
+         Let dp[i][j] be maximum profit buying and selling stocks starting from index i and with the buying indicator
+         set to j. Note that j and can be true or false, 0 or 1.
+
+    Time complexity: O(N)
+    Space complexity: O(N)
+    """
+    n = len(prices)
+    dp = [[0] * 2 for _ in range(n + 2)]
+    for i in reversed(range(n)):
+        for buy in (0, 1):
+            no_transaction = dp[i + 1][buy]
+            if buy:
+                transact = -prices[i] + dp[i + 1][0]
+            else:
+                transact = prices[i] + dp[i + 2][1]
+            dp[i][buy] = max(no_transaction, transact)
+    return dp[0][1]
 
