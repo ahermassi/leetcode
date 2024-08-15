@@ -3,22 +3,39 @@ row below. """
 
 
 def minimum_total_v1(triangle):
-    """ Recursive, bottom-up. TLE
-    Time complexity: O(2^N), where N is the number of rows in the triangle
-    Space complexity: O(N)
+    """ Top-Down Dynamic Programming.
+
+         We'll define a recursive helper function dfs(row, col) that returns the minimum path sum from the cell at
+         (row, col), down to the base of the triangle. The minimum path sum for the entire triangle, would, therefore,
+         be dfs(0, 0).
+
+         The base case is where there are no more rows. In this case, we should simply return 0.
+         Another base case is where there are no more rows below. In this case, we return the current cell's value.
+
+         The recursive case is where there is still at least one row below the current cell. We simply need to add the
+         current cell to the minimum path sum of the cells below it.
+
+         To avoid re-calculating the same results over and over again, we can use a memoization hashmap.
+
+    Time complexity: O(N^2), where N is the number of rows in the triangle. The memoization map ensures that dfs is only
+    called once for each cell. As there are N^2 cells, we get a total time complexity of O(N^2).
+    Space complexity: O(N^2), for the call stack and cache
     """
 
-    def dfs(i, j, path):
-        if i == n - 1:
-            res.append(path + triangle[i][j])
-            return
-        path += triangle[i][j]
-        for x, y in (i + 1, j), (i + 1, j + 1):
-            dfs(x, y, path)
+    def dfs(row, col):
+        if row == n:
+            return 0
+        if row == n - 1:
+            return triangle[row][col]
+        if (row, col) in memo:
+            return memo[(row, col)]
+        lower_left, lower_right = dfs(row + 1, col), dfs(row + 1, col + 1)
+        memo[(row, col)] = triangle[row][col] + min(lower_left, lower_right)
+        return memo[(row, col)]
 
-    n, res = len(triangle), []
-    dfs(0, 0, 0)
-    return min(res)
+    n = len(triangle)
+    memo = {}
+    return dfs(0, 0)
 
 
 def minimum_total_v2(triangle):
