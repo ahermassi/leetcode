@@ -39,25 +39,55 @@ def minimum_total_v1(triangle):
 
 
 def minimum_total_v2(triangle):
-    """ Bottom-up dynamic programming.
-        A far better way is to consider entries in the ith row. For any such entry, if we look at the minimum weight
-        path ending at it, the part of the path that ends at the previous row must also be a minimum weight path. This
-        gives us a DP solution. We iteratively compute the minimum weight of a path ending at each entry in row i using
-        the results at row (i - 1).
-    Time complexity: O(N^2), the time spent per element is O(1) and there are 1 + 2 +...+ n = n(n+1) elements
+    """ Bottom-Up Dynamic Programming.
+
+         We can solve the problem by iterating through each row of the triangle, from top to bottom, updating each
+         number to be the sum of itself + the minimum out of the two numbers above it. For each cell in the triangle,
+         we could have reached there from the previous row/level either from the same column index or column-1.
+
+         So, obviously, the optimal choice to arrive at the current position in the triangle would be to come from the
+         cell having the minimum value of these two choices.
+
+         We need to be quite careful designing the algorithm: the rows and columns are all different sizes, greatly
+         increasing the risk of off-by-one errors. The rows are numbered from top to bottom (so the triangle tip is the
+         first row), and the columns are numbered left to right.
+
+         We can use the following rules for obtaining the cells above a cell with coordinate (row, col):
+
+            - If row == 0: this is the top of the triangle: it stays the same.
+            - If col == 0: there is only one cell above, located at (row - 1, col).
+            - If col == row: There is only one cell above, located at (row - 1, col - 1).
+            - In all other cases: there are two cells above, located at (row - 1, col - 1) and (row - 1, col).
+
+        Let dp[i][j] be the minimum path sum in the triangle whose "base tip" is triangle[i][j]. Based on the rules
+        above, we have the transition function:
+
+                 dp[i][j] = triangle[i][j] + min(dp[i-1][j], dp[i-1][j-1])
+
+        Finally, we can return the minimum value that we get at the bottom-most row of the dp table.
+
+    Time complexity: O(N^2), the time spent per element is O(1) and there are 1 + 2 +...+ N = N * (N+1) elements
     Space complexity: O(N^2)
     """
     n, dp = len(triangle), [[0] * len(row) for row in triangle]
     dp[0][0] = triangle[0][0]
     for i in range(1, n):
-        for j in range(i + 1):  # We calculate the minimum path sum ending at each cell j of the current row i
-            if j == 0:  # The first cell has only 1 previous adjacent cell
-                dp[i][j] = dp[i - 1][j] + triangle[i][j]
-            elif j == i:  # The last cell has only 1 previous adjacent cell
-                dp[i][j] = dp[i - 1][j - 1] + triangle[i][j]
-            else:  # The minimum path sum ending at this cell is the least sum of its two previous adjacent cells plus
-                # the current cell's value
-                dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j]) + triangle[i][j]
+        # The row at index i has i+1 elements.
+        # Calculate the minimum path sum ending at each cell j of the current row i.
+        for j in range(i + 1):
+            upper_left = upper_right = float('inf')
+            if j == 0:
+                # The first cell has only 1 previous "parent" cell above
+                upper_right = dp[i - 1][j]
+            elif j == i:
+                # The last cell has only 1 previous "parent" cell above
+                upper_left = dp[i - 1][j - 1]
+            else:
+                upper_left = dp[i - 1][j - 1]
+                upper_right = dp[i - 1][j]
+            # The minimum path sum ending at this cell is the min sum of its two previous adjacent cells at the row
+            # above plus the current cell's value
+            dp[i][j] = triangle[i][j] + min(upper_left, upper_right)
     return min(dp[-1])  # Each cell of the last row contains the minimum sum of the path ending at that cell
 
 
