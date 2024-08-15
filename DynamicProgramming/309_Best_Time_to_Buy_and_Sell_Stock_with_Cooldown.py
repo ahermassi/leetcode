@@ -135,7 +135,7 @@ def max_profit_v2(prices):
 
          We only need the intermediate values at exactly one step before the current step. As a result, rather than
          keeping all the values in the three arrays, we could use a sliding window of size 1 to calculate the value for
-         max(sold[n],reset[n]).
+         max(sold[n], reset[n]).
 
     Time complexity: O(N)
     Space complexity: O(1)
@@ -147,4 +147,37 @@ def max_profit_v2(prices):
     for i in range(1, n):
         sold, held, reset = held + prices[i], max(held, reset - prices[i]), max(reset, sold)
     return max(sold, reset)
+
+
+def max_profit_v3(prices):
+    """ Notice that reset[i] <= sold[i] is also true therefore reset[i] can be simplified:
+
+            reset[i] = max(reset[i−1], sold[i−1])
+            --> reset[i] = sold[i−1]
+
+        Substitute this in held[i] we now have 2 functions instead of 3:
+
+                sold[i] = hold[i−1] + price[i]
+                held[i] = max(held[i−1], sold[i−2] − price[i])
+
+        If we sell on the ith day, the maximum profit is held[i-1] + price, because we have to buy before we can sell.
+        If we buy on the ith day, the maximum profit is sold[i-2] - price, because on the (i-1)th day we can only cool
+        down. If we cool down on the ith day, the maximum profit is same as held[i-1] since we did not do anything on
+        the ith day. So sold[i] is the larger one of (sold[i-2] - price, held[i-1])
+
+        held[i] is the max profit up to day i with buy as last action. sold[i] is the max profit up to day i with sell
+        as last action.
+
+    Time complexity: O(N)
+    Space complexity: O(1)
+    """
+    held = -prices[0]
+    sold = 0
+    prev_sold = 0
+    for price in prices:
+        prev_held = held
+        held = max(prev_sold - price, prev_held)
+        prev_sold = sold
+        sold = max(prev_held + price, prev_sold)
+    return sold
 
