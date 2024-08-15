@@ -41,11 +41,11 @@ def maximum_subarray_v1(nums):
     Time complexity: O(N)
     Space complexity: O(1)
     """
-    n = len(nums)
-    max_ending_here = global_max = nums[0]
-    for i in range(1, n):
+    max_ending_here = 0
+    global_max = nums[0]
+    for num in nums:
         # What's the maximum sum subarray ending here ? Either [current element] or [previous subarray, current element]
-        max_ending_here = max(nums[i], max_ending_here + nums[i])
+        max_ending_here = max(num, max_ending_here + num)
         global_max = max(global_max, max_ending_here)  # Update the global max
     return global_max
 
