@@ -11,7 +11,7 @@ The interleaving is s1 + t1 + s2 + t2 + s3 + t3 + ... or t1 + s1 + t2 + s2 + t3 
 """
 
 
-def is_interleave(s1, s2, s3):
+def is_interleave_v1(s1, s2, s3):
     """ Top-Down Dynamic Programming.
 
          We can take all possible substrings of s1 and s2 and check if s3 can be formed by interleaving them. At each
@@ -62,3 +62,34 @@ def is_interleave(s1, s2, s3):
         return False
     memo = {}
     return dfs(0, 0, 0)
+
+
+def is_interleave_v2(s1, s2, s3):
+    """ Top-Down Dynamic Programming.
+
+         As mentioned above, DFS variable k is a derivative of i and j, i.e. i + j = k. So we no longer need to pass k
+         to the DFS.
+
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+
+    def dfs(i, j):
+        if i == n and j == m:
+            return True
+        if i == n:
+            return s2[j:] == s3[i + j:]
+        if j == m:
+            return s1[i:] == s3[i + j:]
+        if (i, j) in memo:
+            return memo[(i, j)]
+        use_s1 = s1[i] == s3[i + j] and dfs(i + 1, j)
+        use_s2 = s2[j] == s3[i + j] and dfs(i, j + 1)
+        memo[(i, j)] = use_s1 or use_s2
+        return memo[(i, j)]
+
+    n, m, l = len(s1), len(s2), len(s3)
+    if n + m != l:
+        return False
+    memo = {}
+    return dfs(0, 0)
