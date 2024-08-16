@@ -131,3 +131,43 @@ def is_interleave_v3(s1, s2, s3):
             use_s2 = j < m and s2[j] == s3[i + j] and dp[i][j + 1]
             dp[i][j] = use_s1 or use_s2
     return dp[0][0]
+
+
+def is_interleave_v4(s1, s2, s3):
+    """ Bottom-Up Dynamic Programming.
+
+         Let dp[i][j] be whether s1[:i] and s2[:j], i.e. the first i characters of s1 and the first j characters of s2,
+         can be used to interleave s3. Let's say the character just included i.e. either at ith index of s1 or at jth
+         index of s2 matches the character at index k=i+j+1.
+
+        If the character just included (say x) which matches the character at kth index of s3, is the character at ith
+        index of s1, we need to keep x at the last position in the resultant interleaved string formed so far. Thus,
+        in order to use string s1 and s2 up to indices i and j to form a resultant string of length i+j+2 which is a
+        prefix of s3, we need to ensure that the strings s1 and s2 up to indices i-1 and j respectively obey the same
+        property.
+
+        Similarly, if we just included the jth character of s2, which matches with the kth character of s3, we need to
+        ensure that the strings s1 and s2 up to indices i and j-1 also obey the same property.
+
+        Based on the above rules, we have the transition function:
+
+                    dp[i][j] = (s1[i] == s3[i + j] and dp[i - 1][j]) OR (s2[j] == s3[i + j] and dp[i][j - 1])
+
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, m, l = len(s1), len(s2), len(s3)
+    if n + m != l:
+        return False
+    dp = [[False] * (m + 1) for _ in range(n + 1)]
+    dp[0][0] = True
+    for i in range(1, n + 1):
+        dp[i][0] = dp[i - 1][0] and s1[i - 1] == s3[i - 1]
+    for j in range(1, m + 1):
+        dp[0][j] = dp[0][j - 1] and s2[j - 1] == s3[j - 1]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            use_s1 = s1[i - 1] == s3[i + j - 1] and dp[i - 1][j]
+            use_s2 = s2[j - 1] == s3[i + j - 1] and dp[i][j - 1]
+            dp[i][j] = use_s1 or use_s2
+    return dp[n][m]
