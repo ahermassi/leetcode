@@ -9,7 +9,7 @@ Replace a character
 
 
 # Video explanation: https://youtu.be/XYi2-LPrwm4
-def min_distance(word1, word2):
+def min_distance_v1(word1, word2):
     """ Top-Down Dynamic Programming.
 
          There are different types of "edit distance" each having different types of operations to transform one string
@@ -142,3 +142,57 @@ def min_distance(word1, word2):
     n, m = len(word1), len(word2)
     memo = {}
     return dfs(0, 0)
+
+
+def min_distance_v2(word1, word2):
+    """ Bottom-Up Dynamic Programming.
+
+         Let dp[i][j] be the minimum number of operations required to convert word1[i:] to word2[j:].
+
+         If the characters at current indexes in word1 and word2 are the same, the edit distance will be the same as the
+         result of word1[i+1:] and word2[j+1:].
+
+         If the characters at current indexes in word1 and word2 are different, the edit distance will bethe minimum of
+         3 operations:
+
+            - Add a character at index i in word1. Example, word1 = a and word2 = qa, i=j=0
+               If we add q in word1, the edit distance for word1 = a and word2 = qa will be equal to the edit distance
+               for word1 = a and word2 = a plus one.
+               The result of the sub-problem word1 = a and word2 = a can be referred from dp[i][j+1].
+
+            - Delete the character at index i in word1. Example, word1 = qa and word2 = a, i=j=0
+               If we delete q in word1, the edit distance for word1 = qa and word2 = a will be equal to the edit
+               distance for word1 = a and word2 = a plus one.
+               The result of the sub-problem word1 = a and word2 = a can be referred from dp[i+1][j].
+
+            - Replace a character at word1Index in word1. Example, word1 = qa and word2 = wa, i=j=0
+               If we replace q in word1, the edit distance for word1 = qa and word2 = qa will be equal to the edit
+               distance for word1 = a and word2 = a plus one.
+               The result of the sub-problem word1 = a and word2 = a can be referred from dp[i+1][j+1].
+
+         Based on these rules, we have the transition function:
+
+                    dp[i][j] = dp[i + 1][j + 1]; if word1[i] == word2[j]
+                              OR
+                               = 1 + min(dp[i + 1][j], dp[i + 1][j + 1], dp[i][j + 1]); otherwise
+
+        Base cases:
+        The first row and column of the table have known values since if one string is empty, we simply add the length
+        of the non-empty string since that is the minimum number of edits necessary to arrive at equivalent strings.
+
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, m = len(word1), len(word2)
+    dp = [[float('inf')] * (m + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        dp[i][m] = n - i
+    for j in range(m + 1):
+        dp[n][j] = m - j
+    for i in reversed(range(n)):
+        for j in reversed(range(m)):
+            if word1[i] == word2[j]:
+                dp[i][j] = dp[i + 1][j + 1]
+            else:
+                dp[i][j] = 1 + min(dp[i + 1][j], dp[i + 1][j + 1], dp[i][j + 1])
+    return dp[0][0]
