@@ -162,8 +162,12 @@ def is_interleave_v4(s1, s2, s3):
     dp = [[False] * (m + 1) for _ in range(n + 1)]
     dp[0][0] = True
     for i in range(1, n + 1):
+        # If s2 is empty, then if s1[:i-1] alone is an interleaving of s3 and the current s1 character is equal
+        # to the current s3 character, then s1[:i] alone is considered an interleaving.
         dp[i][0] = dp[i - 1][0] and s1[i - 1] == s3[i - 1]
     for j in range(1, m + 1):
+        # If s1 is empty, then if s2[:i-1] alone is an interleaving of s3 and the current s2 character is equal
+        # to the current s3 character, then s2[:i] alone is considered an interleaving.
         dp[0][j] = dp[0][j - 1] and s2[j - 1] == s3[j - 1]
     for i in range(1, n + 1):
         for j in range(1, m + 1):
@@ -171,3 +175,31 @@ def is_interleave_v4(s1, s2, s3):
             use_s2 = s2[j - 1] == s3[i + j - 1] and dp[i][j - 1]
             dp[i][j] = use_s1 or use_s2
     return dp[n][m]
+
+
+def is_interleave_v5(s1, s2, s3):
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
+         Notice that we only require the information from the cells dp[i - 1][j] and dp[i][j - 1], i.e. the cell above
+         the current row and the cell to the left of the current column. So, no need to use a matrix.
+
+    Time complexity: O(N * M)
+    Space complexity: O(M)
+    """
+    n, m, l = len(s1), len(s2), len(s3)
+    if n + m != l:
+        return False
+    dp = [False] * (m + 1)
+    for i in range(n + 1):
+        for j in range(m + 1):
+            if i == 0 and j == 0:
+                dp[j] = True
+            elif i == 0:
+                dp[j] = dp[j - 1] and s2[j - 1] == s3[i + j - 1]
+            elif j == 0:
+                dp[j] = dp[j] and s1[i - 1] == s3[i + j - 1]
+            else:
+                use_s1 = dp[j] and s1[i - 1] == s3[i + j - 1]
+                use_s2 = dp[j - 1] and s2[j - 1] == s3[i + j - 1]
+                dp[j] = use_s1 or use_s2
+    return dp[m]
