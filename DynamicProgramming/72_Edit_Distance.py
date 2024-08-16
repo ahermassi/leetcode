@@ -177,8 +177,9 @@ def min_distance_v2(word1, word2):
                                = 1 + min(dp[i + 1][j], dp[i + 1][j + 1], dp[i][j + 1]); otherwise
 
         Base cases:
-        The first row and column of the table have known values since if one string is empty, we simply add the length
-        of the non-empty string since that is the minimum number of edits necessary to arrive at equivalent strings.
+        The last row and last column of the table have known values since if one string is empty, we simply add the
+        length of the non-empty string since that is the minimum number of edits necessary to arrive at equivalent
+        strings.
 
     Time complexity: O(N * M)
     Space complexity: O(N * M)
@@ -196,3 +197,71 @@ def min_distance_v2(word1, word2):
             else:
                 dp[i][j] = 1 + min(dp[i + 1][j], dp[i + 1][j + 1], dp[i][j + 1])
     return dp[0][0]
+
+
+def min_distance_v3(word1, word2):
+    """ Bottom-Up Dynamic Programming.
+
+         Let dp[i][j] be the minimum number of operations required to convert word1[:i+1] to word2[:j+1], i.e. convert
+         the first i characters in word1 to the first j characters in word2.
+
+         If the characters at current indexes in word1 and word2 are the same, the edit distance will be the same as the
+         result of word1 ending at i-1 and word2 ending at j-1.
+
+         If the characters at current indexes in word1 and word2 are different, the edit distance will bethe minimum of
+         3 operations:
+
+            - Add a character at index i in word1. Example, word1 = a and word2 = aq, i=0, j=1
+               If we add q in word1, the edit distance for word1 = a and word2 = aq will be equal to the edit distance
+               for word1 = a and word2 = a plus one.
+               The result of the sub-problem word1 = a and word2 = a can be referred from dp[i][j-1].
+
+            - Delete the character at index i in word1. Example, word1 = aq and word2 = a, i=0, j=1
+               If we delete q in word1, the edit distance for word1 = aq and word2 = a will be equal to the edit
+               distance for word1 = a and word2 = a plus one.
+               The result of the sub-problem word1 = a and word2 = a can be referred from dp[i-1][j].
+
+            - Replace a character at word1Index in word1. Example, word1 = aq and word2 = aw, i=0, j=1
+               If we replace q in word1, the edit distance for word1 = aq and word2 = aw will be equal to the edit
+               distance for word1 = a and word2 = a plus one.
+               The result of the sub-problem word1 = a and word2 = a can be referred from dp[i-1][j-1].
+
+         Based on these rules, we have the transition function:
+
+                    dp[i][j] = dp[i - 1][j - 1]; if word1[i] == word2[j]
+                              OR
+                               = 1 + min(dp[i - 1][j], dp[i - 1][j - 1], dp[i][j - 1]); otherwise
+
+        Base cases:
+        The first row and column of the table have known values since if one string is empty, we simply add the length
+        of the non-empty string since that is the minimum number of edits necessary to arrive at equivalent strings.
+
+        Summary:
+
+        When word1[i]=word2[j] , clearly dp[i][j]=dp[i−1][j−1].
+        It means that 0∼i−1 of word1 and 0∼j−1 of word2 have been matched.
+
+        When word1[i]!=word2[j] , then dp[i][j]=min(dp[i−1][j−1],dp[i−1][j],dp[i][j−1])+1.
+            --> Replacement: since 0∼i−1 of word1 and 0∼j−1 of word2 are the same, so just replace the current
+                   character.
+            --> Deletion: If 0∼i−1 of word1 and 0∼j of word2 are the same, so we should use dp[i−1][j].
+            --> Insertion: If 0∼i of word1 and 0∼j−1 of word2 are the same, so we should use dp[i][j−1].
+
+    Time complexity: O(N * M)
+    Space complexity: O(N * M)
+    """
+    n, m = len(word1), len(word2)
+    dp = [[float('inf')] * (m + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        # Need to delete i characters to become ""
+        dp[i][0] = i
+    for j in range(m + 1):
+        # Need to insert j characters to become word2[:j]
+        dp[0][j] = j
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if word1[i - 1] == word2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                dp[i][j] = 1 + min(dp[i - 1][j], dp[i - 1][j - 1], dp[i][j - 1])
+    return dp[n][m]
