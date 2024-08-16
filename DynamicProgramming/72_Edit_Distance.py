@@ -265,3 +265,29 @@ def min_distance_v3(word1, word2):
             else:
                 dp[i][j] = 1 + min(dp[i - 1][j], dp[i - 1][j - 1], dp[i][j - 1])
     return dp[n][m]
+
+
+def min_distance_v4(word1, word2):
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
+         Since we build the dp matrix row by row, we only need access to the previous and current dp states. We can
+         optimize the space to use only two arrays.
+
+    Time complexity: O(N * M)
+    Space complexity: O(M)
+    """
+    n, m = len(word1), len(word2)
+    cur = [float('inf')] * (m + 1)
+    pre = [float('inf')] * (m + 1)
+    for i in range(n + 1):
+        for j in range(m + 1):
+            if i == 0:
+                cur[j] = j
+            elif j == 0:
+                cur[j] = i
+            elif word1[i - 1] == word2[j - 1]:
+                cur[j] = pre[j - 1]
+            else:
+                cur[j] = 1 + min(pre[j], cur[j - 1], pre[j - 1])
+        cur, pre = pre, cur
+    return pre[m]
