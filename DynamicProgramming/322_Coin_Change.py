@@ -65,14 +65,13 @@ def coin_change_v2(coins, amount):
             return -1
         if remaining in memo:
             return memo[remaining]
-        use_remaining_coins = float('inf')
+        res = float('inf')
         for coin in coins:
             # Remove each coin from the remaining amount and see how many more coins are needed.
-            # +1 == add back the coin removed
-            res = 1 + dfs(remaining - coin)
-            if res != -1:
-                use_remaining_coins = min(use_remaining_coins, res)
-        memo[remaining] = use_remaining_coins
+            use_remaining_coins = dfs(remaining - coin)
+            if use_remaining_coins != -1:
+                res = min(res, 1 + use_remaining_coins)  # +1 == add back the coin removed
+        memo[remaining] = res
         return memo[remaining]
 
     memo = {}
@@ -113,6 +112,31 @@ def coin_change_v3(coins, amount):
     return dp[amount] if dp[amount] != float('inf') else -1
 
 
+def coin_change_v4(coins, amount):
+    """ Another top-down DP (memoization is omitted here).
+
+         dfs(i, s) is the fewest number of coins to make up the amount s using coins[i:].
+    """
+
+    def dfs(index, remaining):
+        if index == n:
+            return 0 if not remaining else -1
+        if remaining < 0:
+            return -1
+        res = float('inf')
+        do_not_use_coin = dfs(index + 1, remaining)  # Skip ith coin
+        if do_not_use_coin != -1:
+            res = min(res, do_not_use_coin)
+        # if remaining >= coins[index]:  # Used ith coin
+        use_coin = dfs(index, remaining - coins[index])
+        if use_coin != -1:
+            res = min(res, 1 + use_coin)
+        return res
+
+    n = len(coins)
+    return dfs(0, amount) if dfs(0, amount) != float('inf') else -1
+
+
 class Test(unittest.TestCase):
     data = [([1, 2, 5], 11, 3), ([2], 3, -1)]
 
@@ -121,6 +145,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, coin_change_v1(test_coins, test_amount))
             self.assertEqual(result, coin_change_v2(test_coins, test_amount))
             self.assertEqual(result, coin_change_v3(test_coins, test_amount))
+            self.assertEqual(result, coin_change_v4(test_coins, test_amount))
 
 
 if __name__ == '__main__':
