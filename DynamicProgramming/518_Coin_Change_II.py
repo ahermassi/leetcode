@@ -163,69 +163,146 @@ def change_v3(amount, coins):
     return dp[0][amount]
 
 
-def change(amount, coins):
-    """ This is a classical dynamic programming problem.
-        Let's pick an example: amount = 11, available coins: 2 cent, 5 cent and 10 cent. Note, that coins are unlimited.
+def change_v4(amount, coins):
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
+         The state transition, as we discussed in previous approaches, is:
+
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - coins[i]]
+
+        Looking closely at this transition, we can see that to fill dp[i][j] for a specific i and all values of j we
+        only need the values from dp[i] and dp[i - 1]. Values from older rows like i-2, i-3, etc. are no longer
+        relevant.
+
+        We can optimize the previous solution by using just one 1D array dp of size amount+1.
+
+        We would have an outer loop that selects the current coin under consideration from i=0 to n-1 similar to the
+        previous approach. After the ith iteration of the outer loop, dp[j] would represent dp[i][j] from the previous
+        implementation.
+
+        We initialize dp[0] = 1 since we can always make up the amount 0 by not selecting any coins. It acts as a base
+        case. This is similar to setting dp[i][0] = 1 in the previous approach.
+
+        Now, consider that we have all the values of row i-1 in dp and that we now need to compute the values of row i.
+        We can begin an inner loop that iterates from j = coins[i] to amount. The reason we don't need to consider
+        values from j=1 to coins[i] - 1 is because we cannot select the ith coin for those values of j.
+
+        In such cases, as we saw in the previous approach, dp[i][j] = dp[i - 1][j]. As a result, we don't need to
+        modify these values that were computed in the previous iteration.
+
+        We start an inner loop from j = coins[i] to amount. Now, we have two cases.
+
+            - We ignore the current coin. The number of ways to make up the j amount ignoring the current coin is
+               already present in dp[j]. It is computed in the previous iteration (for row i-1) and is identical to the
+               state dp[i - 1][j] of the previous approach.
+
+            - When we choose the current coin, we add dp[j - coins[i]]. This is equivalent to adding dp[i][j - coins[i]]
+               from the previous approach.
+
+        So, we do dp[j] += dp[j - coins[i]] to add both the cases (analogous to dp[i - 1][j] and dp[i][j - coins[i]]).
+
+        After all iterations, dp[amount] stores the answer.
+
+        Let's consider an example: amount = 11, coins = [2, 5, 10] . Note, that coins are unlimited.
+
         If the total amount of money is zero, there is only one combination: to take zero coins.
-        Let's do one step further and consider the situation with one kind of available coins: 2 cent. It's quite
-        obvious that all amounts less than 2 are not impacted by the presence of 2 cent coins. Starting from amount = 2,
-        we could use 2 cent coins in the combinations. Since the amounts are considered gradually from 2 to 11, at each
-        given moment we could be sure to add not more than one coin to the previously known combinations.
-        So let's pick up 2 cent coin, and use it to make amount = 2. The number of combinations with this 2 cent coin
-        is the number combinations for amount = 0, i.e. 1.
-        Now let's pick up 2 cent coin, and use it to make up amount = 3. The number of combinations with this 2 cent
-        coin is the number combinations for amount = 1, i.e. 0.
-        That leads to DP formula for number of combinations to make up the amount x:
-            dp[x] = dp[x - coin]
-        where coin = 2 cents is the value of coin we're currently adding.
-        Now let's add 5 cent coins. The formula is the same, but do not forget to add dp[x], number of combinations
-        with 2 cent coins. The story is the same for 10 cent coins.
+
+        Let's consider the situation where there is only one kind of coins available: 2.
+        It's obvious that all amounts less than 2 are not impacted by the presence of coin 2. Starting from amount=2,
+        we could use 2 in the combinations. Since the amounts are considered gradually from 2 to 11, at each given
+        moment we could be sure to add not more than one coin to the previously created combinations.
+
+        So let's pick 2 and use it to make up amount=2. The number of combinations is the number combinations for
+        amount=2-2=0, i.e. 1.
+
+        Now let's pick 2 and use it to make up amount=3. The number of combinations is the number combinations for
+        amount=3-2=1, i.e. 0.
+
+        That leads to DP formula for the number of combinations to make up the amount x:
+
+                    dp[x] = dp[x - coin]
+
+        where coin is the value of the coin under consideration.
+
+        Now let's add coin 5. The formula is the same, but do not forget to add dp[x], number of combinations
+        with coin 2. The same applies to coin 10.
+
         Therefore, the number of combinations to make up amount = x is:
-            dp[x] += dp[x - coin]
-        for each of the coins.
-        Why is the outer loop is the coins, not the amount?
-        The reason behind that is that the problem is to find the total number of combinations, not the permutations.
+
+                    dp[x] += dp[x - coin_i]
+
+        !!! IMPORTANT !!!
+        It is important to note that changing the order of the nested loops would produce an incorrect answer. We must
+        iterate over the coins in the outer loop, not the amount.
+        If we change the ordering of the two loops, the outer loop would run from i=1 to amount and the inner loop would
+        execute from j=0 to n-1. We would perform the same operation dp[i] += dp[i - coins[j]] inside the loops. After
+        the ith iteration, dp[i] would store all the ways to make up the amount i using all the coins.
+
+        Let's take an example where coins = [1, 2] and amount = 3. The correct answer for this case is 2 (1 + 1 + 1 and
+        1 + 2).
+
+        However, if we look at the last iteration of the outer loop when i=3, we will execute dp[3] = dp[3] + dp[3-1]
+        when the first coin is selected using the inner loop. dp[2] would be equal to 2 as there is two ways to make
+        up amount 2 (1+1 and 2). This way we selected two cases: 1+1+1 and 1+2.
+
+        We also execute dp[3] = dp[3] + dp[3-2] when the second coin is selected. dp[1] would be equal to 1 as there is
+        just one way to make up amount 1. This way we counted the 1+2 case. We counted the 1+2 case TWICE.
+
+        Overall, the returned answer would be 3 which is incorrect. Switching the ordering of the loops returns all the
+        PERMUTATIONS (1 + 1 + 1, 1 + 2, 2 + 1) as the answer instead of the COMBINATIONS where 1 + 2 and 2 + 1 are not
+        considered as separate cases.
+
         If the outer loop is the amount, then the same combination will be counted multiple times because they can come
-        in in different orders. By letting the coins be the outer loop, we're sure that for any valid combination, the
-        order of each coin will always be the same as their order in coins, so there can be no duplicates. If we switch
-        the loops order, we will count same arrangement multiple times.
-        Let's take an example: amount = 3, coins = [1, 2]
-        If we make amount the outer loop, we will get amount = 3 like this: [1+1+1 , 1+2, 2+1] . We can see that we are
-        counting [1+2] and [2+1], although both are same arrangement. The reason behind it is we will count
+        in different orders. By letting the coins be the outer loop, we're sure that for any valid combination, the
+        order of each coin will always be the same as their order in coins, so there can be no duplicates.
+
+        Let's take another example: amount=3, coins = [1, 2]
+
+        If we make amount the outer loop, we will get amount=3 using: [1+1+1 , 1+2, 2+1] . We can see that we are
+        counting [1+2] and [2+1], although both are same arrangement. The reason behind it is we count
         dp[3] = dp[3-1] + dp[3-2] = dp[2] + dp[1]
-        ---> arrangements of amount = 2 with coin 1 at the end AND arrangements of amount = 1 with coin 2 at the end
-        ---> {1+1 +1; 2 +1} AND {1 +2}
-        If outer loop is amount, we are considering every coin at every stage.
-        If amount = 2, it can be made from 2 and 1 + 1, so 2 combinations. If amount = 3,  we would consider every coin
-        again, which would mean that we're trying dp[amount - 1] and dp[amount - 2], which is: 2 (as there are 2
-        combinations for amount 2) and 1 (1 combination for amount 1). So in this case we have 3 combinations for
-        amount = 3:
-            1 + 2 - taken from dp[amount - 2]
-            2 + 1, 1 + 1 + 1 - taken from dp[amount - 1]
-        We can see there is one duplicate: 1 + 2 and 2 + 1
-        If outer loop is coins, we are NOT considering every coin at every stage.
+
+        --> arrangements of amount = 2 with coin 1 at the end AND arrangements of amount = 1 with coin 2 at the end
+        --> {1+1 +1; 2 +1} AND {1 +2}
+
+        If the outer loop is the amount, we are considering every coin at every stage.
+        If amount=2, it can be made using 2 and 1+1, so 2 combinations. If amount=3,  we would consider every coin
+        again, which would mean that we're trying dp[amount-1] and dp[amount-2], which is 2 (as there are 2 combinations
+        for amount=2) and 1 (1 combination for amount=1). So in this case, we have 3 combinations for amount=3:
+
+            1 + 2 - taken from dp[amount-2]
+            2 + 1, 1 + 1 + 1 - taken from dp[amount-1]
+
+        We can see there is one duplicate: 1+2 and 2+1
+
+        If the outer loop is coins, we are NOT considering every coin at every stage.
         Let's assume we've already calculated all dps for coin with value 1. So for every amount there is just one
         combination, dp array looks like that: [1, 1, 1, 1, 1...]
-        Now we are doing all calculations with value 2. We are at amount = 2, so again, amount 2 has 2 combinations:
-        1 + 1 and 2. Makes sense, no duplicates.
-        For amount = 3, we are NOT considering every coin again - we are just considering ending every combination
-        with 2, so ONLY dp[amount - 2]. That would make only two combinations for amount 3:
+        Now we are doing all calculations with value 2. We are at amount=2, so, again, amount=2 has 2 combinations:
+        1+1 and 2. Makes sense, no duplicates.
+        For amount=3, we are NOT considering every coin again - we are just considering ending every combination with 2,
+        so ONLY dp[amount-2]. That would make only two combinations for amount=3:
+
             1 + 1 + 1 - taken as previous value of dp[3], calculated for coin value 1
-            1 + 2 - taken from dp[amount - 2]
-        Hopefully it shows why we don't have duplicates - all combinations are started with lowest coins, there is no
-        way to have the lowest coin at the end. We can think that we have all SORTED combinations.
-        If amount = 4, the question is: How many ways to make up 4 using coins 1, 2 ?
+            1 + 2 - taken from dp[amount-2]
+
+        Hopefully, this shows why we don't have duplicates - all combinations are started with the lowest value coins,
+        and there is no way to have the lowest value coin at the end. Think of it as having all SORTED combinations.
+
+        If amount=4, the question is: how many ways to make up 4 using coins 1, 2 ?
         We already know how many ways to get 4 using only coin denomination 1 (1+1+1+1), but we also know how many ways
-        to get an amount of 2 (4 - 2) using coins 1, 2: 1+1 and 2. What if we add a coin of denomination 2 to these
-        two combinations: 1+1 +2, 2 +2. Then in total we'll have 3 combinations: 1+1+1+1, 1+1+2, 2+2.
+        to get amount =2 (4 - 2) using coins 1, 2: 1+1 and 2. What if we add a coin of denomination 2 to these two
+        combinations: 1+1 +2, 2 +2. Then in total, we'll have 3 combinations: 1+1+1+1, 1+1+2, 2+2.
+
     Time complexity: O(amount * coins)
     Space complexity: O(amount)
     """
+    n = len(coins)
     dp = [0] * (amount + 1)
     dp[0] = 1
-    for coin in coins:
-        for i in range(coin, amount + 1):
-            dp[i] += dp[i - coin]
+    for i in range(n):
+        for j in range(coins[i], amount + 1):
+            dp[j] += dp[j - coins[i]]
     return dp[amount]
 
 
@@ -237,6 +314,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, change_v1(test_amount, test_coins))
             self.assertEqual(result, change_v2(test_amount, test_coins))
             self.assertEqual(result, change_v3(test_amount, test_coins))
+            self.assertEqual(result, change_v4(test_amount, test_coins))
 
 
 if __name__ == '__main__':
