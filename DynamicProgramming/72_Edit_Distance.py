@@ -9,6 +9,7 @@ Replace a character
 
 
 # Video explanation: https://youtu.be/XYi2-LPrwm4
+# Video explanation: https://www.youtube.com/watch?v=MiqoA-yF-0M
 def min_distance_v1(word1, word2):
     """ Top-Down Dynamic Programming.
 
