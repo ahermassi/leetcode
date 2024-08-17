@@ -138,12 +138,12 @@ def change_v3(amount, coins):
 
          If coins[i] > j, we cannot use the current coin, so we set:
 
-                    dp[i][j] = dp[i - 1][j].
+                    dp[i][j] = dp[i + 1][j].
 
          Otherwise, if we can use the current coin, we add the number of ways to make up the amount j by both selecting
          it and ignoring it:
 
-                    dp[i][j] = dp[i - 1][j] + dp[i][j - coins[i]]
+                    dp[i][j] = dp[i + 1][j] + dp[i][j - coins[i]]
 
         After computing all the dp states in the nested loops, dp[0][amount] state stores the answer, just like
         dfs(0, amount) was the answer in the top-down approach.
@@ -152,15 +152,15 @@ def change_v3(amount, coins):
     Space complexity: O(amount * coins)
     """
     n = len(coins)
-    dp = [[0] * (amount + 1) for _ in range(n)]
-    for i in range(n):
+    dp = [[0] * (amount + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
         dp[i][0] = 1
-    for i in range(n):
+    for i in reversed(range(n)):
         for j in range(1, amount + 1):
-            dp[i][j] = dp[i - 1][j]  # Skip the ith coin
+            dp[i][j] = dp[i + 1][j]  # Skip the ith coin
             if j >= coins[i]:
                 dp[i][j] += dp[i][j - coins[i]]  # Use the ith coin
-    return dp[n - 1][amount]
+    return dp[0][amount]
 
 
 def change(amount, coins):
