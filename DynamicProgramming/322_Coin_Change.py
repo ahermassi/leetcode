@@ -7,9 +7,13 @@ import unittest2 as unittest
 
 
 def coin_change_v1(coins, amount):
-    """ This solution is inspired by the BFS solution for problem 279- Perfect Squares. Since it is to find the least
-        number of coins (like a shortest path from amount to 0), using BFS gives results much faster than DP. We use a
-        'visited' set to avoid exploring amounts that were previously investigated.
+    """ BFS. Similar to  279- Perfect Squares
+
+        Since we want to find the least number of coins (like the shortest path from amount to 0), using BFS gives
+        results that are much faster than DP.
+
+        We use a 'visited' set to avoid exploring amounts that were previously processed.
+
     Time complexity: O(S * N), where S is the amount and N is the number of coins
     Space complexity: O(S + N), for the queue and 'visited' set
     """
@@ -17,7 +21,8 @@ def coin_change_v1(coins, amount):
     while queue:
         remaining, total_coins = queue.popleft()
         if not remaining:
-            return total_coins  # Because we use BFS, we're sure this is the 'shortest path' from amount to 0
+            # Because we use BFS, we're sure this is the shortest path from amount to 0
+            return total_coins
         for coin in coins:
             if remaining >= coin and remaining - coin not in visited:
                 queue.append((remaining - coin, total_coins + 1))
