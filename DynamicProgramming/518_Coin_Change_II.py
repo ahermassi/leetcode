@@ -4,6 +4,63 @@ of combinations that make up that amount. You may assume that you have infinite 
 import unittest2 as unittest
 
 
+# Video explanation: https://youtu.be/Mjy4hd2xgrs
+# Video explanation: https://www.youtube.com/watch?v=DJ4a7cmjZY0
+def change_v1(amount, coins):
+    """ Top-Down Dynamic Programming.
+
+         Intuitively, we could think of iterating over the coins. For a specific coin, we have two options: either we
+         take this coin and decrease the remaining amount we still need, or we ignore the coin and move to the next one
+         without changing the remaining amount. We add the number of ways to make up the required amount from both
+         choices.
+
+         If we choose to take a coin with value, we are now searching for a combination of coins that sum up to
+         amount-value. If we choose to skip the coin, we are still looking for a combination of coins that sum up to
+         amount, but with fewer coins.
+
+         Let dfs(index, remaining) be the recursive method that we use to solve the problem. It would require two
+         parameters: the index of the current coin under consideration and the remaining amount needed. It would return
+         the number of ways to make up the amount by only considering the coins beginning from that index.
+
+            - If index equals n (where n is the number of coins), we return 1 if the remaining amount equals 0. We can
+               choose one way by not selecting any coin to make up an amount of 0.
+
+            - Otherwise, return 0 as we don't have any more coins and hence can't possibly make up the amount.
+
+        These two form the base cases of the recursive implementation.
+
+        If the current coin is worth more than the remaining amount we need, we must skip the current coin. Otherwise,
+        we consider both options: skip the current coin or use the current coin (check the .img file).
+
+        !!! IMPORTANT !!!
+        One key thing to understand here is the fact that we are not looking for the number of permutations, rather, we
+        are looking for the number of combinations. That is, [1, 2, 2] and [2, 1, 2] are equivalent. This is the reason
+        we either choose the coin at index or skip it and move to the coin at index+1, in the latter case we will never
+        revisit coins[index] again.
+
+    Time complexity: O(amount * coins)
+    Space complexity: O(amount)
+    """
+
+    def dfs(index, remaining):
+        if index == n:
+            return 1 if not remaining else 0
+        if (index, remaining) in memo:
+            return memo[(index, remaining)]
+        combinations = 0
+        use_coin = 0
+        if remaining >= coins[index]:
+            use_coin = dfs(index, remaining - coins[index])
+        do_not_use_coin = dfs(index + 1, remaining)
+        combinations += use_coin + do_not_use_coin
+        memo[(index, remaining)] = combinations
+        return combinations
+
+    n = len(coins)
+    memo = {}
+    return dfs(0, amount)
+
+
 def change(amount, coins):
     """ This is a classical dynamic programming problem.
         Let's pick an example: amount = 11, available coins: 2 cent, 5 cent and 10 cent. Note, that coins are unlimited.
@@ -17,7 +74,7 @@ def change(amount, coins):
         Now let's pick up 2 cent coin, and use it to make up amount = 3. The number of combinations with this 2 cent
         coin is the number combinations for amount = 1, i.e. 0.
         That leads to DP formula for number of combinations to make up the amount x:
-            dp[x] = dp[x] + dp[x - coin]
+            dp[x] = dp[x - coin]
         where coin = 2 cents is the value of coin we're currently adding.
         Now let's add 5 cent coins. The formula is the same, but do not forget to add dp[x], number of combinations
         with 2 cent coins. The story is the same for 10 cent coins.
@@ -54,7 +111,7 @@ def change(amount, coins):
             1 + 1 + 1 - taken as previous value of dp[3], calculated for coin value 1
             1 + 2 - taken from dp[amount - 2]
         Hopefully it shows why we don't have duplicates - all combinations are started with lowest coins, there is no
-        way to have lowest coin at the end. We can think that We have all SORTED combinations.
+        way to have the lowest coin at the end. We can think that we have all SORTED combinations.
         If amount = 4, the question is: How many ways to make up 4 using coins 1, 2 ?
         We already know how many ways to get 4 using only coin denomination 1 (1+1+1+1), but we also know how many ways
         to get an amount of 2 (4 - 2) using coins 1, 2: 1+1 and 2. What if we add a coin of denomination 2 to these
@@ -65,9 +122,8 @@ def change(amount, coins):
     dp = [0] * (amount + 1)
     dp[0] = 1
     for coin in coins:
-        for i in range(1, amount + 1):
-            if i >= coin:
-                dp[i] += dp[i - coin]
+        for i in range(coin, amount + 1):
+            dp[i] += dp[i - coin]
     return dp[amount]
 
 
