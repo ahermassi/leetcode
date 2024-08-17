@@ -31,44 +31,52 @@ def coin_change_v1(coins, amount):
 
 
 def coin_change_v2(coins, amount):
-    """ Top-down recursion + memoization.
-        Let's define:
-            F(S): minimum number of coins needed to make change for amount S
+    """ Top-Down Dynamic Programming.
+
+        Let F(S) be the minimum number of coins needed to make change for amount S.
         We compute F(S - c_i) for each possible denomination c_0, c_1, c_2, c_n-1 and choose the minimum among them:
-            F(S) = min(F(S - c_i) for i 0..n-1) + 1, subject to  S − c_i ≥ 0
-​        For example, if S = 11 and coins = [1, 2, 5], then:
-        F(11) = min(F(11-1), F(11-2), F(11-5)) + 1. Let's suppose min(F(11-1), F(11-2), F(11-5)) = F(11-5) = F(6).
+
+                    F(S) = 1 + min(F(S - c_i) for i 0...n-1), such as  S − c_i ≥ 0
+                    F(0)=0
+                    F(S)=−1 , when n=0
+
+        Example: S = 11, coins = [1, 2, 5].
+
+        F(11) = 1 + min(F(11-1), F(11-2), F(11-5)).
+        Let's suppose min(F(11-1), F(11-2), F(11-5)) = F(11-5) = F(6).
         F(6) is the number of coins needed to make change for amount 6. When we add the coin 5 to the result, this
         represents the number of coins needed to make change for amount 11, hence the 1 added to the result.
+
         The answer to the sub-problem for amount 11 is the same thing as the MINIMUM of the answers to the sub problems
-        with each currency deduced from the original sub problem (11) PLUS ONE since we are acting as if each coin we
+        with each currency deducted from the original sub-problem (11) PLUS ONE since we are acting as if each coin we
         subtract from 11 is the last coin used to make change.
-    Time complexity: O(S * N), where S is the amount and N is the number of coins. For each amount we will
-    approximately be doing N work in trying to deduct each denomination from the current sub problem. Our recursive
-    tree will at maximum have a depth of S (worst case if each call deducts 1 at each call).
-    Space complexity: O(S), we answer and store a total of S sub-problems in our dynamic programming table to get to
-    our globally optimum answer.
+
+    Time complexity: O(S * N), where S is the amount and N is the number of coins. For each amount we will approximately
+    be doing O(N) work in trying to deduct each denomination from the current sub-problem. The recursive tree will at
+    maximum have a depth of S (worst case if each call deducts 1).
+    Space complexity: O(S)
     """
 
     def dfs(remaining):
         if not remaining:
             return 0
-        if remaining < 0:  # Minimum coins to make change for a negative amount is -1. This is just a base case we
-            # arbitrarily define.
+        if remaining < 0:
+            # Minimum coins to make change for a negative amount is -1. This is a base case we arbitrarily define.
             return -1
-        if remaining not in memo:
-            min_coins = float('inf')
-            for coin in coins:  # Remove each coin from the remaining amount and see how many more coins are needed
-                res = dfs(remaining - coin)
-                if 0 <= res < min_coins:
-                    min_coins = res + 1  # +1 == add back the coin removed recursively
-            memo[remaining] = min_coins if min_coins != float('inf') else -1  # If no answer is found
-            # (min_coins == float('inf')) then the sub problem answer is just arbitrarily made to be -1, otherwise the
-            # sub problem's answer is min_coins
+        if remaining in memo:
+            return memo[remaining]
+        use_remaining_coins = float('inf')
+        for coin in coins:
+            # Remove each coin from the remaining amount and see how many more coins are needed.
+            # +1 == add back the coin removed
+            res = 1 + dfs(remaining - coin)
+            if res != -1:
+                use_remaining_coins = min(use_remaining_coins, res)
+        memo[remaining] = use_remaining_coins
         return memo[remaining]
 
-    memo = {}  # We cache the minimum number of coins needed to make various smaller amounts of change
-    return dfs(amount)
+    memo = {}
+    return dfs(amount) if dfs(amount) != float('inf') else -1
 
 
 # Watch: https://www.youtube.com/watch?v=jgiZlGzXMBw
