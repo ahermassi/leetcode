@@ -166,6 +166,32 @@ def change_v3(amount, coins):
 def change_v4(amount, coins):
     """ Space-optimized Bottom-Up Dynamic Programming.
 
+         The value in column j only depends on the value in column j-1 and the column j itself. Thus, we can store the
+         previous column when calculating the result for current column.
+
+         Notice we can not do this by each row since the result of row i also depends on the result in row i-coin[j] for
+         a different j. Thus, we need information on multiple rows to calculate the current row.
+
+    Time complexity: O(amount * coins)
+    Space complexity: O(amount)
+    """
+    n = len(coins)
+    cur = [0] * (amount + 1)
+    cur[0] = 1
+    for i in range(n):
+        nxt = [0] * (amount + 1)
+        nxt[0] = 1
+        for j in range(1, amount + 1):
+            nxt[j] = cur[j]
+            if j >= coins[i]:
+                nxt[j] += nxt[j - coins[i]]
+        cur = nxt
+    return cur[amount]
+
+
+def change_v5(amount, coins):
+    """ Space-optimized Bottom-Up Dynamic Programming.
+
          The state transition, as we discussed in previous approaches, is:
 
                     dp[i][j] = dp[i - 1][j] + dp[i][j - coins[i]]
@@ -176,28 +202,28 @@ def change_v4(amount, coins):
 
         We can optimize the previous solution by using just one 1D array dp of size amount+1.
 
-        We would have an outer loop that selects the current coin under consideration from i=0 to n-1 similar to the
-        previous approach. After the ith iteration of the outer loop, dp[j] would represent dp[i][j] from the previous
+        We would have an outer loop that selects the current coin under consideration from i=0 to n-1 similar to a
+        previous approach. After the ith iteration of the outer loop, dp[j] would represent dp[i][j] from a previous
         implementation.
 
         We initialize dp[0] = 1 since we can always make up the amount 0 by not selecting any coins. It acts as a base
-        case. This is similar to setting dp[i][0] = 1 in the previous approach.
+        case. This is similar to setting dp[i][0] = 1 in a previous approach.
 
         Now, consider that we have all the values of row i-1 in dp and that we now need to compute the values of row i.
         We can begin an inner loop that iterates from j = coins[i] to amount. The reason we don't need to consider
         values from j=1 to coins[i] - 1 is because we cannot select the ith coin for those values of j.
 
-        In such cases, as we saw in the previous approach, dp[i][j] = dp[i - 1][j]. As a result, we don't need to
+        In such cases, as we saw in a previous approach, dp[i][j] = dp[i - 1][j]. As a result, we don't need to
         modify these values that were computed in the previous iteration.
 
         We start an inner loop from j = coins[i] to amount. Now, we have two cases.
 
             - We ignore the current coin. The number of ways to make up the j amount ignoring the current coin is
                already present in dp[j]. It is computed in the previous iteration (for row i-1) and is identical to the
-               state dp[i - 1][j] of the previous approach.
+               state dp[i - 1][j] of a previous approach.
 
             - When we choose the current coin, we add dp[j - coins[i]]. This is equivalent to adding dp[i][j - coins[i]]
-               from the previous approach.
+               from a previous approach.
 
         So, we do dp[j] += dp[j - coins[i]] to add both the cases (analogous to dp[i - 1][j] and dp[i][j - coins[i]]).
 
@@ -315,6 +341,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, change_v2(test_amount, test_coins))
             self.assertEqual(result, change_v3(test_amount, test_coins))
             self.assertEqual(result, change_v4(test_amount, test_coins))
+            self.assertEqual(result, change_v5(test_amount, test_coins))
 
 
 if __name__ == '__main__':
