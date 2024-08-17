@@ -79,29 +79,37 @@ def coin_change_v2(coins, amount):
     return dfs(amount) if dfs(amount) != float('inf') else -1
 
 
-# Watch: https://www.youtube.com/watch?v=jgiZlGzXMBw
-
+# Video explanation: https://www.youtube.com/watch?v=jgiZlGzXMBw
+# Video explanation: https://youtu.be/H9bfqozjoqs
 def coin_change_v3(coins, amount):
-    """ The problem could be solved in polynomial time using Dynamic programming. First, let's define:
-            dp(S): minimum number of coins needed to make change for amount S using coin denominations [c0.. cn−1]
-        How to split the problem into sub problems? Let's assume that we know dp(S) where some change val_1, val_2,...
-        for S which is optimal and the last coin's denomination is C. Then the following equation should be true
-        because of optimal substructure of the problem:
-            dp(S) = dp(S−C) + 1
-        But we don't know which is the denomination of the last coin C. We compute dp(S - c_i) for each possible
+    """ Bottom-Up Dynamic Programming.
+
+         Let dp[S] be the minimum number of coins needed to make change for amount S using coin denominations
+         [c0...cn−1]. How to split the problem into sub-problems?
+
+         Let's assume that we know dp[S] where some change val_1, val_2,... for S which is optimal and the last coin's
+         denomination is C. Then the following equation should be true because of optimal substructure of the problem:
+
+                    dp[S] = 1 + dp[S−C]
+
+        But we don't know which is the denomination of the last coin C. We compute dp[S - c_i] for each possible
         denomination c0, c1,...,c_n-1 and choose the minimum among them. The following recurrence relation holds:
-            dp(S) = min(dp(S - c_i) for i 0..n-1) + 1 subject to  S − c_i ≥ 0
+
+                    dp[S] = 1+ min(dp(S - c_i) for i 0...n-1) + 1 such as  S − c_i ≥ 0
+
     Time complexity: O(S * N), for each amount we will potentially try each of the denominations
-    Space complexity: O(S), we answer and store a total of S sub-problems in our dynamic programming table to get to
-    our globally optimum answer
+    Space complexity: O(S), we answer and store a total of S sub-problems in the dynamic programming table to get to
+    the globally optimum answer
     """
     dp = [float('inf')] * (amount+1)
-    dp[0] = 0  # The answer to making change with minimum coins for 0 will always be 0 coins no matter what the coins
-    # we are given
-    for i in range(1, amount+1):  # Solve every sub-problem from 1 to 'amount'
-        for coin in coins:  # For each coin we are given ..
-            if coin <= i:  # if it is less than or equal to the sub problem amount ..
-                dp[i] = min(dp[i], dp[i - coin] + 1)  # try it, see if it gives us a more optimal solution
+    dp[0] = 0  # The answer to making change with minimum coins for 0 is always 0 coins no matter what the coins we use
+    for i in range(1, amount+1):
+        # Solve every sub-problem from 1 to amount
+        for coin in coins:
+            # For each coin we are given ...
+            if coin <= i:
+                # if it is less than or equal to the sub-problem amount, see if it gives a more optimal solution
+                dp[i] = min(dp[i], 1 + dp[i - coin])
     return dp[amount] if dp[amount] != float('inf') else -1
 
 
