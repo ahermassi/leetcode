@@ -61,6 +61,65 @@ def change_v1(amount, coins):
     return dfs(0, amount)
 
 
+def change_v2(amount, coins):
+    """ Bottom-Up Dynamic Programming.
+
+         Let dp[i][j] be the number of ways to make up the j amount using the coins[:i+1], i.e. coins up to and
+         including index i.
+
+         We initialize dp[i][0] = 1 for all values of i from 0 to n-1 since we can always make up the amount 0 by not
+         selecting any coins. While moving from bottom to top, this serves as the base case for the solution.
+
+         When converting a top-down solution to a bottom-up one, we need to iterate starting from the base cases. As
+         such, we will iterate i from 1 until n in the outer loop. It controls the index of the current coin under
+         consideration. For the inner loop, we iterate j from 1 until amount to control the remaining amount to be made.
+
+         Each iteration inside the nested loop represents a state (i, j). As such, we can apply the exact same logic to
+         calculate dp[i][j].
+
+         If coins[i] > j, we cannot use the current coin, so we set:
+
+                    dp[i][j] = dp[i - 1][j].
+
+         Otherwise, if we can use the current coin, we add the number of ways to make up the amount j by both selecting
+         it and ignoring it:
+
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - coins[i]]
+
+        After computing all the dp states in the nested loops, dp[n][amount] state stores the answer.
+
+        For any combination making up to amount=j, it can be uniquely classified into either one of the following cases:
+
+            - Case 1:  coins[i] is not used at all
+            - Case 2:  coins[i] is used somewhere
+
+        In case 1, there's dp[i-1][j] ways by definition.
+        In case 2, we need to make sure at least one coins[i] is used. This is equivalent to adding one coins[i] for
+        every way to make up amount = j - coins[i].
+
+        !!! IMPORTANT !!!
+        An alternate way of defining dp[i][j] is the number of ways to make up the j amount using the first i coins,
+        i.e. coins[:i]. This definition doesn't change the base cases but does change the transition function to:
+
+                    dp[i][j] = dp[i - 1][j] + (dp[i][j - coins[i-1]] if j >= coins[i-1])
+
+        Notice the i-1 instead of i.
+
+    Time complexity: O(amount * coins)
+    Space complexity: O(amount * coins)
+    """
+    n = len(coins)
+    dp = [[0] * (amount + 1) for _ in range(n)]
+    for i in range(n):
+        dp[i][0] = 1
+    for i in range(n):
+        for j in range(1, amount + 1):
+            dp[i][j] = dp[i - 1][j]  # Skip the ith coin
+            if j >= coins[i]:
+                dp[i][j] += dp[i][j - coins[i]]  # Use the ith coin
+    return dp[n - 1][amount]
+
+
 def change(amount, coins):
     """ This is a classical dynamic programming problem.
         Let's pick an example: amount = 11, available coins: 2 cent, 5 cent and 10 cent. Note, that coins are unlimited.
@@ -132,7 +191,8 @@ class Test(unittest.TestCase):
 
     def test_change(self):
         for test_amount, test_coins, result in self.data:
-            self.assertEqual(result, change(test_amount, test_coins))
+            self.assertEqual(result, change_v1(test_amount, test_coins))
+            self.assertEqual(result, change_v2(test_amount, test_coins))
 
 
 if __name__ == '__main__':
