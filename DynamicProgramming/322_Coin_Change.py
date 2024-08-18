@@ -94,7 +94,7 @@ def coin_change_v3(coins, amount):
         But we don't know which is the denomination of the last coin C. We compute dp[S - c_i] for each possible
         denomination c0, c1,...,c_n-1 and choose the minimum among them. The following recurrence relation holds:
 
-                    dp[S] = 1+ min(dp(S - c_i) for i 0...n-1) + 1 such as  S − c_i ≥ 0
+                    dp[S] = 1 + min(dp(S - c_i) for i 0...n-1) such as S − c_i ≥ 0
 
     Time complexity: O(S * N), for each amount we will potentially try each of the denominations
     Space complexity: O(S), we answer and store a total of S sub-problems in the dynamic programming table to get to
