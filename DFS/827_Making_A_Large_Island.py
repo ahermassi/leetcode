@@ -4,8 +4,6 @@ Return the size of the largest island in grid after applying this operation.
 
 An island is a 4-directionally connected group of 1s. """
 
-from collections import defaultdict
-
 
 def largest_island_v1(grid):
     """ Brute force. TLE.
@@ -108,4 +106,52 @@ def largest_island_v2(grid):
                     surrounding_islands_areas += island_area[index]
                 res = max(res, 1 + surrounding_islands_areas)  # +1 to account for the flipped 0
     return res if res > 0 else n * n
+
+
+def largest_island_v3(grid):
+    """ The previous implementation mutates the input, which in practice is not desirable.
+
+         We can create another map {cell coordinates -> island index} and use it to retrieve the index of the island to
+         which a neighbor cell belongs. This also means we no longer need to start the color/index from 2.
+
+         In addition, we check for the maximum island area while enumerating the connected components to avoid the
+         conditional check at the end of the algorithm.
+
+    Time complexity: O(N^2)
+    Space complexity: O(N^2)
+    """
+
+    def dfs(i, j, island_index):
+        if not 0 <= i < n or not 0 <= j < n or not grid[i][j] or (i, j) in visited:
+            return 0
+        visited.add((i, j))
+        island_map[(i, j)] = island_index
+        area = 1
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            area += dfs(x, y, island_index)
+        return area
+
+    n, res = len(grid), 0
+    island_map, island_area = dict(), dict()
+    island_index = 1
+    visited = set()
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                area = dfs(i, j, island_index)
+                island_area[island_index] = area
+                res = max(res, area)
+                island_index += 1
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 0:
+                surrounding_islands_indices = set()
+                for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+                    if 0 <= x < n and 0 <= y < n and grid[x][y]:
+                        surrounding_islands_indices.add(island_map[(x, y)])
+                surrounding_islands_areas = 0
+                for index in surrounding_islands_indices:
+                    surrounding_islands_areas += island_area[index]
+                res = max(res, 1 + surrounding_islands_areas)
+    return res
 
