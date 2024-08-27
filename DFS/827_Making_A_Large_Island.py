@@ -41,20 +41,34 @@ def largest_island_v1(grid):
 
 
 def largest_island_v2(grid):
-    """ For each 1 in the grid, we paint all connected 1s with the next available color (2, 3, and so on). We also
-        remember the size of the island we just painted with that color. Then, for every 0 in the grid, we sum the
-        sizes of connected islands based on the island color/index.
-        Explore every island using DFS, calculate its area, give it an island index, and save the result to a
-        {index: area} map. Note that the grid elements are updated with their corresponding island index. Since the
-        grid has elements 0 and 1, the island index is initialized with 2. Then, for every cell == 0, check its
-        connected islands and calculate total islands' area. The possible connected islands indices are stored in a set
-        to remove duplicate indices.
+    """ As in the previous solution, we check every 0. However, we also store the size of each group, so that we do not
+        have to use DFS to repeatedly calculate the same size.
+
+        But, this idea fails when the 0 touches the same group. For example, consider grid = [[1,1],[1,0]]. When we are
+        in the bottom-right corner, the left neighbor and the upper neighbor are part of the same island.
+
+        We can remedy this problem by keeping track of a group index that is unique for each island. Then, we'll only
+        add areas of neighboring groups with different indices.
+
+        For each 1 in the grid, we paint all connected 1s with the next available color (index). Since the grid has
+        cells values 0 and 1, the island indices start from 2. We also remember the size of the island we just painted
+        with that color by saving the result in a {index: area} map.
+        Note that the grid elements are updated with their corresponding island index.
+
+        Now, the problem boils down to merging multiple islands if there is just one 0 separating them. All these
+        neighboring islands will become one island if we flip this 0 to 1.
+
+        Then, for every 0 in the grid, we sum the sizes of connected islands based on the island color/index, plus 1 for
+        the 0 we are toggling. This gives us a candidate answer for each 0 in the grid (see .img files).
+        The possible connected islands indices are stored in a set to remove duplicate indices.
+
         Example:
             1 0 1 -> 2 0 3
             0 1 1 -> 0 3 3
             1 0 1 -> 4 0 3
-        For the 0 at (0,1), area = island_area[2] + island_area[3] + 1 = 1 + 4 + 1 = 6
-        For the 0 at (1,0), area = island_area[2] + island_area[3] + island_area[4] + 1 = 1 + 4 + 1 + 1 = 7
+        For the 0 at (0,1), area = 1 + island_area[2] + island_area[3] = 1 + 4 + 1 = 6
+        For the 0 at (1,0), area = 1 + island_area[2] + island_area[3] + island_area[4] = 1 + 1 + 4 + 1 = 7
+
     Time complexity: O(N^2)
     Space complexity: O(N^2)
     """
@@ -66,13 +80,15 @@ def largest_island_v2(grid):
             return 0
         grid[i][j] = island_index
         visited.add((i, j))
-        return 1 + dfs(i - 1, j, island_index) + dfs(i + 1, j, island_index) + dfs(i, j - 1, island_index) + \
-               dfs(i, j + 1, island_index)
+        area = 1
+        for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+            area += dfs(x, y, island_index)
+        return area
 
     n = len(grid)
     res, visited = 0, set()
-    island_area = defaultdict(int)  # {color: area}: Area of island painted of that color
-    island_index = 2  # 0 and 1 are already used in grid, hence we start color index from 2
+    island_area = dict()  # {color: area}: area of island painted with that color
+    island_index = 2  # 0 and 1 are already used in the grid, hence we start the color index from 2
     for i in range(n):
         for j in range(n):
             if grid[i][j]:
@@ -81,13 +97,15 @@ def largest_island_v2(grid):
     for i in range(n):
         for j in range(n):
             if not grid[i][j]:
-                # We get unique color indices to avoid calculating the size of 2 connected components twice (it can
-                # happen that for example left neighbor and upper neighbor are the same island)
-                indices = set()
+                # We collect unique color indices to avoid calculating the size of 2 connected components twice (e.g. if
+                # the left neighbor and the upper neighbor are part of the same island)
+                surrounding_islands_indices = set()
                 for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-                    if 0 <= x < n and 0 <= y < n:
-                        indices.add(grid[x][y])
-                sum_areas = sum(island_area[index] for index in indices)
-                res = max(res, 1 + sum_areas)  # +1 to account for the flipped 0
-    return res if res != 0 else n * n
+                    if 0 <= x < n and 0 <= y < n and grid[x][y]:
+                        surrounding_islands_indices.add(grid[x][y])
+                surrounding_islands_areas = 0
+                for index in surrounding_islands_indices:
+                    surrounding_islands_areas += island_area[index]
+                res = max(res, 1 + surrounding_islands_areas)  # +1 to account for the flipped 0
+    return res if res > 0 else n * n
 
