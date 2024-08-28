@@ -7,11 +7,9 @@ import string
 from collections import deque, defaultdict
 import unittest2 as unittest
 
+
 # For all solutions, check out this article: https://leetcode.com/articles/word-ladder/
-
 # Video explanation: https://www.youtube.com/watch?v=h9iTnkgv05E
-
-
 def ladder_length_v1(begin_word, end_word, word_list):
     """ We are given a begin_word and an end_word. Let these two represent start node and end node of a graph. We have
          to reach from the start node to the end node using some intermediate nodes/words. The intermediate nodes are
@@ -20,35 +18,35 @@ def ladder_length_v1(begin_word, end_word, word_list):
 
         We will essentially be working with an undirected and unweighted graph with words as nodes and edges between
         words which differ by just one letter. The problem boils down to finding the shortest path from a start node to
-        a destination node, if there exists one. Hence, it can be solved using Breadth-First Search approach.
+        a destination node in an UNWEIGHTED graph, if there exists one. Hence, it can be solved using Breadth-First
+        Search.
 
         One of the most important steps here is to figure out how to find adjacent nodes i.e. words which differ
         by one letter. To efficiently find the neighboring nodes for any given word, we do some preprocessing on the
         words of the given word_list. The preprocessing involves replacing the letter of a word by a non-alphabet, say,
-        '*'. This preprocessing helps to form generic states to represent a single letter change:
+        '*'. This preprocessing helps form generic states to represent a single letter change:
 
                     Dog ----> D*g <---- Dig
 
         Both 'Dog' and 'Dig' map to the same intermediate or generic state 'D*g'.
 
-        Save these intermediate states in a dictionary with key as the intermediate word and value as the list of words
-        which have the same intermediate word.
+        Save these intermediate states in a dictionary with the intermediate word as key and the list of words which
+        share the same intermediate word as value .
 
-        The preprocessing step helps us find out the generic one-letter-away nodes for any word of the words list and
-        hence making it easier and quicker to get the adjacent nodes. Otherwise, for every word we will have to iterate
-        over the entire words list and find words that differ by one letter. That would take a lot of time. This
-        preprocessing step essentially builds the adjacency list first before beginning the breadth-first search
-        algorithm.
+        The preprocessing step helps find the generic one-letter-away nodes for any word of the words list and hence
+        makes it easier and quicker to get the adjacent nodes. Otherwise, for every word we will have to iterate over
+        the entire words list and find words that differ by one letter. That would take a lot of time. This
+        preprocessing step essentially builds the adjacency list first before beginning the breadth-first search.
 
-        For eg. While doing BFS if we have to find the adjacent nodes for 'Dug' we can first find all the generic
+        For e.g., while doing BFS if we have to find the adjacent nodes for 'Dug' we can first find all the generic
         states for 'Dug':
 
         Dug => *ug
         Dug => D*g
         Dug => Du*
 
-        The second transformation 'D*g' could then be mapped to 'Dog' or 'Dig', since all of them share the same
-        generic state. Having a common generic transformation means two words are connected and differ by one letter.
+        The second transformation 'D*g' could then be mapped to 'Dog' and 'Dig', both all of them share the same generic
+        state. Having a common generic transformation means two words are connected and differ by one letter.
 
             - Start from begin_word and search the end_word using BFS.
 
@@ -57,7 +55,7 @@ def ladder_length_v1(begin_word, end_word, word_list):
                begin_word.
 
             - Find all the generic transformations of the current word and find out if any of these transformations is
-               also a transformation of other words in the words list. This is achieved by checking the hash map. The
+               also a transformation of other words in the words list. This is achieved by checking the hashmap. The
                list of words we get from the map are all the words which have a common intermediate state with the
                current word. This new set of words will be the adjacent nodes/words to current word and hence added to
                the queue.
@@ -65,7 +63,7 @@ def ladder_length_v1(begin_word, end_word, word_list):
             - Eventually, if we reach the desired word, its level would represent the shortest transformation sequence
                length.
 
-        To prevent cycles, we use a 'visited' set.
+        To prevent cycles, we use a visited set.
 
         Example:
         word_list = ["hot","dot","dog","lot","log","cog"]
@@ -96,7 +94,7 @@ def ladder_length_v1(begin_word, end_word, word_list):
     Time complexity: O(N * M^2), where M is the length of words (all words have same length) and N is the total number
     of words in the input words list. For each word in the words list, we iterate over its length to find all the
     intermediate words corresponding to it. Since the length of each word is M, and we have N words, the total number
-    of iterations the algorithm takes to create the hash map is N * M. Additionally, forming each of the intermediate
+    of iterations the algorithm takes to create the hashmap is N * M. Additionally, forming each of the intermediate
     words takes O(M) because of the substring operation used to create the new string.
     Also, breadth-first search in the worst case might go to each of the N words. For each word, we need to examine M
     possible intermediate words/combinations. We use the substring operation to find each of the combination. Thus, M
@@ -107,20 +105,19 @@ def ladder_length_v1(begin_word, end_word, word_list):
     word_list = set(word_list)
     if end_word not in word_list:
         return 0
-    # Dictionary to hold patterns of words that can be formed, from any given word, by changing one letter at a time.
+    # The map contains the patterns of words that can be formed, from any given word, by changing one letter at a time.
     intermediate_words = defaultdict(list)
     for word in word_list:
-        for i in range(len(word)):
+        for i, _ in enumerate(word):
             pattern = word[:i] + '*' + word[i + 1:]
             intermediate_words[pattern].append(word)
     queue = deque([(begin_word, 1)])
-    visited = set()  # Visited to make sure we don't repeat processing the same word
+    visited = set()  # Visited set to make sure we don't process the same word more than once
     while queue:
         word, distance = queue.popleft()
         if word == end_word:  # We found the end word
             return distance
-        n = len(word)
-        for i in range(n):
+        for i, _ in enumerate(word):
             pattern = word[:i] + '*' + word[i + 1:]
             for w in intermediate_words[pattern]:  # The words which share the same intermediate state/pattern
                 if w not in visited:
