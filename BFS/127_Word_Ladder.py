@@ -160,64 +160,65 @@ def ladder_length_v3(begin_word, end_word, word_list):
     """ Bidirectional BFS.
 
         The graph formed from the nodes in the dictionary might be too big. The search space considered by the
-        breadth-first search algorithm depends upon the branching factor of the nodes at each level. If the branching
-        factor remains the same for all the nodes, the search space increases exponentially along with the number of
-        levels. Consider a simple example of a binary tree. With each passing level in a complete binary tree, the
-        number of nodes increase in powers of 2.
+        BFS depends upon the branching factor of the nodes at each level. If the branching factor remains the same for
+        all the nodes, the search space increases exponentially along with the number of levels. Consider a simple
+        example of a binary tree. With each level in a complete binary tree, the number of nodes grows in powers of 2.
 
-        We can considerably cut down the search space of the standard breadth-first search algorithm if we start two
-        simultaneous BFS, one from the begin_word and one from the end_word. We progress one node at a time from both
-        sides. At any point in time, if we find a common node in both the searches, we stop the search.
+        We can considerably cut down the search space of the standard BFS if we start two simultaneous BFS, one from
+        the begin_word and one from the end_word. We progress one node at a time from both sides. At any point in time,
+        if we find a common node in both the searches, we stop the BFS.
 
         This is known as bidirectional BFS, and it considerably cuts down on the search space and hence reduces the time
         and space complexity.
 
         The motivation is that b^(d/2) + b^(d/2) is much less than b^d, where b is branch factor and d is depth.
 
-        The algorithm is very similar to the standard BFS based approach we saw earlier. The only difference is we now
-        do BFS starting from two nodes instead of one. This also changes the termination condition of our search.
+        The algorithm is very similar to the previously implemented standard BFS. The only difference is we start BFS
+        from two nodes instead of one. This also changes the termination condition of the search.
 
-        We now have two 'visited' hash maps to keep track of nodes visited from the search starting at the respective
-        ends. If we ever find a node/word which is in the 'visited' map of the parallel search, we terminate the search
-        since we have found the meeting point of this bidirectional search.
+        We use two hashmaps to keep track of the nodes visited during each of the searches. If we ever find a node/word
+        which is in the visited map of the parallel search, we terminate the search since we have found the meeting
+        point of the bidirectional search.
 
-        Termination condition for bidirectional search is finding a word which has already been seen by the parallel
-        search. It's more like meeting in the middle instead of going all the way through.
+        The termination condition of the bidirectional search is finding a word in one of the searches that has already
+        been seen by the other parallel search. It's more like meeting in the middle instead of going all the way
+        through.
 
         The length of the shortest transformation sequence is the sum of levels of the meeting point node from both
-        ends. Thus, for every visited node, we save its level as value in the visited map.
+        ends. Thus, each map is of the form {intermediate word -> distance from start word of that search}.
 
     Time complexity: O(N * M^2), where N is the number of words and M is the length of each word (same length)
     Space complexity: O(N * M)
     """
 
-    def visit_word(cur_queue, cur_visited, other_visited):
-        word, distance = cur_queue.popleft()
-        n = len(word)
-        for i in range(n):
+    def process_word(word, distance, queue, visited):
+        for i, _ in enumerate(word):
             for c in string.ascii_lowercase:
                 intermediate_word = word[:i] + c + word[i + 1:]
                 # If the intermediate word has already been visited from the other parallel traversal, this means we
                 # have found the answer.
-                if intermediate_word in other_visited:
-                    return distance + other_visited[intermediate_word]
-                if intermediate_word in word_list and intermediate_word not in cur_visited:
-                    cur_queue.append((intermediate_word, distance + 1))
-                    cur_visited[intermediate_word] = distance + 1
+                if intermediate_word in word_list and intermediate_word not in visited:
+                    queue.append((intermediate_word, distance + 1))
+                    visited[intermediate_word] = distance + 1
         return None
 
     if end_word not in word_list:
         return 0
     word_list = set(word_list)
-    begin_queue = deque([(begin_word, 1)])
-    end_queue = deque([(end_word, 1)])
-    begin_visited, end_visited = {begin_word: 1}, {end_word: 1}
+    begin_queue = deque([(begin_word, 0)])
+    end_queue = deque([(end_word, 0)])
+    begin_visited, end_visited = {begin_word: 0}, {end_word: 0}
     while begin_queue and end_queue:
         # We do a bidirectional search starting one pointer from begin word and one pointer from end word. Hopping
         # one by one. One hop from begin word and one hop from end word
-        res = visit_word(begin_queue, begin_visited, end_visited) or visit_word(end_queue, end_visited, begin_visited)
-        if res:
-            return res
+        w1, d1 = begin_queue.popleft()
+        if w1 in end_visited:
+            return d1 + end_visited[w1] + 1
+        process_word(w1, d1, begin_queue, begin_visited)
+        w2, d2 = end_queue.popleft()
+        if w2 in begin_visited:
+            return d2 + begin_visited[w2] + 1
+        process_word(w2, d2, end_queue, end_visited)
     return 0
 
 
