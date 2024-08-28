@@ -225,15 +225,15 @@ def ladder_length_v3(begin_word, end_word, word_list):
 def ladder_length_v4(begin_word, end_word, word_list):
     """ Yet another bidirectional BFS.
 
-        Instead of extracting one word from each queue at each iteration, we process all the words in one of the
-        queues at each iteration. At the end of each iteration, we swap queues if one is shorter than the other.
+         Instead of extracting one word from each queue at each iteration, we process all the words in one of the
+         queues at each iteration. At the end of each iteration, we swap the queues if one is shorter than the other.
 
-        In this algorithm, begin_queue always holds the elements of the smallest queue. Also note that queue are
-        implemented using hash sets.
+         In this algorithm, begin_queue always holds the elements of the smallest queue. Also note that the queues are
+         implemented using hash sets.
 
-        The reason this approach is fast is that, after each iteration, it always chooses the queue that has the smaller
-        size, which means it always tries to spend less computation (generating intermediate words) towards meeting
-        the goal.
+         The reason this approach is fast is that, after each iteration, it always chooses the queue that has the smaller
+         size, which means it always tries to spend less computation (generating intermediate words) towards meeting
+         the goal.
     """
     if end_word not in word_list:
         return 0
@@ -243,8 +243,7 @@ def ladder_length_v4(begin_word, end_word, word_list):
     while begin_queue:
         next_begin_queue = set()
         for word in begin_queue:
-            n = len(word)
-            for i in range(n):
+            for i, _ in enumerate(word):
                 for c in string.ascii_lowercase:
                     intermediate_word = word[:i] + c + word[i + 1:]
                     if intermediate_word in end_queue:
