@@ -131,15 +131,15 @@ def ladder_length_v1(begin_word, end_word, word_list):
 
 def ladder_length_v2(begin_word, end_word, word_list):
     """ Same unidirectional BFS approach. However, instead of preprocessing the list of words to build the graph's
-        adjacency list, we do it on the fly while processing the intermediate words in the queue.
+         adjacency list, we do it on the fly while processing the intermediate words in the queue.
 
-        With a current word at hand, we try all the possible one-letter modifications of that word. If a modification
-        results in an intermediate word that exists in the input list of words, we add it to the queue AND remove it
-        from words list.
+         With a current word in hand, we try all the possible one-letter modifications of that word. If a modification
+         results in an intermediate word that exists in the input list of words, we add it to the queue AND remove it
+         from the words' list.
 
-        The shortest path will be the first one to delete end_word from the dictionary.
+         The shortest path is the first one to delete end_word from the dictionary.
 
-        Note: Intermediate word removal can also be used in the previous solution to replace the visited set.
+         Note: Intermediate word removal can also be used in the previous solution to replace the visited set.
     """
     word_list = set(word_list)
     queue = deque([(begin_word, 1)])
@@ -147,8 +147,7 @@ def ladder_length_v2(begin_word, end_word, word_list):
         word, distance = queue.popleft()
         if word == end_word:
             return distance
-        n = len(word)
-        for i in range(n):
+        for i, _ in enumerate(word):
             for c in string.ascii_lowercase:
                 intermediate_word = word[:i] + c + word[i + 1:]
                 if intermediate_word in word_list:
