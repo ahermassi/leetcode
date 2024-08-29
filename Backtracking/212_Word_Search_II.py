@@ -65,12 +65,12 @@ def find_words_v1(board, words):
          While wandering around the board, we would stop the exploration when we know it would not lead to the discovery
          of new words.
 
-         The key of the solution lies on how we find the matching of word from the dictionary. Intuitively, we might
+         The key of the solution lies in how we find the matching of a word from the dictionary. Intuitively, we might
          resort to the hashset data structure. This could work.
 
          However, during the backtracking process, we would encounter more often the need to tell if there exists any
          word in the dictionary that contains a certain prefix, rather than if an entire string exists as a word in the
-         dictionary. Because if we know that there does not exist any match of word in the dictionary for a given
+         dictionary. Because if we know that there does not exist any match of the word in the dictionary for a given
          prefix, then we would not need to further explore certain direction. And this would greatly reduce the
          exploration space, therefore improve the performance of the backtracking algorithm.
 
@@ -79,16 +79,16 @@ def find_words_v1(board, words):
          prefix.
 
          If we know that there does not exist any match in the dictionary for a given prefix, then we would not need
-         to further explore certain direction. This would greatly reduce the exploration space, therefore improve the
+         to further explore a certain direction. This would greatly reduce the exploration space, therefore improve the
          performance of the backtracking algorithm.
 
-         The overall workflow of the algorithm is intuitive, and it consists of a loop over each cell in the board and a
-         recursive function call starting from that cell. Here is the skeleton of the algorithm:
+         The algorithm consists of a loop over each cell in the board and a recursive function call starting from that
+         cell. Here is the skeleton of the algorithm:
 
             - Build a Trie out of the words in the dictionary, which would be used later for prefix matching.
 
-            - Starting from each cell, we start the backtracking exploration (i.e. search(cell)), if there exists any
-               word in the dictionary, i.e. in the trie, that starts with the letter in the cell.
+            - Starting from each cell, we start the backtracking exploration (i.e. search(cell)), to check if there
+               exists any word in the dictionary, i.e. in the trie, that starts with the letter in the cell.
 
             - During the recursive function call search(cell), we explore the neighbor cells around the current cell
                for the next recursive call search(neighborCell). At each call, we check if the sequence of letters that
@@ -101,10 +101,10 @@ def find_words_v1(board, words):
         we would no longer need to traverse it again. Therefore, we could prune it out from the trie.
 
         Use a 'one time search' trie. As a side benefit, we do not need to check if there is any duplicates in
-        the result set. As a result, we could simply use a list instead of set to keep the results, which could speed
-        up the solution a bit.
+        the result set. As a result, we could simply use a list instead of a hashset to keep the results, which could
+        speed up the solution a bit.
 
-        Bottom line:
+        Summary:
 
                         We use a trie so that we can exit the backtracking early when the current path is not a prefix
                                                                         of any word in the trie
@@ -166,15 +166,15 @@ def find_words_v1(board, words):
     We provide an upper bound of steps for the worst scenario for this problem. The algorithm loops over all the cells
     in the board, therefore we have N * M as a factor in the complexity formula. It then boils down to the maximum
     number of steps we would need for each starting cell.
-    Assume the maximum length of word is L, starting from a cell, initially we would have at most 4 directions to
+    Assume the maximum length of a word is L. Starting from a cell, initially we would have at most 4 directions to
     explore. Assume each direction is valid (i.e. worst case), so during the following exploration we have at most 3
-    neighbor cells (excluding the cell where we come from) to explore. As a result, we would traverse at most 4 * (3^L)
+    neighbor cells (excluding the cell that we came from) to explore. As a result, we would traverse at most 4 * (3^L)
     cells during the backtracking exploration.
     Space complexity: O(C), where C is the total number of letters in the dictionary of words. In the worst case where
     there is no overlapping of prefixes among the words, the trie would have as many nodes as the letters of all words.
     """
 
-    def addWord(word):
+    def add_word(word):
         root = trie
         for c in word:
             root = root.children[c]
@@ -201,7 +201,7 @@ def find_words_v1(board, words):
     trie = TrieNodeV1()
     n, m, res = len(board), len(board[0]), []
     for word in words:
-        addWord(word)
+        add_word(word)
     for i in range(n):
         for j in range(m):
             search(i, j, trie, '')
