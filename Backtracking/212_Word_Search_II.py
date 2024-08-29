@@ -263,33 +263,32 @@ def find_words_v3(board, words):
                                        }
     """
 
-    def addWord(word):
+    def add_word(word):
         root = trie
         for c in word:
             if c not in root:
                 root[c] = dict()
             root = root[c]
-        root['$'] = '$'
+        root['$'] = word
 
-    def search(i, j, node, prefix):
+    def search(i, j, node):
         if not 0 <= i < n or not 0 <= j < m or board[i][j] not in node:
             return
         c = board[i][j]
         node = node[c]
-        prefix += c
         if '$' in node:
-            res.append(prefix)
+            res.append(node['$'])
             del node['$']
         board[i][j] = '#'
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            search(x, y, node, prefix)
+            search(x, y, node)
         board[i][j] = c
 
     trie = dict()
     n, m, res = len(board), len(board[0]), []
     for word in words:
-        addWord(word)
+        add_word(word)
     for i in range(n):
         for j in range(m):
-            search(i, j, trie, '')
+            search(i, j, trie)
     return res
