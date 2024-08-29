@@ -124,7 +124,7 @@ class CodecV2:
 
 
 class CodecV3:
-    """ Same BFS approach, but during deserialization we use a read pointer/index to process the elements in the data
+    """ Same BFS approach, but during deserialization we use a read pointer/index to process the elements of the data
          list without transforming it into a queue.
     """
 
@@ -134,6 +134,8 @@ class CodecV3:
         Time complexity: O(N)
         Space complexity: O(N)
         """
+        if not root:
+            return ''
         values = []
         queue = deque([root])
         while queue:
@@ -151,7 +153,7 @@ class CodecV3:
         Time complexity: O(N)
         Space complexity: O(N)
         """
-        if data[0] == 'X':
+        if not data:
             return None
         data = data.split(',')
         root = TreeNode(data[0])
