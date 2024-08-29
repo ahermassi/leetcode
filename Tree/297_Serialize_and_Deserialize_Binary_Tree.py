@@ -90,6 +90,8 @@ class CodecV2:
         Time complexity: O(N)
         Space complexity: O(N)
         """
+        if not root:
+            return ''
         values = []
         queue = deque([root])
         while queue:
@@ -107,7 +109,7 @@ class CodecV2:
         Time complexity: O(N)
         Space complexity: O(N)
         """
-        if data[0] == 'X':
+        if not data:
             return None
         data = deque(data.split(','))
         root = TreeNode(data.popleft())
