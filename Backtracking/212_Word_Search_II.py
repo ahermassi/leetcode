@@ -220,7 +220,7 @@ def find_words_v2(board, words):
          speed up a bit the recursive call.
     """
 
-    def addWord(word):
+    def add_word(word):
         root = trie
         for c in word:
             root = root.children[c]
@@ -242,7 +242,7 @@ def find_words_v2(board, words):
     trie = TrieNodeV2()
     n, m, res = len(board), len(board[0]), []
     for word in words:
-        addWord(word)
+        add_word(word)
     for i in range(n):
         for j in range(m):
             search(i, j, trie)
