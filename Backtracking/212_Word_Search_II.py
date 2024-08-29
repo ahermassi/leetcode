@@ -10,6 +10,10 @@ def find_words_v0(board, words):
 
         Apply the same search algorithm as in 79- Word Search for every word in the input list.
 
+        !!! IMPORTANT !!!
+        Since the algorithm considers every possible starting cell for the purpose of search, a check is needed before
+        each DFS to make sure we aren't searching for a word that's been already found.
+
     Time complexity: O(W * N * M * (3^L)), where W is the number of words, N and M are the dimensions of the board, and
     L is the length of the longest word. We iterate through the board for backtracking, i.e. there could be N * M times
     invocation for the backtracking function in the worst case. For the backtracking function, initially we could have
@@ -22,8 +26,8 @@ def find_words_v0(board, words):
     The maximum length of the call stack would be the length of the longest word.
     """
 
-    def search_word(i, j, index, word_len):
-        if index == word_len:
+    def search_word(i, j, index):
+        if index == length:
             return True
         if not 0 <= i < n or not 0 <= j < m or board[i][j] != word[index]:
             return False
@@ -31,22 +35,21 @@ def find_words_v0(board, words):
         board[i][j] = '#'
         found = False
         for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
-            if search_word(x, y, index + 1, word_len):
+            if search_word(x, y, index + 1):
                 found = True
                 break
         board[i][j] = temp
         return found
 
     n, m = len(board), len(board[0])
-    words = set(words)
-    res = []
+    res = set()
     for i in range(n):
         for j in range(m):
-            for word in words.copy():
-                if search_word(i, j, 0, len(word)):
-                    res.append(word)
-                    words.remove(word)
-    return res
+            for word in words:
+                length = len(word)
+                if word not in res and search_word(i, j, 0):
+                    res.add(word)
+    return list(res)
 
 
 # Video explanation: https://youtu.be/asbcE9mZz_U
