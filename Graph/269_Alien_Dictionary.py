@@ -65,21 +65,21 @@ def alien_order_v1(words):
         we can also count up how many incoming edges each letter has. We call the number of incoming edges the
         indegree of a node.
 
-        Therefore, when a character has a 'prerequisite' extracted, we can simply decrement its count by 1. once the
+        Therefore, when a character has a 'prerequisite' extracted, we can simply decrement its count by 1. Once the
         count reaches 0, this is equivalent to there being no incoming edges left.
 
         We do a BFS for all letters that are reachable, adding each letter to the output as soon as it's reachable.
         A letter is reachable once all the letters that need to be before it have been added to the output.
 
         To perform a BFS, recall that we use a queue. We should initially put all letters with an indegree of 0 into
-        that queue. Each time a letter gets down to an indegree of 0, it is added to the queue.
+        the queue. Each time a letter's indegree goes down to 0, it is added to the queue.
 
         We continue this until the queue is empty. After that, we check whether all letters were put in the output list.
         If some are missing, this is because we got to a point where all remaining letters had at least one edge going
-        in; this means there must be a cycle! In that case, we should return '' as per the problem description.
+        in. This means there must be a cycle! In that case, we should return '' as per the problem description.
         Otherwise, we return the complete ordering we found.
 
-        One edge case we need to be careful of is where a word is followed by its own prefix. In these cases, it is
+        One edge case we need to be mindful of is where a word is followed by its own prefix. In these cases, it is
         impossible to come up with a valid ordering, and so we should return ''. The best place to detect it is in the
         loop that compares each adjacent pair of words.
 
@@ -101,8 +101,7 @@ def alien_order_v1(words):
         # Check if next_word is a prefix of cur_word
         if j == min_len and len(cur_word) > len(next_word):
             return ''
-        # We need to make sure we're not processing the same edge more than once as it would result in a wrong
-        # indegree value
+        # Make sure we're not processing the same edge more than once as it would result in a wrong indegree value
         if j < min_len and next_word[j] not in graph[cur_word[j]]:
             # Create a graph, better thought of as is_prerequisite_of graph: graph[char1] = char2 means 'char1' is a
             # prerequisite of 'char2' and precedes it in the alien alphabet
