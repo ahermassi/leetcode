@@ -3,9 +3,8 @@
 from collections import deque
 from heapq import heappush, heappop
 
-# Definition for singly-linked list.
 
-
+# Definition of singly-linked list.
 class ListNode:
     def __init__(self, x):
         self.val = x
@@ -141,7 +140,7 @@ def merge_k_lists_v3(lists):
 
 # Video explanation: https://youtu.be/q5a5OiGbT6Q
 def merge_k_lists_v4(lists):
-    """  We can convert merging K lists into merging 2 lists (K-1) times with the help of a queue.
+    """  We can convert merging K lists into merging 2 lists K-1 times with the help of a queue.
 
     Time complexity: O(N * K), where N is the total number of nodes across the lists
     Space complexity: O(N), for the queue
