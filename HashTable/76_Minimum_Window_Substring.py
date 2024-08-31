@@ -113,27 +113,28 @@ def min_window_v2(s, t):
     counter = Counter(t)
     window = defaultdict(int)  # Keeps a count of all the characters in the current window
     # Note that, unlike the previous algorithm, characters_to_match is initialized to the length of the counter not t.
-    # 'characters_to_match' is how many UNIQUE characters in t should be present in the current window in its desired
+    # characters_to_match is how many UNIQUE characters in t should be present in the current window in its desired
     # frequency for the window to be valid. e.g. if t = "AABC" then the window must have two A's, one B and one C.
-    # Thus 'characters_to_match'' would be equal to 0 when all these conditions are met.
+    # Thus, characters_to_match is equal to 3.
     characters_to_match = len(counter)
+    matched_characters = 0
     res, min_len = '', float('inf')
     left = right = 0
     while right < n:
         cur_char = s[right]
         window[cur_char] += 1
         if window[cur_char] == counter[cur_char]:
-            # If the frequency of the current added character equals the desired count in t, then we have one less
-            # character to match
-            characters_to_match -= 1
+            # If the frequency of the current added character equals the desired count in t, then we have just matched
+            # ALL THE OCCURRENCES of one more character
+            matched_characters += 1
         # Try to contract the window until it ceases to be desirable/valid
-        while characters_to_match == 0:
+        while matched_characters == characters_to_match:
             window_length = right - left + 1
-            if window_length < min_len:  # Save the smallest valid window seen so far
+            if window_length < min_len:  # Take note of the smallest valid window seen so far
                 min_len, res = window_length, s[left:right + 1]
             window[s[left]] -= 1
             if window[s[left]] < counter[s[left]]:
-                characters_to_match += 1
+                matched_characters -= 1
             left += 1
         right += 1
     return res
