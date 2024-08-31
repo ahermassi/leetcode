@@ -9,55 +9,55 @@ import unittest2 as unittest
 def min_window_v1(s, t):
     """ Similar to 438- Find All Anagrams in a String.
 
-        We can use a simple sliding window approach to solve this problem. Let us call a window desirable if it has all
-        the characters from T.
+         We can use a simple sliding window approach to solve this problem. Let us call a window desirable if it has all
+         the characters from T.
 
-        In any sliding window based problem we have two pointers: one right pointer whose job is to expand the current
-        window, and one left pointer whose job is to contract the window. At any point in time, only one of these
-        pointers moves and the other one remains fixed.
+         In any sliding window based problem we have two pointers: one right pointer whose job is to expand the current
+         window, and one left pointer whose job is to contract the window. At any point in time, only one of these
+         pointers moves and the other one remains fixed.
 
-        The solution is pretty intuitive: keep expanding the window by moving the right pointer. When the window has
-        all the desired characters, we contract (if possible) and save the smallest window so far. The answer is the
-        smallest desirable window.
+         The solution is pretty intuitive: keep expanding the window by moving the right pointer. When the window has
+         all the desired characters, we contract (if possible) and save the smallest window so far. The answer is the
+         smallest desirable window.
 
-            - Start with two pointers, 'left' and 'right', initially pointing to the first element of the string S.
+            - Start with two pointers, 'left' and 'right', initially pointing to the first character of the string s.
 
             - Use the right pointer to expand the window until we get a desirable window i.e. a window that contains all
-               the characters of T.
+               the characters of t.
 
-            - Once we have a window with all the characters, we can move the left pointer ahead one by one. If the
+            - Once we have a window with all the characters, we can move the left pointer forward one by one. If the
                window is still desirable, we keep on updating the minimum window size. If the window is no longer
                desirable, we repeat step 2 onwards.
 
-        To check if a window is valid/desirable, we use a map 'counter' to store (char, count) of characters in T (even
-        though the map evolves to include characters in S but with a negative count). We also use a count variable
-        'matched_characters' for the number of chars of T so far matched in S.
+         To check if a window is valid/desirable, we use a counter map to store (char, count) of characters in t (even
+         though the map evolves to include characters in s but with a negative count). We also use a count variable
+         matched_characters for the number of chars of t so far matched in s.
 
-        The key part is counter[cur_char] -= 1: we decrease the count of EVERY character in S. If it does not exist in
-        T, the count will drop below zero. When contracting the window, we make sure that the active window always
-        contains all the characters in T. In this case, every time the window expands, only the new character is
-        checked.
+         The key part is counter[cur_char] -= 1: we decrease the count of EVERY character in s. If it does not exist in
+         t, the count will drop below zero. When contracting the window, we make sure that the active window always
+         contains all the characters in t. In this case, every time the window expands, only the new character is
+         checked.
 
-        The idea is we use a variable-length sliding window which is gradually applied across the string. We use two
-        pointers 'left' and 'right' to mark the sliding window. We start by fixing the left pointer and moving the right
-        pointer to the right. The way we determine whether the current window is valid is by checking if all the target
-        characters are present in the current window. If we are in a valid sliding window:
+         The idea is to use a variable-length sliding window which is gradually applied across the string. We use two
+         pointers 'left' and 'right' to mark the sliding window. We start by fixing the left pointer and slide the right
+         pointer to the right. The way we determine whether the current window is valid is by checking if all the target
+         characters are present in the current window. If we are in a valid sliding window:
 
-            - We first take note of the sliding window of the minimum length we have seen so far.
+            - We try to contract the sliding window by moving the left pointer.
 
-            - Next, we try to contract the sliding window by moving the left pointer.
+            - We take note of the sliding window of the minimum length we have seen so far
 
             - If the sliding window continues to be valid, we note the new minimum length.
                If it becomes invalid (at least one character of the target string have been dropped), we break out of
                the inner loop and go back to expanding the window.
 
-        The idea is a general solution for substring (longest/shortest/non-duplicate, etc):
+         The idea is a general solution for substring (longest/shortest/non-duplicate, etc):
 
-            - Create a hashmap to track the occurrences of any specific characters in the target substring.
+            - Create a hashmap to track the occurrences of any specific characters in the target substring
 
-            - Use two pointers, left and right, to track the current width/distance/range of the active window.
+            - Use two pointers, left and right, to track the current width/distance/range of the active window
 
-            - Create a counter to check if the current width/distance/range is a valid substring range.
+            - Create a counter to check if the current width/distance/range is a valid substring range
 
             - As long as the counter indicates it's a valid range, shrink/expand the window until the range's validity
                changes (by altering the counter accordingly), record the valid width, and let it compare with the last
@@ -70,6 +70,7 @@ def min_window_v1(s, t):
     counter = Counter(t)
     # characters_to_match is the total number of characters yet to be matched in the current window to make it valid
     characters_to_match = len(t)
+    matched_characters = 0
     left = right = 0
     min_left, min_length = 0, float('inf')  # min_left is the left boundary of the minimum valid window found so far
     while right < n:
@@ -80,13 +81,13 @@ def min_window_v1(s, t):
         counter[cur_char] -= 1
         if counter[cur_char] >= 0:
             # If the count of the current character doesn't drop below zero, it means the character exists in t, so
-            # decrement the count of characters to match.
-            characters_to_match -= 1
-        while characters_to_match == 0:
+            # increment the count of matched characters.
+            matched_characters += 1
+        while matched_characters == characters_to_match:
             # Try to contract the window until it ceases to be desirable/valid
             window_length = right - left + 1
             if window_length < min_length:
-                min_left, min_length = left, window_length  # Save the smallest valid window
+                min_left, min_length = left, window_length  # Take note of the smallest valid window
             # Increment the count of the leftmost character in the window. We increment this for all characters, but
             # only the target characters have a chance to have positive counts.
             counter[s[left]] += 1
@@ -95,7 +96,7 @@ def min_window_v1(s, t):
                 # and if it's the case it would be > 0 after being incremented.
                 # For every character that is not in s, we do one increment and one decrement. So, it totals up to 0,
                 # which will never satisfy the if condition.
-                characters_to_match += 1
+                matched_characters -= 1
             left += 1
         right += 1
     return s[min_left:min_left + min_length] if min_length != float('inf') else ''
