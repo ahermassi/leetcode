@@ -4,29 +4,28 @@ water it is able to trap after raining. """
 import unittest2 as unittest
 
 
-# Great explanation for this solution: https://www.youtube.com/watch?v=HmBbcDiJapY
-
+# Video explanation: https://www.youtube.com/watch?v=HmBbcDiJapY
 def trap_v1(height):
     """ For each element in the array, we find the maximum level of water it can trap after the rain, which is equal to
-        the minimum of maximum height of bars on both the sides minus its own height.
+         the minimum of maximum height of bars on both the sides minus its own height.
 
-        The ith bar can trap water if and only if there exists a higher bar to the left and a higher bar to the right
-        of it. To calculate how much amount of water the ith bar can trap, we need to look at the maximum height
-        of the left bar and the maximum height of the right bar, then the water level that can be formed at ith bar is:
+         The ith bar can trap water if and only if there exists a higher bar to its left and a higher bar to its right.
+         To calculate how much amount of water the ith bar can trap, we need to look at the maximum height of the left
+         bar and the maximum height of the right bar, then the water level that can be formed at ith bar is:
 
-                water_level = min(max_left[i], max_right[i])
+                     water_level[i] = min(max_left[i], max_right[i])
 
-        If water_level >= height[i] then ith bar can trap:
+         If water_level[i] >= height[i] then ith bar can trap:
 
-                amount of water = water_level - height[i]
+                     amount of water[i] = water_level[i] - height[i]
 
-    Time complexity: O(N^2), for each element of array we iterate the left and right parts
+    Time complexity: O(N^2), for each element of the array we iterate the left and right parts
     Space complexity: O(1)
     """
     n, res = len(height), 0
     for i, cur_height in enumerate(height):
         left = right = i
-        max_left = max_right = 0
+        max_left = max_right = height[i]
         while left >= 0:
             max_left = max(max_left, height[left])
             left -= 1
