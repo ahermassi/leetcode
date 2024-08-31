@@ -35,33 +35,41 @@ def trap_v1(height):
         res += min(max_left, max_right) - cur_height
     return res
 
-# Great explanation for this solution: https://www.youtube.com/watch?v=VZpJxINSvfs
 
-
+# Video explanation: https://www.youtube.com/watch?v=VZpJxINSvfs
 def trap_v2(height):
     """ In the previous solution, we iterate over the left and right parts again and again just to find the highest bar
-        size up to current index. However, this could be pre-computed and stored.
+         size up to the current index. However, this could be pre-computed and stored.
 
-        Find maximum height of bar from the left end up to an index i in the 'left_max' array.
-        Find maximum height of bar from the right end up to an index i in the array 'right_max' array.
+         Find the maximum height of bars from the left up to AND INCLUDING index i in the left_max array.
+         Find the maximum height of bars from the right up to AND INCLUDING index i in the right_max array.
 
-        Therefore, at each index i, the water that can be trapped is:
+         Therefore, at each index i, the water that can be trapped is:
 
-                amount of water =min(left_max[i], right_max[i]) − height[i]
+                    amount of water[i] =min(left_max[i], right_max[i]) − height[i]
+
+         !!! IMPORTANT !!!
+         If instead we were to calculate the maximum heights from the left and from the right if each index EXCLUDING
+         that index, the equation would have to change to:
+
+                    amount of water[i] = max(0, min(left_max[i], right_max[i]) − height[i])
+
+        to account for the case where a bar has only one higher bar to either end or none at all, in which case the
+        amount of water the bar can trap is 0.
+
 
     Time complexity: O(N)
     Space complexity: O(N)
     """
     n, res = len(height), 0
-    left_max, right_max = [0] * n, [0] * n
-    left_max[0], right_max[-1] = height[0], height[-1]
+    max_left, max_right = [0] * n, [0] * n
+    max_left[0], max_right[-1] = height[0], height[-1]
     for i in range(1, n):
-        left_max[i] = max(left_max[i-1], height[i])
+        max_left[i] = max(max_left[i-1], height[i])
     for i in reversed(range(n-1)):
-        right_max[i] = max(right_max[i+1], height[i])
+        max_right[i] = max(max_right[i+1], height[i])
     for i, cur_height in enumerate(height):
-        max_left, max_right = left_max[i], right_max[i]
-        res += min(max_left, max_right) - cur_height
+        res += min(max_left[i], max_right[i]) - cur_height
     return res
 
 # Video explanation: https://youtu.be/ZI2z5pq0TqA?t=660
