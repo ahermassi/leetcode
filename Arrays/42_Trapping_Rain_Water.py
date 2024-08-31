@@ -46,13 +46,13 @@ def trap_v2(height):
 
          Therefore, at each index i, the water that can be trapped is:
 
-                    amount of water[i] =min(left_max[i], right_max[i]) − height[i]
+                    amount of water[i] =min(max_left[i], max_right[i]) − height[i]
 
          !!! IMPORTANT !!!
          If instead we were to calculate the maximum heights from the left and from the right if each index EXCLUDING
          that index, the equation would have to change to:
 
-                    amount of water[i] = max(0, min(left_max[i], right_max[i]) − height[i])
+                    amount of water[i] = max(0, min(max_left[i], max_right[i]) − height[i])
 
         to account for the case where a bar has only one higher bar to either end or none at all, in which case the
         amount of water the bar can trap is 0.
@@ -72,58 +72,72 @@ def trap_v2(height):
         res += min(max_left[i], max_right[i]) - cur_height
     return res
 
+
 # Video explanation: https://youtu.be/ZI2z5pq0TqA?t=660
-
-
 def trap_v3(height):
     """ Instead of computing the left and right parts separately, we may think of some way to do it in one iteration.
 
-        Notice that as long as left_max[i] < right_max[i], the water trapped depends upon 'left_max' ONLY, and similar
-        is the case when right_max[i] < left_max[i]. So, we can say that if there is a larger bar at one end (say right),
-        we are assured that the water trapped would be dependent on height of (left) bar in current direction (from
-        left to right).
+         Notice that as long as max_left[i] < max_right[i], the water trapped depends upon max_left ONLY, and similar
+         is the case when max_right[i] < max_left[i]. So, we can say that if there is a larger bar at one end, say
+         right for example, we are assured that the water trapped would be dependent on height of the left bar in
+         current direction (from left to right).
+         As soon as we find out that the bar at the other end, which is right in this example, is smaller, we start
+         iterating in opposite direction (from right to left).
 
-        As soon as we find out that the bar at other end (right) is smaller, we start iterating in
-        opposite direction (from right to left).
+         We must maintain max_left and max_right during the iteration, but now we can do it in one iteration
+         using 2 pointers, switching between the two.
 
-        We must maintain 'left_max' and 'right_max' during the iteration, but now we can do it in one iteration
-        using 2 pointers, switching between the two.
+        If max_left is smaller, use left bar as current container rim.
+        If max_right is smaller, use right bar as current container rim.
 
-        If 'left_max' is smaller, use left bar as current container rim.
-        If 'right_max' is smaller, use right bar as current container rim.
+         In other words:
 
-        In other words:
+         We calculate the stored water at each index 'left' and 'right'. At the start of every iteration, we update
+         the current maximum height from left side (that is from height[:left+1]) and the maximum height from right side
+         (from height[right:]).
 
-        We calculate the stored water at each index 'left' and 'right'. At the start of every iteration, we update
-        the current maximum height from left side (that is from height[:left+1]) and the maximum height from right side
-        (from height[right:]).
+         If max_left < max_right, then AT LEAST (min(max_left, max_right) - height[left]) = (max_left- height[left])
+         water can definitely be stored no matter what exists between [left, right] since we know there is a barrier on
+         the right side (max_left < max_right).
+         On the other hand, we cannot store more water than (max_left - height[left]) at index 'left' since the left
+         barrier is of height max_left. So, we know the water that can be stored at index 'left' is exactly
+         (max_left - height[left]).
+         The same logic applies to the case when max_right < max_left.
 
-        If left_max < right_max, then AT LEAST (left_max- height[left]) water can definitely be stored no matter what
-        exists between [left, right] since we know there is a barrier on the right side (left_max < right_max).
-        On the other hand, we cannot store more water than (left_max - height[left]) at index 'left' since the left
-        barrier is of height 'left_max'. So, we know the water that can be stored at index 'left' is exactly
-        (left_max - height[left]).
-        The same logic applies to the case when right_max < left_max.
+        At each iteration, we can make 'left' and 'right' one step closer.
 
-        At each iteration we can make 'left' and 'right' one step closer. The key point is that any bars between
-        left_max and right_max bars will NOT influence how much water can the current position trap.
+        !!! IMPORTANT !!!
+        Since left and right pointers scan the entire [0, n-1] interval, we're sure the trapped water is calculated for
+        all the bars by the end of the algorithm.
+        The key point is that any bars between max_left and max_right bars will NOT influence how much water the
+        current position can trap.
+        For example, left=3, right=7, max_left < max_right. We KNOW that the maximum bar height up to AND INCLUDING
+        index left is exactly max_left. However, max_right is the maximum bar height STARTING FROM index right. But what
+        about all the bars between [left+1, right-1]?? They don't matter! Remember the equation:
+
+                    amount of water[i] = min(max_left[i], max_right[i]) − height[i]
+
+        The lowest of the highest bars is the BOTTLENECK. In this example, max_left is the bottleneck. Therefore,
+        min(max_left[i], max_right[i]) will always resolve to max_left[i], or max_left for i=left, no matter what's
+        between [left+1, right-1], as we try to MINIMIZE.
 
     Time complexity: O(N)
     Space complexity: O(1)
     """
     left, right = 0, len(height) - 1
-    left_max = right_max = 0
+    max_left = max_right = 0
     res = 0
     while left < right:
-        left_max = max(left_max, height[left])
-        right_max = max(right_max, height[right])
-        # How much can the current position trap depends on the shorter bar
-        if left_max < right_max:
-            res += left_max - height[left]  # We know that we can fill the current point with water up to the previous
-            # left maximum as any more than that limit will overflow
+        max_left = max(max_left, height[left])
+        max_right = max(max_right, height[right])
+        # How much water the current position can trap depends on the shorter bar
+        if max_left < max_right:
+            # We know that we can fill the current point with water up to the previous left maximum as any more than
+            # that limit will overflow
+            res += max_left - height[left]
             left += 1
         else:
-            res += right_max - height[right]
+            res += max_right - height[right]
             right -= 1
     return res
 
