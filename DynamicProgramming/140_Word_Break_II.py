@@ -126,6 +126,12 @@ def word_break_v3(s, word_dict):
 
          The desired result would be the last element in the array, i.e. dp[len(s)], which corresponds to the results
          for the entire string.
+
+    Time complexity: O(N * 2^N), similar to memoization, the tabulation approach still needs to explore all possible
+    substrings, which can be up to 2^N in the worst case, leading to an exponential time complexity. O(N) work is
+    performed to explore each substring
+    Space complexity: O(N * 2^N), the dynamic programming table needs to store the valid sentences for all possible
+    starting indices, which can be up to 2^N strings of size N in the worst case.
     """
     n, word_dict = len(s), set(word_dict)
     dp = [[]] * (n + 1)
