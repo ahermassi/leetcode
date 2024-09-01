@@ -71,28 +71,37 @@ def word_break_v1(s, word_dict):
 
 
 def word_break_v2(s, word_dict):
-    """ An optimization of the previous solution. We pre-compute the length of the longest word in the dictionary.
-        When we check for the existence of the prefixes in the dictionary, we only consider those whose length is not
-        greater than the max word length.
+    """ An optimization of the previous solution. We calculate the length of the longest word in the dictionary.
+         When we check for the existence of the prefixes in the dictionary, we only consider those whose length is not
+         greater than the max word length.
+
     Time complexity: O(2^N)
     Space complexity: O(N)
     """
+
     def dfs(index):
         if index == n:
             return ['']
+        if index in memo:
+            return memo[index]
         res = []
-        for i in range(index, index + max_len[0] + 1):
-            prefix, suffix = s[index:i], s[i:]
+        for i in range(index, index + max_len[0]):
+            prefix = s[index:i + 1]
             if prefix in word_dict:
-                rest = dfs(i)
-                for subs in rest:
-                    res.append(prefix + (' ' + subs if subs else ''))
+                sentences = dfs(i + 1)
+                for sentence in sentences:
+                    if sentence == '':
+                        res.append(prefix)
+                    else:
+                        res.append(prefix + ' ' + sentence)
+        memo[index] = res
         return res
 
+    n = len(s)
     word_dict = set(word_dict)
     longest_word = max(word_dict, key=len)
     max_len = [len(longest_word)]
-    n = len(s)
+    memo = {}
     return dfs(0)
 
 
