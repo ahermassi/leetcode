@@ -148,6 +148,29 @@ def word_break_v3(s, word_dict):
     return dp[n]
 
 
+def word_break_v4(s, word_dict):
+    """ Bottom-Up Dynamic Programming.
+
+         Instead of trying to find a substring/suffix that is contained in the set of dictionary words, we instead
+         verify if a word of the dictionary is a substring of s starting at index i-len(word).
+
+         Since dp[i - len(word)] is already filled with the list of sentences that can be formed up to index
+         i-len(word), we can use each of the sentences as a prefix to s[:i - len(word)] if the latter can be found in
+         the dictionary.
+    """
+    n, word_dict = len(s), set(word_dict)
+    dp = [[]] * (n + 1)
+    dp[0] = ['']
+    for i in range(1, n + 1):
+        for word in word_dict:
+            length = len(word)
+            if i - length >= 0 and s[i - length:i] == word:
+                sentences = dp[i - length]
+                for sentence in sentences:
+                    dp[i].append(sentence + ' ' + word if sentence else word)
+    return dp[n]
+
+
 class Test(unittest.TestCase):
     data = [('catsanddog', ['cat', 'cats', 'and', 'sand', 'dog'], ['cat sand dog', 'cats and dog']), (
         'pineapplepenapple', ['apple', 'pen', 'applepen', 'pine', 'pineapple'],
@@ -159,6 +182,7 @@ class Test(unittest.TestCase):
             self.assertEqual(result, word_break_v1(test_string, test_word_dict))
             self.assertEqual(result, word_break_v2(test_string, test_word_dict))
             self.assertEqual(result, word_break_v3(test_string, test_word_dict))
+            self.assertEqual(result, word_break_v4(test_string, test_word_dict))
 
 
 if __name__ == '__main__':
