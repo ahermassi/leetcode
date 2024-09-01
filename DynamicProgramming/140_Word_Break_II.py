@@ -106,29 +106,27 @@ def word_break_v2(s, word_dict):
 
 
 def word_break_v3(s, word_dict):
-    """ Bottom-up dynamic programming.
-        Following the same definition in the top-down approach, given an input string s = 'catsanddog', we define the
-        results of breaking it into words with the function F(s).
-        For any word (denoted as w) in the dictionary, if it matches with a SUFFIX of the input string, we then can
-        divide the string into two parts: the prefix and the word, i.e. s = prefix + w.
-        Consequently, the solution for the input string can be represented as follows:
-            ∀ w ∈ dict, s = prefix + w ⟹ {F(prefix) + w} ∈⊆F(s)
-        i.e. we add the matched word to the solutions from the prefix.
-        We start from an empty prefix (i.e. the bottom case), to progressively extend the solutions to a larger prefix.
-        Eventually, the extended prefix would grow to be the original string.
-        We define the dp array as follows:
+    """ Bottom-Up Dynamic Programming.
 
-            dp[i] = solutions for the corresponding prefix s[:i], or first i characters of s
+         For any word (denoted as w) in the dictionary, if it matches a SUFFIX in the input string, we then can
+         divide the string into two parts: the prefix and the word, i.e. s = prefix + w.
 
-        The desired result would be the last element in the array, i.e. dp[len(s)], which corresponds to the results
-        for the entire string.
-        We ad an additional check at the beginning of the algorithm to see if the input string contains some characters
-        that do not appear in any of the words in the dictionary. If this is the case, then we are sure that the input
-        string cannot be broken down into words. With this check, we could bypass some tricky test cases, not ending up
-        with the TLE error.
+         Consequently, the solution for the input string can be represented as follows:
+
+                    ∀ w ∈ dict, s = prefix + w ⟹ {F(prefix) + w} ∈⊆F(s)
+
+         i.e. we add the matched word to the solutions from the prefix.
+         We start from an empty prefix (i.e. the bottom case), to progressively extend the solutions to a larger prefix.
+         Eventually, the extended prefix would grow to be the original string.
+
+         Let dp[i] be the list of sentences that can be formed by segmenting the first i characters in s using words
+         from the dictionary. Therefore:
+
+                dp[i] = [ { sentence + s[j:i] } for sentence in dp[j] ] for index j < i if s[j:i] is in the dictionary
+
+         The desired result would be the last element in the array, i.e. dp[len(s)], which corresponds to the results
+         for the entire string.
     """
-    if set(Counter(s).keys()) > set(Counter(''.join(word_dict)).keys()):
-        return []
     n, word_dict = len(s), set(word_dict)
     dp = [[]] * (n + 1)
     dp[0] = ['']
@@ -136,11 +134,12 @@ def word_break_v3(s, word_dict):
         res = []
         for j in range(i):
             suffix = s[j:i]
-            if suffix in word_dict:  # s[:i] = s[:j] + s[j:i] = s[:j] + suffix, so we append suffix to results of s[:j]
-                for subs in dp[j]:
-                    res.append(subs + ' ' + suffix if subs else suffix)
-        dp[i] = res
-    return dp[-1]
+            if suffix in word_dict:
+                # s[:i] = s[:j] + s[j:i] = s[:j] + suffix, so we append suffix to the results of s[:j]
+                for sentence in dp[j]:
+                    res.append(sentence + '  ' + suffix if sentence else suffix)
+            dp[i] = res
+    return dp[n]
 
 
 class Test(unittest.TestCase):
