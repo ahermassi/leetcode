@@ -151,9 +151,10 @@ def max_sliding_window_v1(nums, k):
 
 
 def max_sliding_window_v2(nums, k):
-    """ Similar to previous solution, but we store indices instead of actual elements in the queue. This is because we
-        need the index to know if an element is outside the boundaries of the window and we can always get the value
-        using the index from the array.
+    """ Similar to the previous solution, but we store indices instead of elements' values in the queue. This is because
+         we need the index to know if an element is outside the boundaries of the window, and we can always get the
+         value from the array using the index.
+
     Time complexity: O(N)
     Space complexity: O(k)
     """
