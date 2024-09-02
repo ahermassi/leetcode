@@ -8,112 +8,144 @@ from collections import deque
 import unittest2 as unittest
 
 
+# Video explanation: https://www.youtube.com/watch?v=DfljaUwZsOk
 def max_sliding_window_v1(nums, k):
     """ Monotonic Decreasing Queue.
 
-        Monotonic queue is like a regular queue with one key distinction in the enqueue operation: Before we push a new
-        element onto the queue, we first check if adding it breaks the monotonic condition. If it does, then we pop
-        the tail elements off the queue until pushing the new element no longer breaks the monotonic condition.
+         An intuitive way to solve the problem is to iterate over all windows and then iterate over all the elements in
+         a window to find the largest element. There are a total of n-k+1 (where n is the size of nums) windows, and it
+         would take O(k) to find the largest element from each window. This strategy is too slow and results in TLE.
 
-        Intuition: A question we can ask ourselves is "do we need to keep all the window elements in our state?"
-        An important observation is for two elements arr[left] and arr[right], where left < right, arr[left] leaves the
-        window earlier as we slide. If arr[right] is larger than arr[left], then there is no point keeping arr[left] in
-        our window since arr[right] is always going to be larger during the time arr[left] is in the window.
-        Therefore, arr[left] can never be the maximum and can be safely discarded.
+         A question we can ask is "do we need to keep all the window elements?" We may observe that in a window, the
+         elements that come before the largest element will never be selected as the largest element of any FUTURE
+         windows. For two elements nums[left] and nums[right], where left < right, nums[left] leaves the window earlier
+         as we slide. If nums[right] > nums[left], then there is no point keeping nums[left] in the window since
+         nums[right] is always going to be larger during the time nums[left] is in the window. Therefore, nums[left] can
+         be safely discarded.
 
-        It is implicitly ensured that the front of the queue will have the largest element of the sliding window because
-        any elements smaller than it would have already been dropped when it entered the queue.
+         However, we cannot ignore the items that follow the largest element. Whenever we encounter a new element x, we
+         want to discard all elements that are less than x before adding x. Let's say we currently have [63, 15, 8, 3],
+         and we encounter 12. Any FUTURE window with 8 or 3 will also contain 12, so we can discard them. After
+         discarding them and adding 12, we have [63, 15, 12]. Notice that we're keep elements in descending order.
 
-        We scan the array and keep 'promising' elements in the queue. At each index i, we keep 'promising' elements,
-        which are potentially max elements in window [i-k+1,i] or any subsequent window. This means:
+         To perform these operations, we can use a monotonic queue as it supports efficient insertion, deletion, and
+         retrieval of elements from either end of a window.
 
-            - If an element in the queue is outside (i - k + 1), we discard it. We just need to poll
-              from the head as we are using a deque and elements are ordered as the sequence in the array.
-            - Now only those elements within nums[i-k+1,i] are in the queue. We then discard elements smaller
-              than nums[i] from the tail. This is because if j < i and nums[j] < nums[i], then nums[j] has no
-              chance of being the max in nums[i-k+1,i] or any other subsequent window: nums[i] would always be
-              a BETTER CANDIDATE.
-            - As a result, elements in the queue are ordered in both sequence in array and their value.
-              At each step, the head of the deque is the max element of the window.
+         Monotonic queue is like a regular queue with one key distinction in the enqueue operation: before we push a new
+         element, we first check if adding it breaks the monotonic condition. If it does, then we pop the tail elements
+         until pushing the new element no longer breaks the monotonic condition.
 
-        To summarize:
-        We maintain a queue of the largest elements we've seen so far (aka 'good candidates').
-        The problem is that we need to maintain sanity of this queue. To this end, we need to make sure that the queue:
-            - Should NEVER point to elements smaller than current element
-            - Should NEVER point to elements outside the current sliding window
-        We want to ensure that the queue window only has decreasing elements. That way, the leftmost element is always
-        the largest in the current window.
+         We need to make sure that the queue:
 
-        At each index i:
-            - Pop (from the front/right) the element at index (i-k) if it's still in the queue (falls outside the window)
-            - Pop (from the end/left) the smaller elements (they'll be useless)
-            - Append the current element
-            - If our window has reached size k (i >= k-1), append the current window maximum to the output (queue front)
-        The elements in the queue are from the current window and are decreasing. Then the first queue element is
-        the largest window value.
+             - Should NEVER hold elements smaller than the current element
+             - Should NEVER hold elements outside the current window
 
-        More formally:
-        Let D be the deque which maintains a pair (i, a_i). An important property of D that we will maintain is that
-        elements in D will always be in sorted order (invariant). We will first start with an empty D, and will insert
-        a_i and remove elements from D accordingly as we iterate from the left to the right of array.
-        Suppose that we are now at index i and considering adding a_i. Notice that when a_i is added, all elements
-        (j, a_j) in D such that a_j is smaller than a_i can never be a maximum value as we go forward, hence they can be
-        removed from D. Furthermore, if the element (i-k-1, a(i−k−1)) is in D (which will be located at the front of D
-        if it exists), we remove that element as well. Lastly, we append a_i at the back of D. Then we will have the
-        maximum as the top element in D when we reach index i. Since each element will enter and leave D only once,
-        we have a total of O(N) operations.
+         In our case, we want a monotonic decreasing queue, which means that the elements in the queue are always sorted
+         in descending order. When we want to add a new element x, we maintain the monotonic property by removing all
+         elements less than x before adding x.
 
-        Example: nums = [8, 3, -1, -3, 5, 3, 6, 7], k = 3
+         By maintaining the monotonic decreasing property, it is implicitly ensured that the front of the queue will
+         have the largest element of the sliding window because any elements smaller than it would have already been
+         discarded when it entered the queue.
+
+         We scan the array and keep 'promising' elements in the queue. At each index i, we keep 'promising' elements,
+         which are potentially max elements in the window [i-k+1,i] or any subsequent window. This means:
+
+             - If an element in the queue is too far to the left, i.e. outside i-k+1,  discard it.
+
+             - Now only the elements in nums[i-k+1,i] are in the queue. We then discard elements smaller
+                than nums[i] from the tail. This is because if j < i and nums[j] < nums[i], then nums[j] has no
+                chance of being the max in nums[i-k+1,i] or any other subsequent window: nums[i] would always be
+                a BETTER CANDIDATE.
+
+             - As a result, the queue will correctly hold the indices of all useful elements in the current window in
+                decreasing order. At each step, the head of the deque is the max element of the window.
+
+        Since we consistently add the largest index to the end of the deque and remove some other indices that
+        correspond to useless elements, we are essentially storing indices in ascending order.
+
+        Summary:
+
+         At each index i:
+
+             - Pop (from the tail/left) the element at index (i-k) if it's still in the queue (falls outside the window)
+
+             - Pop (from the front/right) the smaller elements (they'll be useless)
+
+             - Append the current element
+
+             - If the window has reached size k (i >= k-1), add the current window maximum to the output (queue front)
+
+         The elements in the queue are from the current window and are decreasing. Then the first queue element is
+         the largest window value.
+
+         More formally:
+         Let D be the deque which maintains a pair (i, a_i). An important property of D that we maintain is that
+         elements in D are always in sorted order (invariant). We first start with an empty D, insert a_i and remove
+         elements from D accordingly as we iterate from the left to the right of the array.
+         Suppose we are at index i and considering adding a_i. Notice that when a_i is added, all elements (j, a_j) in D
+         such that a_j < a_i can never be a maximum value as we go forward, hence they can be removed from D.
+         Furthermore, if the element (i-k-1, a(i−k−1)) is in D (which will be located at the tail of D if it exists), we
+         remove that element as well. Lastly, we append a_i at the front of D. Then we will have the maximum as the top
+         element in D when we reach index i. Since each element will enter and leave D only once, we have a total of
+         O(N) operations.
+
+         Example: nums = [8, 3, -1, -3, 5, 3, 6, 7], k = 3
         
-        i = 0, curr element = 8, queue = [], res = []
-	    Add 8 to queue
+         i = 0, curr element = 8, queue = [], res = []
+	     Add 8 to queue
 	    
-        i = 1, curr element = 3, queue = [8], res = []
-	    Add 3 to queue
+         i = 1, curr element = 3, queue = [8], res = []
+	     Add 3 to queue
 	    
-        i = 2, curr element = -1, queue = [8, 3], res = []
-	    Add -1 to queue
-	    Append queue[0] = 8 to res
+         i = 2, curr element = -1, queue = [8, 3], res = []
+	     Add -1 to queue
+	     Append queue[0] = 8 to res
 
-        i = 3, curr element = -3, queue = [8, 3, -1], res = [8]
-        Pop left from queue because it's outside the window's leftmost (i-k)
-	    Add -3 to queue
-	    Append queue[0] = 3 to res
+         i = 3, curr element = -3, queue = [8, 3, -1], res = [8]
+         Pop left from queue because it's outside the window's leftmost (i-k)
+	     Add -3 to queue
+	     Append queue[0] = 3 to res
 
-        i = 4, curr element = 5, queue = [3, -1, -3], res = [8, 3]
-	    Pop from queue because queue.top < curr element
-	    Pop from queue because queue.top < curr element
-	    Pop from queue because queue.top < curr element
-	    Add 5 to queue
-	    Append queue[0] = 5 to res
+         i = 4, curr element = 5, queue = [3, -1, -3], res = [8, 3]
+	     Pop from queue because queue.top < curr element
+	     Pop from queue because queue.top < curr element
+	     Pop from queue because queue.top < curr element
+	     Add 5 to queue
+	     Append queue[0] = 5 to res
 
-        i = 5, curr element = 3, queue = [5], res = [8, 3, 5]
-	    Add 3 to queue
-	    Append queue[0] = 5 to res
+         i = 5, curr element = 3, queue = [5], res = [8, 3, 5]
+	     Add 3 to queue
+	     Append queue[0] = 5 to res
 
-        i = 6, curr element = 6, queue = [5, 3], res = [8, 3, 5, 5]
-	    Pop from queue because queue.top < curr element
-	    Pop from queue because queue.top < curr element
-	    Add 6 to queue
-	    Append queue[0] = 6 to res
+         i = 6, curr element = 6, queue = [5, 3], res = [8, 3, 5, 5]
+	     Pop from queue because queue.top < curr element
+	     Pop from queue because queue.top < curr element
+	     Add 6 to queue
+	     Append queue[0] = 6 to res
 
-        i = 7, curr element = 7, queue = [6], res = [8, 3, 5, 5, 6]
-	    Pop from queue because queue.top < curr element
-	    Add 7 to queue
-	    Append queue[0] = 7 to res
+         i = 7, curr element = 7, queue = [6], res = [8, 3, 5, 5, 6]
+	     Pop from queue because queue.top < curr element
+	     Add 7 to queue
+	     Append queue[0] = 7 to res
 
-        res = [8, 3, 5, 5, 6, 7]
+         res = [8, 3, 5, 5, 6, 7]
+
     Time complexity: O(N), since each element is processed exactly twice - it's added and then removed from the queue
-    Space complexity: O(k), for the queue
+    Space complexity: O(k), for the queue, we are only ever taking into account the 'useful' elements of the current
+    window
     """
     queue, res = deque(), []
     for i, num in enumerate(nums):
-        if queue and queue[0] == nums[i - k]:  # The first/left element is outside the current window
+        if queue and queue[0] == nums[i - k]:
+            # The first/leftmost element is outside the window
             queue.popleft()
-        while queue and queue[-1] < num:  # Remove from queue all elements that are smaller than current element 'num'
+        while queue and queue[-1] < num:
+            # Remove from queue/window all elements that are smaller than the current element
             queue.pop()
         queue.append(num)
-        if i >= k - 1:  # i == k-1 is the beginning of a (first) full window
+        if i >= k - 1:
+            # i == k-1 is the start of a (first) full window
             res.append(queue[0])
     return res
 
