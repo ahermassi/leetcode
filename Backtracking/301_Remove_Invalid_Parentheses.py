@@ -226,27 +226,32 @@ def remove_invalid_parentheses_v2(s):
 
 def remove_invalid_parentheses_v3(s):
     """ We are required to return the minimum number of invalid parentheses to remove. Let's model the problem as a
-        graph:
-            node: String obtained by removing parenthesis (The start node is `s`)
-            edge (from u to v): Remove a parentheses from u
-        As a result, the problem becomes to get the shortest distance from s to a valid node (assuming at level l) in
-        the first place, then get all valid nodes at level l.
-        BFS guarantees shortest path. Since the problem asks to remove minimum parenthesis, it is natural to think of
-        BFS.
+         graph:
 
-        The idea is straightforward: With the input string s, we generate all possible states by removing one '(' or
-        ')' and check if they are valid; if we find valid strings at the current level, we add them to the final result
-        list and we are done. Otherwise, we add them to a queue and carry on to the next level.
+            - node: string obtained by removing some parentheses, where the start node is the string s
+            - edge (from u to v): remove a parenthesis from string u
 
-        The one crucial observation is that once we find a valid expression, it means we have found the minimum
-        removals since we are using BFS. Therefore, there is no need to search further. We just check all the valid
-        expressions  at that level. If we were using DFS, we would need to keep track of the minimum removals.
-    Time complexity: O(2^N), on the first level there's only one string which is the input string s, let's say of
-    length n. To check whether it's valid, we need O(n) time. On the second level, we remove one '(' or ')' from the
-    first level, so there are C(n, n-1) new strings, each of them has (n - 1) characters, and for each string we need
-    to check whether it's valid or not, thus the total time complexity on this level is (n-1) x C(n, n-1). Come to the
-    third level, total time complexity is (n-2) x C(n, n-2), so on and so forth. Finally we have this formula:
-    T(n) = n x C(n, n) + (n-1) x C(n, n-1) + ... + 1 x C(n, 1) = n x 2^(n-1)
+         As a result, the problem becomes to first find the shortest distance from s to ANY valid node (say at level l),
+         then find all valid nodes at level l.
+
+         BFS guarantees the shortest path. Since the problem asks to remove the minimum number of parentheses, it is
+         natural to think of BFS.
+
+         The idea is straightforward: starting with the input string s, we generate all possible states by removing one
+         '(' or ')' and check if they are valid. If we find valid strings at the current level, we add them to the final
+         result list, and we are done. Otherwise, we add them to a queue and carry on to the next level.
+
+         The one crucial observation is that once we find a valid expression, it means we have found the minimum
+         number of needed removals since we are using BFS. Therefore, there is no need to search further. We just check
+         all the valid expressions at that same level. In contrast, when using DFS, we need to keep track of the global
+         minimum number of removals.
+
+    Time complexity: O(2^N), at the first level there's only one string which is the input string s, let's say of
+    length N. To check whether it's valid, we need O(N) time. At the second level, we remove one '(' or ')' from the
+    first level, so there are C(N, N-1) new strings, each of them has N-1 characters, and for each string we need to
+    check whether it's valid, thus the total time complexity at this level is (N-1) x C(N, N-1). Come to the third
+    level, total time complexity is (N-2) x C(N, N-2), and so on and so forth. Finally, we have the formula
+    T(N) = N x C(N, N) + (N-1) x C(N, N-1) + ... + 1 x C(N, 1) = N x 2^(N-1)
     Space complexity: O(N)
     """
 
@@ -269,15 +274,16 @@ def remove_invalid_parentheses_v3(s):
         if is_valid(expression):
             res.append(expression)
             valid_expression_found = True
-        if valid_expression_found:  # This ensures once we've found a valid parentheses pattern, we don't do any
-            # further BFS using items pending in the queue since any further BFS would only yield strings of smaller
-            # length. However, the items already in queue need to be processed since there could be other solutions of
-            # the same length. Once we have a string of length k that is valid, all those strings in the next level
-            # which have a length of (k - 1) are definitely not valid (we need to remove a pair to make it valid again).
+        if valid_expression_found:
+            # This ensures once we've found a valid parentheses' expression, we don't do any further BFS using items
+            # pending in the queue since any further BFS would only yield strings of smaller length, hence more
+            # parentheses removals. However, the items already in queue need to be processed since there could be other
+            # valid expressions of the same length. Once we have a string of length k that is valid, each of the strings
+            # in the next level of length of k-1 is definitely invalid (we need to remove one or more parentheses to
+            # make it valid).
             continue
-        n = len(expression)
-        for i in range(n):
-            if expression[i] not in '()':
+        for i, c in enumerate(expression):
+            if c not in '()':
                 continue
             sub_expression = expression[:i] + expression[i + 1:]
             if sub_expression not in visited:
