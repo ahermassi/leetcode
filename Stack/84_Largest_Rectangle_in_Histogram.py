@@ -9,7 +9,10 @@ def largest_rectangle_area_v1(heights):
 
          We can simply start off by considering every possible pair of bars and finding the area of the rectangle formed
          between them using the height of the shortest bar lying between them as the height and the spacing between them
-         as the width of the rectangle. We can thus, find the required rectangle with the maximum area.
+         as the width of the rectangle. We can, thus, find the required rectangle with the maximum area.
+
+         Instead of taking every possible pair and then finding the bar of minimum height lying between them everytime,
+         we can find the bar of minimum height for current pair by using the minimum height bar of the previous pair.
 
     Time complexity: O(N^2)
     Space complexity: O(1)
