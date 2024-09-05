@@ -7,9 +7,9 @@ import unittest2 as unittest
 def largest_rectangle_area_v1(heights):
     """  Brute Force. TLE.
 
-        We can simply start off by considering every possible pair of bars and finding the area of the rectangle formed
-        between them using the height of the shortest bar lying between them as the height and the spacing between them
-        as the width of the rectangle. We can thus, find the required rectangle with the maximum area.
+         We can simply start off by considering every possible pair of bars and finding the area of the rectangle formed
+         between them using the height of the shortest bar lying between them as the height and the spacing between them
+         as the width of the rectangle. We can thus, find the required rectangle with the maximum area.
 
     Time complexity: O(N^2)
     Space complexity: O(1)
