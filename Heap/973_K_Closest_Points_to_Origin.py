@@ -114,14 +114,16 @@ def k_closest_v2(points, K):
         points[i], points[right] = points[right], points[i]
         return i  # Return the pivot's final resting position
 
+    n = len(points)
+    if k >= n:
+        return points
     distance = lambda x, y: x * x + y * y
-    left, right = 0, len(points) - 1
+    left, right = 0, n - 1
     while left <= right :
         index = partition(left, right)
         if index == K:
-            break
+            return points[:K]
         if index < K:
             left = index + 1
         else:
             right = index - 1
-    return points[:K]
