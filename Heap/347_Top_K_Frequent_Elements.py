@@ -154,7 +154,7 @@ def top_k_frequent_v4(nums, k):
     # Since indexing is 0-based, kth most frequent is at index (n - k) in the frequency-sorted array.
     k = n - k
     left, right = 0, n - 1
-    while True:
+    while left <= right:
         index = partition(left, right)
         if index == k:
             return unique_nums[k:]
