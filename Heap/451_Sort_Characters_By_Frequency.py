@@ -55,19 +55,20 @@ def frequency_sort_v2(s):
 
 
 def frequency_sort_v3(s):
-    """ Create a hash map 'counter' of character to character frequency for the input string. Then, iterate 'counter'
-        to create a second hash map 'substrings' with key as frequency and value as substrings of repeated strings with
-        length as the frequency. Finally, lookup all potential frequencies in decreasing order in 'substrings' and
-        produce the final result.
+    """ Create a hashmap 'counter' of character to character frequency for the input string. Then, iterate over
+        'counter' to create a second hashmap 'substrings' where the key is the frequency and the value are the
+        substrings of repeated strings with length as the frequency. Finally, look up all potential frequencies in
+        decreasing order in 'substrings' and produce the final result.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    if not s:
-        return ''
-    counter, substrings, res = Counter(s), defaultdict(list), []
+    counter = Counter(s)
+    substrings = defaultdict(list)
     for char, count in counter.items():
         substrings[count].append(char * count)
     max_frequency = max(counter.values())
+    res = []
     for i in reversed(range(max_frequency + 1)):
         res.extend(substrings[i])
     return ''.join(res)
