@@ -74,12 +74,13 @@ def top_k_frequent_v3(words, k):
     Time complexity: O(K logK)
     Space complexity: O(N)
     """
-    n = len(words)
-    bucket, res = [[] for _ in range(n + 1)], []
     counter = Counter(words)
-    for key, v in counter.items():
-        bucket[v].append(key)
-    for i in reversed(range(n + 1)):
+    max_freq = max(counter.values())
+    bucket = [[] for _ in range(max_freq + 1)]
+    for word, count in counter.items():
+        bucket[count].append(word)
+    res = []
+    for i in reversed(range(max_freq + 1)):
         if bucket[i]:
             res.extend(sorted(bucket[i]))  # Sort the elements alphabetically
         if len(res) >= k:
