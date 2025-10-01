@@ -24,21 +24,25 @@ def frequency_sort_v1(s):
 
 def frequency_sort_v2(s):
     """ This solution is based on bucket sort.
-        Observe that because all of the characters came out of a string of length n, the maximum frequency for any one
-        character is n. This means that once we've determined all the letter frequencies using a hash map, we can sort
+
+        Notice that because all the characters came out of a string of length n, the maximum frequency for any one
+        character is n. This means that once we've determined all the letter frequencies using a hashmap, we can sort
         them in linear time using bucket sort.
-        Build a map of characters to the number of times they occur in the string.
-        Create an array where the index of the array represents how many times that character occurred in the string.
-        While we could simply make our bucket array length n, we're best to just look for the maximum value (frequency)
-        in the hash map. That way, we only use as much space as we need, and won't need to iterate over empty buckets
-        during the next phase.
-        Iterate from the end of the array to the beginning, and at each index append each character to the result
-        string that number of times.
+
+            - Build a map of characters to the number of times they occur in the string.
+
+            - Create an array where the index represents how many times that character occurred in the string.
+
+            - While we could simply make the bucket array's size n, it's better to look for the maximum value
+              (frequency) in the hashmap. That way, we only use the space we actually need and won't need to iterate
+              over empty buckets.
+
+            - Iterate from the end of the array to the beginning, and at each index append each character to the result
+              string that number of times.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    if not s:
-        return ''
     counter, res = Counter(s), []
     max_frequency = max(counter.values())
     bucket = [[] for _ in range(max_frequency + 1)]
