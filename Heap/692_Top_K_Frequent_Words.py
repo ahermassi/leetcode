@@ -53,8 +53,10 @@ def top_k_frequent_v1(words, k):
 
 
 def top_k_frequent_v2(words, k):
-    """ We build a max heap of size N, length of words list. To get the k most frequent words, we simply pop the first
-        k items from the heap.
+    """ If we put all numbers into a max heap, the top element of the heap must be the max value of all numbers in the
+        heap. So instead of sorting all unique words, we only need to pop the word with the max frequency from the max
+        heap k times.
+
     Time complexity: O(k logN), we pop k elements from a heap of size N
     Space complexity: O(N)
     """
