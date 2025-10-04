@@ -70,13 +70,26 @@ def three_sum_v2(nums):
 
          To do that, we process each element nums[j] to the right of the pivot and check whether a complement
          -(nums[i] + nums[j]) is already in the hashset. If it is, we found a triplet. Then, we add nums[j] to the
-         hashset, so it can be used as a complement from that point on.
+         hashset so it can be used as a complement from that point on.
 
-         Like in the previous approach, we also sort the array, so we can skip duplicate values.
+         Like in the previous approach, we also sort the array so we can skip duplicate values.
 
     Time complexity: O(N logN + N^2) = O(N^2)
     Space complexity: O(N)
     """
+
+    def twoSum(left, right, target):
+        seen = set()
+        while left <= right:
+            complement = target - nums[left]
+            if target - nums[left] in seen:
+                res.append([-target, complement, nums[left]])
+                # Skip duplicates
+                while left < right and nums[left] == nums[left + 1]:
+                    left += 1
+            seen.add(nums[left])
+            left += 1
+
     nums.sort()
     n, res = len(nums), []
     for i in range(n - 2):
@@ -86,18 +99,7 @@ def three_sum_v2(nums):
             continue
         a = nums[i]
         # Find a pair of numbers (b, c) in [i + 1, n - 1] whose sum is equal to -a
-        j = i + 1
-        seen = set()
-        while j < n:
-            b = nums[j]
-            complement = - (a + b)
-            if complement in seen:
-                res.append([a, b, complement])
-                # Skip duplicates
-                while j < n - 1 and nums[j] == nums[j + 1]:
-                    j += 1
-            seen.add(b)
-            j += 1
+        twoSum(i + 1, n - 1, -a)
     return res
 
 
