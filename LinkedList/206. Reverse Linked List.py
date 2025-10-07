@@ -16,19 +16,18 @@ def reverse_list_v1(head):
     Time complexity: O(N)
     Space complexity: O(N)
     """
-    if not head:
-        return None
     stack = []
-    while head:
-        stack.append(head)
-        head = head.next
-    head = stack.pop()
-    ptr = head
+    cur = head;
+    while cur:
+        stack.append(cur)
+        cur = cur.next
+    dummy = ListNode(0)
+    tail = dummy
     while stack:
-        ptr.next = stack.pop()
-        ptr = ptr.next
-    ptr.next = None
-    return head
+        tail.next = stack.pop()
+        tail = tail.next
+    tail.next = None
+    return dummy.next
 
 
 def reverse_list_v2(head):
