@@ -117,6 +117,15 @@ def three_sum_v3(nums):
     Time complexity: O(N^2)
     Space complexity: O(N)
     """
+    def twoSum(left, right, target):
+        seen = set()
+        while left <= right:
+            complement = target - nums[left]
+            if target - nums[left] in seen:
+                res.append(tuple(sorted([-target, complement, nums[left]])))
+            seen.add(nums[left])
+            left += 1
+
     n, res = len(nums), set()
     start_of_triplet = set()
     for i in range(n - 2):
@@ -125,13 +134,7 @@ def three_sum_v3(nums):
         a = nums[i]
         start_of_triplet.add(a)
         # Find a pair of numbers (b, c) in [i + 1, n - 1] whose sum is equal to -a
-        seen = set()
-        for j in range(i + 1, n):
-            b = nums[j]
-            complement = - (a + b)
-            if complement in seen:
-                res.add(tuple(sorted([a, b, complement])))
-            seen.add(b)
+        twoSum(i + 1, n - 1, -a)
     return map(list, res)
 
 
