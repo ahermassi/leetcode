@@ -87,7 +87,8 @@ def missing_number_v3(nums):
 
 def missing_number_v4(nums):
     """ A brute force method would be to simply check for the presence of each number that we expect to be present. Use
-         a set to get constant time containment queries and overall linear runtime.
+        a set to get constant time containment queries and overall linear runtime.
+
     Time complexity: O(N)
     Space complexity: O(N)
     """
