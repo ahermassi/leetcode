@@ -12,11 +12,11 @@ def search_v1(reader, target):
             - Perform binary search in the defined boundaries
         To define search boundaries, the idea is quite simple. Let's take two first indices, 0 and 1, as left and right
         boundaries. If the target value is not among these zeroth and the first element, then it's outside the
-        boundaries, on the right. That means that the left boundary could moved to the right, and the right boundary
+        boundaries, on the right. That means that the left boundary could slide to the right, and the right boundary
         should be extended. To keep logarithmic time complexity, let's extend it twice as far: right = right * 2.
         If the target now is less than the right element, we're done, the boundaries are set. If not, repeat these two
         steps till the boundaries are established.
-    Time complexity: O(logT), where TT is the index of target value
+    Time complexity: O(logT), where T is the index of target value
     Space complexity: O(1)
     """
     left, right = 0, 1
