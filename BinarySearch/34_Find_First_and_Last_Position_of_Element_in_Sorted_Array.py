@@ -11,7 +11,7 @@ def search_range_v1(nums, target):
          respectively. The tricky part is handling the left and right pointers when a match is found.
 
          Example:
-                      0  1  2  3  4  5  6  7  8  9  10 11 12
+                0  1  2  3  4  5  6  7  8  9  10  11  12
         nums = [1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7,  9,  9], target = 5
 
         Finding the first position:
