@@ -83,24 +83,23 @@ def min_eating_speed(piles, h):
     Time complexity: O(N logM), where N is the number of piles and M is the maximum size of a pile
     Space complexity: O(1)
     """
-    left, right = 1, max(piles)
-    while left < right:
-        mid = (left + right) // 2
+
+    def hours_needed_to_eat_at_speed(mid):
         hours_needed = 0
         for bananas in piles:
             hours_needed += bananas // mid
             if bananas % mid:
-                hours_needed +=  1
-        if hours_needed <= h:
+                hours_needed += 1
+        return hours_needed
+
+    left, right = 1, max(piles)
+    while left < right:
+        mid = (left + right) // 2
+        if hours_needed_to_eat_at_speed(mid) <= h:
             right = mid
-            # We could also use an 'ans' variable as follows:
-            # ans = mid
-            # right = mid - 1
         else:
             left = mid + 1
     return left
-    # or return ans
-
 
 class Test(unittest.TestCase):
     data = [([3, 6, 7, 11], 8, 4), ([30, 11, 23, 4, 20], 5, 30), ([30, 11, 23, 4, 20], 6, 23)]
