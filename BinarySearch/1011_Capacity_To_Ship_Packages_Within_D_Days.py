@@ -9,76 +9,61 @@ import unittest2 as unittest
 
 # Video explanation: https://www.youtube.com/watch?v=ER_oLmdc-nw
 def ship_within_days(weights, days):
-    """ An intuitive approach would be to start with checking ship capacity equal to the largest weight in weights,
-         say w. The ship's capacity cannot be smaller than w, otherwise the conveyor belt couldn't ship the heaviest
-         package.
+    """ The ship's capacity must be at least max(weights), because the heaviest package has to fit on the ship by
+        itself. At the other extreme, a capacity of sum(weights) is always enough, because we could ship every package
+        in a single day.
 
-         We check if it is possible to ship all the packages within the days' limit, using w as the capacity of the
-         ship. If we are able to ship all the packages within the required days, we have w as the required answer.
-         Otherwise, we increment the capacity and try with w+1. If we are able to ship the packages within the required
-         days now, w+1 is the answer. Otherwise, we try with the ship's capacity as w+2, etc.
+        So the answer must lie in: [max(weights), sum(weights)]
 
-         How long can we go? In the worst case, we might need to choose the capacity of the ship equal to the sum of
-         all the weights and send them all in one day.
+        Now define the predicate:
 
-         So, the range starts from the largest weight and goes until the sum of the weights in weights, i.e. the
-         solution lies within a range.
+            can_ship(capacity) = days_needed_to_ship_with_capacity(capacity) <= days
 
-         The intuitive, linear approach will provide the right answer to all the test cases but will indicate that the
-         time limit has been exceeded. Let's think of a faster way by making some observations.
+        As capacity increases, shipping never becomes harder.
+        For small capacities, we may need too many days: False False False False
+        Eventually the capacity becomes large enough to meet the day limit: True True True ...
 
-         If we cannot ship the packages in the required days with capacity A, we can never ship packages with a capacity
-         less than A. Also, if we can ship the packages in the required days with capacity B, we can always ship them
-         with a capacity greater than B.
+        So the answer space looks like: F F F F F T T T T
+                                                  ^
+                                                 first True
 
-         A scenario like this where the task is to search for an element X from a given range (L, R) where all values
-         smaller than X do not satisfy a certain condition and all values greater than or equal to X satisfy it (or
-         vice-versa), can be solved optimally with a binary search.
+        We therefore use our canonical boundary binary search to find the smallest capacity for which can_ship(capacity)
+        is True.
 
-         Therefore, the question becomes binary search to find the minimum weight capacity of the ship between
-         the two boundaries defined above.
+        For each candidate capacity `mid`, simulate loading the packages in order.
+        if days_needed <= days: mid works, so it is in the True region. It could be the FIRST True, so keep it:
+        right = mid
+        Otherwise,mid does not work, so it is in the False region. Eliminate it: left = mid + 1
 
-        We set mid = (left + right) / 2 as the current weight capacity of the ship.
-        To check whether we can ship all the packages with the given capacity mid, we create define two variables,
-        days_needed = 1 and cur_load = 0 which store the total number of days needed to ship all the weights with
-        mid ship capacity and to keep track of how much weight has been placed in the ship on a day, respectively.
+        When left == right, we have found the first True: the minimum ship capacity that can deliver all packages
+        within `days`.
 
-        We iterate over all the weights, and for each weight, we place the weight in the ship and increase its load to
-        cur_load = cur_load + weight. We keep on placing the weights until cur_load > mid. If cur_load exceeds capacity,
-        we cannot keep adding weight and need an additional day. So, we increase the days needed to ship the packages
-        by one, i.e., days_needed += 1 we also set cur_load = weight as this is the current load for the next day.
-
-        If we can ship the packages with mid as the ship's capacity in less than or equal to the days' limit, we move to
-        the lower half of the range by setting right = mid - 1. Otherwise, if we cannot ship the packages with
-        capacity=mid in the required days, we move to the upper half of the range by setting left = mid + 1.
-
-        NOTE: binary search using predicate
-        f(mid) = days_needed_to_ship_with_capacity_mid > days
-        -> [T, T, ..., T, F, F, ..., F]
-        -> Find the first F
-
-    Time complexity: O(N logN)
+    Time complexity: O(N log(sum(weights) - max(weights)))
     Space complexity: O(1)
     """
-    left, right = max(weights), sum(weights)
-    while left <= right:
-        mid = (left + right) // 2
-        # loaded capacity of current ship and number of days needed
-        cur_load, days_needed = 0, 1
+
+    def days_needed_to_ship_with_capacity(capacity):
+        days_needed, load = 0, 0
         # ---- Simulating loading the weight to ship one by one ---- #
         for weight in weights:
-            cur_load += weight
-            if cur_load > mid:
+            load += weight
+            if load > capacity:
                 # Current ship meets its capacity
-                cur_load = weight
                 days_needed += 1
-        # --------------- simulation ends -------------------------- #
-        if days_needed > days:
+                load = weight
+        # After the loop, there is still the final partially/fully loaded day to count, hence + 1.
+        # The important invariant is: every individual package must fit by itself. And because the binary search lower
+        # bound is left = max(weights), that is guaranteed.
+        return days_needed + 1
+
+    left, right = max(weights), sum(weights)
+    while left < right:
+        mid = (left + right) // 2
+        if days_needed_to_ship_with_capacity(mid) <= days:
+            right = mid
+        else:
             # We needed too many days, so we need to increase capacity to reduce number of days needed
             left = mid + 1
-        else:
-            # We were able to ship within good number of days, but we still need to find the optimal minimum capacity
-            right = mid - 1
     return left
 
 
