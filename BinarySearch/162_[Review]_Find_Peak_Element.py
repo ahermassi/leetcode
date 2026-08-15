@@ -42,66 +42,128 @@ def find_peak_element_v1(nums):
 
 
 def find_peak_element_v2(nums):
-    """ We can view any given sequence in nums array as alternating ascending and descending sequences. By making
-         use of this property and the fact that we can return any peak, we can use binary search to find the peak
-         element.
+    """ We can think of the array as a sequence of rising and falling slopes.
 
-         In the case of a regular binary search, we work on a sorted sequence of numbers and try to find the required
-         number by reducing the search space at every step. For this problem, we use a modified binary search.
+        We do NOT need to find the global maximum. We only need to find ANY local peak.
+        That is what makes binary search possible.
 
-         We start off by finding the middle element 'mid'.
+        This is a boundary / candidate-convergence style binary search:
 
-            - If mid happens to be in a descending sequence of numbers, or a local falling slope (found by comparing
-               nums[i] to its left neighbor), it means that the peak will always be towards the left of mid. Thus, we
-               reduce the search space to the left of mid (including itself) and perform the same process on the left
-               subarray.
+            while left < right
 
-            - If mid is in an ascending sequence of numbers, or a rising slope (found by comparing nums[i] to its
-               right neighbor), it obviously implies that the peak is towards the right of this element. Thus, we reduce
-               the search space to the right of mid and perform the same process on the right subarray.
+        The invariant is:
 
-         In this way, we keep on reducing the search space until we eventually reach a state where only one element is
-         remaining in the search space. This single element is the peak element.
+            [left, right] always contains at least one peak.
 
-         Binary search works here because we need to return any local peak, not necessarily the global peak.
+        We keep shrinking that interval until only one candidate remains.
+        When left == right, that index must be a peak.
 
-            - If the number to the right is bigger than the middle value, then somewhere on the right there must be a
-               peak - either the numbers ascend and then descend, in which case there would be a peak where the change
-               from ascent to descent happens, or the numbers continue to ascend until the end of the array, in which
-               case the last value in the array would be a local peak (because nums[n] = -∞).
+        At each step, compare nums[mid] with nums[mid + 1]:
+
+        1- nums[mid] < nums[mid + 1]
+
+            Example:
+
+                ... 2, 3, 5, 7, ...
+                       M  M+1
+
+            We are on a rising slope.
+
+            If we continue moving right:
+
+                - either the values eventually stop increasing and start decreasing,
+                  in which case the turning point is a peak,
+
+                - or the values keep increasing all the way to the end of the array,
+                  in which case the last element is a peak because the problem defines
+                  nums[n] = -infinity.
+
+            Therefore, at least one peak must exist strictly to the right of mid.
+
+            mid itself cannot be the peak because nums[mid + 1] > nums[mid], so we
+            can safely discard it:
+
+                left = mid + 1
 
 
-            - If the value to the left is bigger than the middle value, then it must be that either the middle value
-               itself is a peak or that there is definitely a peak on the left side of the middle value. This is because
-               if the number on the left is bigger than the middle value, there are two options: either the numbers
-               continue ascending in the left direction until the beginning of the array, in which case the first
-               element of the array would be a peak (because nums[0] = -∞), or the values increase to the left until a
-               point at which they start decreasing, and that point would be a peak.
+        2- nums[mid] > nums[mid + 1]
 
-         So binary search works because as long as we follow the slopes upward, we will for sure encounter a peak.
-         Yes, we may miss some peaks during binary cuts, but there is at least 1 that will be encountered since beyond 0
-         and (n - 1) are negative infinities. If it keeps going up, then it has to have a peak turn or reach either end
-         of the array which by the definition are peaks.
+            Example:
 
-         What is helpful is the following statement in the question description:
-            "You may imagine that nums[-1] = nums[n] = -∞"
-         This means a peak will always exist.
+                ... 7, 5, 3, 2, ...
+                     M  M+1
 
-         Example: 3 is peak in following two arrays:
-         -∞ | 0,1,2,3|-∞
-         -∞ | 3,2,1,0|-∞
-         So all we need to do is find the end of any increasing slope in the input array.
+            We are on a falling slope.
+            This means a peak exists at mid or somewhere to its left.
 
-         Let's say we have a mid at index i, nums[i]. If nums[i] < nums[i+1], that means a peak element HAS TO exist in
-         the right half of the array, because (since every number is unique):
+            mid itself could already be a peak, so we must keep it:
 
-            - If the numbers keep increasing on the right side, then the peak will be the last element.
-            - If the numbers stop increasing and there is a 'dip', or there exists somewhere an index j such that
-               nums[j] < nums[j-1], it means number[i] is a peak element.
+                right = mid
 
-         This same logic can be applied to the left-hand side (nums[i] < nums[i-1]).
+            This follows the same general binary-search rule:
 
-         Example:
+                If mid can still be the answer, do NOT discard it.
+
+
+        Why `while left < right`?
+
+            This is not an exact-target search.
+
+            We maintain the guarantee that [left, right] contains a peak and keep
+            shrinking the candidate interval:
+
+                many candidates
+                    ->
+                fewer candidates
+                    ->
+                one candidate
+
+            Once left == right, exactly one candidate remains, so we stop and
+            return that index.
+
+        Why is nums[mid + 1] always safe to access?
+
+            The loop only runs while:
+
+                left < right
+
+            Therefore mid is always strictly less than right, so mid + 1 is always
+            a valid index.
+
+        Why does a peak always exist?
+
+            The problem lets us imagine:
+
+                nums[-1] = nums[n] = -infinity
+
+            Therefore, if we keep following an increasing slope, one of two things
+            must eventually happen:
+
+                - the slope turns downward -> we found a local peak
+                - it reaches the end       -> the last element is a peak
+
+            The same reasoning applies when following a falling slope toward the left.
+
+        So the mental model is simply:
+
+            nums[mid] < nums[mid + 1]
+                -> uphill
+                -> a peak exists strictly right
+                -> discard mid
+                -> left = mid + 1
+
+            nums[mid] > nums[mid + 1]
+                -> downhill
+                -> a peak exists at mid or left
+                -> keep mid
+                -> right = mid
+
+        In other words:
+
+            Follow the slope uphill.
+            A peak is guaranteed to be waiting in that direction.
+
+        Example:
         | 1 | 2 | 3 | 4 | 5 | 4 | 3 | 2 | 1 |
         |---|---|---|---|---|---|---|
         | l | _ | _ | _ | m | _ | _ | _ | r    |
