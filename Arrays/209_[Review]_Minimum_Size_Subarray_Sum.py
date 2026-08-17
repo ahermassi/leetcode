@@ -9,30 +9,24 @@ import unittest2 as unittest
 
 # Video explanation: https://www.youtube.com/watch?v=aYqYMIqZx5s
 def min_sub_array_len_v1(target, nums):
-    """ Use 2 pointers, one for the start and another for the end of the current subarray (window) and make optimal
-         moves as to keep the sum greater than or equal to 'target' as well as maintain the smallest subarray size
-         possible.
+    """ Pattern: Variable-Size Sliding Window — Minimum Valid Window.
 
-        Initialize the left pointer 'left', the right pointer 'right', and the window sum 'cur_sum' to 0 .
-        Iterate over nums array:
+        Template:
+        Expand the right boundary until the window satisfies the required condition.
+        Once valid, shrink from the left while it remains valid, recording the answer
+        before each shrink because we want the smallest valid window.
 
-            - Add nums[right] to 'cur_sum'
+        For this problem, the window condition is:
+            sum(window) >= target
 
-            - While 'cur_sum' is greater than or equal to 'target':
+        We maintain the sum of nums[left:right+1]. Each time right advances, we add
+        nums[right]. Once the sum reaches target, the current window is a candidate.
+        We then repeatedly remove nums[left] and advance left, updating the minimum
+        length each time, until the sum falls below target.
 
-                * Update res = min(res ,right - left + 1), where (right - left + 1) is the size of the current window
-                * It means that the element pointed at by the leftmost index can safely be discarded, since the minimum
-                   subarray starting with this index with sum ≥ target has been found
-                * Subtract nums[left] from 'cur_sum' and increment 'left' to shrink the window
-
-        Since the given array contains only positive integers, the subarray sum can only increase by including more
-        elements. Therefore, we don't have to include more elements once the current subarray reached a large
-        enough sum.
-
-        The essential idea is if a subarray starts at 'left', then try to get the minimum length subarray by adding
-        elements to it. Once the sum is over 'target', it means we just found the minimum subarray starting at 'left'.
-        In this case, instead of moving 'left' forward one step, we can just discard any elements starting from leftmost
-        element of the current minimum subarray until the sum becomes less than 'target'.
+        This sliding-window approach is valid because every number is positive:
+        expanding the window can only increase the sum, and shrinking it can only
+        decrease the sum. Therefore, the two pointers only need to move forward.
 
     Time complexity: O(N), each element can be visited at most twice, once by the right pointer and (at most) once by
     the left pointer.
