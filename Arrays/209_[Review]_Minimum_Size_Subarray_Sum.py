@@ -45,46 +45,76 @@ def min_sub_array_len_v1(target, nums):
 
 
 def min_sub_array_len_v2(target, nums):
-    """ We cannot sort the input array as the current order actually matters. How do we get an ordered array then?
+    """ Alternative Pattern: Prefix Sum + Binary Search.
 
-        Since all the numbers are positive, the cumulative sum must be strictly increasing. Then, a subarray sum can
-        be expressed as a difference between two cumulative sums. Hence, given the start index of the cumulative sum
-        subarray, the other end index can be searched using binary search.
+        The primary solution to this problem is the O(n) variable-size sliding-window
+        template. This alternative is useful because it connects prefix sums with the
+        binary-search boundary template.
+
+        For a subarray [left:right], its sum can be computed from prefix sums. Since all
+        nums are positive, the prefix sums are strictly increasing. That gives us a
+        sorted/monotonic search space.
+
+        For each right endpoint, we want the largest possible left endpoint whose
+        subarray sum is still >= target, because that produces the shortest valid
+        subarray ending at right. We can locate that boundary with binary search over
+        the prefix sums.
+
+        Pattern connection:
+            positive nums
+                -> increasing prefix sums
+                -> monotonic search space
+                -> binary search for a boundary
+
+        This is slower than the sliding-window solution, so it is mainly useful as an
+        example of recognizing when a prefix-sum array creates a binary-searchable
+        search space.
+
+        Let prefix[i] be the sum of nums[0:i]. Then:
+
+        sum(nums[left:right]) = prefix[right] - prefix[left]
+
+        For each possible 'left', we need the smallest 'right' such that:
+
+            prefix[right] - prefix[left] >= target
+
+        Rearranging:
+
+            prefix[right] >= prefix[left] + target
+
+        Since prefix is strictly increasing, this becomes a standard
+        "find the first value >= target" binary search.
+
+        The first prefix index satisfying that condition gives the shortest
+        valid subarray starting at 'left'.
+
 
     Time complexity: O(N logN), the time required is O(N) for iteration over the array and O(logN) for finding the
     subarray for each index using binary search
     Space complexity: O(1)
     """
 
-    def find_left(left, right, cur_sum):
-        while left <= right:
-            mid = (left + right) // 2
-            if cur_sum - prefix_sum[mid] >= target:
-                # The sum between indices 'mid' and 'right' is >= target
-                left = mid + 1
-            else:
-                right = mid - 1
-        # 'left' is the largest index such as nums[left:right+1] has a sum >= target, thus a minimum length subarray
-        return left
+    n = len(nums)
+    prefix = [0] * (n + 1)  # prefix[i] = sum of nums[0:i]
+    for i in range(n):
+        prefix[i + 1] = prefix[i] + nums[i]
+    res = float("inf")
+    for left in range(n):
+        required = prefix[left] + target
 
-    n, res = len(nums), float('inf')
-    prefix_sum = [0] * n
-    prefix_sum[0] = nums[0]
-    for i in range(1, n):
-        # Cumulative sum, resulting in a sorted prefix_sum array
-        prefix_sum[i] += prefix_sum[i - 1] + nums[i]
-    left = right = 0
-    while right < n:
-        if prefix_sum[right] >= target:
-            # If the cumulative sum up to index 'right' is >= target, then it should be the right end of a
-            # subarray that satisfies the problem property. Use binary search to find its left end.
-            left = find_left(left, right, prefix_sum[right])
-            # Note that we don't initialize 'left' at each iteration. As 'right' keeps moving forward, the cumulative
-            # sum keeps increasing, and 'left' is the largest index (guaranteeing a minimum length subarray) from
-            # previous iterations, so it's a waste of time to initialize it.
-            res = min(res, right - left + 1)
-        right += 1
-    return res if res != float('inf') else 0
+        # Binary Search Template:
+        # Find the first index 'right' where prefix[right] >= required.
+        lo, hi = left + 1, n
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if prefix[mid] >= required:
+                hi = mid
+            else:
+                lo = mid + 1
+        if prefix[lo] >= required:
+            res = min(res, lo - left)
+
+    return 0 if res == float("inf") else res
 
 
 class Test(unittest.TestCase):
