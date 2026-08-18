@@ -56,31 +56,51 @@ def longest_ones_v1(nums, k):
 
 
 def longest_ones_v2(nums, k):
-    """ Same algorithm, but we can solve this problem a t more efficiently.
+    """ Pattern: Variable-Size Sliding Window — Longest Valid Window
+        Optimization: Non-shrinking / monotonically growing window size.
 
-         Since we have to find the MAXIMUM window (in terms of size), we never reduce the size of the window. We either
-         increase the size of the window or keep it the same but never reduce the size. If the limit of zeros is
-         reached, we contract only by one, thus keeping the same window size (as the window expands by 1 index with each
-         iteration).
+        Start from the standard longest-valid-window template:
 
-        Take nums = [0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1], k = 3.
-        We know the answer is 10 with the subarray from nums[2] to nums[11], corresponding to left=2 , right=11.
-        What happens next ?
-        As we keep advancing 'right', we find out that 'left' and 'right' keep adding 1 in every iteration, which makes
-        the distance between 'left' and 'right' fixed (and is the CURRENT best window in terms of size).
-        The distance between 'left' and 'right' would change again if a longer subarray exists. So in short:
+            expand right
+            -> if the window becomes invalid, shrink left until valid again
+            -> update the maximum valid length
 
-                We are looking for a bigger window size. When we find one, we use this window to iterate till we find
-                a bigger one (if any). Increasing 'left' and 'right' by 1 allows the distance between 'left' and 'right'
-                for the currently best found window to be fixed. Later, only 'right' will expand if a longer subarray is
-                found.
+        This version uses an additional observation specific to finding a MAXIMUM
+        window length:
 
-        So it's crucial to realize that this code does NOT find the max VALID window but rather the maximum size of a
-        valid window (this size is fixed when 'left' and 'right' advance in tandem). So when the loop exits, 'left' and
-        'right' do NOT represent the actual indices of the longest VALID window.
+            Once we have already found a valid window of length L, we never care
+            about constructing a valid window shorter than L again. Future work only
+            needs to determine whether a window of length L + 1 (and later larger)
+            is possible.
 
-        Example: nums = [1, 1, 1, 0, 0, 0, 0, 0], k = 2 . The maximum window's SIZE is carried through until the loop
-        terminates with left=3 and right=7.
+        The current window width therefore acts as the best length found so far.
+
+        Each time right advances, the window temporarily grows by 1:
+            - If it is valid, we have found a larger valid window, so we keep the
+              increased size.
+            - If it is invalid (k < 0), we advance left exactly once. Since right
+              also advanced once, the window returns to its previous size instead
+              of shrinking further.
+
+        Unlike the standard sliding-window template, we do NOT require the carried
+        window to always be valid. After shifting left once, it may still contain
+        too many zeros. That is okay: we already know that its SIZE is achievable
+        from an earlier valid window, so there is no reason to shrink below it.
+
+        As right continues advancing, an invalid carried window shifts forward at
+        the same size until enough zeros leave from the left. Once the constraint is
+        restored, a future right expansion can increase the window size again.
+
+        Thus, the window size never decreases:
+            - left and right move together -> keep the current best size
+            - only right moves            -> a larger valid size was found
+
+        At the end, right - left represents the largest valid window SIZE found,
+        even though [left, right) does not necessarily represent the actual longest
+        valid window.
+
+        This is an optimization of the standard longest-valid-window template, not
+        a separate core template.
 
     Time complexity: O(N)
     Space complexity: O(1)
@@ -91,10 +111,10 @@ def longest_ones_v2(nums, k):
         if nums[right] == 0:
             k -= 1
         if k < 0:
-            # A negative k denotes we have consumed all allowed flips and window has more than allowed zeros,
-            # thus increment left pointer by 1 to keep the window size same.
+            # A negative k denotes we have consumed all allowed flips and the window more zeros than allowed, so
+            # increment left pointer by 1 to maintain the window size.
             if nums[left] == 0:
-                # If the left element to be thrown out is zero we increment k
+                # If the left element to be thrown out is zero, we increment k
                 k += 1
             # Regardless of whether we had a 1 or a 0 we can move left side by 1. If we keep seeing 1's, the
             # window still keeps moving as-is
