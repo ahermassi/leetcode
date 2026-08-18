@@ -5,22 +5,36 @@ import unittest2 as unittest
 
 
 def longest_ones_v1(nums, k):
-    """ We can use a simple sliding window approach to solve this problem.
+    """ Pattern: Variable-Size Sliding Window — Longest Valid Window.
 
-        The solution is pretty intuitive. We keep expanding the window by moving the right pointer. When the window has
-        reached the limit of 0's allowed, we contract (if possible) and save the longest window till now. The answer is
-        the longest desirable window.
+        General template:
+            1. Expand the right boundary and update the window state.
+            2. If the window becomes invalid, shrink from the left until the invariant
+               is restored.
+            3. Once valid again, update the maximum window length.
 
-            - Initialize two pointers. The two pointers help us mark the left and right end of the window/subarray with
-               contiguous 1's.
+        For this problem, a window is valid if it contains at most k zeros, since those
+        are exactly the elements we are allowed to flip to 1.
 
-            - Use the right pointer to expand the window until the window/subarray is desirable. i.e. number of 0's in
-               the window is in the allowed range of [0, k].
+        Instead of counting zeros separately, we reuse k as the number of flips still
+        available in the current window. When nums[right] is 0, we consume one flip:
 
-            - Once we have a window which has more than the allowed number of 0's, we can move the left pointer ahead
-               one by one until we encounter 0 on the left too. This step ensures we are throwing out the extra zero.
-               Note that using a 'while' loop means we always have a valid window, not only a window whose size is equal
-               to the maximum size of a valid window.
+            k -= 1
+
+        If k becomes negative, the window contains too many zeros and is invalid.
+        We then move left forward until a zero leaves the window, restoring one flip
+        and making the window valid again.
+
+        Once the shrinking loop finishes, nums[left:right+1] is the longest valid
+        window ending at right, so we update the global maximum.
+
+        This is the same longest-valid-window template as problems such as longest
+        substring without repeating characters; only the validity condition changes:
+
+            LC 3:    no duplicate characters
+            LC 1004: at most k zeros
+
+        Each element enters the window once and leaves it at most once.
 
     Time complexity: O(N)
     Space complexity: O(1)
@@ -29,14 +43,11 @@ def longest_ones_v1(nums, k):
     left = right = 0
     while right < n:
         if nums[right] == 0:
-            # If we include a zero in the window we reduce the value of k since k is the maximum zeros allowed in
-            # a window.
             k -= 1
         while k < 0:
             # A negative k denotes we have consumed all allowed flips and the window has more than allowed zeros.
-            # We need to advance the left pointer until the current window is valid
+            # We need to advance the left pointer until the current window is valid again.
             if nums[left] == 0:
-                # If the left element to be thrown out is a zero, we increment k
                 k += 1
             left += 1
         res = max(res, right - left + 1)
