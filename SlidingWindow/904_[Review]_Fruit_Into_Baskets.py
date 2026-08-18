@@ -12,7 +12,7 @@ Given the integer array fruits, return the maximum number of fruits you can pick
 
 from collections import defaultdict
 
-def total_fruit(fruits):
+def total_fruit_v1(fruits):
     """ Pattern: Variable-Size Sliding Window — Longest Valid Window.
 
         General template:
@@ -62,4 +62,89 @@ def total_fruit(fruits):
             left += 1
         res = max(res, right - left + 1)
         right += 1
+    return res
+
+def total_fruit_v2(fruits):
+    """ Pattern: Variable-Size Sliding Window — Longest Valid Window.
+        Optimization: Compress the window state for the special case of at most
+        2 distinct values.
+
+        The standard solution uses a HashMap and the general template:
+
+            expand right
+            -> if more than 2 fruit types exist, shrink left until valid
+            -> update the longest valid window
+
+        This solution uses the same underlying idea, but exploits the fact that
+        the limit is exactly 2 distinct fruit types.
+
+        Suppose the current valid window ends with:
+
+            ... A B B B
+
+        and a new third type C arrives:
+
+            ... A B B B C
+
+        A can no longer belong to a valid window ending at C. The only part of
+        the previous window that can survive is the consecutive suffix of B's:
+
+            B B B C
+
+        Therefore, instead of maintaining the entire window, we only need:
+
+            most_recent_type:
+                the fruit type at the end of the current sequence
+
+            other_type:
+                the other fruit type allowed in the current window
+
+            recent_run_length:
+                how many consecutive occurrences of most_recent_type appear
+                at the end
+
+            current_length:
+                length of the longest valid window ending at the current index
+
+        When the next fruit is one of the two current types, the valid window
+        simply grows by 1.
+
+        When a third type appears, the new valid window consists only of:
+            trailing run of the previous most_recent_type + the new fruit
+
+        so:
+            current_length = recent_run_length + 1
+
+        This is a specialized optimization of the standard longest-valid-window
+        template. Instead of explicitly moving a left pointer, we retain only the
+        suffix that could possibly remain after a third distinct type appears.
+
+        This trick is specific to "at most 2 distinct values"; the HashMap version
+        is the general solution for "at most K distinct values".
+
+    Time complexity : O(N)
+    Space complexity: O(1)
+    """
+    most_recent_type = other_type = None
+    recent_run_length = current_length = res = 0
+    for fruit in fruits:
+        # If this fruit is already one of our two allowed types,
+        # the current valid window can simply grow.
+        if fruit == most_recent_type or fruit == other_type:
+            current_length += 1
+        else:
+            # A third type appeared. Only the consecutive suffix of the
+            # most recent type can be preserved in a valid window.
+            current_length = recent_run_length + 1
+
+        if fruit == most_recent_type:
+            # Extend the trailing run of the most recent fruit type.
+            recent_run_length += 1
+        else:
+            # A new type is now the most recent one. The previous most
+            # recent type becomes the second allowed type.
+            other_type = most_recent_type
+            most_recent_type = fruit
+            recent_run_length = 1
+        res = max(res, current_length)
     return res
