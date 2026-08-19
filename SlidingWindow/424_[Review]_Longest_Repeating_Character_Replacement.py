@@ -67,8 +67,49 @@ def character_replacement_v1(s, k):
 
 
 def character_replacement_v2(s, k):
-    """ Same idea but we keep shrinking the window from the left AS LONG AS the max number of character replacements
-        exceeds k.
+    """ Pattern: Variable-Size Sliding Window — Longest Valid Window.
+        Optimization: keep a monotonically non-decreasing maximum frequency.
+
+        The first-principles version uses the condition:
+
+            window_size - actual_max_frequency <= k
+
+        and recomputes the maximum character frequency after the window shrinks.
+
+        This version avoids that recomputation.
+
+        `max_frequency` records the largest frequency reached by any character
+        while expanding right:
+
+            max_frequency = max(max_frequency, freq[s[right]])
+
+        Importantly, we do NOT decrease `max_frequency` when left moves.
+
+        Because of this, `max_frequency` can become larger than the true maximum
+        frequency of the CURRENT window. Therefore, unlike the canonical sliding
+        window solution, the carried window is not guaranteed to be literally
+        valid at every point.
+
+        The optimization relies on a stronger property of this specific
+        maximum-length problem: a stale `max_frequency` can allow us to carry
+        forward a window size that was already achievable, but it cannot justify
+        increasing the answer to a new size unless enough frequency support has
+        actually been observed.
+
+        We therefore still shrink when:
+
+            window_size - max_frequency > k
+
+        but `max_frequency` only increases and never needs to be recomputed when
+        the left boundary moves.
+
+        The optimization relies on a property specific to this maximum-length problem:
+        a stale max_frequency may allow us to carry forward a window SIZE that was
+        already achievable, but it cannot establish a genuinely larger answer without
+        new frequency support appearing as right expands.
+
+        This is an optimization of the same longest-window idea, but it uses a
+        less intuitive invariant than the canonical solution.
 
     Time complexity: O(N)
     Space complexity: O(1)
