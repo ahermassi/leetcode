@@ -6,25 +6,61 @@ import unittest2 as unittest
 
 
 def check_inclusion_v1(s1, s2):
-    """ One string is a permutation of another string only if both of them contain the same characters with the
-         same number of occurrences.
+    """ Pattern: Fixed-Size Sliding Window + Frequency Matching.
 
-         We can consider every possible substring in the longer string s2 of the same length as that of s1 and check the
-         occurrences of characters appearing in the two. If the frequencies of all letters match exactly, then s1's
-         permutation can be a substring of s2.
+        Start from the definition of a permutation:
 
-         We make use of a hashmap 'counter' which stores the number of occurrences of all the characters in the shorter
-         string s1. Then, we consider every possible substring of s2 of the same length as that of s1 and construct its
-         corresponding frequency map as well.
+            Two strings are permutations of each other iff they contain exactly the
+            same characters with exactly the same frequencies.
 
-         Instead of generating the hashmap afresh for every window in s2, we just need to maintain a sliding window of
-         the same length as s1 and move it from the beginning to the end of s2.
+        Therefore, we do not care about the order of characters inside a candidate
+        substring of s2. We only care about its character-frequency map.
 
-         When a character enters the window, we increment that character's count. When a character is dropped from the
-         window, we decrement that character's count. We maintain a valid window by decrementing the count of the
-         character at window's leftmost index. After, we only need to check if the two frequency maps are equal.
+        A permutation of s1 must also have exactly len(s1) characters. That immediately
+        gives us a fixed-size sliding window:
 
-         Thus, the substrings considered can be viewed as a window of length as that of s1 iterating over s2.
+            window_size = len(s1)
+
+        So instead of examining arbitrary substrings of s2, we only need to examine
+        every contiguous window of exactly that size and ask:
+
+            frequencies(window) == frequencies(s1) ?
+
+        This maps directly to the Fixed-Size Sliding Window template:
+
+            1. Build the state for the first window of size n.
+            2. Move the window one position to the right:
+                   - add the new right character
+                   - remove the old left character
+            3. Evaluate the newly formed window.
+            4. Repeat until every size-n window has been checked.
+
+        Here, the window state is a frequency map.
+
+        `counter` stores the required frequencies from s1.
+        `window` stores the frequencies in the current substring of s2.
+
+        When the window slides:
+            - s2[right] enters, so increment its count
+            - s2[left] leaves, so decrement its count
+            - if that count reaches 0, remove the key so the map represents only
+              characters actually present in the current window
+
+        If `window == counter`, the current substring contains exactly the same
+        multiset of characters as s1, so it must be a permutation of s1.
+
+        The key pattern connection is:
+
+            permutation preserves length
+                -> only windows of len(s1) matter
+                -> fixed-size sliding window
+
+            permutation ignores order but preserves counts
+                -> frequency map is the necessary window state
+
+        Instead of rebuilding a frequency map for every substring from scratch, the
+        sliding window updates the existing state in O(1) work as characters enter and
+        leave.
 
     Time complexity: O(N + M), where N is the length of s1 and M is the length of s2. We could argue that comparing the
     frequency maps is O(1) since they contain at most 26 key-value pairs, which results in an O(N + M) time complexity.
@@ -33,11 +69,8 @@ def check_inclusion_v1(s1, s2):
     if len(s1) > len(s2):
         return False
     n, m = len(s1), len(s2)
-    counter, window = defaultdict(int), defaultdict(int)
-    for i in range(n):
-        counter[s1[i]] += 1
-        window[s2[i]] += 1
-    if counter == window:
+    counter, window = Counter(s1), Counter(s2[:n])
+    if window == counter:
         return True
     left, right = 0, n
     while right < m:
