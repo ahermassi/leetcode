@@ -250,42 +250,148 @@ def find_anagrams_v2(s, p):
     return res
 
 
-def find_anagrams_v2(s, p):
-    """ A different sliding window approach. No hash map comparison is involved.
-        Find the frequency of characters in the string p using 'counter' hash map, two variables 'left' and 'right' to
-        represent the left and right boundaries of the sliding window, and a variable 'need' to represent the number
-        of characters in the string p that need to be matched.
-        If the character on the right boundary is already in the hash table, indicating that the character appears in
-        p, then 'need' is decremented by 1, and then the entry of the current character in the hash table is also
-        decremented by 1 anyways. If 'need' is reduced to 0 at this time, it means that the characters in p are
-        matched in the current window, and the left boundary is added to the result 'res'.
-        If the window size (right - left + 1) is equal to the length of p, it means that the leftmost character should
-        be removed from the window. If after removal (corresponding entry in the frequency map is incremented by 1)
-        the count of the left character is greater than 0, it means that the character is a character in p. Why ?
-        Well, because each character is decremented by 1 above, and if it is not a character in p, then the character's
-        frequency in the hash table should be 0, and it will be -1 after decrementing by 1, so that we know whether
-        the character belongs to p. So if the leftmost character we removed belongs to p, 'need' is incremented by 1.
-    Time complexity: O(N)
-    Space complexity: O(1)
+def find_anagrams_v3(s, p):
     """
-    n, m = len(s), len(p)
+    Pattern: Fixed-Size Sliding Window + Deficit Counter.
+
+    Start from the same first principles as v1 and v2:
+
+        - An anagram of p must have exactly len(p) characters.
+        - Therefore, only fixed-size windows of len(p) in s matter.
+        - A window is an anagram iff it contains exactly the character
+          frequencies required by p.
+
+    The previous solutions represent the window state differently:
+
+        v1:
+            Keep `counter` for p and a separate `window` frequency map.
+            Compare the two maps for every complete window.
+
+        v2:
+            Keep both maps, but maintain the result of that comparison
+            incrementally with `matches`.
+
+        v3:
+            Remove the separate window map entirely and mutate `counter`
+            into a deficit/surplus map for the current window.
+
+    Initially:
+
+        counter[c] = number of copies of c required by p
+
+    As characters enter the window, we decrement their counts:
+
+        counter[c] > 0  -> still missing copies of c
+        counter[c] == 0 -> exactly enough copies of c have been seen
+        counter[c] < 0  -> the current window contains surplus copies of c
+
+    `matched_chars` counts how many individual character occurrences required
+    by p are currently satisfied.
+
+    When right_char enters:
+
+        if counter[right_char] > 0:
+            matched_chars += 1
+
+        counter[right_char] -= 1
+
+    If counter[right_char] was positive before the decrement, we still needed
+    that occurrence, so it satisfies one requirement from p.
+
+    When:
+
+        matched_chars == len(p)
+
+    every required character occurrence has been satisfied.
+
+    Because the sliding window is bounded to len(p) characters, satisfying all
+    len(p) required occurrences means the current window must be an anagram of
+    p. We therefore append its left boundary to the result.
+
+    When the window reaches size len(p), the leftmost character must leave
+    before the next iteration:
+
+        counter[left_char] += 1
+
+    If the count becomes positive afterward, the new window is now missing one
+    required copy of that character, so:
+
+        matched_chars -= 1
+
+    If the count remains zero or negative, the removed occurrence was surplus
+    and was not contributing to `matched_chars`.
+
+    This is still the Fixed-Size Sliding Window template:
+
+        expand right
+        -> update the window state
+        -> evaluate the complete size-len(p) window
+        -> remove left
+        -> continue
+
+    The progression across the three solutions is:
+
+        v1: compare complete frequency state
+        v2: maintain the comparison result incrementally
+        v3: encode target vs. current window directly as deficits and surpluses
+
+    This is also the same deficit-counter representation used in LC 567 v3.
+    The only difference is the problem's output:
+
+        LC 567: return True when a matching window is found
+        LC 438: append the left boundary of every matching window
+
+    Reusable idea:
+
+        A target frequency map can sometimes be transformed into a balance or
+        deficit map:
+
+            positive -> still needed
+            zero     -> satisfied
+            negative -> surplus
+
+    Time complexity: O(N), where N = len(s).
+    Space complexity: O(1), since the counter contains at most 26 lowercase
+                      English letters.
+    """
+    if len(p) > len(s):
+        return []
+    n, m = len(p), len(s)
     counter = Counter(p)
-    left, right, need, res = 0, 0, len(p), []
-    while right < n:
-        cur_char = s[right]
-        if counter[cur_char] > 0:  # The current character is in p
-            need -= 1  # One less character is needed
-        counter[cur_char] -= 1  # Decrement the count of current character anyway, so when it is not part of p it gets
-        # a negative entry in the map
-        if need == 0:
+    matched_chars = 0
+    res = []
+    left = right = 0
+    while right < m:
+        right_char = s[right]
+
+        # This character satisfies one still-unmet requirement from p.
+        if counter[right_char] > 0:
+            matched_chars += 1
+
+        # Consume this occurrence. A negative value means we have surplus
+        # copies of this character in the current window.
+        counter[right_char] -= 1
+
+        # All characters required by p are satisfied, so the current
+        # size-n window is an anagram.
+        if matched_chars == n:
             res.append(left)
-        if right - left + 1 == m:  # Current window size is equal to p length
-            counter[s[left]] += 1  # Discard the leftmost character
-            if counter[s[left]] > 0:  # If the discarded character was part of p, then it would have an entry equal to
-                # 0 at least, and if it's the case it would be > 0 after being incremented
-                need += 1
+
+        # Keep the window bounded to size n.
+        if right - left + 1 == n:
+            left_char = s[left]
+
+            # Undo the contribution of the character leaving the window.
+            counter[left_char] += 1
+
+            # Positive again means the new window is missing one required copy.
+            if counter[left_char] > 0:
+                matched_chars -= 1
+
             left += 1
+
         right += 1
+
     return res
 
 
@@ -296,6 +402,7 @@ class Test(unittest.TestCase):
         for test_string, test_pattern, result in self.data:
             self.assertEqual(result, find_anagrams_v1(test_string, test_pattern))
             self.assertEqual(result, find_anagrams_v2(test_string, test_pattern))
+            self.assertEqual(result, find_anagrams_v3(test_string, test_pattern))
 
 
 if __name__ == '__main__':
