@@ -87,22 +87,96 @@ def check_inclusion_v1(s1, s2):
 
 # Video explanation: https://youtu.be/UbyhOgBN834
 def check_inclusion_v2(s1, s2):
-    """ The previous approach can be optimized. Instead of comparing all the elements of the hashmaps for every updated
-         frequency map of every window in s2, we keep track of the number of characters that already matched in the
-         previous window and only update the count of those characters when we slide the window.
+    """ Pattern: Fixed-Size Sliding Window + Incremental Frequency Matching.
 
-         We maintain a 'matches' variable which stores the number of characters that have the same number of occurrences
-         in both s1 and the current window in s2. When we slide the window:
+        Start from the same reasoning as the first solution:
 
-            - If the exclusion of the leftmost character and the inclusion of the current character lead to a new
-               match in occurrences for any of the characters, we increment 'matches'.
+            - A permutation of s1 must have exactly len(s1) characters.
+            - Therefore, only fixed-size windows of len(s1) in s2 matter.
+            - Two strings are permutations iff every character has the same
+              frequency in both strings.
 
-            - Otherwise, if a character whose frequency was the same earlier (prior to addition or removal) is included,
-               it could lead to a frequency mismatch which is taken into account by decrementing 'matches'.
+        The first solution maintains the frequency map for the current window and,
+        after every slide, compares the entire window state against `counter`.
 
-            - Otherwise, we keep 'matches' intact.
+        This solution asks a further question:
 
-        If after sliding the window 'matches' evaluates to 26, it means all the characters match in frequency.
+            When the window slides by one position, how much of the frequency
+            state actually changes?
+
+        Only two characters can change:
+            - s2[right] enters the window
+            - s2[left] leaves the window
+
+        Equality of the two frequency maps can be viewed as 26 independent
+        conditions:
+
+            window['a'] == counter['a']
+            window['b'] == counter['b']
+            ...
+            window['z'] == counter['z']
+
+        Instead of checking all 26 conditions after every slide, `matches` stores
+        how many of them are currently true.
+
+        Now consider what happens when one character's frequency changes.
+
+        When `right_char` enters the window, its count increases by exactly 1:
+
+            window[right_char] += 1
+
+        Because the count changes by only 1, there are only two cases in which its
+        match status can change:
+
+            - If the new count equals counter[right_char], the character just went
+              from mismatched to matched, so increment `matches`.
+
+            - If the new count equals counter[right_char] + 1, then it must have
+              matched immediately before the increment. We just moved one past the
+              required count, so decrement `matches`.
+
+        Similarly, when `left_char` leaves the window, its count decreases by
+        exactly 1:
+
+            window[left_char] -= 1
+
+        Again, only two transitions matter:
+
+            - If the new count equals counter[left_char], the character just became
+              matched, so increment `matches`.
+
+            - If the new count equals counter[left_char] - 1, then it matched before
+              the decrement, and we just moved below the required count, so decrement
+              `matches`.
+
+        Any other change leaves that character mismatched both before and after, so
+        `matches` remains unchanged.
+
+        Therefore, when:
+
+            matches == 26
+
+        all 26 character frequencies match, so the current window is a permutation
+        of s1.
+
+        This is still the same Fixed-Size Sliding Window template:
+
+            build first window
+            -> add the new right element
+            -> remove the old left element
+            -> evaluate the updated window
+
+        The optimization is in HOW we evaluate the window:
+
+            v1: compare the whole frequency state after every slide
+
+            v2: maintain the result of that comparison incrementally, updating only
+                the characters whose frequencies actually changed
+
+        General reusable idea:
+
+            When a state changes locally, avoid recomputing a global predicate from
+            scratch if the predicate itself can be updated from those local changes.
 
     Time complexity: O(N + M)
     Space complexity: O(1)
@@ -113,25 +187,27 @@ def check_inclusion_v2(s1, s2):
     counter, window = Counter(s1), Counter(s2[:n])
     matches = 0
     for i in range(26):
-        if window[chr(i + ord('a'))] == counter[chr(i + ord('a'))]:
+        char = chr(ord('a') + i)
+        if window[char] == counter[char]:
             matches += 1
     if matches == 26:
         return True
     left, right = 0, n
     while right < m:
-        cur_char, leftmost_char = s2[right], s2[left]
-        window[cur_char] += 1  # Expand the window
-        if window[cur_char] == counter[cur_char]:
-            matches += 1
-        elif window[cur_char] == counter[cur_char] + 1:
-            # If the addition of the current character disrupts an earlier match
+        left_char, right_char = s2[left], s2[right]
+        # right_char is about to change, so remove its old contribution
+        # to `matches` before updating its frequency.
+        if window[right_char] == counter[right_char]:
             matches -= 1
-        window[leftmost_char] -= 1  # Shrink the window
-        if window[leftmost_char] == counter[leftmost_char]:
+        window[right_char] += 1
+        if window[right_char] == counter[right_char]:
             matches += 1
-        elif window[leftmost_char] == counter[leftmost_char] - 1:
-            # If the removal of the current character disrupts an earlier match
+        # Same logic for the character leaving the window.
+        if window[left_char] == counter[left_char]:
             matches -= 1
+        window[left_char] -= 1
+        if window[left_char] == counter[left_char]:
+            matches += 1
         if matches == 26:
             return True
         left += 1
