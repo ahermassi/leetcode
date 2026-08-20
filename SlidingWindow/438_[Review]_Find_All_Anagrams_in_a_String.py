@@ -102,6 +102,153 @@ def find_anagrams_v1(s, p):
 
     return res
 
+def find_anagrams_v2(s, p):
+    """
+    Pattern: Fixed-Size Sliding Window + Incremental Frequency Matching.
+
+    Start from the same first principles as v1:
+
+        - An anagram of p must have exactly len(p) characters.
+        - Therefore, only fixed-size windows of len(p) in s matter.
+        - Two strings are anagrams iff every character has exactly the same
+          frequency in both strings.
+
+    v1 maintains:
+        `counter` = frequencies required by p
+        `window`  = frequencies in the current window
+
+    and evaluates every complete window by comparing:
+
+        window == counter
+
+    This solution asks:
+
+        When the window slides by one position, how much of the frequency
+        state actually changes?
+
+    Only two character counts change:
+        - s[right] enters the window
+        - s[left] leaves the window
+
+    Equality of the two frequency maps can be viewed as 26 independent
+    conditions:
+
+        window['a'] == counter['a']
+        window['b'] == counter['b']
+        ...
+        window['z'] == counter['z']
+
+    Instead of checking all 26 conditions after every slide, `matches` stores
+    how many of those equalities are currently true.
+
+    This implementation uses the Fixed-Size Sliding Window lifecycle:
+
+        preload len(p) - 1 characters
+        -> add right, completing a size-len(p) window
+        -> update `matches` for right_char
+        -> evaluate the complete window
+        -> remove left, returning to size len(p) - 1
+        -> update `matches` for left_char
+        -> advance and repeat
+
+    Because each affected frequency changes by exactly 1, a character's match
+    status can only change when it crosses the required frequency.
+
+    When right_char enters:
+
+        window[right_char] += 1
+
+        - If the new count equals counter[right_char], it just became a match,
+          so increment `matches`.
+
+        - If the new count equals counter[right_char] + 1, it must have matched
+          immediately before the increment. We moved one above the required
+          count, so decrement `matches`.
+
+    When left_char leaves:
+
+        window[left_char] -= 1
+
+        - If the new count equals counter[left_char], it just became a match,
+          so increment `matches`.
+
+        - If the new count equals counter[left_char] - 1, it must have matched
+          immediately before the decrement. We moved one below the required
+          count, so decrement `matches`.
+
+    Any other count change leaves that character mismatched both before and
+    after, so `matches` does not change.
+
+    Therefore:
+
+        matches == 26
+
+    means every character frequency matches, so the current fixed-size window
+    is an anagram of p. Unlike LC 567, where we can return immediately, this
+    problem requires every match, so we append the current left boundary.
+
+    Progression from v1:
+
+        v1:
+            maintain the window frequencies
+            -> compare the entire frequency state
+
+        v2:
+            maintain the same frequencies
+            -> maintain the result of that comparison incrementally
+
+    Reusable idea:
+
+        When an operation changes only a small part of the state, avoid
+        recomputing a global predicate from scratch if the predicate itself can
+        be updated using only those local changes.
+
+    Time complexity: O(N), where N = len(s). Initializing the counters and
+                     matches is bounded by len(p) + 26, and every character in
+                     s is processed at most once as it enters and leaves the
+                     fixed-size window.
+    Space complexity: O(1), since the frequency maps contain at most 26
+                      lowercase English letters.
+    """
+    if len(p) > len(s):
+        return []
+    n, m = len(s), len(p)
+    counter, window = Counter(p), Counter(s[:m - 1])
+    matches = 0
+    for i in range(26):
+        char = chr(ord('a') + i)
+        if window[char] == counter[char]:
+            matches += 1
+    res = []
+    left, right = 0, m - 1
+    while right < n:
+        left_char, right_char = s[left], s[right]
+
+        # Complete the current fixed-size window.
+        window[right_char] += 1
+
+        if window[right_char] == counter[right_char]:
+            matches += 1
+        elif window[right_char] == counter[right_char] + 1:
+            matches -= 1
+
+        # Evaluate while the window contains exactly len(p) characters.
+        if matches == 26:
+            res.append(left)
+
+        # Return the window to size len(p) - 1 for the next iteration.
+        window[left_char] -= 1
+
+        if window[left_char] == counter[left_char]:
+            matches += 1
+        elif window[left_char] == counter[left_char] - 1:
+            matches -= 1
+
+        left += 1
+        right += 1
+
+    return res
+
 
 def find_anagrams_v2(s, p):
     """ A different sliding window approach. No hash map comparison is involved.
