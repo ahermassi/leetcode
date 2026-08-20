@@ -8,22 +8,98 @@ import unittest2 as unittest
 
 
 def find_anagrams_v1(s, p):
-    """ Maintain a window of len(p) in s, and slide to right until finish.
-    Time complexity: O(N), the comparison of the two hash maps is still O(1) because every hash map can hold at most
-    26 characters.
+    """
+    Pattern: Fixed-Size Sliding Window + Frequency Matching.
+
+    Start from the definition of an anagram:
+
+        Two strings are anagrams iff they contain exactly the same characters
+        with exactly the same frequencies.
+
+    Therefore, character order inside a candidate substring does not matter.
+    What matters is whether its frequency map matches the frequency map of `p`.
+
+    An anagram of `p` must also have exactly len(p) characters, which gives us
+    a fixed-size sliding window:
+
+        window_size = len(p)
+
+    So the problem becomes:
+
+        For every contiguous window of size len(p) in `s`,
+        does its frequency map equal Counter(p)?
+
+    This is the same Fixed-Size Sliding Window + Frequency Matching pattern
+    used in LC 567.
+
+    The difference in the problem objective is:
+
+        LC 567:
+            return True as soon as one matching window is found
+
+        LC 438:
+            collect the starting index of every matching window
+
+    This implementation uses the following fixed-window lifecycle:
+
+        preload len(p) - 1 characters
+        -> add right, completing a window of size len(p)
+        -> evaluate the complete window
+        -> remove left, returning to size len(p) - 1
+        -> advance and repeat
+
+    `p_counter` stores the required frequencies from `p`.
+    `window` stores the frequencies represented by the current sliding window.
+
+    When:
+
+        window == p_counter
+
+    the current substring is an anagram of `p`, so we append its left boundary.
+
+    After evaluating the window, the leftmost character is removed from the
+    frequency map so the next iteration can slide the window one position
+    to the right without rebuilding its state from scratch.
+
+    Pattern connection:
+
+        anagram preserves length
+            -> only windows of len(p) matter
+            -> Fixed-Size Sliding Window
+
+        anagram ignores order but preserves frequencies
+            -> Frequency Matching
+
+    Each character enters and leaves the window once.
+
+    Time complexity: O(N), where N = len(s).
+          Counter comparison is O(26) = O(1) because the strings contain only
+          lowercase English letters.
     Space complexity: O(26) = O(1)
     """
-    n, m, res = len(s), len(p), []
-    p_counter = Counter(p)
-    window = Counter(s[:m - 1])  # Initially, the window is of size len(p) - 1
-    for i in range(m - 1, n):
-        window[s[i]] += 1  # Add character to have a window of size len(p)
+    if len(p) > len(s):
+        return []
+    n, m = len(s), len(p)
+    p_counter, window = Counter(p), Counter(s[:m - 1])
+    res = []
+    left, right = 0, m - 1
+    while right < n:
+        left_char, right_char = s[left], s[right]
+
+        # Complete the current size-m window.
+        window[right_char] += 1
+
         if window == p_counter:
-            res.append(i - m + 1)  # Append the starting index, or left boundary, of the window
-        window[s[i - m + 1]] -= 1  # Decrease the count of the oldest char in the window. This is how the window
-        # 'slides' and shrinks (from left)
-        if window[s[i - m + 1]] == 0:
-            del window[s[i - m + 1]]  # Remove the character if its count is zero
+            res.append(left)
+
+        # Return the window to size m - 1 before the next iteration.
+        window[left_char] -= 1
+        if window[left_char] == 0:
+            del window[left_char]
+
+        left += 1
+        right += 1
+
     return res
 
 
