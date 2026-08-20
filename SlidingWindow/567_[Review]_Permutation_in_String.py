@@ -10,78 +10,91 @@ def check_inclusion_v1(s1, s2):
 
         Start from the definition of a permutation:
 
-            Two strings are permutations of each other iff they contain exactly the
-            same characters with exactly the same frequencies.
+            Two strings are permutations iff they contain exactly the same
+            characters with exactly the same frequencies.
 
-        Therefore, we do not care about the order of characters inside a candidate
-        substring of s2. We only care about its character-frequency map.
+        Therefore, character order does not matter. For every candidate substring
+        of s2, we only care about its frequency map.
 
-        A permutation of s1 must also have exactly len(s1) characters. That immediately
-        gives us a fixed-size sliding window:
+        A permutation of s1 must also have exactly len(s1) characters, which gives
+        us a fixed-size sliding window:
 
             window_size = len(s1)
 
-        So instead of examining arbitrary substrings of s2, we only need to examine
-        every contiguous window of exactly that size and ask:
+        So the problem becomes:
 
-            frequencies(window) == frequencies(s1) ?
+            For every contiguous window of size len(s1) in s2,
+            does its frequency map equal the frequency map of s1?
 
-        This maps directly to the Fixed-Size Sliding Window template:
+        Fixed-Size Sliding Window template used here:
 
-            1. Build the state for the first window of size n.
-            2. Move the window one position to the right:
-                   - add the new right character
-                   - remove the old left character
-            3. Evaluate the newly formed window.
-            4. Repeat until every size-n window has been checked.
+            1. Preload the window with the first n - 1 elements.
+            2. Add s2[right], completing a window of exactly size n.
+            3. Evaluate the complete window.
+            4. Remove s2[left], returning the window to size n - 1.
+            5. Advance both boundaries and repeat.
 
-        Here, the window state is a frequency map.
+        This gives every iteration the same lifecycle:
 
-        `counter` stores the required frequencies from s1.
-        `window` stores the frequencies in the current substring of s2.
+            size n - 1
+                -> add right
+            size n
+                -> evaluate
+                -> remove left
+            size n - 1
+                -> repeat
 
-        When the window slides:
-            - s2[right] enters, so increment its count
-            - s2[left] leaves, so decrement its count
-            - if that count reaches 0, remove the key so the map represents only
-              characters actually present in the current window
+        Window state:
+            `counter` = frequencies required by s1
+            `window`  = frequencies currently represented by the sliding window
 
-        If `window == counter`, the current substring contains exactly the same
-        multiset of characters as s1, so it must be a permutation of s1.
+        When `window == counter`, the current size-n substring contains exactly the
+        same multiset of characters as s1, so it is a permutation.
 
-        The key pattern connection is:
+        When the leftmost character leaves, its count is decremented. If the count
+        reaches 0, we remove the key so `window` contains only characters actually
+        present in the current window.
+
+        Pattern connection:
 
             permutation preserves length
                 -> only windows of len(s1) matter
-                -> fixed-size sliding window
+                -> Fixed-Size Sliding Window
 
-            permutation ignores order but preserves counts
-                -> frequency map is the necessary window state
+            permutation ignores order but preserves frequencies
+                -> Frequency Matching
 
-        Instead of rebuilding a frequency map for every substring from scratch, the
-        sliding window updates the existing state in O(1) work as characters enter and
-        leave.
+        Instead of rebuilding a frequency map for every candidate substring, we
+        update the existing window state as one character enters and one leaves.
 
-    Time complexity: O(N + M), where N is the length of s1 and M is the length of s2. We could argue that comparing the
-    frequency maps is O(1) since they contain at most 26 key-value pairs, which results in an O(N + M) time complexity.
-    Space complexity: O(1)
+    Time complexity: O(N + M), where N = len(s1) and M = len(s2). Counter comparison is O(26) = O(1) because there are only 26
+    lowercase English letters.
+    Space complexity: O(26) = O(1)
     """
     if len(s1) > len(s2):
         return False
     n, m = len(s1), len(s2)
-    counter, window = Counter(s1), Counter(s2[:n])
-    if window == counter:
-        return True
-    left, right = 0, n
+    counter, window = Counter(s1), Counter(s2[:n - 1])
+    left, right = 0, n - 1
     while right < m:
-        window[s2[right]] += 1
-        window[s2[left]] -= 1
-        if window[s2[left]] == 0:
-            del window[s2[left]]
+        left_char, right_char = s2[left], s2[right]
+
+        # Complete the current fixed-size window.
+        window[right_char] += 1
+
         if window == counter:
             return True
+
+        # Remove the leftmost character so the window is back to size n - 1
+        # before the next iteration.
+        window[left_char] -= 1
+
+        if window[left_char] == 0:
+            del window[left_char]
+
         left += 1
         right += 1
+
     return False
 
 
@@ -89,26 +102,31 @@ def check_inclusion_v1(s1, s2):
 def check_inclusion_v2(s1, s2):
     """ Pattern: Fixed-Size Sliding Window + Incremental Frequency Matching.
 
-        Start from the same reasoning as the first solution:
+        Start from the same first principles as v1:
 
             - A permutation of s1 must have exactly len(s1) characters.
             - Therefore, only fixed-size windows of len(s1) in s2 matter.
-            - Two strings are permutations iff every character has the same
-              frequency in both strings.
+            - Two strings are permutations iff every character has exactly the
+              same frequency in both strings.
 
-        The first solution maintains the frequency map for the current window and,
-        after every slide, compares the entire window state against `counter`.
+        v1 maintains:
+            `counter` = frequencies required by s1
+            `window`  = frequencies in the current window
 
-        This solution asks a further question:
+        and evaluates each candidate by comparing the entire frequency state:
 
-            When the window slides by one position, how much of the frequency
-            state actually changes?
+            window == counter
 
-        Only two characters can change:
-            - s2[right] enters the window
-            - s2[left] leaves the window
+        This solution asks:
 
-        Equality of the two frequency maps can be viewed as 26 independent
+            When the window changes, do we really need to compare all 26
+            character frequencies again?
+
+        No. Each sliding-window step changes only two character counts:
+            - right_char enters
+            - left_char leaves
+
+        We can view equality between the two frequency maps as 26 independent
         conditions:
 
             window['a'] == counter['a']
@@ -116,102 +134,109 @@ def check_inclusion_v2(s1, s2):
             ...
             window['z'] == counter['z']
 
-        Instead of checking all 26 conditions after every slide, `matches` stores
-        how many of them are currently true.
+        `matches` stores how many of those 26 equalities are currently true.
 
-        Now consider what happens when one character's frequency changes.
+        Fixed-Size Sliding Window template used here:
 
-        When `right_char` enters the window, its count increases by exactly 1:
+            1. Preload the first n - 1 elements.
+            2. Add s2[right], completing a window of exactly size n.
+            3. Incrementally update `matches` for right_char.
+            4. Evaluate the complete window.
+            5. Remove s2[left], returning the window to size n - 1.
+            6. Incrementally update `matches` for left_char.
+            7. Advance both boundaries and repeat.
+
+        Because every count changes by exactly 1, a character's match status can
+        change only when it crosses the required frequency.
+
+        When right_char enters:
 
             window[right_char] += 1
 
-        Because the count changes by only 1, there are only two cases in which its
-        match status can change:
+            - If the new count equals counter[right_char], it just became a match:
+                  matches += 1
 
-            - If the new count equals counter[right_char], the character just went
-              from mismatched to matched, so increment `matches`.
+            - If the new count equals counter[right_char] + 1, it must have been
+              matching immediately before the increment, so the new character
+              destroyed that match:
+                  matches -= 1
 
-            - If the new count equals counter[right_char] + 1, then it must have
-              matched immediately before the increment. We just moved one past the
-              required count, so decrement `matches`.
-
-        Similarly, when `left_char` leaves the window, its count decreases by
-        exactly 1:
+        When left_char leaves:
 
             window[left_char] -= 1
 
-        Again, only two transitions matter:
+            - If the new count equals counter[left_char], it just became a match:
+                  matches += 1
 
-            - If the new count equals counter[left_char], the character just became
-              matched, so increment `matches`.
+            - If the new count equals counter[left_char] - 1, it must have been
+              matching immediately before the decrement, so removing the character
+              destroyed that match:
+                  matches -= 1
 
-            - If the new count equals counter[left_char] - 1, then it matched before
-              the decrement, and we just moved below the required count, so decrement
-              `matches`.
+        Any other change leaves that character mismatched both before and after.
 
-        Any other change leaves that character mismatched both before and after, so
-        `matches` remains unchanged.
-
-        Therefore, when:
+        Therefore:
 
             matches == 26
 
-        all 26 character frequencies match, so the current window is a permutation
-        of s1.
+        means all 26 character frequencies match, so the current size-n window is
+        a permutation of s1.
 
-        This is still the same Fixed-Size Sliding Window template:
+        The progression from v1 is:
 
-            build first window
-            -> add the new right element
-            -> remove the old left element
-            -> evaluate the updated window
+            v1:
+                maintain the window state
+                -> compare the entire state
 
-        The optimization is in HOW we evaluate the window:
-
-            v1: compare the whole frequency state after every slide
-
-            v2: maintain the result of that comparison incrementally, updating only
-                the characters whose frequencies actually changed
+            v2:
+                maintain the same window state
+                -> maintain the comparison result incrementally
 
         General reusable idea:
 
-            When a state changes locally, avoid recomputing a global predicate from
-            scratch if the predicate itself can be updated from those local changes.
+            If an operation changes only a small part of some state, avoid
+            recomputing a global predicate from scratch when the predicate itself
+            can be updated from those local changes.
 
     Time complexity: O(N + M)
-    Space complexity: O(1)
+    Space complexity: O(1), since there are only 26 lowercase English letters.
     """
     if len(s1) > len(s2):
         return False
     n, m = len(s1), len(s2)
-    counter, window = Counter(s1), Counter(s2[:n])
+    counter, window = Counter(s1), Counter(s2[:n - 1])
     matches = 0
+    # `window` currently contains n - 1 characters, so initialize matches
+    # against that exact state.
     for i in range(26):
         char = chr(ord('a') + i)
         if window[char] == counter[char]:
             matches += 1
-    if matches == 26:
-        return True
-    left, right = 0, n
+    left, right = 0, n - 1
     while right < m:
         left_char, right_char = s2[left], s2[right]
-        # right_char is about to change, so remove its old contribution
-        # to `matches` before updating its frequency.
-        if window[right_char] == counter[right_char]:
-            matches -= 1
+
+        # Complete the size-n window.
         window[right_char] += 1
         if window[right_char] == counter[right_char]:
             matches += 1
-        # Same logic for the character leaving the window.
-        if window[left_char] == counter[left_char]:
+        elif window[right_char] == counter[right_char] + 1:
             matches -= 1
+
+        # Evaluate while the window contains exactly n characters.
+        if matches == 26:
+            return True
+
+        # Return the window to size n - 1 for the next iteration.
         window[left_char] -= 1
         if window[left_char] == counter[left_char]:
             matches += 1
-        if matches == 26:
-            return True
+        elif window[left_char] == counter[left_char] - 1:
+            matches -= 1
+
         left += 1
         right += 1
+
     return False
 
 
