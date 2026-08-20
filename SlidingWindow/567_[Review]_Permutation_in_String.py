@@ -216,51 +216,125 @@ def check_inclusion_v2(s1, s2):
 
 
 def check_inclusion_v3(s1, s2):
-    """ Same as 438- Find All Anagrams in a String. No hashmap comparison is needed.
+    """ Pattern: Fixed-Size Sliding Window + Deficit Counter.
 
-         Find the frequency of characters in s1 using 'counter' hashmap, two variables 'left' and 'right' represent
-         the left and right boundaries of the sliding window, and a variable 'matches' represents the number of
-         characters in s1 that matched in the sliding window so far.
+        Start from the same first principles as v1 and v2:
 
-         If the rightmost (current) character is already in the hashmap, indicating that the character exists in s1,
-         then 'matches' is incremented, and the count of the current character in the hashmap is also decremented in all
-         cases.
+            - A permutation of s1 must have exactly len(s1) characters.
+            - Therefore, only fixed-size windows of len(s1) in s2 matter.
+            - A window is a permutation iff it contains exactly the character
+              frequencies required by s1.
 
-         If at any point in time 'matches' becomes equal to s2's length, it means that all the characters in s1 were
-         matched in the current window, so we return true.
+        The previous solutions represent this state differently:
 
-         If the window size (right - left + 1) is equal to the length of s1, it means that the leftmost character should
-         be removed from the window. If after removal (corresponding count in the frequency map is incremented by 1)
-         the count of the leftmost character is greater than 0, it means that the character exists in s1. Why?
-         Because each character count is decremented in all cases, and if it is not a character of s1, then the
-         character's count in the hashmap should be 0, and it would become -1 after decrementing, so that way we know
-         whether the character exists in s1. So if the leftmost character we removed exists in s1, 'matches' is
-         decremented.
+            v1:
+                Keep `counter` for s1 and a separate `window` frequency map.
+                Compare the two maps after every slide.
 
-    Time complexity: O(N + M)
-    Space complexity: O(1)
+            v2:
+                Keep both maps, but avoid comparing all frequencies by maintaining
+                how many frequency equalities currently match.
+
+        This solution goes one step further:
+
+            Do we even need a separate frequency map for the window?
+
+        Instead, we mutate `counter` itself so that it represents how many copies
+        of each character are still needed by the CURRENT window.
+
+        Initially:
+
+            counter[c] means we still need that many copies of c if counter[c] > 0
+
+        When s2[right] enters:
+
+            - If counter[s2[right]] > 0, this occurrence satisfies one character
+              that we still needed, so `matched_chars` increases.
+
+            - We always decrement counter[s2[right]].
+
+        This gives the counter a useful interpretation:
+
+            counter[c] > 0  -> still missing copies of c
+            counter[c] == 0 -> exactly enough copies of c have been seen
+            counter[c] < 0  -> the window contains surplus copies of c
+
+        When the fixed-size window slides and s2[left] leaves, we undo its effect:
+
+            counter[s2[left]] += 1
+
+        If that makes the count positive, the removed occurrence was one of the
+        copies that had been satisfying s1's requirement. The new window is now
+        missing that character again, so `matched_chars` decreases.
+
+        Therefore:
+
+            matched_chars == len(s1)
+
+        means every required character occurrence from s1 has been satisfied.
+        Since the window also has exactly len(s1) characters, it must be a
+        permutation of s1.
+
+        This is still the Fixed-Size Sliding Window template:
+
+            expand right
+            -> update window state
+            -> evaluate the size-n window
+            -> remove left
+            -> continue
+
+        The difference is only how we REPRESENT the state:
+
+            v1: target frequencies + window frequencies
+            v2: same maps + incremental equality summary
+            v3: one mutable deficit/surplus counter
+
+        Reusable idea:
+            A target frequency map can sometimes be transformed into a balance
+            or deficit map. Positive counts mean "still needed", zero means
+            "satisfied", and negative counts mean "surplus".
+
+    Time: O(N + M)
+    Space: O(1), since there are only 26 lowercase English letters.
     """
+    if len(s1) > len(s2):
+        return False
     n, m = len(s1), len(s2)
     counter = Counter(s1)
-    matches, needed = 0, n
+    matched_chars = 0
     left = right = 0
     while right < m:
-        cur_char = s2[right]
-        if counter[cur_char] > 0:  # The current character is in s1
-            matches += 1  # One more character is matched
-        # Decrement the count of current character in all cases, so when it is not part of s1 it gets a negative
-        # count in the map.
-        counter[cur_char] -= 1
-        if matches == needed:
+        right_char = s2[right]
+
+        # This character satisfies one still-unmet requirement from s1.
+        if counter[right_char] > 0:
+            matched_chars += 1
+
+        # Consume this occurrence. A negative value means we have surplus
+        # copies of this character in the current window.
+        counter[right_char] -= 1
+
+        # Because the window cannot have len(s1) matched characters without
+        # containing at least len(s1) total characters, this means the current
+        # size-n window is a permutation.
+        if matched_chars == n:
             return True
-        if right - left + 1 == n:  # Current window size is equal to s1's length
-            counter[s2[left]] += 1  # Exclude the leftmost character
-            if counter[s2[left]] > 0:
-                # If the discarded character was part of s1, then it would have an entry equal to 0 at least, and if
-                # it's the case it would be > 0 after being incremented
-                matches -= 1
+
+        # Keep the window bounded to size n.
+        if right - left + 1 == n:
+            left_char = s2[left]
+
+            # Undo the contribution of the character leaving the window.
+            counter[left_char] += 1
+
+            # Positive again means the new window is missing one required copy.
+            if counter[left_char] > 0:
+                matched_chars -= 1
+
             left += 1
+
         right += 1
+
     return False
 
 
