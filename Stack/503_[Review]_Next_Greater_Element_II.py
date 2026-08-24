@@ -73,25 +73,48 @@ def next_greater_elements(nums):
     original array a chance to find their next greater element near the
     beginning.
 
-    This implementation pushes indices during both virtual passes. That means
-    the same real index can appear on the stack more than once, but that is
-    harmless here: we are conceptually processing nums + nums, and repeated
-    writes to res[index] produce the same next-greater value.
+    We only push indices during the first pass.
 
-    Any element that still has no greater value after the full 2 * n traversal
-    correctly keeps its initial answer of -1.
+    Why?
 
-    Time complexity: O(N). We process 2N virtual positions, and every pushed
-    stack entry is popped at most once. Since 2N is still O(N), the total time
+    The stack represents ORIGINAL elements whose next greater element is still
+    unresolved. By the time the first pass finishes, every original element has
+    already had its one chance to become unresolved and be pushed onto the
+    stack.
+
+    The second pass does not represent new elements. It only simulates wrapping
+    around to the beginning of the same circular array so that elements still
+    waiting on the stack can find an answer there.
+
+    Therefore:
+
+        First pass:
+            - resolve previous elements when possible
+            - push each original index once
+
+        Second pass:
+            - only use the repeated values to resolve elements still waiting
+              on the stack
+            - do not push the indices again
+
+    This keeps the invariant especially clean: every index on the stack
+    represents one original array element that is still waiting for its next
+    greater element.
+
+    Any element that is still unresolved after the full 2 * n traversal has no
+    greater value anywhere in circular order, so its answer correctly remains
+    -1.
+
+    Time complexity: O(N). We process 2N positions, and every original index is
+    pushed once and popped at most once. Since 2N is still O(N), the total time
     complexity is O(N).
+
     Space complexity: O(N). The stack can contain O(N) indices. The result
     array also contains N elements.
     """
     n = len(nums)
     stack = []
     res = [-1] * n
-    # Virtually traverse nums + nums so elements near the end can
-    # see elements at the beginning after wrapping around.
     for i in range(2 * n):
         index = i % n
         num = nums[index]
@@ -100,8 +123,10 @@ def next_greater_elements(nums):
         while stack and num > nums[stack[-1]]:
             res[stack.pop()] = num
 
-        # Treat this as another occurrence in the virtual doubled array.
-        stack.append(index)
+        # Only original elements become unresolved candidates.
+        # The second pass only simulates wraparound.
+        if i < n:
+            stack.append(index)
 
     return res
 
