@@ -91,120 +91,132 @@ def daily_temperatures_v1(temperatures):
 
 
 def daily_temperatures_v2(temperatures):
-    """ With the monotonic stack, we iterated forward through the array and moved backwards when we found a warmer day.
-         In this approach, we'll do the reverse - iterate backwards through the array, and move forwards to find the
-         number of days until a warmer day.
+    """
+    Pattern: Monotonic decreasing stack — next greater element to the right,
+    processed from right to left.
 
-         Our main objective is to keep the candidate temperatures on the stack that can be a next greater temperature for
-         the current index.
+    Unlike the left-to-right version, where the stack contains unresolved days
+    waiting to find their first warmer day, here we scan from right to left and
+    maintain a stack of useful CANDIDATES that could be the next warmer day for
+    the current day or for days further to the left.
 
-         For a current temperature at index i, we check the top of the stack and see whether it has a temperature that
-         is greater than the current one. Why do we do this? Because the stack is a LIFO structure, and we move from
-         right, so the top of the stack will be the latest element/temperature that would have been pushed to the stack
-         from the right of the current index i. There can be two cases:
+    The stack stores indices because the answer requires the distance between
+    the current day and its next warmer day.
 
-            - 1) When the temperature at the top of the stack is less than the current temperature, then this can never
-                   be a next greater element of the current temperature OR ALL THE OTHER temperatures before the current
-                   temperature. Why? Because for temperatures to the left of the  current temperature (at indices < i),
-                   the temperature at the current index can be their CANDIDATE for next greater element. (I'm warmer
-                   than those to my right, so if anything I should be a better candidate for next warmer day for those
-                   to my left). Hence, we simply pop the top of the stack until we find a warmer day or until the stack
-                   becomes empty (this means there are no greater elements to the right).
+    For the current day i, we first remove any candidate whose temperature is
+    less than or equal to temperatures[i]:
 
-            - 2) When we find a warmer day at the top of the stack, then we simply consider that temperature as the next
-                   greater element and set the distance between the current temperature and the next greater temperature
-                   as the answer for the current index.
+        while stack and temperatures[i] >= temperatures[stack[-1]]:
+            stack.pop()
 
-         Then we simply push the current temperature to the stack as now this temperature can be a CANDIDATE for next
-         greater element of the temperatures to the left of the current index.
+    Why can those days be permanently discarded?
 
-         To summarize:
+    Suppose the current temperature is 72 and the candidate at the top of the
+    stack is 69:
 
-         For temperatures[i], we pop all the elements of the stack such that temperatures[stack[top]] < temperatures[i].
-         We keep popping until we encounter a stack[top] satisfying temperatures[stack[top]] >= temperatures[i].
-         Now, it is obvious that the current stack[top] can only act as the next greater element for temperatures[i].
+        ... 72 ... 69
+            i
 
-         If no element remains at the top of the stack, it means no temperature greater than temperatures[i] exists to
-         its right. Along with this, we also push the index of the current temperature (temperatures[i]) to the stack,
-         so that temperatures[i] (or stack[top]) now acts as the next greater element for the temperatures to its left.
+    The 69 cannot be the next warmer day for 72 because it is colder.
 
-        Example: temperatures = [73,74,75,71,69,72,76,73]
+    More importantly, 69 can never be useful for any day further to the left
+    either. The current 72 is now a better candidate:
 
+        - 72 is closer to every future day we process on the left.
+        - 72 is warmer than 69.
 
-         i 	        T[i]	    stack	    res	                                                                Description
-        7	        73	    [7]	        [0,0,0,0,0,0,0,0]	        Stack was empty, so we have no next warmer temperature for T[i]. Assign res[7] = 0 and push the current day (7) to the stack.
+    Therefore, if 69 could have been a valid warmer day for some temperature
+    to the left, 72 would also be warmer and would be encountered first.
+    The 69 is dominated by 72 and can safely be removed.
 
-        6	        76	    [6]	        [0,0,0,0,0,0,0,0]	        Stack's top temperature (73) is less than today's temperature (76), so pop it since it can never be the next warmer temperature for
-                                                                                    any day. Again, the stack is empty and so there's no next warmer temperature for today. Assign res[6] = 0 and push current day (6) to the stack.
+    We also pop EQUAL temperatures. The problem requires a STRICTLY warmer
+    temperature, so an equal temperature cannot answer the current day.
+    Furthermore, the current occurrence of that temperature is closer to every
+    day on the left, making the farther equal occurrence useless.
 
-        5	        72	    [6,5]	        [0,0,0,0,0,1,0,0]	        Stack's top temperature (76) is warmer than today's temperature (72). So assign res[5] = 6-5 = 1 and push the current day (5) to the stack.
+    After removing all candidates that are less than or equal to the current
+    temperature, one of two things is true:
 
-        4	        69	    [6,5,4]	    [0,0,0,0,1,1,0,0]	        Stack's top temperature (72) is warmer than today's temperature (69). So assign res[4] = 6-5 = 1 and and push the current day (4) to the stack.
+        1. The stack is empty.
 
-        3	        71	    [6,5,3]	    [0,0,0,2,1,1,0,0]	        Stack's to temperature (69) is less than today's temperature (71), so pop it. Now, stack's top has a greater temperature so we break out of the
-                                                                                    loop and assign res[3] = 5-3 = 2 and push the current day (3) to the stack.
+           There is no warmer temperature to the right, so the answer for this
+           day remains 0.
 
-        2	        75	    [6,2]	        [0,0,4,2,1,1,0,0]	        Stack's top' temperature (71) is less than today's temperature (75), so pop it. Again, stack's top temperature (72) is less than 75, so pop it again.
-                                                                                    Now, stack's top temperature is greater, so we break out of the loop and assign res[2] = 6-2 = 4 and push the current day (2) to the stack.
+        2. The stack is not empty.
 
-        1	        74	    [6,2,1]	    [0,1,4,2,1,1,0,0]	        Stack's top temperature (75) is warmer than today's temperature (74), so assign res[1] = 2-1 = 1 and push the current day (1) to the stack.
+           The temperature at stack[-1] is strictly warmer than the current
+           temperature. Because the top represents the nearest surviving useful
+           candidate to the right, it is the current day's next warmer day.
 
-        0	        73	    [6,2,1,0]	[1,1,4,2,1,1,0,0]	        Stack's top temperature (74) is warmer than today's temperature (73), so assign res[0] = 1-0 = 1 and push the current day (0) to the stack
+           Therefore:
 
-        Example: temperatures = [89, 62, 70, 58, 47, 47, 46, 76, 100, 70].
+               res[i] = stack[-1] - i
 
-        The first element in the stack is going to be 9 (index of 70, the last element), and the initial condition will
-        be:
-            {9} //stack
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0} //result vector
+    Finally, we push the current index onto the stack because the current day
+    can now be a candidate warmer day for temperatures further to the left.
 
-        We then move to the penultimate element (index 8), and since its matching element is bigger than the one in
-        the stack, we remove it, we do not update the result vector (there is nothing bigger to its right), and push it
-        to the stack:
-            {8} //stack
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0} //result vector
+    Example:
 
-        Next is index 7, matching element of value 76. Since we have something in the stack which is bigger than that,
-        we update the 8th element (the one with index 7, again) of the result vector with the difference between the
-        current element and the top of the stack and move on after pushing it too:
-            {7, 8} //stack
-            {0, 0, 0, 0, 0, 0, 0, 1, 0, 0} //result vector
+        temperatures = [75, 71, 69, 72]
 
-        Next, we have an index 6 for element of value 46. Nothing in the stack is less than that, so no removals from
-        the stack. We update the distance from the next bigger (the previous element) and we just push it:
-            {6, 7 , 8} //stack
-            {0, 0, 0, 0, 0, 0, 1, 1, 0, 0} //result vector
+    Scan from right to left.
 
-        We move to index 5 and its matching value 47. This time we pop until we have no greater values (so just once)
-        and update the vector with the distance (the next bigger was 2 positions to the right), before pushing it to the
-        stack:
-            {5, 7 , 8} //stack
-            {0, 0, 0, 0, 0, 2, 1, 1, 0, 0} //result vector
+        72:
+            stack is empty
+            push 72
 
-        Now, an interesting case: Index 4 matches another equal value, but equal is not greater than, so we pop all the
-        way up to a value greater than 47, update the vector with the computed distance, and push the element to the
-        stack:
-            {4, 7 , 8} //stack
-            {0, 0, 0, 0, 3, 2, 1, 1, 0, 0} //result vector
+            stack temperatures: [72]
 
-        After the last few steps:
-            {8} //stack
-            {8, 1, 5, 4, 3, 2, 1, 1, 0, 0} //result vector
+        69:
+            72 > 69, so 72 is the next warmer day for 69
+            push 69
 
-    Time complexity: O(N)
-    Space complexity: O(N)
+            stack temperatures: [72, 69]
+
+        71:
+            71 >= 69, so 69 is useless and gets popped.
+            Now 72 > 71, so 72 is the next warmer day for 71.
+            Push 71.
+
+            stack temperatures: [72, 71]
+
+        75:
+            75 >= 71 -> pop 71
+            75 >= 72 -> pop 72
+            stack is empty, so 75 has no warmer day to its right.
+            Push 75.
+
+    Notice that the temperatures represented by the stack remain monotonically
+    decreasing from bottom to top.
+
+    Just like in the left-to-right version, we do not choose a decreasing stack
+    arbitrarily. The monotonic property follows from the removal rule: before
+    pushing the current temperature, we remove every temperature less than or
+    equal to it. Therefore, anything remaining underneath it must be strictly
+    warmer.
+
+    Time complexity: O(N). Each index is pushed onto the stack once and popped
+    at most once, so there are O(N) total stack operations.
+    Space complexity: O(N). In the worst case, all N indices can remain on the
+    stack.
     """
     n = len(temperatures)
-    stack, res = [], [0] * n
+    res = [0] * n
+    stack = []  # Useful candidate warmer days to the right.
+
     for i in reversed(range(n)):
+        # Remove candidates dominated by the current day.
+        # They are no warmer and are farther away from every day to the left.
         while stack and temperatures[i] >= temperatures[stack[-1]]:
-            # Pop until we find the next greater element to the right
             stack.pop()
+
+        # The nearest surviving candidate is strictly warmer.
         if stack:
-            # If the stack is not empty, then we have a next greater element, so we take the distance between the
-            # current temperature and the next greater
             res[i] = stack[-1] - i
+
+        # The current day becomes a candidate for days further to the left.
         stack.append(i)
+
     return res
 
 
