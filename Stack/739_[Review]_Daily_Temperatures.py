@@ -8,59 +8,85 @@ import unittest2 as unittest
 
 # Video explanation: https://youtu.be/cTBiBSnjO3c
 def daily_temperatures_v1(temperatures):
-    """ The logic is similar to 503- Next Greater Element II.
-
-         Imagine if we had multiple days in a row with decreasing temperatures, and then one very hot day -
-         [40, 39, 38, 37, 36, 35, 34, 65]. The final day is the "answer" day for all the other days. Why? Because all
-         the other days are in descending order (and cooler than the last day). If we make use of the fact that
-         temperatures in descending order can share the same "answer" day, we can improve the time complexity.
-
-         In the above example, we can "delay" finding the answer for the first 7 days, and upon finding a warmer
-         temperature of 65 we can move backward to find the answer for all 7 days at the same time. This process of
-         storing elements and then walking back through them matches the behavior of a stack.
-
-         A monotonic stack is simply a stack where the elements are always in sorted order. How does this help us?
-
-         We can use a monotonic decreasing stack to hold temperatures. Monotonic decreasing means that the stack will
-         always be sorted in descending order. Because the problem is asking for the number of days, instead of storing
-         the temperatures themselves, we store the indices of the days, and use temperatures[i] to find the temperature
-         of the ith day.
-
-         Monotonic stacks are a good option when a problem involves comparing the size of numeric elements, with their
-         order being relevant.
-
-         On each day, there are two possibilities:
-
-            - If the current day's temperature is not warmer than the temperature at the top of the stack, we can just
-               push the current day to the stack - since it is not as warm (equal or smaller). This will maintain the
-               sorted property.
-
-            - If the current day's temperature is warmer than the temperature at top of the stack, this is significant.
-               It means that the current day is the FIRST day with a warmer temperature than the day associated with the
-               temperature at the top of the stack. When we find a warmer temperature, the number of days is the
-               difference between the current index and the index at the top of the stack.
-
-         We can declare an answer list before iterating through the input and populate the list as we go.
-
-         When we find a warmer temperature, we can't stop after checking only one element at the top of the stack.
-         Using the example temperatures = [75, 71, 69, 72], once we arrive at the last day the stack looks like
-         [0, 1, 2]. Here's what the stack looks like with each temperature associated with the day:
-         [(0, 75), (1, 71), (2, 69)]. 72 (the current temperature) is greater than 69, but it is also greater than 71.
-         To make sure we don't miss any days, we should pop from the stack until the top of the stack is no longer
-         colder than the current temperature. Once that is the case, we can push the current day to the stack.
-
-    Time complexity: O(N), a specific index can only be pushed once (as cur_index) and can only be popped once
-    (as prev_index). Every iteration of the while loop uses 1 pop, which means the while loop will not iterate more than
-    N times in total across all iterations of the for loop.
-    Space complexity: O(N), if the input was non-increasing, then no element would ever be popped from the stack,
-    and the stack would grow to a size of N elements at the end.
     """
-    stack, res = [], [0] * len(temperatures)
+    Pattern: Monotonic decreasing stack — next greater element to the right.
+
+    The reusable idea is to scan from left to right while keeping a stack of
+    elements whose "next greater" element has not been found yet.
+
+    Here, a day stays on the stack while we are still waiting to find the first
+    future day with a warmer temperature.
+
+    For each current day:
+
+        - If the current temperature is not warmer than the temperature of the
+          day at the top of the stack, it cannot resolve that day. The current
+          day is also unresolved, so we push its index onto the stack.
+
+        - If the current temperature is warmer than the temperature at the top
+          of the stack, then the current day must be the FIRST warmer day for
+          that previous day. If an earlier warmer day had existed, that previous
+          day would already have been removed from the stack.
+
+          We therefore pop that previous day and set its answer to the distance
+          between the two indices.
+
+    We use a while loop rather than a single check because one warm day can
+    resolve several previous unresolved days.
+
+    Example:
+
+        temperatures = [75, 71, 69, 72]
+
+    Before processing 72, the stack contains the indices for:
+
+        [75, 71, 69]
+
+    72 > 69, so 72 is the first warmer day for 69. Pop 69.
+    72 > 71, so 72 is also the first warmer day for 71. Pop 71.
+    72 < 75, so 75 is still unresolved and remains on the stack.
+
+    The stack now represents:
+
+        [75, 72]
+
+    Why is the stack monotonically decreasing?
+
+    We do not start by deciding that the stack must be decreasing. Instead,
+    the decreasing order is a consequence of how unresolved elements are
+    maintained.
+
+    Before pushing a new temperature, we remove every smaller temperature that
+    it resolves. Therefore, once the current day is pushed, the temperature
+    below it must be greater than or equal to it. Repeating this process causes
+    the stack to remain monotonically decreasing from bottom to top.
+
+    We store indices instead of temperatures because the answer asks for the
+    number of days until the warmer temperature, so when day `cur_day` resolves
+    `prev_day`, the answer is:
+
+        cur_day - prev_day
+
+    Any indices left on the stack after the scan never encounter a warmer day,
+    so their answers correctly remain 0.
+
+    Time complexity: O(N). Each index is pushed onto the stack once and popped
+    at most once, so there are at most O(N) total stack operations.
+    Space complexity: O(N). In the worst case, temperatures are non-increasing,
+    so no index is popped and all N indices remain on the stack.
+    """
+    res = [0] * len(temperatures)
+    stack = []  # Indices of unresolved days waiting for their first warmer day.
+
     for cur_day, temperature in enumerate(temperatures):
+        # The current day resolves every colder unresolved day on top of the stack.
         while stack and temperature > temperatures[stack[-1]]:
             prev_day = stack.pop()
             res[prev_day] = cur_day - prev_day
+
+        # The current day is now unresolved and waits for a future warmer day.
         stack.append(cur_day)
+
     return res
 
 
