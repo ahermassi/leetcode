@@ -6,50 +6,104 @@ doesn't exist, output -1 for this number. """
 import unittest2 as unittest
 
 
-def next_greater_elements_v1(nums):
-    """ Similar to 496- Next Greater Element I.
-        We can traverse circularly in the nums array by making use of the %(modulus) operator. For every element
-        nums[i], we start searching in the num array(of length n) from the index ((i+1) % n) and look at the next
-        (circularly) (n - 1) elements. For nums[i], we do so by scanning over nums[j], such that
-        (i+1) % n ≤ j ≤ (i+n-1) % n, and we look for the first greater element found.
-    Time complexity: O(N^2)
-    Space complexity: O(1)
+def next_greater_elements(nums):
+    """
+    Pattern: Monotonic decreasing stack — next greater element to the right,
+    with a circular array.
+
+    The reusable monotonic-stack idea is the same as the normal Next Greater
+    Element problem:
+
+        - Scan from left to right.
+        - The stack contains indices of elements whose next greater element
+          has not been found yet.
+        - When the current value is greater than the value at the top of the
+          stack, the current value is the first greater element for that
+          unresolved element, so we pop it and record the answer.
+        - We keep popping because one value can resolve multiple unresolved
+          elements.
+
+    The only new complication is that nums is circular.
+
+    For example:
+
+        nums = [5, 4, 3, 2, 1]
+
+    For the value 2, the elements that come after it are not just:
+
+        [1]
+
+    Because the array wraps around, they are:
+
+        [1, 5, 4, 3]
+
+    A simple way to model this is to imagine that the array is duplicated:
+
+        [5, 4, 3, 2, 1, 5, 4, 3, 2, 1]
+         ----------------  ----------------
+            first pass        wraparound
+
+    Now the circular problem becomes an ordinary "look to the right" problem.
+    Every original element gets a chance to see the beginning of the array
+    again after reaching the end.
+
+    We do not actually create nums + nums. Instead, we iterate 2 * n times and
+    map each virtual position back into the real array with:
+
+        index = i % n
+
+    Example:
+
+        nums = [5, 4, 3, 2, 1]
+
+    During the first pass, the stack eventually contains all five indices,
+    because no later value is greater:
+
+        stack values = [5, 4, 3, 2, 1]
+
+    When the traversal wraps around and encounters 5 again:
+
+        5 > 1  -> resolve 1
+        5 > 2  -> resolve 2
+        5 > 3  -> resolve 3
+        5 > 4  -> resolve 4
+        5 > 5  -> false
+
+    So the second traversal gives unresolved elements near the end of the
+    original array a chance to find their next greater element near the
+    beginning.
+
+    This implementation pushes indices during both virtual passes. That means
+    the same real index can appear on the stack more than once, but that is
+    harmless here: we are conceptually processing nums + nums, and repeated
+    writes to res[index] produce the same next-greater value.
+
+    Any element that still has no greater value after the full 2 * n traversal
+    correctly keeps its initial answer of -1.
+
+    Time complexity: O(N). We process 2N virtual positions, and every pushed
+    stack entry is popped at most once. Since 2N is still O(N), the total time
+    complexity is O(N).
+    Space complexity: O(N). The stack can contain O(N) indices. The result
+    array also contains N elements.
     """
     n = len(nums)
+    stack = []
     res = [-1] * n
-    for i in range(n):
-        for j in range(1, n):  # We examine the remaining (n - 1) elements by wrapping around using %
-            if nums[(i + j) % n] > nums[i]:
-                res[i] = nums[(i + j) % n]
-                break
-    return res
-
-
-def next_greater_elements_v2(nums):
-    """ The approach is same as Next Greater Element I. The only difference here is that we use stack to keep the
-        indices of the decreasing sub-sequence. We store the indices instead of the elements since there could be
-        duplicates in the array. This time, we need to traverse the whole array twice since it is circular, so even
-        the very first elements can be potential next greater for the later ones.
-        We start traversing the array from left towards the right. For an element nums[i] encountered, we pop all the
-        elements stack[top] from the stack such that nums[stack[top]] < nums[i]. We continue the popping till we
-        encounter a stack[top] satisfying nums[stack[top]] >= nums[i]. Now, it is obvious that the current stack[top]
-        only can act as the next greater element for nums[i] (right now, considering only the elements lying to the
-        left of nums[i]).
-        If no element remains on the top of the stack, it means no larger element than nums[i] exists to its left.
-        Along with this, we also push the index of the element just encountered (nums[i]), i.e. i over the top of the
-        stack, so that nums[i] (or stack[top]) now acts as the next greater element for the elements lying to its left.
-        We go through two such passes over the complete array. This is done so as to complete a circular traversal
-        over the array.
-    Time complexity: O(N)
-    Space complexity: O(N)
-    """
-    n, greater, stack = len(nums), {}, []
+    # Virtually traverse nums + nums so elements near the end can
+    # see elements at the beginning after wrapping around.
     for i in range(2 * n):
-        num = nums[i % n]
-        while stack and nums[stack[-1]] < num:
-            greater[stack.pop()] = num
-        stack.append(i % n)
-    return [greater.get(i, -1) for i in range(n)]
+        index = i % n
+        num = nums[index]
+
+        # The current value resolves every smaller unresolved value.
+        while stack and num > nums[stack[-1]]:
+            res[stack.pop()] = num
+
+        # Treat this as another occurrence in the virtual doubled array.
+        stack.append(index)
+
+    return res
 
 
 class Test(unittest.TestCase):
@@ -57,8 +111,7 @@ class Test(unittest.TestCase):
 
     def test_next_greater_elements(self):
         for test_nums, result in self.data:
-            self.assertEqual(result, next_greater_elements_v1(test_nums))
-            self.assertEqual(result, next_greater_elements_v2(test_nums))
+            self.assertEqual(result, next_greater_elements(test_nums))
 
 
 if __name__ == '__main__':
