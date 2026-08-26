@@ -1,185 +1,260 @@
 """ Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the
 area of largest rectangle in the histogram. """
 
-import unittest2 as unittest
 
-
-def largest_rectangle_area_v1(heights):
-    """  Brute Force. TLE.
-
-         We can simply start off by considering every possible pair of bars and finding the area of the rectangle formed
-         between them using the height of the shortest bar lying between them as the height and the spacing between them
-         as the width of the rectangle. We can, thus, find the required rectangle with the maximum area.
-
-         Instead of taking every possible pair and then finding the bar of minimum height lying between them everytime,
-         we can find the bar of minimum height for current pair by using the minimum height bar of the previous pair.
-
-    Time complexity: O(N^2)
-    Space complexity: O(1)
+def largest_rectangle_area(heights):
     """
-    n, res = len(heights), 0
-    for i in range(n):
-        min_height = heights[i]
-        for j in range(i, n):
-            min_height = min(min_height, heights[j])
-            res = max(res, min_height * (j - i + 1))
-    return res
+    Pattern: Monotonic increasing stack — previous smaller + next smaller boundaries.
 
+    First-principles idea:
 
-# Video explanation (set speed to 1.25x): https://www.youtube.com/watch?v=RVIh0snn4Qc
-# Video explanation: https://www.youtube.com/watch?v=zx5Sw9130L0
-def largest_rectangle_area_v2(heights):
-    """ First, we need to take into account the fact that the height of the rectangle formed between any two bars
-         will always be limited by the height of the shortest bar lying between them.
+    For any particular bar i with height h, the largest rectangle that uses
+    height h can extend left and right for as long as every bar in that range
+    has height >= h.
 
-         For any bar at index i, the maximum rectangle is of width r-l+1, where r is the index of the rightmost
-         SUBSEQUENT bar with height h[r] >= h[i] (contiguous bars), and l is the index of the leftmost SUBSEQUENT bar
-         with height h[l] >= h[i] (see the first comment on this thread:
-         https://leetcode.com/problems/largest-rectangle-in-histogram/discuss/28902/5ms-O(n)-Java-solution-explained-(beats-96)).
-         These two particular bars represent the expansion boundaries of the rectangle which the ith bar be part of
-         because a rectangle can only be formed using contiguous neighboring bars to the right and to the left with
-         heights greater than or equal to the ith bar's height.
+    Therefore, the rectangle is bounded by:
 
-         NOTE: for the rest of the explanation, leftmost/rightmost refer to leftmost subsequent / rightmost subsequent.
+        - the first bar smaller than h on the left
+        - the first bar smaller than h on the right
 
-         So for any index i, if we know its utmost higher (or of the same height) neighbors to the right and to
-         the left, we can easily find the largest rectangle using:
+    If those boundaries are L and R, then they themselves cannot participate
+    in the rectangle, so:
 
-                    maxArea = max(maxArea, height[i] * (greaterOrEqualFromRight[i] - greaterOrEqualFromLeft[i] + 1))
+        width = R - L - 1
+        area  = h * (R - L - 1)
 
-         The trick is how to effectively calculate greaterOrEqualFromRight and greaterOrEqualFromLeft.
+    --------------------------------------------------------------------------
+    Brute force
+    --------------------------------------------------------------------------
 
-         The basic idea behind this algorithm is that we would like to calculate the maximum rectangle for every
-         bar at index i with width r-l+1 and height heights[i], where r / l is the index of the rightmost / leftmost bar
-         with height greater than or equal to bar i. Once we get the maximum rectangle for every bar, the result could
-         be derived by choosing the largest maximum rectangle.
+    For every bar i, we could:
 
-         Calculating and storing l and r will be too cumbersome, so a stack is introduced here.
+        1. Scan left until we find the first smaller bar.
+        2. Scan right until we find the first smaller bar.
+        3. Compute:
 
-        At each step, we need the information of previously seen 'candidate' bars - bars which give us hope of
-        expansion. These are the bars of increasing heights. And since they'll need to be put in the order of their
-        occurrence, a stack should come to mind.
+               area = heights[i] * (right - left - 1)
 
-         We process the bars from left to right and keep pushing indices to the stack as long as the corresponding
-         heights are in increasing order. As soon as we encounter a bar with a height that disrupts the increasing order
-         at index i, it's stime to pause and reflect.
+    This is correct, but in the worst case we scan O(N) positions for each of
+    the N bars, giving:
 
-         With a shorter bar B1 in hand, the bars in the stack have no hope of further expansion to the right.
-         Therefore, we need to pop them one by one and calculate the maximum area of the rectangle that they can be
-         part of.
+        Time complexity: O(N^2)
 
-        The previous bar B2 index is stack.pop(). The current index i is the index of the first bar to the right
-        of B2 with lower height, and stack[-1] is the index of the first bar B3 to the left of B2 with less height than
-        B2 after popping B2 (remember that the stack if monotonically increasing). Thus, B1 and B3 represent,
-        respectively, the right and the left boundaries of the largest rectangle that B2 can be part of.
+    --------------------------------------------------------------------------
+    How the monotonic stack improves this
+    --------------------------------------------------------------------------
 
-         So, before adding the new bar B1 to the stack, we pop the bar(s) that is/are taller than B1. The popped bar(s)
-         represents the height of a rectangle with B1 as the right boundary and the current stack's top as the left
-         boundary.
+    Instead of repeatedly searching for the previous-smaller and next-smaller
+    boundaries, we process the bars from left to right and maintain a
+    monotonically increasing stack of indices.
 
-         So the idea is that, when we encounter a shorter bar at index i, then for each bar B in the monotonically
-         increasing stack:
+    The important event is encountering a bar that is shorter than the bar at
+    the top of the stack.
 
-             1- Take its height as the rectangle's height, then find the left and right boundaries of this rectangle
-             2- The bar at current index i is always the rightmost bar lower than B
-             3- The top of the stack is always the leftmost bar lower than B (after popping B). Let's call the index j.
-             4- After steps 2 and 3, we know the left and right boundaries, then know the width, then can calculate
-                  the area.
-                  width = (i - 1) - (j+1) + 1 = i - 1 - j - 1 + 1 = i - j - 1
+    Suppose the current index is i and:
 
-         Why i-1? The bar to the right at current index i can't be part of the rectangle because it's... well, lower.
-         Why j+1? The bar to the left at index j can't be part of the rectangle because it's... well, lower.
+        heights[i] < heights[stack[-1]]
 
-         So the algorithm boils down to:
+    The bar at the top can no longer extend any farther to the right while
+    keeping its own height, because the current shorter bar blocks it.
 
-            - Maintain a stack such that heights are always in increasing order.
-            - When we see a bar that's lower than the top of the stack, we use it as the right side and compute all the
-               possible rectangles using what's on the stack to derive left side and height.
-            - Remove each considered rectangle / bar from the stack.
+    Therefore, when we pop that bar:
 
-         We append a dummy 0 to either side of the list of heights for the following reasons:
+        popped_index = stack.pop()
 
-         Without the [0] appended to the end of the list of heights, we would need to basically repeat what we did in
-         the inner while loop once at the very end of the algorithm in case there are bars left in the stack (for
-         example, when the input list of heights is strictly increasing). With the dummy 0 at the end, however, every
-         element left in the stack will have a height >= 0, and so they will be popped and included in the calculation.
-         So the [0] is used to "force pop" all the remaining elements in the stack.
+    we have just discovered its NEXT smaller boundary:
 
-        Without the dummy 0 added to the start of the list, we wouldn't be able to calculate the maximum area of
-        rectangle when the input list of heights has a single element.
+        right boundary = i
 
-        Check the first comment on this thread for a walk through example:
-         https://leetcode.com/problems/largest-rectangle-in-histogram/discuss/28900/Short-and-Clean-O(n)-stack-based-JAVA-solution
+    What about its previous smaller boundary?
 
-         Example: heights = [2, 1, 5, 6, 2, 3]
+    After popping it, the new top of the stack is the closest bar to its left
+    that is shorter than the popped bar.
 
-         Let's take the bar at index 4 with height 2.
+    Therefore:
 
-         When i=4, the top of stack is bar(6). If we take bar(6) as the current height of the rectangle, we need to find
-         the left and right boundary bars of the rectangle. It is always true that both left and right boundary bars have
-         heights either equal to or greater than bar(6).
+        left boundary = stack[-1]
 
-         Right Boundary: bar(2), which i points to, is the rightmost bar that is lower than bar(6), so the right boundary
-         is i-1.
-        Left Boundary: bar(5), which is the top in stack after bar(6) is popped, is the leftmost bar that is lower than
-        bar(6), so the left boundary is stack.peek()+1.
+    At that exact moment, both boundaries are known:
 
-         Now we have both left and right boundaries, then let's get the width of the rectangle:
-         width = index of right boundary - index of left boundary + 1 = (i - 1) - (stack.peek() + 1) + 1 =
-         i - stack.peek() - 1
-         Then the area = (height of bar(6)) * (i - stack.peek() - 1).
+        left smaller             popped bar               right smaller
+             |                       |                          |
+             v                       v                          v
+        ... [L] ... >= h ... >= h [h] ... >= h ... >= h ... [R]
 
-         Let's move to the next iteration. The top of the stack is bar(5), and i still points to bar(2). So we pop bar(5)
-         and take bar(5)'s height as the rectangle's height.
+        L = stack[-1]
+        R = i
 
-         Right Boundary: bar(2) is the rightmost bar that is lower than bar(5). Then the right boundary is i-1.
-         Left Boundary: bar(1), which is the top in stack after bar(5) is popped, is the leftmost bar that is lower than
-         bar(5). So the left boundary is stack.peek()+1.
+    So we can immediately finalize the largest rectangle that uses the popped
+    bar's height:
 
-         width = (i - 1) - (stack.peek() + 1) = i - stack.peek() - 1 and
-         area = (height of bar(5)) * (i - stack.peek() - 1).
+        width = i - stack[-1] - 1
+        area  = heights[popped_index] * width
 
-         There is only bar(1) left in the stack, and it is lower than bar(2), to which i points. So we continue pushing
-         bars to the stack till the height starts to decrease or the end of the histogram.
+    We keep popping because one short bar can simultaneously become the right
+    boundary for several taller bars.
 
-         Now the stack has [bar(1), bar(2), bar(3)] and bar(3) is in the top. i points to the position of the right
-         bar(3).
-         We pop bar(3) out of the stack and take its height as the rectangle's height. The right boundary is i-1.
-         The left boundary is bar(2) which is stack.peek()+1.
+    --------------------------------------------------------------------------
+    Why the stack is monotonically increasing
+    --------------------------------------------------------------------------
 
-         Next, pop bar(2) and take its height as the rectangle's height. Remember that the boundary's height is either
-         equal to or larger than bar(2)'s height. The right boundary is bar(3), which is i-1. The left boundary is
-         bar(1)'s right which is stack.peek()+1.
+    Before pushing the current bar, we remove every taller bar that the current
+    shorter bar resolves.
 
-    Time complexity: O(N), each height is pushed and popped once
-    Space complexity: O(N)
+    Therefore, after all necessary pops, the bar underneath the current one is
+    no taller than it.
+
+    The stack consequently remains monotonically increasing by height.
+
+    More importantly, each bar on the stack represents a bar whose right
+    smaller boundary has NOT been discovered yet.
+
+    --------------------------------------------------------------------------
+    Sentinel bars
+    --------------------------------------------------------------------------
+
+    We add a height-0 bar to both ends:
+
+        heights = [0] + heights + [0]
+
+    The left sentinel solves the "no smaller bar to the left" case.
+
+    Because every real bar has height >= 0, the sentinel remains at the bottom
+    of the stack. Therefore, after popping a real bar, stack[-1] always exists.
+
+    Conceptually, this sentinel represents a boundary just before the beginning
+    of the original histogram.
+
+    The right sentinel solves the "no smaller bar to the right" case.
+
+    Example:
+
+        [1, 2, 3, 4]
+
+    Without a smaller bar at the end, none of these bars would naturally get
+    popped.
+
+    Adding the final 0 gives:
+
+        [0, 1, 2, 3, 4, 0]
+
+    The last 0 is smaller than every remaining real bar, so it forces all of
+    them to be popped and finalized.
+
+    This removes the need for a separate cleanup loop.
+
+    --------------------------------------------------------------------------
+    Example walkthrough
+    --------------------------------------------------------------------------
+
+        heights = [2, 1, 5, 6, 2, 3]
+
+    After adding sentinels:
+
+        [0, 2, 1, 5, 6, 2, 3, 0]
+
+    Start with the left sentinel:
+
+        stack values = [0]
+
+    Process 2:
+
+        2 >= 0
+        push 2
+
+        stack values = [0, 2]
+
+    Process 1:
+
+        1 < 2
+
+        Pop 2.
+
+        current index = right smaller boundary
+        new stack top = left smaller boundary
+
+        width = 2 - 0 - 1 = 1
+        area  = 2 * 1 = 2
+
+        Push 1.
+
+        stack values = [0, 1]
+
+    Process 5:
+
+        push 5
+
+        stack values = [0, 1, 5]
+
+    Process 6:
+
+        push 6
+
+        stack values = [0, 1, 5, 6]
+
+    Process 2:
+
+        2 < 6
+
+        Pop 6.
+
+        width = 5 - 3 - 1 = 1
+        area  = 6 * 1 = 6
+
+        2 < 5
+
+        Pop 5.
+
+        After popping 5, the stack top corresponds to height 1.
+
+        width = 5 - 2 - 1 = 2
+        area  = 5 * 2 = 10
+
+        This represents the rectangle formed by:
+
+            [5, 6]
+
+        whose limiting height is 5 and width is 2.
+
+        Now 2 > 1, so stop popping and push 2.
+
+    Eventually the final sentinel 0 forces all remaining bars to be finalized.
+
+    The largest area found is:
+
+        10
+
+    --------------------------------------------------------------------------
+    Reusable invariant
+    --------------------------------------------------------------------------
+
+    The stack contains bars whose NEXT smaller element has not been found yet.
+
+    When a shorter bar arrives:
+
+        - pop taller bars
+        - current index = their next smaller boundary
+        - new stack top = their previous smaller boundary
+        - compute their maximum rectangle immediately
+
+    This is the O(N) version of the original brute-force idea of finding the
+    first smaller bar on both sides of every bar.
+
+    Time complexity: O(N). Each index is pushed onto the stack once and popped
+    at most once, so there are O(N) total stack operations.
+    Space complexity: O(N). The monotonic stack can contain O(N) indices.
     """
-    heights.append(0)
-    heights = [0] + heights
-    heights.append(0)  # Append 0 to heights to ensure that it pops out all previous heights from the stack
+
+    heights = [0] + heights + [0]
     stack = []
     res = 0
     for i, height in enumerate(heights):
         while stack and height < heights[stack[-1]]:
-            # As long as the current bar is shorter than the one at the top of the stack, we keep popping out the stack
-            # and calculate the area based on the popped bar
-            index = stack.pop()
-            w = i - stack[-1] - 1
-            res = max(res, heights[index] * w)
-        # We'll need to consider the rectangle of height 'height'. We don't know how far to the right this rectangle
-        # will extend, so we'll just push i to the stack.
+            bar = stack.pop()
+            # After popping:
+            #   stack[-1] = first smaller bar to the left
+            #   i         = first smaller bar to the right
+            width = i - stack[-1] - 1
+            res = max(res, heights[bar] * width)
         stack.append(i)
     return res
-
-
-class Test(unittest.TestCase):
-    data = [([2, 1, 5, 6, 2, 3], 10)]
-
-    def test_largest_rectangle_area(self):
-        for test_heights, result in self.data:
-            self.assertEqual(result, largest_rectangle_area_v1(test_heights))
-            self.assertEqual(result, largest_rectangle_area_v2(test_heights))
-
-
-if __name__ == '__main__':
-    unittest.main()
